@@ -1,0 +1,14 @@
+{
+    "name": "LHH.Casters",
+    "references": [
+        "GUID:e86dc1930d0060f46b2723d0dbfef748"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

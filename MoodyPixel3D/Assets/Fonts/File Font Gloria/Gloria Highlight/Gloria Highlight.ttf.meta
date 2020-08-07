@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 684f585a75d82e047ba3cf9431f15d6a
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Gloria
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 3069b2295d344164d94649d71dbd1604, type: 3}
+  - {fileID: 12800000, guid: f2cf4010b4b37fb439f75aed4d21ea2b, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7286143943119374542
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e948ca2903dac2d40b5ef239e0812a7e, type: 3}
+  m_Name: PixelArtSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  height:
+    overrideState: 1
+    value: 224
+  mode:
+    overrideState: 1
+    value: 0
+  material:
+    overrideState: 1
+    value: {fileID: 2100000, guid: 8f58268dbc0adaf4c8dc4b696aa6a978, type: 2}
+  palette:
+    overrideState: 1
+    value: {fileID: 11400000, guid: 081cbccd86440554889ffc979a951d43, type: 2}
+  changeBefore:
+    overrideState: 1
+    value: 1
+--- !u!114 &-4331611281405269405
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
+  m_Name: AmbientOcclusion
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  mode:
+    overrideState: 1
+    value: 0
+  intensity:
+    overrideState: 1
+    value: 0.8
+  color:
+    overrideState: 1
+    value: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
+  ambientOnly:
+    overrideState: 1
+    value: 1
+  noiseFilterTolerance:
+    overrideState: 1
+    value: 0
+  blurTolerance:
+    overrideState: 1
+    value: -4.6
+  upsampleTolerance:
+    overrideState: 1
+    value: -12
+  thicknessModifier:
+    overrideState: 1
+    value: 2
+  directLightingStrength:
+    overrideState: 1
+    value: 0
+  radius:
+    overrideState: 1
+    value: 1.3
+  quality:
+    overrideState: 1
+    value: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
+  m_Name: Pixel Art
+  m_EditorClassIdentifier: 
+  settings:
+  - {fileID: -7286143943119374542}
+  - {fileID: -4331611281405269405}
+--- !u!114 &5050785311146469628
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: PixelArtSettings
+  m_EditorClassIdentifier: Assembly-CSharp::PixelArtSettings
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  height:
+    overrideState: 1
+    value: 130
+  mode:
+    overrideState: 1
+    value: 0
+  material:
+    overrideState: 1
+    value: {fileID: 2100000, guid: 8f58268dbc0adaf4c8dc4b696aa6a978, type: 2}
+  palette:
+    overrideState: 1
+    value: {fileID: 11400000, guid: ac4c2210698545648b37463abb7812bf, type: 2}
+  changeBefore:
+    overrideState: 1
+    value: 1
