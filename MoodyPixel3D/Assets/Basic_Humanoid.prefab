@@ -50,6 +50,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1965822293490487455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7542337584432739264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae712ec31f1c4444293d186cdffac044, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedAnimationWalk: 1
+  speedAnimationRun: 1
 --- !u!1001 &7235786806841429649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -71,19 +85,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
       propertyPath: m_RootOrder
@@ -91,7 +105,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
