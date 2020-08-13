@@ -4,8 +4,19 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
+public interface IRangeSphereSkill
+{
+    RangeSphere.Properties GetRangeSphereProperties();
+}
+
 public class RangeSphere : MonoBehaviour
 {
+    [Serializable]
+    public class Properties
+    {
+        public float radius;
+    }
+    
     [System.Serializable]
     private struct ConditionalFloat
     {
@@ -65,15 +76,15 @@ public class RangeSphere : MonoBehaviour
         Hide(0f);
     }
 
-    public void Show(float radius)
+    public void Show(Properties param)
     {
-        Show(radius, _duration);
+        Show(param, _duration);
     }
 
-    public void Show(float radius, float duration)
+    public void Show(Properties param, float duration)
     {
         SetRadius(0f);
-        TweenRadius(duration, radius, true, showColor);
+        TweenRadius(duration, param.radius, true, showColor);
     }
     
     public void Hide()

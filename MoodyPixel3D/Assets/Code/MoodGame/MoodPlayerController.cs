@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
+using Cinemachine;
+using LHH.Utils;
+using LHH.Utils.UnityUtils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +17,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private Camera _mainCamera;
 
     public MoodCommandController command;
+
+    public Enabler inCommand;
+    public CinemachineBlendListCamera cameraBlendList;
+
+    private Vector3 _mouseWorldPosition;
 
 
     // Start is called before the first frame update
@@ -90,37 +98,95 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
     }
 
-    void GetInputUpdate(out Vector3 moveAxis, out bool readyingWeapon, out ButtonState execute)
+    private struct DirectionalState
     {
-        moveAxis = Vector3.zero;
+        public ButtonState up;
+        public ButtonState down;
+        public ButtonState left;
+        public ButtonState right;
+        
+        public Vector3 GetMoveAxis()
+        {
+            Vector3 moveAxis = Vector3.zero;
+            moveAxis += up * Vector3.forward;
+            moveAxis += left * Vector3.left;
+            moveAxis += down * Vector3.back;
+            moveAxis += right * Vector3.right;
+            return moveAxis.normalized;
+        }
+    }
+
+    void GetInputUpdate(out DirectionalState move, out bool readyingWeapon, out ButtonState execute)
+    {
+        move = new DirectionalState();
         readyingWeapon = false;
         execute = new ButtonState(KeyCode.Space);
 
-        moveAxis += new ButtonState(ButtonState.Join.Or, KeyCode.UpArrow, KeyCode.W) * Vector3.forward;
-        moveAxis += new ButtonState(ButtonState.Join.Or, KeyCode.LeftArrow, KeyCode.A) * Vector3.left;
-        moveAxis += new ButtonState(ButtonState.Join.Or, KeyCode.DownArrow, KeyCode.S) * Vector3.back;
-        moveAxis += new ButtonState(ButtonState.Join.Or, KeyCode.RightArrow, KeyCode.D) * Vector3.right;
-        moveAxis.Normalize();
+
+        move.up = new ButtonState(ButtonState.Join.Or, KeyCode.UpArrow, KeyCode.W);
+        move.left = new ButtonState(ButtonState.Join.Or, KeyCode.LeftArrow, KeyCode.A);
+        move.down = new ButtonState(ButtonState.Join.Or, KeyCode.DownArrow, KeyCode.S);
+        move.right = new ButtonState(ButtonState.Join.Or, KeyCode.RightArrow, KeyCode.D);
         #if UNITY_EDITOR
         #endif
     }
 
+    void GetMouseInputUpdate(Camera mainCamera, Vector3 playerPlanePosition, ref Vector3 position)
+    {
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
+        float collisionLineFactor = Vector3.Dot(playerPlanePosition - ray.origin, Vector3.up) /
+                                    Vector3.Dot(ray.direction, Vector3.up);
+        position = ray.origin + ray.direction * collisionLineFactor;
+        DebugUtils.DrawNormalStar(position, 0.5f, Quaternion.identity, Color.red, 0.02f);
+        DebugUtils.DrawNormalStar(GetPlayerPlaneOrigin(), 0.5f, Quaternion.identity, Color.blue, 0.02f);
+    }
 
-    private bool showing;
-    
+    private Vector3 GetPlayerPlaneOrigin()
+    {
+        return pawn.Position;
+    }
+
+
     private void Update()
     {
-        GetInputUpdate(out Vector3 moveAxis, out bool readyingWeapon, out ButtonState executeAction);
-        pawn.mover.SetVelocity(ToWorldPosition((moveAxis * 5f)));
+        GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState executeAction);
+        GetMouseInputUpdate(_mainCamera, GetPlayerPlaneOrigin(), ref _mouseWorldPosition);
+        Vector3 currentDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
+        Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
 
         if (executeAction.down)
         {
             command.Activate(transform.position, 6f);
+            _mouseWorldPosition = GetPlayerPlaneOrigin();
         }
         else if (executeAction.up)
         {
             command.Deactivate();
+            command.ExecuteCurrent(pawn, currentDirection);
         }
+
+        bool isInCommand = command.IsActivated();
+
+        inCommand.SetActive(isInCommand);
+        if (isInCommand) //The command is open
+        {
+            if (moveAxis.up.down)
+            {
+                command.MoveSelected(-1);
+            }
+            else if (moveAxis.down.down)
+            {
+                command.MoveSelected(1);
+            }
+
+            command.SetDirection(currentDirection);
+            pawn.mover.SetVelocity(Vector3.zero);
+        }
+        else //The command is not open
+        {
+            pawn.mover.SetVelocity(ToWorldPosition((moveAxis.GetMoveAxis() * 5f)));
+        }
+        
 
     }
     

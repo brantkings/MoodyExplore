@@ -123,6 +123,32 @@ public class KinematicPlatformer : MonoBehaviour
         _velocity = Vector3.zero;
     }
 
+    
+    public Vector3 Position
+    {
+        protected set
+        {
+            if (_body != null)
+            {
+                _body.MovePosition(value);
+            }
+            else
+            {
+                transform.position = value;
+            }
+        } 
+        get
+        {
+            if (_body != null)
+            {
+                return _body.position;
+            }
+            else
+            {
+                return transform.position;
+            }
+        }
+    }
     public void SetVelocity(Vector3 vel)
     {
         _currentInputVelocity = vel;
@@ -394,6 +420,7 @@ public class KinematicPlatformer : MonoBehaviour
 
     }
 
+
     private void Move(Vector3 movement)
     {
         _latestValidVelocity = movement;
@@ -403,14 +430,7 @@ public class KinematicPlatformer : MonoBehaviour
         if (movement != Vector3.zero)
         {
             //Debug.LogErrorFormat("Moving {0} with {1}", this, movement.ToString("F8"));
-            if (_body != null)
-            {
-                _body.MovePosition(_body.position + movement);
-            }
-            else
-            {
-                transform.position = transform.position + movement;
-            }
+            Position = Position + movement;
         }
     }
 }
