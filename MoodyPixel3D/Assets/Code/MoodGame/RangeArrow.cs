@@ -4,12 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public interface IRangeArrowSkill
-{
-    RangeArrow.Properties GetRangeArrowProperties();
-}
-
-public class RangeArrow : MonoBehaviour
+public class RangeArrow : RangeShow<RangeArrow.Properties>
 {
     [System.Serializable]
     public class Properties
@@ -41,7 +36,7 @@ public class RangeArrow : MonoBehaviour
         _rend = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public void Show(Properties arrowParameters)
+    public override void Show(Properties arrowParameters)
     {
         
         _tweenNow.KillIfActive();
@@ -58,7 +53,7 @@ public class RangeArrow : MonoBehaviour
         _parametersInEffect = arrowParameters;
     }
 
-    public void Hide()
+    public override void Hide()
     {
         _tweenNow.KillIfActive();
         Sequence seq = DOTween.Sequence();
@@ -77,10 +72,12 @@ public class RangeArrow : MonoBehaviour
         {
             return Mathf.Clamp(originalMagnitude, _parametersInEffect.minLength, _parametersInEffect.maxLength);
         }
-        else return originalMagnitude;
+        else return 0f;
     }
 
 
+    
+    
     public void SetDirection(Vector3 direction)
     {
         _rend.transform.rotation = Quaternion.LookRotation(Vector3.up, direction.normalized);

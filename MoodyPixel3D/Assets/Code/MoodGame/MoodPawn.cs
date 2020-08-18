@@ -41,6 +41,11 @@ public class MoodPawn : MonoBehaviour
         
     }
 
+    public IEnumerator ExecuteSkill(MoodSkill skill, Vector3 direction)
+    {
+        yield return StartCoroutine(skill.Execute(this, direction));
+    }
+
     private void CallBeginMove()
     {
         OnBeginMove?.Invoke();

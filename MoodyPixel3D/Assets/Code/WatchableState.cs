@@ -26,7 +26,7 @@ public class WatchableState<T>
     {
         if (!state.Equals(newState))
         {
-            Debug.LogFormat("Changed {0} to {1}", debug, newState);
+            //Debug.LogFormat("Changed {0} to {1}", debug, newState);
             this.state = newState;
             if (OnChanged != null) OnChanged(newState);
         }

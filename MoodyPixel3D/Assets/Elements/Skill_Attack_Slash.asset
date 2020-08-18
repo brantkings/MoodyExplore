@@ -15,3 +15,10 @@ MonoBehaviour:
   _icon: {fileID: 0}
   _name: Slash
   _cost: 2
+  attackRadius: 0.5
+  attackRange: 6
+  attackY: 0.5
+  attackCapsuleHeight: 1.5
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 1024

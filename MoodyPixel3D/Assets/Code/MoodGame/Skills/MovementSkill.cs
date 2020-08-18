@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 
 [CreateAssetMenu(fileName = "Skill_Movement_", menuName = "Mood/Skill/Movement", order = 0)]
-public class MovementSkill : StaminaCostMoodSkill, IRangeArrowSkill
+public class MovementSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowPropertyGiver
 {
     public float minDistance;
     public float maxDistance;
@@ -13,7 +13,7 @@ public class MovementSkill : StaminaCostMoodSkill, IRangeArrowSkill
     public float showArrowWidth = 1f;
     public Ease ease;
     
-    public override void Execute(MoodPawn pawn, Vector3 skillDirection)
+    public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
     {
         Vector3 dist = skillDirection;
         dist = dist.Clamp(minDistance, maxDistance);
@@ -23,9 +23,10 @@ public class MovementSkill : StaminaCostMoodSkill, IRangeArrowSkill
             duration += dist.magnitude / velocityAdd;
         }
         pawn.Move(dist, duration, ease);
+        yield return new WaitForSecondsRealtime(0.6f);
     }
 
-    public RangeArrow.Properties GetRangeArrowProperties()
+    public RangeArrow.Properties GetRangeProperty()
     {
         return new RangeArrow.Properties()
         {

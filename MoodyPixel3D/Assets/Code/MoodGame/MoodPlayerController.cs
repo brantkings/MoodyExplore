@@ -22,6 +22,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     public CinemachineBlendListCamera cameraBlendList;
 
     private Vector3 _mouseWorldPosition;
+    private bool _executingCommand;
 
 
     // Start is called before the first frame update
@@ -146,6 +147,15 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         return pawn.Position;
     }
 
+    private IEnumerator ExecuteCurrentCommand(Vector3 direction)
+    {
+        _executingCommand = true;
+        Debug.LogFormat("Starting command {0}", Time.time);
+        yield return command.ExecuteCurrent(pawn, direction);
+        _executingCommand = false;
+        Debug.LogFormat("Ending command {0}", Time.time);
+    }
+
 
     private void Update()
     {
@@ -162,10 +172,10 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         else if (executeAction.up)
         {
             command.Deactivate();
-            command.ExecuteCurrent(pawn, currentDirection);
+            StartCoroutine(ExecuteCurrentCommand(currentDirection));
         }
 
-        bool isInCommand = command.IsActivated();
+        bool isInCommand = command.IsActivated() || _executingCommand;
 
         inCommand.SetActive(isInCommand);
         if (isInCommand) //The command is open
@@ -179,7 +189,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 command.MoveSelected(1);
             }
 
-            command.SetDirection(currentDirection);
+            command.UpdateCommandView(pawn, currentDirection);
             pawn.mover.SetVelocity(Vector3.zero);
         }
         else //The command is not open

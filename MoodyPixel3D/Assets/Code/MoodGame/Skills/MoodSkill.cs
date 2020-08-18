@@ -10,8 +10,9 @@ public interface IMoodSelectable
 
 public interface IMoodSkill
 {
+    void SetShowDirection(MoodPawn pawn, Vector3 direction);
     bool CanExecute(MoodPawn pawn, Vector3 where);
-    void Execute(MoodPawn pawn, Vector3 skillDirection);
+    IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection);
 }
  
 public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
@@ -36,5 +37,9 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     {
         return true;
     }
-    public abstract void Execute(MoodPawn pawn, Vector3 skillDirection);
+    public abstract IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection);
+
+    public virtual void SetShowDirection(MoodPawn pawn, Vector3 direction)
+    {
+    }
 }

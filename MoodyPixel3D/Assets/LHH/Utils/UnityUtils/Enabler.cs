@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LHH.Utils.UnityUtils
@@ -7,7 +9,16 @@ namespace LHH.Utils.UnityUtils
     {
         public GameObject[] active;
         public GameObject[] inactive;
+        [SerializeField]
+        private ActivationOrder order;
 
+        private enum ActivationOrder
+        {
+            SimultaneouslyDeactivated,
+            SimultaneouslyActivated
+        }
+        
+        
         private bool _setted;
         private bool _set;
 
@@ -35,18 +46,25 @@ namespace LHH.Utils.UnityUtils
             
             _setted = true;
             _set = set;
-            Debug.LogFormat("Setting enabler to '{0}'", set);
-            foreach (GameObject o in active)
+
+            switch (order)
             {
-                Debug.LogFormat("Activating {0} {1}", o, Time.frameCount);
-                o.SetActive(set);
-            }
-            foreach (GameObject o in inactive)
-            {
-                Debug.LogFormat("Deactivating {0} {1}", o, Time.frameCount);
-                o.SetActive(!set);
+                case ActivationOrder.SimultaneouslyActivated:
+                    foreach(GameObject o in ToActivate(set)) o.SetActive(true);
+                    foreach(GameObject o in ToActivate(!set)) o.SetActive(false);
+                    break;
+                default:
+                    foreach(GameObject o in ToActivate(!set)) o.SetActive(false);
+                    foreach(GameObject o in ToActivate(set)) o.SetActive(true);
+                    break;
             }
         }
-        
+
+        private IEnumerable<GameObject> ToActivate(bool set)
+        {
+            if (set) return active;
+            else return inactive;
+        }
+
     }
 }

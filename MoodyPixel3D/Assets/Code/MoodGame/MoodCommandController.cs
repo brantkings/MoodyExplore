@@ -18,6 +18,7 @@ public class MoodCommandController : MonoBehaviour
     
     private RangeSphere _sphereIndicator;
     private RangeArrow _arrowIndicator;
+    private RangeTarget _targetIndicator;
     [SerializeField]
     private Canvas _canvas;
 
@@ -27,6 +28,7 @@ public class MoodCommandController : MonoBehaviour
     {
         _sphereIndicator = GetComponentInChildren<RangeSphere>();
         _arrowIndicator = GetComponentInChildren<RangeArrow>();
+        _targetIndicator = GetComponentInChildren<RangeTarget>();
 
         Deactivate();
     }
@@ -68,9 +70,9 @@ public class MoodCommandController : MonoBehaviour
         return _equippedSkills[_currentOption];
     }
 
-    public void ExecuteCurrent(MoodPawn pawn, Vector3 direction)
+    public IEnumerator ExecuteCurrent(MoodPawn pawn, Vector3 direction)
     {
-        GetCurrentSkill().Execute(pawn, direction);
+        yield return pawn.ExecuteSkill(GetCurrentSkill(), direction);
     }
 
     public void MoveSelected(int add)
@@ -83,29 +85,29 @@ public class MoodCommandController : MonoBehaviour
 
     private void SetSelected(int index, bool selected)
     {
-        Debug.LogFormat("Setting {0} as selected:{1}, ({2})", index, selected, Time.time);
         _options[index].SetSelected(selected);
     }
-    
+
+    private IEnumerable<IRangeShow> AllRangeShows()
+    {
+        yield return _sphereIndicator;
+        yield return _arrowIndicator;
+        yield return _targetIndicator;
+    }
+
 
     private void SetActiveObjects(bool active, MoodSkill skillTo)
     {
         if (active)
         {
-            if(skillTo is IRangeSphereSkill)
-                _sphereIndicator.Show((skillTo as IRangeSphereSkill).GetRangeSphereProperties());
-            else 
-                _sphereIndicator.Hide();
-
-            if (skillTo is IRangeArrowSkill)
-                _arrowIndicator.Show((skillTo as IRangeArrowSkill).GetRangeArrowProperties());
-            else 
-                _arrowIndicator.Hide();
+            //TODO this sucks. The skill should be able to both execute and draw itself. Not every drawer should be asking the current skill if the drawer can draw it. This sucks.
+            foreach(IRangeShow show in AllRangeShows()) 
+                show.ResolveSkill(skillTo);
         }
         else
         {
-            _sphereIndicator.Hide();
-            _arrowIndicator.Hide();
+            foreach(IRangeShow show in AllRangeShows()) 
+                show.Hide();
         }
         
         _canvas.gameObject.SetActive(active);
@@ -116,8 +118,10 @@ public class MoodCommandController : MonoBehaviour
         return _canvas.gameObject.activeSelf;
     }
 
-    public void SetDirection(Vector3 direction)
+    public void UpdateCommandView(MoodPawn pawn, Vector3 direction)
     {
+        GetCurrentSkill().SetShowDirection(pawn, direction);
+        
         _arrowIndicator.SetDirection(direction);
     }
     

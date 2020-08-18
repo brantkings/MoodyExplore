@@ -4,12 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public interface IRangeSphereSkill
-{
-    RangeSphere.Properties GetRangeSphereProperties();
-}
-
-public class RangeSphere : MonoBehaviour
+public class RangeSphere : RangeShow<RangeSphere.Properties>
 {
     [Serializable]
     public class Properties
@@ -73,26 +68,26 @@ public class RangeSphere : MonoBehaviour
     private void Start()
     {
         _currentRotationVelocity = _minEulerRotation;
-        Hide(0f);
+        HideDuration(0f);
     }
 
-    public void Show(Properties param)
+    public override void Show(Properties param)
     {
-        Show(param, _duration);
+        ShowDuration(param, _duration);
     }
 
-    public void Show(Properties param, float duration)
+    public void ShowDuration(Properties param, float duration)
     {
         SetRadius(0f);
         TweenRadius(duration, param.radius, true, showColor);
     }
     
-    public void Hide()
+    public override void Hide()
     {
-        Hide(_duration);
+        HideDuration(_duration);
     }
     
-    public void Hide(float duration)
+    public void HideDuration(float duration)
     {
         TweenRadius(duration, _toRotate.lossyScale.x * 1.05f, false, hideColor);
     }

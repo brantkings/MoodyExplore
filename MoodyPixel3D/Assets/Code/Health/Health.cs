@@ -48,9 +48,9 @@ public class Health : MonoBehaviour {
         return false;
     }
 
-    public void Kill(DamageTeam team = DamageTeam.Neutral)
+    public void Kill(DamageTeam origin = DamageTeam.Neutral)
     {
-        Damage(maxLife, team);
+        Damage(maxLife, origin);
     }
 
     private bool CanDamage(DamageTeam from)
