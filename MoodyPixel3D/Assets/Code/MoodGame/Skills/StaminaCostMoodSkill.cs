@@ -7,23 +7,20 @@ public abstract class StaminaCostMoodSkill : MoodSkill
     [SerializeField]
     private float _cost;
 
-    protected virtual float GetCost()
+    protected virtual float GetStaminaCost()
     {
         return _cost;
     }
 
-    protected bool HaveEnoughStamina()
-    {
-        return GetCost() < GetCurrentStamina();
-    }
-
-    protected float GetCurrentStamina()
-    {
-        return float.PositiveInfinity;
-    }
-    
     public override bool CanExecute(MoodPawn pawn, Vector3 where)
     {
-        return HaveEnoughStamina() && base.CanExecute(pawn, where);
+       //Debug.LogFormat("Can {0} execute {1}? {2} and {3}", pawn, this, pawn.HasStamina(GetStaminaCost()),  base.CanExecute(pawn, where));
+        return pawn.HasStamina(GetStaminaCost()) && base.CanExecute(pawn, where);
+    }
+
+    protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    {
+        pawn.DepleteStamina(_cost);
+        return 0f;
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -14,15 +16,28 @@ public class MoodCommandController : MonoBehaviour
     [SerializeField]
     private List<MoodSkill> _equippedSkills;
 
-    private List<MoodCommandOption> _options;
+    private List<OptionTuple> _options;
+
     
     private RangeSphere _sphereIndicator;
     private RangeArrow _arrowIndicator;
     private RangeTarget _targetIndicator;
     [SerializeField]
     private Canvas _canvas;
+    [SerializeField]
+    private CanvasGroup _canvasGroup;
+
+    public float canvasGroupFadeDuration = 0.45f;
+
+    private bool _activated;
 
     private int _currentOption;
+    
+    private struct OptionTuple
+    {
+        public MoodSkill skill;
+        public MoodCommandOption command;
+    }
 
     private void Awake()
     {
@@ -31,6 +46,7 @@ public class MoodCommandController : MonoBehaviour
         _targetIndicator = GetComponentInChildren<RangeTarget>();
 
         Deactivate();
+        FadeCanvasGroup(false, 0f);
     }
 
     private void Start()
@@ -45,24 +61,43 @@ public class MoodCommandController : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        _options = new List<MoodCommandOption>(12);
+        _options = new List<OptionTuple>(12);
         foreach (MoodSkill skill in _equippedSkills)
         {
             MoodCommandOption child = Instantiate(_optionPrefab, _optionParent.transform);
             child.SetOption(skill);
-            _options.Add(child);
+            _options.Add(new OptionTuple()
+            {
+                skill = skill,
+                command = child
+            });
         }
+    }
+    
+    private void PaintOptions(MoodPawn pawn, Vector3 direction)
+    {
+        foreach (OptionTuple opt in _options)
+        {
+            PaintOption(opt, opt.skill.CanExecute(pawn, direction));
+        }
+    }
+
+    private void PaintOption(OptionTuple opt, bool canExecute)
+    {
+        opt.command.SetPossible(canExecute);
     }
 
     public void Activate(Vector3 position, float radius)
     {
         transform.position = position;
         SetActiveObjects(true, GetCurrentSkill());
+        _activated = true;
     }
 
     public void Deactivate()
     {
         SetActiveObjects(false, GetCurrentSkill());
+        _activated = false;
     }
 
     private MoodSkill GetCurrentSkill()
@@ -72,7 +107,7 @@ public class MoodCommandController : MonoBehaviour
 
     public IEnumerator ExecuteCurrent(MoodPawn pawn, Vector3 direction)
     {
-        yield return pawn.ExecuteSkill(GetCurrentSkill(), direction);
+        yield return GetCurrentSkill().Execute(pawn, direction);
     }
 
     public void MoveSelected(int add)
@@ -85,7 +120,7 @@ public class MoodCommandController : MonoBehaviour
 
     private void SetSelected(int index, bool selected)
     {
-        _options[index].SetSelected(selected);
+        _options[index].command.SetSelected(selected);
     }
 
     private IEnumerable<IRangeShow> AllRangeShows()
@@ -109,13 +144,19 @@ public class MoodCommandController : MonoBehaviour
             foreach(IRangeShow show in AllRangeShows()) 
                 show.Hide();
         }
-        
-        _canvas.gameObject.SetActive(active);
+
+        FadeCanvasGroup(active, canvasGroupFadeDuration);
+    }
+
+    private Tween FadeCanvasGroup(bool setOn, float duration)
+    {
+        _canvasGroup.DOKill();
+        return _canvasGroup.DOFade(setOn ? 1f : 0f, duration).SetId(_canvasGroup).SetEase(Ease.InOutSine);
     }
 
     public bool IsActivated()
     {
-        return _canvas.gameObject.activeSelf;
+        return _activated;
     }
 
     public void UpdateCommandView(MoodPawn pawn, Vector3 direction)
@@ -123,8 +164,12 @@ public class MoodCommandController : MonoBehaviour
         GetCurrentSkill().SetShowDirection(pawn, direction);
         
         _arrowIndicator.SetDirection(direction);
+        PaintOptions(pawn, direction);
     }
-    
-    
-    
+
+
+    public bool CanExecuteCurrent(MoodPawn pawn, Vector3 where)
+    {
+        return GetCurrentSkill().CanExecute(pawn, where);
+    }
 }

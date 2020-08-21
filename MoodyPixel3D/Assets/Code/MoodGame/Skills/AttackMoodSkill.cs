@@ -9,6 +9,7 @@ namespace Code.MoodGame.Skills
     [CreateAssetMenu(fileName = "Skill_Attack_", menuName = "Mood/Skill/Attack", order = 0)]
     public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver
     {
+        [Header("Attack")]
         public int damage = 10;
         public float attackRadius = 0.5f;
         public float attackRange = 6f;
@@ -16,6 +17,9 @@ namespace Code.MoodGame.Skills
         public float attackCapsuleHeight = 1.5f;
         public LayerMask targetLayer;
 
+        [Space] 
+        public float preTime = 0.5f;
+        public float postTime = 1f;
         private RangeTarget.Properties _targetProp;
 
         private RangeTarget.Properties TargetProperties =>
@@ -55,14 +59,25 @@ namespace Code.MoodGame.Skills
 
         public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
         {
+            pawn.StartSkillAnimation(this);
+            yield return new WaitForSeconds(preTime);
+
+            ExecuteEffect(pawn, skillDirection);
+            DispatchExecuteEvent(pawn, skillDirection);
+            
+            pawn.FinishSkillAnimation(this);
+            yield return new WaitForSeconds(postTime);
+        }
+
+        protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+        {
             Transform t = GetTarget(pawn.Position, skillDirection);
             if (t != null)
             {
-                Health enemy = t.GetComponentInChildren<Health>();
-                enemy.Damage(damage, DamageTeam.Ally);
+                t.GetComponentInChildren<Health>()?.Damage(damage, pawn.DamageTeam);
             }
 
-            yield break;
+            return base.ExecuteEffect(pawn, skillDirection);
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()

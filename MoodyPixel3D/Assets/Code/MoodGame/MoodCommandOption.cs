@@ -11,6 +11,8 @@ public class MoodCommandOption : MonoBehaviour
     public Outline outline;
 
     public Color unselectedOutlineColor;
+    public Color possibleColor = Color.white;
+    public Color impossibleColor = Color.gray;
     public Gradient selectedOutlineColorAnimation;
     public float selectedColorAnimationDuration;
 
@@ -47,6 +49,11 @@ public class MoodCommandOption : MonoBehaviour
         }
     }
 
+    public void SetPossible(bool possible)
+    {
+        text.color = possible ? possibleColor : impossibleColor;
+    }
+
     private float _colorGradientAnimPos;
 
     private void SetOutlineColor(Color c)
@@ -58,7 +65,6 @@ public class MoodCommandOption : MonoBehaviour
     {
         _colorGradientAnimPos = t;
         SetOutlineColor(selectedOutlineColorAnimation.Evaluate(t));
-        
     }
 
     private float GetColorGradient()

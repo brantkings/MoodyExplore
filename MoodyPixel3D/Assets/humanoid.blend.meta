@@ -18,8 +18,7 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
-    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
-      human bone 'Hips' not found\n"
+    rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -34,7 +33,36 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Scene
+      takeName: Scene
+      internalID: 0
+      firstFrame: 1
+      lastFrame: 250
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -247,13 +275,23 @@ ModelImporter:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: Armature
+    - name: Camera
+      parentName: humanoid(Clone)
+      position: {x: -7.3588915, y: 4.958309, z: 6.925791}
+      rotation: {x: 0.21255732, y: 0.90479696, z: -0.08438931, w: -0.35922182}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: Dude
+      parentName: humanoid(Clone)
+      position: {x: -0, y: 0.051646233, z: -5.684342e-14}
+      rotation: {x: 0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 1, y: 1, z: 1}
+    - name: DudeArmature
       parentName: humanoid(Clone)
       position: {x: -0, y: 6, z: 0}
       rotation: {x: 0.7071068, y: 0, z: -0, w: 0.7071067}
       scale: {x: 1, y: 1, z: 1}
     - name: ElbowIK.L
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: -2.641018, y: -0.9666939, z: -2.346489}
       rotation: {x: 0.000000054676434, y: 0.00000013282981, z: 0.9999971, w: -0.002435059}
       scale: {x: 1.0003597, y: 1, z: 1}
@@ -263,7 +301,7 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: ElbowIK.R
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: 2.641018, y: -0.9666939, z: -2.346489}
       rotation: {x: -0.000000054676434, y: 0.00000013282981, z: 0.9999971, w: 0.002435059}
       scale: {x: 1.0003597, y: 1, z: 1}
@@ -273,7 +311,7 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: HandIK.L
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: -3.9391656, y: 0.2135393, z: -2.4273195}
       rotation: {x: -0.0148065975, y: 0.014580911, z: 0.7123623, w: 0.70150423}
       scale: {x: 1, y: 0.99999994, z: 1}
@@ -283,7 +321,7 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: HandIK.R
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: 3.9391656, y: 0.2135393, z: -2.4273195}
       rotation: {x: -0.0148065975, y: -0.014580911, z: -0.7123623, w: 0.70150423}
       scale: {x: 1, y: 0.99999994, z: 1}
@@ -293,30 +331,30 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Hips
-      parentName: Armature
-      position: {x: 0.0020593572, y: 0.1677895, z: 1.1914711}
+      parentName: DudeArmature
+      position: {x: 0.0020593572, y: 0.1677894, z: 0.70011514}
       rotation: {x: -0.35209754, y: 0.6163492, z: -0.61321074, w: 0.34657407}
       scale: {x: 1, y: 1.0000002, z: 1}
     - name: Leg1.L
       parentName: Hips
       position: {x: 0.39504817, y: 0.01876803, z: -0.60583365}
-      rotation: {x: 0.48595178, y: -0.10335161, z: 0.86785287, w: 0.0008492972}
-      scale: {x: 1.0000001, y: 1.0000004, z: 1.0000004}
+      rotation: {x: 0.49595845, y: 0.0183402, z: 0.8666755, w: -0.05062195}
+      scale: {x: 1.0000001, y: 1.0000002, z: 1.0000006}
     - name: Leg2.L
       parentName: Leg1.L
-      position: {x: 0.00000004004687, y: 2.2506294, z: 0.000000117812306}
-      rotation: {x: 0.16246031, y: -0.02117653, z: -0.013039619, w: 0.9864017}
-      scale: {x: 1, y: 0.99999994, z: 0.9999999}
+      position: {x: -0.00000008568168, y: 2.2506297, z: -0.00000010244548}
+      rotation: {x: 0.076009214, y: -0.0020007421, z: -0.0073461924, w: 0.9970781}
+      scale: {x: 0.99999994, y: 1.0000001, z: 0.99999976}
     - name: Feet1.L
       parentName: Leg2.L
-      position: {x: 0.00000012572855, y: 2.4126575, z: -0.000000053085387}
-      rotation: {x: -0.7354666, y: 0.047995944, z: -0.041767236, w: 0.6745671}
-      scale: {x: 1, y: 0.99999994, z: 0.9999999}
+      position: {x: 0.00000006193295, y: 2.4126577, z: -0.00000031292439}
+      rotation: {x: -0.73137665, y: 0.07790446, z: -0.036278278, w: 0.6765375}
+      scale: {x: 1.0000001, y: 1.0000001, z: 0.99999994}
     - name: Feet2.L
       parentName: Feet1.L
-      position: {x: -0.00000006071059, y: 0.7899164, z: 0.000000044703484}
-      rotation: {x: 0.023225969, y: 0.000000036182886, z: 0.001413266, w: 0.9997293}
-      scale: {x: 1, y: 0.99999994, z: 0.9999999}
+      position: {x: 0.000000052154064, y: 0.78991616, z: 0.00000024586916}
+      rotation: {x: 0.023225961, y: 0.000000037734488, z: 0.0014132645, w: 0.9997293}
+      scale: {x: 1, y: 0.99999994, z: 1}
     - name: Feet2.L_end
       parentName: Feet2.L
       position: {x: -0, y: 0.5988217, z: 0}
@@ -325,23 +363,23 @@ ModelImporter:
     - name: Leg1.R
       parentName: Hips
       position: {x: -0.3427425, y: 0.0058173486, z: 0.6324603}
-      rotation: {x: 0.49772826, y: -0.05799423, z: 0.8616348, w: 0.080552936}
-      scale: {x: 1.0000027, y: 1, z: 1.0000001}
+      rotation: {x: 0.49139625, y: 0.03148547, z: 0.8702834, w: 0.012053023}
+      scale: {x: 1.0000029, y: 1, z: 1.0000002}
     - name: Leg2.R
       parentName: Leg1.R
-      position: {x: -0.0000001238659, y: 2.2506294, z: 0.000000007916242}
-      rotation: {x: 0.16245772, y: 0.02117667, z: 0.0130393645, w: 0.9864021}
-      scale: {x: 0.99999994, y: 0.9999997, z: 0.99999976}
+      position: {x: -0.00000008381903, y: 2.2506294, z: -0.0000000018626451}
+      rotation: {x: 0.10939059, y: 0.003808656, z: 0.00738556, w: 0.99396414}
+      scale: {x: 1, y: 0.99999994, z: 0.9999997}
     - name: Feet1.R
       parentName: Leg2.R
-      position: {x: 0.0000000121071935, y: 2.4126582, z: -0.00000002142042}
-      rotation: {x: -0.7354666, y: -0.047995917, z: 0.04176729, w: 0.6745671}
-      scale: {x: 1, y: 1, z: 1}
+      position: {x: 0.000000031199306, y: 2.4126577, z: -0.00000019744039}
+      rotation: {x: -0.79862404, y: 0.0074504637, z: 0.16992708, w: 0.5772945}
+      scale: {x: 0.99999994, y: 1, z: 0.9999999}
     - name: Feet2.R
       parentName: Feet1.R
-      position: {x: 0.000000048195943, y: 0.78991646, z: -0.00000008940697}
-      rotation: {x: 0.023225967, y: 0.00000004404658, z: -0.0014132683, w: 0.9997293}
-      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+      position: {x: 0.05, y: 0.77, z: 0.21}
+      rotation: {x: 0.023225961, y: 0.00000004191526, z: -0.0014132673, w: 0.9997293}
+      scale: {x: 1, y: 1, z: 1}
     - name: Feet2.R_end
       parentName: Feet2.R
       position: {x: -0, y: 0.5988217, z: 0}
@@ -360,28 +398,28 @@ ModelImporter:
     - name: Arm2.L
       parentName: Arm.L
       position: {x: 0.000000070780516, y: 0.5888982, z: -0.00000012759119}
-      rotation: {x: -0.05444712, y: 0.0057859668, z: -0.0328082, w: 0.99796075}
-      scale: {x: 1, y: 1.0000001, z: 0.99999976}
+      rotation: {x: -0.0869666, y: 0.0056383563, z: -0.06781666, w: 0.99388427}
+      scale: {x: 1, y: 1.0000002, z: 0.99999976}
     - name: Arm3.L
       parentName: Arm2.L
-      position: {x: -0.000000037252903, y: 1.2384356, z: -0.00000026711496}
-      rotation: {x: -0.03104919, y: 0.00065238145, z: -0.05275239, w: 0.9981246}
-      scale: {x: 0.99999964, y: 0.99999964, z: 1.0000004}
+      position: {x: 0.000000026077032, y: 1.2384357, z: -0.00000023655593}
+      rotation: {x: 0.03218379, y: 0.003144653, z: 0.016142135, w: 0.9993467}
+      scale: {x: 0.99999976, y: 0.99999976, z: 1.0000004}
     - name: Hand1.L
       parentName: Arm3.L
-      position: {x: 0.000000029802322, y: 1.3023273, z: -0.00000012805685}
-      rotation: {x: 0.030687524, y: 0.00317462, z: 0.03362342, w: 0.9989583}
-      scale: {x: 1, y: 0.99999994, z: 1}
+      position: {x: 0.000000029802322, y: 1.3023272, z: 0.000000045634806}
+      rotation: {x: -0.000020197636, y: 0.00000001423291, z: -0.000010255631, w: 1}
+      scale: {x: 1, y: 1, z: 1}
     - name: Hand2.L
       parentName: Hand1.L
-      position: {x: -0.000000022351742, y: 0.31950986, z: -0.00000037252903}
-      rotation: {x: 0.088393375, y: -0.0017443426, z: -0.051774777, w: 0.9947376}
-      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+      position: {x: -0, y: 0.31950966, z: 0.0000002796296}
+      rotation: {x: 0.08839339, y: -0.0017443404, z: -0.051774785, w: 0.9947376}
+      scale: {x: 1, y: 0.9999999, z: 0.99999994}
     - name: Hand3.L
       parentName: Hand2.L
-      position: {x: -0.000000026077032, y: 0.41583887, z: 0.000000058673322}
-      rotation: {x: 0.010798974, y: -0.000003467516, z: 0.0000011146253, w: 0.9999417}
-      scale: {x: 1, y: 1, z: 0.99999994}
+      position: {x: -0.000000022351742, y: 0.41583925, z: 0.0000002104789}
+      rotation: {x: 0.010798969, y: -0.0000034684474, z: 0.0000011141595, w: 0.9999417}
+      scale: {x: 1, y: 1, z: 1}
     - name: Hand3.L_end
       parentName: Hand3.L
       position: {x: -0, y: 0.3304615, z: 0}
@@ -389,14 +427,14 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: Thumb1.L
       parentName: Arm3.L
-      position: {x: 0.000000029802322, y: 1.3023273, z: -0.00000012805685}
-      rotation: {x: 0.119698346, y: 0.037327573, z: -0.43712503, w: 0.89061815}
-      scale: {x: 1, y: 1.0000001, z: 1}
+      position: {x: 0.000000029802322, y: 1.3023272, z: 0.000000045634806}
+      rotation: {x: 0.11969836, y: 0.03732758, z: -0.437125, w: 0.8906182}
+      scale: {x: 1, y: 1.0000001, z: 0.99999994}
     - name: Thumb2.L
       parentName: Thumb1.L
-      position: {x: -0.000000029802322, y: 0.61898744, z: -0.0000002514571}
-      rotation: {x: -0.21677688, y: -0.09568909, z: 0.32824516, w: 0.9143886}
-      scale: {x: 0.9999999, y: 0.9999998, z: 0.9999998}
+      position: {x: -0.000000029802322, y: 0.6189878, z: 0.00000020721927}
+      rotation: {x: -0.21677688, y: -0.095689096, z: 0.32824516, w: 0.9143886}
+      scale: {x: 0.9999999, y: 0.99999994, z: 0.99999976}
     - name: Thumb2.L_end
       parentName: Thumb2.L
       position: {x: -0, y: 0.22245045, z: 0}
@@ -410,28 +448,28 @@ ModelImporter:
     - name: Arm2.R
       parentName: Arm.R
       position: {x: -0.000000070780516, y: 0.58889806, z: -0.00000038929284}
-      rotation: {x: -0.054448463, y: -0.0057861023, z: 0.032810017, w: 0.9979606}
-      scale: {x: 1.0000001, y: 0.9999998, z: 0.9999997}
+      rotation: {x: -0.086966895, y: -0.005638485, z: 0.067816414, w: 0.99388427}
+      scale: {x: 1, y: 0.9999998, z: 0.99999976}
     - name: Arm3.R
       parentName: Arm2.R
-      position: {x: 0.000000037252903, y: 1.238436, z: -0.00000013879253}
-      rotation: {x: -0.03104692, y: -0.000652366, z: 0.052748512, w: 0.9981249}
-      scale: {x: 0.9999996, y: 0.99999994, z: 1.0000002}
+      position: {x: -0.000000011175871, y: 1.2384361, z: -0.00000016763806}
+      rotation: {x: 0.03218401, y: -0.0031446274, z: -0.01614198, w: 0.9993467}
+      scale: {x: 0.9999997, y: 1, z: 1.0000002}
     - name: Hand1.R
       parentName: Arm3.R
-      position: {x: 0.000000007450581, y: 1.3023275, z: -0.0000003632158}
-      rotation: {x: 0.030686554, y: -0.0031745117, z: -0.03362146, w: 0.9989584}
-      scale: {x: 1, y: 1, z: 0.99999976}
+      position: {x: 0.000000033527613, y: 1.3023275, z: -0.00000016507693}
+      rotation: {x: -0.000020178302, y: -0.000000016755166, z: 0.000010245257, w: 1}
+      scale: {x: 1, y: 0.99999994, z: 1}
     - name: Hand2.R
       parentName: Hand1.R
-      position: {x: -0.000000014901161, y: 0.31950986, z: -0.0000003692694}
-      rotation: {x: 0.08839335, y: 0.0017443495, z: 0.05177473, w: 0.9947376}
+      position: {x: -0, y: 0.31950942, z: 0.000000041211024}
+      rotation: {x: 0.08839336, y: 0.0017443488, z: 0.051774736, w: 0.9947376}
       scale: {x: 1, y: 1, z: 0.99999994}
     - name: Hand3.R
       parentName: Hand2.R
-      position: {x: -0.0000000037252903, y: 0.4158384, z: 0.000000059138983}
-      rotation: {x: 0.0107989935, y: 0.0000034679822, z: -0.0000011027504, w: 0.9999417}
-      scale: {x: 0.99999994, y: 0.9999999, z: 0.9999999}
+      position: {x: 0.000000055879354, y: 0.41583866, z: -0.00000014994293}
+      rotation: {x: 0.010798985, y: 0.000003466352, z: -0.0000010994904, w: 0.9999417}
+      scale: {x: 1, y: 1, z: 1}
     - name: Hand3.R_end
       parentName: Hand3.R
       position: {x: -0, y: 0.3304615, z: 0}
@@ -439,14 +477,14 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: Thumb1.R
       parentName: Arm3.R
-      position: {x: 0.000000007450581, y: 1.3023275, z: -0.0000003632158}
-      rotation: {x: 0.11969832, y: -0.037327472, z: 0.43712503, w: 0.89061815}
-      scale: {x: 1, y: 1.0000001, z: 1}
+      position: {x: 0.000000033527613, y: 1.3023275, z: -0.00000016507693}
+      rotation: {x: 0.11969834, y: -0.037327472, z: 0.437125, w: 0.8906182}
+      scale: {x: 1, y: 1.0000001, z: 0.99999994}
     - name: Thumb2.R
       parentName: Thumb1.R
-      position: {x: -0.00000032782555, y: 0.61898816, z: -0.0000002188608}
+      position: {x: -0.00000020861626, y: 0.61898756, z: -0.000000020489097}
       rotation: {x: -0.21677686, y: 0.09568905, z: -0.32824516, w: 0.91438866}
-      scale: {x: 0.99999994, y: 1.0000001, z: 1}
+      scale: {x: 0.9999999, y: 1, z: 0.9999999}
     - name: Thumb2.R_end
       parentName: Thumb2.R
       position: {x: -0, y: 0.22245045, z: 0}
@@ -468,7 +506,7 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: KneeIK.L
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: -0.92991966, y: 1.7433788, z: 3.3836112}
       rotation: {x: 0, y: -0.034811966, z: -0, w: 0.9993939}
       scale: {x: 1, y: 1, z: 1}
@@ -478,7 +516,7 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: KneeIK.R
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: 0.92991966, y: 1.7433788, z: 3.3836112}
       rotation: {x: 0, y: 0.034811966, z: -0, w: 0.9993939}
       scale: {x: 1, y: 1, z: 1}
@@ -488,7 +526,7 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: LegIK.L
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: -1.0908258, y: 0.18916161, z: 5.7650223}
       rotation: {x: 0.9996992, y: -1.5018791e-18, z: 0.024527546, w: 6.121392e-17}
       scale: {x: 1, y: 0.99999976, z: 1}
@@ -498,7 +536,7 @@ ModelImporter:
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: LegIK.R
-      parentName: Armature
+      parentName: DudeArmature
       position: {x: 1.0908258, y: 0.18916161, z: 5.7650223}
       rotation: {x: 0.9996992, y: 1.5018791e-18, z: -0.024527546, w: 6.121392e-17}
       scale: {x: 1, y: 0.99999976, z: 1}
@@ -506,16 +544,6 @@ ModelImporter:
       parentName: LegIK.R
       position: {x: -0, y: 0.7530298, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Camera
-      parentName: humanoid(Clone)
-      position: {x: -7.3588915, y: 4.958309, z: 6.925791}
-      rotation: {x: 0.21255732, y: 0.90479696, z: -0.08438931, w: -0.35922182}
-      scale: {x: 0.99999994, y: 1, z: 1}
-    - name: Dude
-      parentName: humanoid(Clone)
-      position: {x: -0, y: 0.051646233, z: -5.684342e-14}
-      rotation: {x: 0.7071068, y: 0, z: -0, w: 0.7071067}
       scale: {x: 1, y: 1, z: 1}
     - name: Light
       parentName: humanoid(Clone)

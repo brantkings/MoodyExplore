@@ -7,6 +7,7 @@ using LHH.Utils.UnityUtils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class MoodPlayerController : Singleton<MoodPlayerController>
 {
@@ -15,6 +16,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     [SerializeField]
     private RangeSphere sphere;
     private Camera _mainCamera;
+
+    [SerializeField]
+    private BackToCamera _backToCameraControl;
 
     public MoodCommandController command;
 
@@ -32,6 +36,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         _mainCamera = Camera.main;
     }
 
+    public MoodPawn Pawn => pawn;
+
     public struct ButtonState
     {
         public enum Join
@@ -48,15 +54,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
         public ButtonState(KeyCode code)
         {
-            bool isPressed = IsState(code);
+            bool isPressed = IsKeyState(code);
             pressed = isPressed;
             down = isPressed && Input.GetKeyDown(code);
             up = !isPressed && Input.GetKeyUp(code);
         }
+        
+        public ButtonState(int mouseButton)
+        {
+            bool isPressed = Input.GetMouseButton(mouseButton);
+            pressed = isPressed;
+            down = isPressed && Input.GetMouseButtonDown(mouseButton);
+            up = !isPressed && Input.GetMouseButtonUp(mouseButton);
+        }
 
         public ButtonState(Join how, params KeyCode[] codes)
         {
-            bool press = IsState(codes[0]);
+            bool press = IsKeyState(codes[0]);
             pressed = press;
             down = press && Input.GetKeyDown(codes[0]);
             up = !press && Input.GetKeyUp(codes[0]);
@@ -64,7 +78,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             for (int i = 1; i < codes.Length; i++)
             {
                 KeyCode code = codes[i];
-                press = IsState(code);
+                press = IsKeyState(code);
                 switch (how)
                 {
                     case Join.And:
@@ -83,7 +97,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             else down = false;
         }
 
-        private static bool IsState(KeyCode code)
+        private static bool IsKeyState(KeyCode code)
         {
             return Input.GetKey(code);
         }
@@ -117,11 +131,12 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
     }
 
-    void GetInputUpdate(out DirectionalState move, out bool readyingWeapon, out ButtonState execute)
+    void GetInputUpdate(out DirectionalState move, out bool readyingWeapon, out ButtonState showCommand, out ButtonState executeAction)
     {
         move = new DirectionalState();
         readyingWeapon = false;
-        execute = new ButtonState(KeyCode.Space);
+        showCommand = new ButtonState(KeyCode.Space);
+        executeAction = new ButtonState(0);
 
 
         move.up = new ButtonState(ButtonState.Join.Or, KeyCode.UpArrow, KeyCode.W);
@@ -156,28 +171,32 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         Debug.LogFormat("Ending command {0}", Time.time);
     }
 
+    private bool IsExecutingCommand()
+    {
+        return _executingCommand;
+    }
+
 
     private void Update()
     {
-        GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState executeAction);
+        GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState showCommandAction, out ButtonState executeAction);
         GetMouseInputUpdate(_mainCamera, GetPlayerPlaneOrigin(), ref _mouseWorldPosition);
         Vector3 currentDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
         Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
 
-        if (executeAction.down)
+        if (showCommandAction.down)
         {
             command.Activate(transform.position, 6f);
             _mouseWorldPosition = GetPlayerPlaneOrigin();
         }
-        else if (executeAction.up)
+        else if (showCommandAction.up)
         {
             command.Deactivate();
-            StartCoroutine(ExecuteCurrentCommand(currentDirection));
         }
 
-        bool isInCommand = command.IsActivated() || _executingCommand;
+        bool isInCommand = command.IsActivated() || IsExecutingCommand();
 
-        inCommand.SetActive(isInCommand);
+        SetCommandMode(isInCommand);
         if (isInCommand) //The command is open
         {
             if (moveAxis.up.down)
@@ -188,9 +207,22 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             {
                 command.MoveSelected(1);
             }
+            else if (executeAction.down)
+            {
+                Debug.LogFormat("Hey {0} ", command.CanExecuteCurrent(pawn, currentDirection));
+                if (command.CanExecuteCurrent(pawn, currentDirection))
+                {
+                    StartCoroutine(ExecuteCurrentCommand(currentDirection));
+                }
+            }
 
             command.UpdateCommandView(pawn, currentDirection);
             pawn.mover.SetVelocity(Vector3.zero);
+
+            if (!IsExecutingCommand())
+            {
+                pawn.SetDirection(currentDirection);
+            }
         }
         else //The command is not open
         {
@@ -198,6 +230,12 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
         
 
+    }
+
+    private void SetCommandMode(bool set)
+    {
+        inCommand.SetActive(set);
+        _backToCameraControl.enabled = !set;
     }
     
     private Vector3 ToWorldPosition(Vector3 vec)

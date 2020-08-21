@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Skill_Attack_Slash
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Slash
-  _cost: 2
+  _name: Slap
+  _cost: 1
+  damage: 10
   attackRadius: 0.5
   attackRange: 6
   attackY: 0.5
@@ -22,3 +23,5 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
+  preTime: 0.5
+  postTime: 1

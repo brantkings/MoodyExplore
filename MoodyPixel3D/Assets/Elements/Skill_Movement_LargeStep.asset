@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Large Step
-  _cost: 2
+  _cost: 1
   minDistance: 0
   maxDistance: 5
   velocityAdd: 0
