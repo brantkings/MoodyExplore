@@ -2,7 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Damage : MonoBehaviour {
+public class Damage : MonoBehaviour
+{
+
+    public delegate void DelDamageEvent(Health health, int amount);
+
+    public event DelDamageEvent OnDamage;
+    public event DelDamageEvent OnKill;
 
     private List<Health> alreadyDamaged;
 
@@ -15,9 +21,17 @@ public class Damage : MonoBehaviour {
     [SerializeField]
     private bool _onlyDamageOnce;
 
+    [SerializeField]
+    private bool _debug;
+
     private void Awake()
     {
         alreadyDamaged = new List<Health>(2);
+    }
+
+    public void SetSourceDamageTeam(DamageTeam newTeam)
+    {
+        source = newTeam;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -31,6 +45,14 @@ public class Damage : MonoBehaviour {
         {
             DealDamage(enemy);
         }
+        #if UNITY_EDITOR
+        if (_debug)
+        {
+            Debug.LogFormat(
+                "{0} entered {1} and it is going to damage {2} by {3} damage. It already damaged how many? {4}", 
+                this, other, enemy, _amount, alreadyDamaged.Count);
+        }
+        #endif
     }
 
     private void OnTriggerExit(Collider other)
@@ -61,6 +83,11 @@ public class Damage : MonoBehaviour {
     public virtual void DealDamage(Health health)
     {
         health.Damage(_amount, source);
+        OnDamage?.Invoke(health, _amount);
+        if (!health.IsAlive())
+        {
+            OnKill?.Invoke(health, _amount);
+        }
         if (alreadyDamaged != null) alreadyDamaged.Add(health);
     }
 }

@@ -105,6 +105,7 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         seq.Insert(0f, _material.DOColor(color, "_WireColor", duration * _colorDurationMultiplier.GetValue(appearing)).SetEase(_colorEase));
         seq.Insert(0f, DOTween.To(GetRadius, SetRadius, radius, duration).SetEase(_ease));
         seq.Insert(0f, DOTween.To(() => _currentRotationVelocity, (x) => _currentRotationVelocity = x, _minEulerRotation, duration * _velocityDurationMultiplier.GetValue(appearing)).SetEase(_ease));
+        seq.SetUpdate(true);
         _tween = seq;
         return seq;
     }

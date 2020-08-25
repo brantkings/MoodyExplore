@@ -39,11 +39,6 @@ namespace Code.MoodGame.Skills
         {
             Vector3 downPoint = origin + direction + Vector3.up * attackY;
             Vector3 upPoint = origin + direction + Vector3.up * (attackY + attackCapsuleHeight);
-            #if UNITY_EDITOR
-            Debug.DrawLine(downPoint, upPoint, Color.magenta, 0.02f);
-            DebugUtils.DrawNormalStar(downPoint, 0.25f, Quaternion.identity, Color.magenta, 0.02f);
-            DebugUtils.DrawNormalStar(upPoint, 0.25f, Quaternion.identity, Color.magenta, 0.02f);
-            #endif
             foreach (Collider c in Physics.OverlapCapsule(downPoint, upPoint, attackRadius + 0.01f, targetLayer.value))
             {
                 return c.transform.root;
@@ -54,7 +49,7 @@ namespace Code.MoodGame.Skills
 
         public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
         {
-            Target = GetTarget(pawn.Position, direction);
+            Target = pawn.FindTarget(direction, attackRange);
         }
 
         public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)

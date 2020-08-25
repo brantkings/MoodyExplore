@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using DG.Tweening;
+using JetBrains.Annotations;
+using LHH.Utils;
 
 public interface IMoodPawnPeeker
 {
@@ -15,15 +18,26 @@ public class MoodPawn : MonoBehaviour
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnSkillEvent(MoodSkill skill, Vector3 direction);
 
-    public event DelMoodPawnEvent OnDepleteStamina;
+    public event DelMoodPawnEvent OnChangeStamina;
     
     public KinematicPlatformer mover;
     public Animator animator;
     public Transform toDirect;
 
+    [Space()] 
+    public float height = 2f;
+    public float pawnRadius = 0.5f;
+
+    public float extraRangeBase = 0f;
+    
+    [Space()]
     public float maxStamina;
     private float _stamina;
     public bool infiniteStamina;
+    public float staminaRecoveryIdle;
+    public float staminaRecoveryMoving;
+
+    public Transform handPosition;
 
     [SerializeField]
     private DamageTeam damageTeam = DamageTeam.Neutral;
@@ -40,12 +54,25 @@ public class MoodPawn : MonoBehaviour
     private void Start()
     {
         _stamina = maxStamina;
-        OnDepleteStamina?.Invoke(this);
+        OnChangeStamina?.Invoke(this);
     }
+
+    private void Update()
+    {
+        float staminaRecovery = IsMoving() ? staminaRecoveryMoving : staminaRecoveryIdle; 
+        RecoverStamina(staminaRecovery, Time.deltaTime);
+    }
+    
 
     #region Movement
     public event PawnEvent OnBeginMove;
     public event PawnEvent OnEndMove;
+
+    public bool IsMoving()
+    {
+        return mover.Velocity.sqrMagnitude > 0.1f;
+    }
+    
     public Tween Move(Vector3 direction, float duration, AnimationCurve curve)
     {
         return TweenMoverPosition(direction, duration).SetEase(curve);
@@ -60,7 +87,7 @@ public class MoodPawn : MonoBehaviour
     {
         CallBeginMove();
         _position = mover.Position;
-        return DOTween.To(GetPawnPosition, SetPawnPosition, direction, duration).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
+        return DOTween.To(GetPawnLerpPosition, SetPawnPosition, direction, duration).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
     }
 
     private void CallBeginMove()
@@ -75,7 +102,7 @@ public class MoodPawn : MonoBehaviour
 
     private Vector3 _position;
 
-    private Vector3 GetPawnPosition()
+    private Vector3 GetPawnLerpPosition()
     {
         return _position;
     }
@@ -102,6 +129,20 @@ public class MoodPawn : MonoBehaviour
         toDirect.forward = Vector3.ProjectOnPlane(direction, Vector3.up);
     }
 
+    public Quaternion GetDirection()
+    {
+        return toDirect.rotation;
+    }
+    #endregion
+    
+
+    #region Stamina
+
+    private void RecoverStamina(float recovery, float timeDelta)
+    {
+        ChangeStamina(recovery * timeDelta);
+    }
+    
     public float GetStamina()
     {
         return infiniteStamina ? float.PositiveInfinity : _stamina;
@@ -115,8 +156,17 @@ public class MoodPawn : MonoBehaviour
 
     public void DepleteStamina(float cost)
     {
-        _stamina = Mathf.Clamp(_stamina - cost, 0f, maxStamina);
-        OnDepleteStamina?.Invoke(this);
+        ChangeStamina(-cost);
+    }
+
+    private void ChangeStamina(float change)
+    {
+        float oldStamina = _stamina;
+        _stamina = Mathf.Clamp(_stamina + change, 0f, maxStamina);
+        if (oldStamina != _stamina)
+        {
+            OnChangeStamina?.Invoke(this);
+        }
     }
 
     public float GetStaminaRatio()
@@ -130,5 +180,56 @@ public class MoodPawn : MonoBehaviour
         return maxStamina;
     }
     #endregion
+
+    #region Places
+
+    public Vector3 GetInstantiatePlace()
+    {
+        return handPosition != null ? handPosition.position : transform.position;
+    }
+
+    public Quaternion GetInstantiateRotation()
+    {
+        return GetDirection();
+    }
+    
+
+    #endregion
+    
+    #region Targetting
+
+    
+    public Transform FindTarget(Vector3 direction, float range)
+    {
+        return Cast(direction, range, Position, transform.up, height);
+    }
+
+    private Transform Cast(Vector3 direction, float range,  Vector3 groundPosition, Vector3 capsuleDirection, float capsuleHeight)
+    {
+        Vector3 capsuleHeightVec = capsuleDirection * (capsuleHeight);
+        Vector3 point1 = groundPosition;
+        Vector3 point2 = groundPosition + capsuleHeightVec;
+        
+#if UNITY_EDITOR
+        Vector3 distanceShoot = direction.normalized * range;
+        Vector3 distPoint1 = point1 + distanceShoot;
+        Vector3 distPoint2 = point2 + distanceShoot;
+        Debug.DrawLine(distPoint1, distPoint2, Color.magenta, 0.02f);
+        DebugUtils.DrawNormalStar(distPoint1, pawnRadius, Quaternion.identity, Color.magenta, 0.02f);
+        DebugUtils.DrawNormalStar(distPoint2, pawnRadius, Quaternion.identity, Color.magenta, 0.02f);
+#endif
+        
+        if (Physics.CapsuleCast(point1, point2, pawnRadius, direction.normalized, out RaycastHit hit, range,
+            MoodGameManager.Instance.GetPawnBodyLayer()))
+        {
+            return hit.transform;
+        }
+        else
+        {
+            return null;
+        }
+    }
+    #endregion
+    
     
 }

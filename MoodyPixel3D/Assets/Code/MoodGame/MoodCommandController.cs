@@ -91,12 +91,14 @@ public class MoodCommandController : MonoBehaviour
     {
         transform.position = position;
         SetActiveObjects(true, GetCurrentSkill());
+        TimeManager.Instance.ChangeTimeDelta(0.02f);
         _activated = true;
     }
 
     public void Deactivate()
     {
         SetActiveObjects(false, GetCurrentSkill());
+        TimeManager.Instance.ReturnTimeToNormal();
         _activated = false;
     }
 
@@ -151,7 +153,7 @@ public class MoodCommandController : MonoBehaviour
     private Tween FadeCanvasGroup(bool setOn, float duration)
     {
         _canvasGroup.DOKill();
-        return _canvasGroup.DOFade(setOn ? 1f : 0f, duration).SetId(_canvasGroup).SetEase(Ease.InOutSine);
+        return _canvasGroup.DOFade(setOn ? 1f : 0f, duration).SetId(_canvasGroup).SetUpdate(true).SetEase(Ease.InOutSine);
     }
 
     public bool IsActivated()

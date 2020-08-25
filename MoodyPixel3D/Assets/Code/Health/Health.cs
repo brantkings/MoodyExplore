@@ -36,6 +36,11 @@ public class Health : MonoBehaviour {
         _lifeNow = maxLife;
     }
 
+    public bool IsAlive()
+    {
+        return _lifeNow > 0;
+    }
+
     public bool Damage(int amount, DamageTeam team)
     {
         if (CanDamage(team))

@@ -213,6 +213,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 if (command.CanExecuteCurrent(pawn, currentDirection))
                 {
                     StartCoroutine(ExecuteCurrentCommand(currentDirection));
+                    command.Deactivate();
                 }
             }
 

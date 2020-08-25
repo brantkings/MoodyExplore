@@ -20,6 +20,13 @@ public class TimeManager : CreateableSingleton<TimeManager>
         }
     }
 
+    private float _currentTargetDeltaTime = 1f;
+    public float deltaTimeSlowDuration;
+    public Ease deltaTimeSlowEase = Ease.OutSine;
+    public float deltaTimeReturnToNormalDuration;
+    public Ease deltaTimeReturnEase = Ease.InSine;
+    
+    
     private Tween _currentTween;
 
     public void StopTime(FrameFreezeData data)
@@ -35,17 +42,39 @@ public class TimeManager : CreateableSingleton<TimeManager>
         if (data.freezeDuration > 0f) yield return new WaitForSecondsRealtime(data.freezeDuration);
         if (data.tweenDuration > 0f)
         {
-            _currentTween = TweenTime(1f, data.tweenDuration).SetEase(data.ease);
+            _currentTween = TweenTime(GetTargetDeltaTime(), data.tweenDuration).SetEase(data.ease);
             yield return _currentTween;
         }
         else
         {
-            Time.timeScale = 1f;
+            Time.timeScale = GetTargetDeltaTime();
         }
+    }
+
+    private float GetTargetDeltaTime()
+    {
+        return _currentTargetDeltaTime;
     }
 
     private Tween TweenTime(float to, float duration)
     {
         return DOTween.To(() => Time.timeScale, (x) => Time.timeScale = x, to, duration).SetUpdate(true);
+    }
+
+    public void ReturnTimeToNormal()
+    {
+        ChangeTimeDelta(1f, deltaTimeReturnToNormalDuration, deltaTimeReturnEase);
+    }
+
+    public void ChangeTimeDelta(float targetTimeDelta)
+    {
+        ChangeTimeDelta(targetTimeDelta, deltaTimeSlowDuration, deltaTimeSlowEase);
+    }
+    
+    
+    public void ChangeTimeDelta(float targetTimeDelta, float duration, Ease ease = Ease.OutSine)
+    {
+        _currentTargetDeltaTime = targetTimeDelta;
+        TweenTime(_currentTargetDeltaTime, duration).SetEase(ease);
     }
 }

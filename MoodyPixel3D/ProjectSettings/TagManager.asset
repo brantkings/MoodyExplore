@@ -16,12 +16,12 @@ TagManager:
   - Post-Processing
   - Player
   - Enemy
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerProjectile
+  - EnemyProjectile
+  - Neutral
+  - NeutralProjectile
+  - NoTouch
+  - OnlyTouchItself
   - 
   - 
   - 

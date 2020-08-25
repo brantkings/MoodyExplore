@@ -48,6 +48,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>
         seq.Insert(0f, TweenSpriteWidth(arrowParameters.width, durationIn, easeIn));
         seq.Insert(0f, TweenColor(colorIn, durationIn));
         seq.Insert(0f, _rend.DOFade(0.5f, durationIn).SetEase(easeIn));
+        seq.SetUpdate(true);
         
         _tweenNow = seq;
         _parametersInEffect = arrowParameters;
@@ -61,6 +62,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>
         seq.Insert(0f, TweenSpriteWidth(GetSpriteWidth() * expandOutFactor, durationOut, easeOut));
         seq.Insert(0f, TweenColor(colorOut, durationOut));
         seq.Insert(0f, _rend.DOFade(0f, durationOut).SetEase(easeOut));
+        seq.SetUpdate(true);
         
         _tweenNow = seq;
         _parametersInEffect = null;

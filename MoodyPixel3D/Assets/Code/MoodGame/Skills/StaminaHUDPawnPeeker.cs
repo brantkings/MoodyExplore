@@ -13,16 +13,16 @@ public class StaminaHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     public void SetTarget(MoodPawn pawn)
     {
-        pawn.OnDepleteStamina += OnDepleteStamina;
-        OnDepleteStamina(pawn);
+        pawn.OnChangeStamina += OnChangeStamina;
+        OnChangeStamina(pawn);
     }
     
     public void UnsetTarget(MoodPawn pawn)
     {
-        pawn.OnDepleteStamina -= OnDepleteStamina;
+        pawn.OnChangeStamina -= OnChangeStamina;
     }
     
-    private void OnDepleteStamina(MoodPawn pawn)
+    private void OnChangeStamina(MoodPawn pawn)
     {
         //float maxWidth = border.rectTransform.;
         //Vector2 size = fill.rectTransform.sizeDelta;

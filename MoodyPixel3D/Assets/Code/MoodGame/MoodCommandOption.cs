@@ -38,7 +38,7 @@ public class MoodCommandOption : MonoBehaviour
         {
             outline.effectColor = selectedOutlineColorAnimation.Evaluate(0f);
             SetColorGradient(0f);
-            _selectedAnim = DOTween.To(GetColorGradient, SetColorGradient, 1f, selectedColorAnimationDuration).SetEase(Ease.Linear).SetLoops(-1);
+            _selectedAnim = DOTween.To(GetColorGradient, SetColorGradient, 1f, selectedColorAnimationDuration).SetEase(Ease.Linear).SetUpdate(true).SetLoops(-1);
         }
         else
         {
