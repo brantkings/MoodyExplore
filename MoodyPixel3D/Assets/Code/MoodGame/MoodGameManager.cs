@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MoodGameManager : PersistentSingleton<MoodGameManager>
 {
@@ -11,5 +13,18 @@ public class MoodGameManager : PersistentSingleton<MoodGameManager>
     public LayerMask GetPawnBodyLayer()
     {
         return _pawnlayer;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetGame();
+        }
+    }
+
+    private static void ResetGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

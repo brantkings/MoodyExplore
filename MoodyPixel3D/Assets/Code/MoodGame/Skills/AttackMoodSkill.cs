@@ -54,6 +54,7 @@ namespace Code.MoodGame.Skills
 
         public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
         {
+            pawn.SetDirection(skillDirection);
             pawn.StartSkillAnimation(this);
             yield return new WaitForSeconds(preTime);
 
@@ -64,9 +65,15 @@ namespace Code.MoodGame.Skills
             yield return new WaitForSeconds(postTime);
         }
 
+        public override void Interrupt(MoodPawn pawn)
+        {
+            base.Interrupt(pawn);
+            pawn.FinishSkillAnimation(this);
+        }
+
         protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
         {
-            Transform t = GetTarget(pawn.Position, skillDirection);
+            Transform t = pawn.FindTarget(skillDirection, attackRange);
             if (t != null)
             {
                 t.GetComponentInChildren<Health>()?.Damage(damage, pawn.DamageTeam);

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using Cinemachine;
+using Code.Animation.Humanoid;
 using LHH.Utils;
 using LHH.Utils.UnityUtils;
 using UnityEditor;
@@ -17,8 +18,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private RangeSphere sphere;
     private Camera _mainCamera;
 
-    [SerializeField]
-    private BackToCamera _backToCameraControl;
 
     public MoodCommandController command;
 
@@ -218,16 +217,18 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             }
 
             command.UpdateCommandView(pawn, currentDirection);
-            pawn.mover.SetVelocity(Vector3.zero);
+            pawn.SetVelocity(Vector3.zero);
 
             if (!IsExecutingCommand())
             {
+                pawn.SetLookAt(currentDirection);
                 pawn.SetDirection(currentDirection);
             }
         }
         else //The command is not open
         {
-            pawn.mover.SetVelocity(ToWorldPosition((moveAxis.GetMoveAxis() * 5f)));
+            pawn.SetLookAt(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up));
+            pawn.SetVelocity(ToWorldPosition((moveAxis.GetMoveAxis() * 5f)));
         }
         
 
@@ -236,7 +237,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private void SetCommandMode(bool set)
     {
         inCommand.SetActive(set);
-        _backToCameraControl.enabled = !set;
+        //_backToCameraControl.enabled = !set;
     }
     
     private Vector3 ToWorldPosition(Vector3 vec)

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Code.Animation.Humanoid;
 using UnityEngine;
 using DG.Tweening;
 using JetBrains.Annotations;
@@ -17,14 +18,20 @@ public class MoodPawn : MonoBehaviour
 {
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnSkillEvent(MoodSkill skill, Vector3 direction);
+    public delegate void DelMoodPawnUndirectedSkillEvent(MoodSkill skill);
 
     public event DelMoodPawnEvent OnChangeStamina;
+    public event DelMoodPawnSkillEvent OnUseSKill;
+    public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
     
     public KinematicPlatformer mover;
     public Animator animator;
     public Transform toDirect;
+    [SerializeField]
+    private LookAtIK _lookAtControl;
 
     [Space()] 
+    public float turningTime = 0.1f;
     public float height = 2f;
     public float pawnRadius = 0.5f;
 
@@ -51,6 +58,9 @@ public class MoodPawn : MonoBehaviour
 
     public DamageTeam DamageTeam => damageTeam;
 
+    private Vector3 _directionTarget;
+    private Vector3 _directionVel;
+
     private void Start()
     {
         _stamina = maxStamina;
@@ -61,24 +71,49 @@ public class MoodPawn : MonoBehaviour
     {
         float staminaRecovery = IsMoving() ? staminaRecoveryMoving : staminaRecoveryIdle; 
         RecoverStamina(staminaRecovery, Time.deltaTime);
+
+        Vector3 forward = toDirect.forward;
+        if (Vector3.Dot(forward, _directionTarget) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
+        toDirect.forward = Vector3.SmoothDamp(forward, _directionTarget, ref _directionVel, turningTime, float.MaxValue,
+            Time.deltaTime);
     }
+
+    public void UsedSkill(MoodSkill skill, Vector3 direction)
+    {
+        OnUseSKill?.Invoke(skill, direction);
+    }
+
+    public void InterruptedSkill(MoodSkill skill)
+    {
+        OnInterruptSkill?.Invoke(skill);
+    }
+    
     
 
     #region Movement
     public event PawnEvent OnBeginMove;
     public event PawnEvent OnEndMove;
 
+    public void SetVelocity(Vector3 velocity)
+    {
+        mover.SetVelocity(velocity);
+        if (velocity.sqrMagnitude > 0.001f)
+        {
+            _directionTarget = Vector3.ProjectOnPlane(velocity, Vector3.up);
+        }
+    }
+
     public bool IsMoving()
     {
         return mover.Velocity.sqrMagnitude > 0.1f;
     }
     
-    public Tween Move(Vector3 direction, float duration, AnimationCurve curve)
+    public Tween Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
         return TweenMoverPosition(direction, duration).SetEase(curve);
     }
     
-    public Tween Move(Vector3 direction, float duration, Ease ease)
+    public Tween Dash(Vector3 direction, float duration, Ease ease)
     {
         return TweenMoverPosition(direction, duration).SetEase(ease);
     }
@@ -127,6 +162,11 @@ public class MoodPawn : MonoBehaviour
     public void SetDirection(Vector3 direction)
     {
         toDirect.forward = Vector3.ProjectOnPlane(direction, Vector3.up);
+    }
+
+    public void SetLookAt(Vector3 direction)
+    {
+        _lookAtControl.LookAt(direction);
     }
 
     public Quaternion GetDirection()

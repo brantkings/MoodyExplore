@@ -12,7 +12,22 @@ public interface IMoodSkill
 {
     void SetShowDirection(MoodPawn pawn, Vector3 direction);
     bool CanExecute(MoodPawn pawn, Vector3 where);
+    
+    /// <summary>
+    /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. Dispatch execute event after you do the skill. Do not call base.
+    /// </summary>
+    /// <param name="pawn">The pawn that is executing the skill.</param>
+    /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
+    /// <returns></returns>
     IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection);
+    
+    /// <summary>
+    /// An skill can be interrupted at any time. Implement this to tell what should still happen, what shouldn't, kill tweens.
+    /// </summary>
+    /// <param name="pawn">The pawn that is executing the skill.</param>
+    /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
+    /// <returns>The amount of time this should wait in real time.</returns>
+    void Interrupt(MoodPawn pawn);
 }
  
 public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
@@ -62,6 +77,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection)
     {
         OnExecute?.Invoke(pawn, skillDirection);
+        pawn.UsedSkill(this, skillDirection);
     }
 
     /// <summary>
@@ -75,5 +91,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public virtual void SetShowDirection(MoodPawn pawn, Vector3 direction)
     {
         OnPreview?.Invoke(pawn, direction);
+    }
+
+    public virtual void Interrupt(MoodPawn pawn) 
+    {
+        pawn.InterruptedSkill(this);
     }
 }
