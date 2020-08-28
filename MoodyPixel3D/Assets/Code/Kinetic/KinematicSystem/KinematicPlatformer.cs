@@ -114,7 +114,6 @@ public class KinematicPlatformer : MonoBehaviour
         if(mass != 0f)
         {
             _velocity += force / mass;
-            Debug.LogFormat("Adding {0} -> {1} to {2}", force.ToString("F3"), force / mass, this);
         }
     }
 
@@ -151,6 +150,7 @@ public class KinematicPlatformer : MonoBehaviour
     }
     public void SetVelocity(Vector3 vel)
     {
+        if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel);
         _currentInputVelocity = vel;
     }
 
@@ -429,7 +429,6 @@ public class KinematicPlatformer : MonoBehaviour
 #endif
         if (movement != Vector3.zero)
         {
-            //Debug.LogErrorFormat("Moving {0} with {1}", this, movement.ToString("F8"));
             Position = Position + movement;
         }
     }

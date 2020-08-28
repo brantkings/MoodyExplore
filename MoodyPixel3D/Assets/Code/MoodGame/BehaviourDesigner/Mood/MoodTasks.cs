@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace BehaviorDesigner.Runtime.Tasks.Mood
@@ -37,6 +39,27 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             if (o != null && d != null)
             {
                 directionOut.Value = PlayerTransform.position - o.position;
+                return TaskStatus.Success;
+            }
+            else
+            {
+                return TaskStatus.Failure;
+            }
+        }
+    }
+    
+    [TaskCategory("Mood/Pawn")]
+    public class GetPawnDirectionToPlayer : PlayerReferenceAction
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 directionOut;
+
+        public override TaskStatus OnUpdate()
+        {
+            Transform d = PlayerTransform;
+            if (pawn.Value != null && d != null)
+            {
+                directionOut.Value = PlayerTransform.position - pawn.Value.Position;
                 return TaskStatus.Success;
             }
             else
@@ -90,6 +113,73 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             pawn.Value.SetLookAt(direction.Value);
             return TaskStatus.Success;
         }
+    }
+    
+    [TaskCategory("Mood/Pawn")]
+    public class SetVelocity : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 velocity;
+
+        public override TaskStatus OnUpdate()
+        {
+            pawn.Value.SetVelocity(velocity.Value);
+            return TaskStatus.Success;
+        }
+    }
+    
+    [TaskCategory("Mood/Pawn")]
+    public class Dash : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 relativePosition;
+        [SerializeField] private SharedFloat velocity;
+        //[SerializeField] private SharedAnimationCurve curve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
+        [SerializeField] private Ease ease = Ease.Linear;
+        [SerializeField] private VelocityKind useVelocityAs;
+
+
+        public enum VelocityKind
+        {
+            Velocity,
+            Duration
+        }
+        
+        private float GetVelocity(float speedValue, Vector3 move, VelocityKind kind)
+        {
+            switch (useVelocityAs)
+            {
+                case VelocityKind.Velocity:
+                    if (speedValue == 0f) 
+                        return 0f;
+                    else 
+                        return move.magnitude / speedValue;
+                default:
+                    return speedValue;
+            }
+        }
+
+        public override TaskStatus OnUpdate()
+        {
+            if (pawn.Value != null)
+            {
+                /*if (curve.Value != null)
+                {
+                    pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), curve.Value);
+                }
+                else
+                {
+                    pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
+                }*/
+                pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
+                return TaskStatus.Success;
+            }
+            else
+            {
+                return TaskStatus.Failure;
+            }
+        }
+
     }
 
     [TaskCategory("Mood/Skill")]
@@ -162,6 +252,30 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             yield return StartCoroutine(skill.Execute(pawn, direction));
             _running = false;
             _completed = true;
+        }
+    }
+    
+    [TaskCategory("Mood/Pawn")]
+    public class IsThreatened : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+
+        public override TaskStatus OnUpdate()
+        {
+            if (pawn.Value == null) return TaskStatus.Failure;
+            return pawn.Value.IsThreatened() ? TaskStatus.Success : TaskStatus.Failure;
+        }
+    }
+    
+    [TaskCategory("Mood/Pawn")]
+    public class IsNotThreatened : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+
+        public override TaskStatus OnUpdate()
+        {
+            if (pawn.Value == null) return TaskStatus.Failure;
+            return pawn.Value.IsThreatened() ? TaskStatus.Failure : TaskStatus.Success;
         }
     }
 

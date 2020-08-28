@@ -27,12 +27,26 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private Vector3 _mouseWorldPosition;
     private bool _executingCommand;
 
+    public float timeSlowOnThreat = 0.2f;
+
 
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 120;
         _mainCamera = Camera.main;
+    }
+
+    void OnEnable()
+    {
+        pawn.OnThreatAppear += AddThreat;
+        pawn.OnThreatRelief += RemoveThreat;
+    }
+    
+    void OnDisable()
+    {
+        pawn.OnThreatAppear -= AddThreat;
+        pawn.OnThreatRelief -= RemoveThreat;
     }
 
     public MoodPawn Pawn => pawn;
@@ -233,7 +247,17 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         
 
     }
-
+    
+    
+    private void AddThreat(MoodPawn moodPawn)
+    {
+        TimeManager.Instance.ChangeTimeDelta(timeSlowOnThreat, "PlayerThreat");
+    }
+    private void RemoveThreat(MoodPawn moodPawn)
+    {
+        TimeManager.Instance.RemoveTimeDeltaChange("PlayerThreat");
+    }
+    
     private void SetCommandMode(bool set)
     {
         inCommand.SetActive(set);

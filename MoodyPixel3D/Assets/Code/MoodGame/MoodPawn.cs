@@ -56,15 +56,33 @@ public class MoodPawn : MonoBehaviour
     
     public Vector3 Direction => toDirect != null? toDirect.forward : mover.transform.forward;
 
+
     public DamageTeam DamageTeam => damageTeam;
 
     private Vector3 _directionTarget;
     private Vector3 _directionVel;
 
+    [SerializeField]
+    private bool _debug;
+
+    private bool Debugging
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return _debug;
+#else
+            return false;
+#endif
+        }
+    }
+
+
     private void Start()
     {
         _stamina = maxStamina;
         OnChangeStamina?.Invoke(this);
+        _wasThreatened = IsThreatened();
     }
 
     private void Update()
@@ -77,7 +95,12 @@ public class MoodPawn : MonoBehaviour
         toDirect.forward = Vector3.SmoothDamp(forward, _directionTarget, ref _directionVel, turningTime, float.MaxValue,
             Time.deltaTime);
     }
-
+    
+    private void FixedUpdate()
+    {
+        ThreatFixedUpdate(_threatDirection);
+    }
+    
     public void UsedSkill(MoodSkill skill, Vector3 direction)
     {
         OnUseSKill?.Invoke(skill, direction);
@@ -172,6 +195,83 @@ public class MoodPawn : MonoBehaviour
     public Quaternion GetDirection()
     {
         return toDirect.rotation;
+    }
+    #endregion
+
+    #region Threat
+    private HashSet<GameObject> _threatList;
+    public event DelMoodPawnEvent OnThreatAppear;
+    public event DelMoodPawnEvent OnThreatRelief;
+
+    private bool _wasThreatened;
+    private Vector3 _threatDirection;
+
+    public void StartThreatening(Vector3 direction)
+    {
+        _threatDirection = direction;
+    }
+
+    public void QuitThreatening()
+    {
+        _threatDirection = Vector3.zero;
+    }
+    
+    private MoodPawn _threatTarget;
+    
+    private void ThreatFixedUpdate(Vector3 threatDirection)
+    {
+        if (threatDirection == Vector3.zero)
+        {
+            ChangeThreatTarget(null);
+            return;
+        }
+        ChangeThreatTarget(FindTarget(threatDirection, threatDirection.magnitude)?.GetComponentInParent<MoodPawn>());
+    }
+
+    private void ChangeThreatTarget(MoodPawn target)
+    {
+        if (_threatTarget == target) return;
+        if (_threatTarget != null)
+        {
+            _threatTarget.RemoveThreat(gameObject);
+        }
+        if (target != null)
+        {
+            target.AddThreat(gameObject);
+            _threatTarget = target;
+        }
+    }
+    
+    public void AddThreat(GameObject origin)
+    {
+        if(_threatList == null) _threatList = new HashSet<GameObject>();
+        _threatList.Add(origin);
+        bool isThreatened = IsThreatened();
+        if (!_wasThreatened && isThreatened)
+            OnThreatAppear?.Invoke(this);
+        _wasThreatened = isThreatened;
+    }
+
+    public void RemoveThreat(GameObject origin)
+    {
+        _threatList?.Remove(origin);
+        bool isThreatened = IsThreatened();
+        if(_wasThreatened && !IsThreatened()) 
+            OnThreatRelief?.Invoke(this);
+        _wasThreatened = isThreatened;
+    }
+
+    public bool IsThreatened()
+    {
+        if (_threatList != null)
+        {
+            foreach (GameObject o in _threatList)
+            {
+                if (o != null) return true;
+            }
+        }
+
+        return false;
     }
     #endregion
     

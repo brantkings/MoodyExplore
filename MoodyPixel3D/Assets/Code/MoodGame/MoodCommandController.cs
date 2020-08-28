@@ -91,14 +91,14 @@ public class MoodCommandController : MonoBehaviour
     {
         transform.position = position;
         SetActiveObjects(true, GetCurrentSkill());
-        TimeManager.Instance.ChangeTimeDelta(0.02f);
+        TimeManager.Instance.ChangeTimeDelta(0.02f, "ControlSlow");
         _activated = true;
     }
 
     public void Deactivate()
     {
         SetActiveObjects(false, GetCurrentSkill());
-        TimeManager.Instance.ReturnTimeToNormal();
+        TimeManager.Instance.RemoveTimeDeltaChange("ControlSlow");
         _activated = false;
     }
 

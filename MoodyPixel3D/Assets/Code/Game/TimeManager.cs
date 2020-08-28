@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Serialization;
 
 public class TimeManager : CreateableSingleton<TimeManager>
 {
@@ -20,11 +21,12 @@ public class TimeManager : CreateableSingleton<TimeManager>
         }
     }
 
-    private float _currentTargetDeltaTime = 1f;
     public float deltaTimeSlowDuration;
-    public Ease deltaTimeSlowEase = Ease.OutSine;
+    [FormerlySerializedAs("deltaTimeSlowEase")] public Ease deltaTimeChangeEase = Ease.OutSine;
     public float deltaTimeReturnToNormalDuration;
     public Ease deltaTimeReturnEase = Ease.InSine;
+
+    private Dictionary<string, float> targetDeltaTime;
     
     
     private Tween _currentTween;
@@ -42,18 +44,13 @@ public class TimeManager : CreateableSingleton<TimeManager>
         if (data.freezeDuration > 0f) yield return new WaitForSecondsRealtime(data.freezeDuration);
         if (data.tweenDuration > 0f)
         {
-            _currentTween = TweenTime(GetTargetDeltaTime(), data.tweenDuration).SetEase(data.ease);
+            _currentTween = TweenTime(GetCurrentTimeDeltaTarget(), data.tweenDuration).SetEase(data.ease);
             yield return _currentTween;
         }
         else
         {
-            Time.timeScale = GetTargetDeltaTime();
+            Time.timeScale = GetCurrentTimeDeltaTarget();
         }
-    }
-
-    private float GetTargetDeltaTime()
-    {
-        return _currentTargetDeltaTime;
     }
 
     private Tween TweenTime(float to, float duration)
@@ -61,20 +58,51 @@ public class TimeManager : CreateableSingleton<TimeManager>
         return DOTween.To(() => Time.timeScale, (x) => Time.timeScale = x, to, duration).SetUpdate(true);
     }
 
-    public void ReturnTimeToNormal()
+    private void AddTimeDeltaTarget(string id, float target)
     {
-        ChangeTimeDelta(1f, deltaTimeReturnToNormalDuration, deltaTimeReturnEase);
+        if (targetDeltaTime == null)
+        {
+            targetDeltaTime = new Dictionary<string, float>(8);
+        }
+        targetDeltaTime.Add(id, target);
     }
 
-    public void ChangeTimeDelta(float targetTimeDelta)
+    private void RemoveTimeDeltaTarget(string id)
     {
-        ChangeTimeDelta(targetTimeDelta, deltaTimeSlowDuration, deltaTimeSlowEase);
+        targetDeltaTime?.Remove(id);
+    }
+
+    private float GetCurrentTimeDeltaTarget()
+    {
+        if (targetDeltaTime == null) return 1f;
+        float targetMin = 1f;
+        float targetMax = 1f;
+        float targetProduct = 1f;
+        foreach (float value in targetDeltaTime.Values)
+        {
+            targetMin = Mathf.Min(value, targetMin);
+            targetMax = Mathf.Min(value, targetMax);
+            targetProduct = targetProduct * value;
+        }
+
+        return Mathf.Clamp(targetProduct, targetMin, targetMax);
+    }
+    
+    public void RemoveTimeDeltaChange(string id)
+    {
+        RemoveTimeDeltaTarget(id);
+        TweenTimeDelta(GetCurrentTimeDeltaTarget(), deltaTimeReturnToNormalDuration, deltaTimeReturnEase);
+    }
+    
+    public void ChangeTimeDelta(float targetTimeDelta, string id)
+    {    
+        AddTimeDeltaTarget(id, targetTimeDelta);
+        TweenTimeDelta(GetCurrentTimeDeltaTarget(), deltaTimeSlowDuration, deltaTimeChangeEase);
     }
     
     
-    public void ChangeTimeDelta(float targetTimeDelta, float duration, Ease ease = Ease.OutSine)
+    public void TweenTimeDelta(float targetTimeDelta, float duration, Ease ease = Ease.OutSine)
     {
-        _currentTargetDeltaTime = targetTimeDelta;
-        TweenTime(_currentTargetDeltaTime, duration).SetEase(ease);
+        TweenTime(targetTimeDelta, duration).SetEase(ease);
     }
 }
