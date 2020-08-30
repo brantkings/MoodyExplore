@@ -87,6 +87,9 @@ public class SmoothFixedStepWalk : MonoBehaviour
     [SerializeField]
     Transform followee;
 
+    public bool doPosition = true;
+    public bool doRotation = true;
+
     PositionInterpolator pos;
     RotationInterpolator rot;
 
@@ -108,8 +111,8 @@ public class SmoothFixedStepWalk : MonoBehaviour
 
     private void FixedUpdate()
     {
-        pos.AddValue(followee.position);
-        rot.AddValue(followee.rotation);
+        if (doPosition) pos.AddValue(followee.position);
+        if (doRotation) rot.AddValue(followee.rotation);
     }
 
     void LateUpdate()

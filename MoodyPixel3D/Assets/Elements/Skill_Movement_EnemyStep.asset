@@ -9,19 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Attack_Slash
+  m_Script: {fileID: 11500000, guid: 90ae4c23724f4444984bad838a8ad073, type: 3}
+  m_Name: Skill_Movement_EnemyStep
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Slap
+  _name: Large Step
   _cost: 1
-  damage: 10
-  attackRadius: 1
-  attackRange: 3
-  attackY: 0.5
-  attackCapsuleHeight: 1.5
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  preTime: 0.5
-  postTime: 1
+  minDistance: 0
+  maxDistance: 5
+  velocityAdd: 5
+  durationAdd: 0
+  showArrowWidth: 1
+  ease: 3

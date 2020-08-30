@@ -19,6 +19,8 @@ public class KinematicPlatformer : MonoBehaviour
     public Caster groundCaster;
     public Caster ceilingCaster;
     public Caster wallCaster;
+    [SerializeField]
+    private bool _setPositionDirectlyToTransform;
 
     public bool _hasGravity;
     public bool preciseWallCorrections = true;
@@ -85,6 +87,21 @@ public class KinematicPlatformer : MonoBehaviour
     private Vector3 _lastValidVelDebug;
 
 #endif
+    
+    [SerializeField]
+    private bool _debug;
+
+    private bool Debugging
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return _debug;
+#else
+            return false;
+#endif
+        }
+    }
 
     private LinkedList<IKinematicPlatformerVelocityGetter> Sources
     {
@@ -127,9 +144,9 @@ public class KinematicPlatformer : MonoBehaviour
     {
         protected set
         {
-            if (_body != null)
+            if (!_setPositionDirectlyToTransform && _body != null)
             {
-                _body.MovePosition(value);
+                _body.position = value;
             }
             else
             {
@@ -138,7 +155,7 @@ public class KinematicPlatformer : MonoBehaviour
         } 
         get
         {
-            if (_body != null)
+            if (!_setPositionDirectlyToTransform && _body != null)
             {
                 return _body.position;
             }
@@ -150,7 +167,7 @@ public class KinematicPlatformer : MonoBehaviour
     }
     public void SetVelocity(Vector3 vel)
     {
-        if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel);
+        if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel.ToString("F3"));
         _currentInputVelocity = vel;
     }
 
@@ -429,6 +446,9 @@ public class KinematicPlatformer : MonoBehaviour
 #endif
         if (movement != Vector3.zero)
         {
+            if (Debugging)
+                Debug.LogFormat("{0} going to {1} + {2} [{4}] = {3}", 
+                    this, Position, movement.ToString("F4"), Position + movement, _lastValidVelDebug.ToString("F2"));
             Position = Position + movement;
         }
     }

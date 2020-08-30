@@ -26,7 +26,6 @@ public class MoodPawn : MonoBehaviour
     
     public KinematicPlatformer mover;
     public Animator animator;
-    public Transform toDirect;
     [SerializeField]
     private LookAtIK _lookAtControl;
 
@@ -54,7 +53,16 @@ public class MoodPawn : MonoBehaviour
 
     public Vector3 Position => mover.Position;
     
-    public Vector3 Direction => toDirect != null? toDirect.forward : mover.transform.forward;
+    public Vector3 Direction
+    {
+        get => mover.transform.forward;
+        set
+        {
+            if(value != Vector3.zero)
+                mover.transform.forward = value.normalized;
+        }
+        
+    }
 
 
     public DamageTeam DamageTeam => damageTeam;
@@ -90,10 +98,11 @@ public class MoodPawn : MonoBehaviour
         float staminaRecovery = IsMoving() ? staminaRecoveryMoving : staminaRecoveryIdle; 
         RecoverStamina(staminaRecovery, Time.deltaTime);
 
-        Vector3 forward = toDirect.forward;
-        if (Vector3.Dot(forward, _directionTarget) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
-        toDirect.forward = Vector3.SmoothDamp(forward, _directionTarget, ref _directionVel, turningTime, float.MaxValue,
-            Time.deltaTime);
+        Direction = _directionTarget;
+        //Vector3 forward = mover.transform.forward;
+        //if (Vector3.Dot(forward, _directionTarget) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
+        //mover.transform.forward = Vector3.SmoothDamp(forward, _directionTarget, ref _directionVel, turningTime, float.MaxValue,
+        //Time.deltaTime);
     }
     
     private void FixedUpdate()
@@ -117,13 +126,29 @@ public class MoodPawn : MonoBehaviour
     public event PawnEvent OnBeginMove;
     public event PawnEvent OnEndMove;
 
+    private Vector3 _targetVelocity;
+    private Tween _movementTween;
+
+    private void SolveFinalVelocity()
+    {
+        if (_movementTween != null && _movementTween.IsActive())
+        {
+            mover.SetVelocity(Vector3.zero);
+        }
+        else
+        {
+            mover.SetVelocity(_targetVelocity);
+            if (_targetVelocity.sqrMagnitude > 0.001f)
+            {
+                _directionTarget = Vector3.ProjectOnPlane(_targetVelocity, Vector3.up);
+            }
+        }
+    }
+
     public void SetVelocity(Vector3 velocity)
     {
-        mover.SetVelocity(velocity);
-        if (velocity.sqrMagnitude > 0.001f)
-        {
-            _directionTarget = Vector3.ProjectOnPlane(velocity, Vector3.up);
-        }
+        _targetVelocity = velocity;
+        SolveFinalVelocity();
     }
 
     public bool IsMoving()
@@ -144,8 +169,8 @@ public class MoodPawn : MonoBehaviour
     private Tween TweenMoverPosition(Vector3 direction, float duration)
     {
         CallBeginMove();
-        _position = mover.Position;
-        return DOTween.To(GetPawnLerpPosition, SetPawnPosition, direction, duration).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
+        _lerpPosition = mover.Position;
+        return DOTween.To(GetPawnLerpPosition, SetPawnLerpPosition, direction, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
     }
 
     private void CallBeginMove()
@@ -155,21 +180,22 @@ public class MoodPawn : MonoBehaviour
 
     private void CallEndMove()
     {
+        SolveFinalVelocity();
         OnEndMove?.Invoke();
     }
 
-    private Vector3 _position;
+    private Vector3 _lerpPosition;
 
     private Vector3 GetPawnLerpPosition()
     {
-        return _position;
+        return _lerpPosition;
     }
 
-    private void SetPawnPosition(Vector3 set)
+    private void SetPawnLerpPosition(Vector3 set)
     {
-        Vector3 diff = set - _position;
-        mover.AddExactNextFrameMove(set - _position);
-        _position = set;
+        Vector3 diff = set - _lerpPosition;
+        mover.AddExactNextFrameMove(set - _lerpPosition);
+        _lerpPosition = set;
     }
 
     public void StartSkillAnimation(MoodSkill skill)
@@ -182,9 +208,10 @@ public class MoodPawn : MonoBehaviour
         animator.SetBool("Attack", false);
     }
 
-    public void SetDirection(Vector3 direction)
+    public void SetHorizontalDirection(Vector3 direction)
     {
-        toDirect.forward = Vector3.ProjectOnPlane(direction, Vector3.up);
+        _directionTarget = direction;
+        Direction = Vector3.ProjectOnPlane(direction, Vector3.up);
     }
 
     public void SetLookAt(Vector3 direction)
@@ -192,9 +219,9 @@ public class MoodPawn : MonoBehaviour
         _lookAtControl.LookAt(direction);
     }
 
-    public Quaternion GetDirection()
+    public Quaternion GetRotation()
     {
-        return toDirect.rotation;
+        return mover.transform.rotation;
     }
     #endregion
 
@@ -228,23 +255,26 @@ public class MoodPawn : MonoBehaviour
         ChangeThreatTarget(FindTarget(threatDirection, threatDirection.magnitude)?.GetComponentInParent<MoodPawn>());
     }
 
-    private void ChangeThreatTarget(MoodPawn target)
+    private void ChangeThreatTarget(MoodPawn nextTarget)
     {
-        if (_threatTarget == target) return;
+        if (_threatTarget == nextTarget) return;
         if (_threatTarget != null)
         {
             _threatTarget.RemoveThreat(gameObject);
+            _threatTarget = null;
         }
-        if (target != null)
+        if (nextTarget != null)
         {
-            target.AddThreat(gameObject);
-            _threatTarget = target;
+            nextTarget.AddThreat(gameObject);
+            _threatTarget = nextTarget;
         }
     }
-    
+
     public void AddThreat(GameObject origin)
     {
+        Debug.LogFormat("Add threat {0} to {1}", origin, this);
         if(_threatList == null) _threatList = new HashSet<GameObject>();
+        _wasThreatened = IsThreatened();
         _threatList.Add(origin);
         bool isThreatened = IsThreatened();
         if (!_wasThreatened && isThreatened)
@@ -254,6 +284,8 @@ public class MoodPawn : MonoBehaviour
 
     public void RemoveThreat(GameObject origin)
     {
+        Debug.LogFormat("Remove threat {0} to {1}", origin, this);
+        _wasThreatened = IsThreatened();
         _threatList?.Remove(origin);
         bool isThreatened = IsThreatened();
         if(_wasThreatened && !IsThreatened()) 
@@ -330,7 +362,7 @@ public class MoodPawn : MonoBehaviour
 
     public Quaternion GetInstantiateRotation()
     {
-        return GetDirection();
+        return GetRotation();
     }
     
 

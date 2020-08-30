@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Power Blast
-  _cost: 0
+  _cost: 4
   prefab: {fileID: 2242556836230007570, guid: db9eb4a7933d38446a9220a98312a84a, type: 3}
   range: 50
   resetDamageTeamAsPawnTeam: 1

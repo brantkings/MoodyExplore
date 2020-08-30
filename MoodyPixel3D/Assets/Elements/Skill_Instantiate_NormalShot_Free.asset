@@ -9,19 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Attack_SuperSlash
+  m_Script: {fileID: 11500000, guid: c35f8d62a121c914493a1ea138b0e9e6, type: 3}
+  m_Name: Skill_Instantiate_NormalShot_Free
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Slap hard
-  _cost: 2
-  damage: 10
-  attackRadius: 1
-  attackRange: 6
-  attackY: 0.5
-  attackCapsuleHeight: 1.5
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 1024
+  _name: Power Blast
+  _cost: 0
+  prefab: {fileID: 2242556836230007570, guid: db9eb4a7933d38446a9220a98312a84a, type: 3}
+  range: 50
+  resetDamageTeamAsPawnTeam: 1
   preTime: 0.5
   postTime: 1

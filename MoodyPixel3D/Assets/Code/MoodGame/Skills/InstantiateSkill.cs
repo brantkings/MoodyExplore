@@ -51,11 +51,12 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 
     public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
     {
-        //Target = GetTarget(pawn.Position, direction);
+        Target = pawn.FindTarget(direction, range);
     }
 
     public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
     {
+        pawn.SetHorizontalDirection(skillDirection);
         pawn.StartSkillAnimation(this);
         yield return new WaitForSeconds(preTime);
 

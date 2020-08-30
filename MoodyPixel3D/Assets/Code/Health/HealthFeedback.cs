@@ -9,14 +9,20 @@ public class HealthFeedback : AddonBehaviour<Health>
 
     private void OnEnable()
     {
-        Addon.OnDamage += OnDamage;
-        Addon.OnDeath += OnDeath;
+        if (Addon != null)
+        {
+            Addon.OnDamage += OnDamage;
+            Addon.OnDeath += OnDeath;
+        }
     }
 
     private void OnDisable()
     {
-        Addon.OnDamage -= OnDamage;
-        Addon.OnDeath -= OnDeath;
+        if (Addon != null)
+        {
+            Addon.OnDamage -= OnDamage;
+            Addon.OnDeath -= OnDeath;
+        }
     }
 
     private void OnDamage(int amount, Health health)

@@ -22,9 +22,9 @@ TagManager:
   - NeutralProjectile
   - NoTouch
   - OnlyTouchItself
-  - 
-  - 
-  - 
+  - PlayerDetector
+  - EnemyDetector
+  - Detector
   - 
   - 
   - 

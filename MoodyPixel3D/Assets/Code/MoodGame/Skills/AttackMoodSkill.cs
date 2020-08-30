@@ -54,13 +54,14 @@ namespace Code.MoodGame.Skills
 
         public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
         {
-            pawn.SetDirection(skillDirection);
+            pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection);
             pawn.StartSkillAnimation(this);
             yield return new WaitForSeconds(preTime);
 
-            ExecuteEffect(pawn, skillDirection);
+            float executingTime = ExecuteEffect(pawn, skillDirection);
             DispatchExecuteEvent(pawn, skillDirection);
+            yield return new WaitForSecondsRealtime(executingTime);
             
             pawn.QuitThreatening();
             pawn.FinishSkillAnimation(this);

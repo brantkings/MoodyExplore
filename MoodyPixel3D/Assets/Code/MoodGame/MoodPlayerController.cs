@@ -194,8 +194,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     {
         GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState showCommandAction, out ButtonState executeAction);
         GetMouseInputUpdate(_mainCamera, GetPlayerPlaneOrigin(), ref _mouseWorldPosition);
-        Vector3 currentDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
-        Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
 
         if (showCommandAction.down)
         {
@@ -212,6 +210,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         SetCommandMode(isInCommand);
         if (isInCommand) //The command is open
         {
+            Vector3 currentDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
+            Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
+            
             if (moveAxis.up.down)
             {
                 command.MoveSelected(-1);
@@ -236,13 +237,14 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             if (!IsExecutingCommand())
             {
                 pawn.SetLookAt(currentDirection);
-                pawn.SetDirection(currentDirection);
+                pawn.SetHorizontalDirection(currentDirection);
             }
         }
         else //The command is not open
         {
             pawn.SetLookAt(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up));
-            pawn.SetVelocity(ToWorldPosition((moveAxis.GetMoveAxis() * 5f)));
+            pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * 5f), Vector3.up));
+            //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
         
 

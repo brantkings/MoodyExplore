@@ -97,7 +97,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
 
         public override TaskStatus OnUpdate()
         {
-            pawn.Value.SetDirection(direction.Value);
+            pawn.Value.SetHorizontalDirection(direction.Value);
             return TaskStatus.Success;
         }
     }
@@ -129,6 +129,18 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
     }
     
     [TaskCategory("Mood/Pawn")]
+    public class StopVelocity : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+
+        public override TaskStatus OnUpdate()
+        {
+            pawn.Value.SetVelocity(Vector3.zero);
+            return TaskStatus.Success;
+        }
+    }
+    
+    [TaskCategory("Mood/Pawn")]
     public class Dash : Action
     {
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
@@ -138,6 +150,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         [SerializeField] private Ease ease = Ease.Linear;
         [SerializeField] private VelocityKind useVelocityAs;
 
+        private Tween _tween;
+        private bool _dashed;
 
         public enum VelocityKind
         {
@@ -161,18 +175,23 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
 
         public override TaskStatus OnUpdate()
         {
-            if (pawn.Value != null)
+            if (_dashed)
             {
-                /*if (curve.Value != null)
+                if (_tween != null && _tween.IsActive())
                 {
-                    pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), curve.Value);
+                    return TaskStatus.Running;
                 }
                 else
                 {
-                    pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
-                }*/
-                pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
-                return TaskStatus.Success;
+                    _dashed = false;
+                    return TaskStatus.Success;
+                }
+            }
+            if (pawn.Value != null)
+            {
+                _dashed = true;
+                _tween = pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
+                return TaskStatus.Running;
             }
             else
             {
@@ -190,6 +209,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         [SerializeField] private SharedVector3 direction;
         [SerializeField] private SharedBool keepRunningUntilCanUse;
         [SerializeField] private SharedBool waitUntilUsed = true;
+        [SerializeField] private SharedBool directPawnToSkill = true;
 
         private bool _running;
         private bool _completed;
@@ -203,6 +223,9 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
 
         public override TaskStatus OnUpdate()
         {
+            
+            //Debug.LogFormat("Executing {0} on {1}. Can execute? {2}, is it running? {3}",
+                //this, this.transform, skill.Value.CanExecute(pawn.Value, direction.Value), _running);
             if (_running)
             {
                 return TaskStatus.Running;
@@ -219,12 +242,13 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             
             if (skill.Value.CanExecute(pawn.Value, direction.Value))
             {
+                if(directPawnToSkill.Value) pawn.Value.SetHorizontalDirection(direction.Value);
                 StartCoroutine(UseSkillRoutine(skill.Value, pawn.Value, direction.Value));
                 if (waitUntilUsed.Value && _running) 
                     return TaskStatus.Running;
                 else 
                     return TaskStatus.Success;
-            }
+            } 
             else
             {
                 if (keepRunningUntilCanUse.Value)
@@ -288,12 +312,14 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
 
         public override TaskStatus OnUpdate()
         {
+            Debug.LogFormat("{0} can execute {1} on {2}? {3}", pawn, skill, direction,
+                skill.Value.CanExecute(pawn.Value, direction.Value));
             return skill.Value.CanExecute(pawn.Value, direction.Value) ? TaskStatus.Success : TaskStatus.Failure;
         }
     }
 
     [TaskCategory("Mood/Pawn")]
-    public class SearchTarget : Conditional
+    public class SearchTarget : Action
     {
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
         [SerializeField] private SharedVector3 direction;

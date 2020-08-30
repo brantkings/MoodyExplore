@@ -45,7 +45,7 @@ public class Health : MonoBehaviour {
     {
         if (CanDamage(team))
         {
-            _lifeNow -= amount;
+            _lifeNow = Mathf.Clamp(_lifeNow - amount, 0, maxLife);
             OnDamage?.Invoke(amount, this);
             if (_lifeNow <= 0) Die();
             return true;
