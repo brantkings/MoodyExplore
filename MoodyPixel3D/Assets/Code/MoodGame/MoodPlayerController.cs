@@ -12,6 +12,26 @@ using UnityEngine.UIElements;
 
 public class MoodPlayerController : Singleton<MoodPlayerController>
 {
+    public struct EventfulParameter<T>
+    {
+        private T _param;
+
+        public delegate void DelOnChange(T changed);
+
+        public void Update(T newValue, DelOnChange onChange)
+        {
+            if (_param.Equals(newValue)) return;
+            _param = newValue;
+            onChange(newValue);
+        }
+        
+    }
+
+    public delegate void DelPlayerEvent();
+
+    public event DelPlayerEvent OnStartCommand;
+    public event DelPlayerEvent OnStopCommand;
+    
     [SerializeField]
     private MoodPawn pawn;
     [SerializeField]
@@ -19,9 +39,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private Camera _mainCamera;
 
 
+
     public MoodCommandController command;
 
-    public Enabler inCommand;
+    public Animator animatorCamera;
+    public string animatorCameraCommandBoolean;
     public CinemachineBlendListCamera cameraBlendList;
 
     private Vector3 _mouseWorldPosition;
@@ -39,14 +61,18 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     void OnEnable()
     {
-        pawn.OnThreatAppear += AddThreat;
-        pawn.OnThreatRelief += RemoveThreat;
+        pawn.OnThreatAppear += ChangeThreat;
+        pawn.OnThreatRelief += ChangeThreat;
+        OnStartCommand += SolveSlowDown;
+        OnStopCommand += SolveSlowDown;
     }
     
     void OnDisable()
     {
-        pawn.OnThreatAppear -= AddThreat;
-        pawn.OnThreatRelief -= RemoveThreat;
+        pawn.OnThreatAppear -= ChangeThreat;
+        pawn.OnThreatRelief -= ChangeThreat;
+        OnStartCommand += SolveSlowDown;
+        OnStopCommand += SolveSlowDown;
     }
 
     public MoodPawn Pawn => pawn;
@@ -178,9 +204,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private IEnumerator ExecuteCurrentCommand(Vector3 direction)
     {
         _executingCommand = true;
+        OnStartCommand?.Invoke();
         Debug.LogFormat("Starting command {0}", Time.time);
         yield return command.ExecuteCurrent(pawn, direction);
         _executingCommand = false;
+        OnStopCommand?.Invoke();
         Debug.LogFormat("Ending command {0}", Time.time);
     }
 
@@ -251,18 +279,30 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     }
     
     
-    private void AddThreat(MoodPawn moodPawn)
+    private void ChangeThreat(MoodPawn moodPawn)
     {
-        TimeManager.Instance.ChangeTimeDelta(timeSlowOnThreat, "PlayerThreat");
+        SolveSlowDown();
     }
-    private void RemoveThreat(MoodPawn moodPawn)
+
+    private bool ShouldSlowDown()
     {
-        TimeManager.Instance.RemoveTimeDeltaChange("PlayerThreat");
+        return pawn.IsThreatened() && !IsExecutingCommand();
+    }
+
+    private EventfulParameter<bool> _slowedDown;
+    
+    private void SolveSlowDown()
+    {
+        _slowedDown.Update(ShouldSlowDown(), (slowed) =>
+        {
+            if(slowed) TimeManager.Instance.ChangeTimeDelta(timeSlowOnThreat, "PlayerThreat");
+            else TimeManager.Instance.RemoveTimeDeltaChange("PlayerThreat");
+        });
     }
     
     private void SetCommandMode(bool set)
     {
-        inCommand.SetActive(set);
+        animatorCamera.SetBool(animatorCameraCommandBoolean, set);
         //_backToCameraControl.enabled = !set;
     }
     

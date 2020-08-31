@@ -56,6 +56,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 
     public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
     {
+        pawn.MarkUsingSkill(this);
         pawn.SetHorizontalDirection(skillDirection);
         pawn.StartSkillAnimation(this);
         yield return new WaitForSeconds(preTime);
@@ -65,6 +66,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         
         pawn.FinishSkillAnimation(this);
         yield return new WaitForSeconds(postTime);
+        pawn.UnmarkUsingSkill(this);
     }
 
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)

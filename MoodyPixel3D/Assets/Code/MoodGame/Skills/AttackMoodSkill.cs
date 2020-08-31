@@ -54,6 +54,7 @@ namespace Code.MoodGame.Skills
 
         public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
         {
+            pawn.MarkUsingSkill(this);
             pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection);
             pawn.StartSkillAnimation(this);
@@ -66,6 +67,7 @@ namespace Code.MoodGame.Skills
             pawn.QuitThreatening();
             pawn.FinishSkillAnimation(this);
             yield return new WaitForSeconds(postTime);
+            pawn.UnmarkUsingSkill(this);
         }
 
         public override void Interrupt(MoodPawn pawn)

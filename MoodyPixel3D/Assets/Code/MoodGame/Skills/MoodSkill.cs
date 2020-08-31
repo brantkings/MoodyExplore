@@ -66,12 +66,14 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// <returns></returns>
     public virtual IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
     {
+        pawn.MarkUsingSkill(this);
         float duration = ExecuteEffect(pawn, skillDirection);
         DispatchExecuteEvent(pawn, skillDirection);
         if (duration > 0f)
         {
             yield return new WaitForSecondsRealtime(duration);
         }
+        pawn.UnmarkUsingSkill(this);
     }
 
     protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection)

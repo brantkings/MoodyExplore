@@ -101,6 +101,19 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             return TaskStatus.Success;
         }
     }
+    
+    [TaskCategory("Mood/Pawn")]
+    public class GetPawnDirection : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 outVector;
+
+        public override TaskStatus OnUpdate()
+        {
+            outVector.Value = pawn.Value.Direction;
+            return TaskStatus.Success;
+        }
+    }
 
     [TaskCategory("Mood/Pawn")]
     public class LookToDirection : Action

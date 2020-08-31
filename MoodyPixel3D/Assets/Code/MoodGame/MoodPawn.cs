@@ -35,6 +35,7 @@ public class MoodPawn : MonoBehaviour
     public float pawnRadius = 0.5f;
 
     public float extraRangeBase = 0f;
+    public bool cantMoveWhileThreatened = true;
     
     [Space()]
     public float maxStamina;
@@ -120,7 +121,26 @@ public class MoodPawn : MonoBehaviour
         OnInterruptSkill?.Invoke(skill);
     }
     
-    
+    #region Skills
+    private MoodSkill _currentSkill;
+    public void MarkUsingSkill(MoodSkill skill)
+    {
+        _currentSkill = skill;
+    }
+
+    public void UnmarkUsingSkill(MoodSkill skill)
+    {
+        if (_currentSkill == skill)
+        {
+            _currentSkill = null;
+        }
+    }
+
+    public MoodSkill CurrentlyUsingSkill()
+    {
+        return _currentSkill;
+    }
+    #endregion
 
     #region Movement
     public event PawnEvent OnBeginMove;
@@ -137,11 +157,19 @@ public class MoodPawn : MonoBehaviour
         }
         else
         {
-            mover.SetVelocity(_targetVelocity);
-            if (_targetVelocity.sqrMagnitude > 0.001f)
+            if (cantMoveWhileThreatened && IsThreatened())
             {
-                _directionTarget = Vector3.ProjectOnPlane(_targetVelocity, Vector3.up);
+                mover.SetVelocity(Vector3.zero);
             }
+            else
+            {
+                mover.SetVelocity(_targetVelocity);
+                if (_targetVelocity.sqrMagnitude > 0.001f)
+                {
+                    _directionTarget = Vector3.ProjectOnPlane(_targetVelocity, Vector3.up);
+                }
+            }
+            
         }
     }
 
@@ -278,7 +306,10 @@ public class MoodPawn : MonoBehaviour
         _threatList.Add(origin);
         bool isThreatened = IsThreatened();
         if (!_wasThreatened && isThreatened)
+        {
             OnThreatAppear?.Invoke(this);
+            SolveFinalVelocity();
+        }
         _wasThreatened = isThreatened;
     }
 
@@ -288,8 +319,11 @@ public class MoodPawn : MonoBehaviour
         _wasThreatened = IsThreatened();
         _threatList?.Remove(origin);
         bool isThreatened = IsThreatened();
-        if(_wasThreatened && !IsThreatened()) 
+        if (_wasThreatened && !IsThreatened())
+        {
             OnThreatRelief?.Invoke(this);
+            SolveFinalVelocity();
+        }
         _wasThreatened = isThreatened;
     }
 
@@ -307,7 +341,6 @@ public class MoodPawn : MonoBehaviour
     }
     #endregion
     
-
     #region Stamina
 
     private void RecoverStamina(float recovery, float timeDelta)

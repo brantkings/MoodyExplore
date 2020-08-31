@@ -167,7 +167,7 @@ public class KinematicPlatformer : MonoBehaviour
     }
     public void SetVelocity(Vector3 vel)
     {
-        if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel.ToString("F3"));
+        //if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel.ToString("F3"));
         _currentInputVelocity = vel;
     }
 
