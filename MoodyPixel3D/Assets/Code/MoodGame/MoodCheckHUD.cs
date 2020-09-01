@@ -1,12 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-public class MoodCheckHUD : MonoBehaviour
+public class MoodCheckHUD : Singleton<MoodCheckHUD>
 {
     
     private static readonly char[] PassableChars = new char[] {' ', ',', '.', ';', ':'};
@@ -14,12 +16,22 @@ public class MoodCheckHUD : MonoBehaviour
     private class WaitForNextInput : CustomYieldInstruction
     {
         private bool _nextPressed;
+        private MoodCheckHUD _hud;
         
         public WaitForNextInput(MoodCheckHUD hud)
         {
-            
+            _hud = hud;
+            _hud.OnPressNext += OnPressNext;
         }
-        
+
+        private void OnPressNext()
+        {
+            _nextPressed = true;
+            _hud.OnPressNext -= OnPressNext;
+            _hud = null;
+
+        }
+
         public override bool keepWaiting
         {
             get
@@ -33,18 +45,6 @@ public class MoodCheckHUD : MonoBehaviour
 
     public event DelCheckHUDEvent OnPressNext;
 
-    public void PressNext()
-    {
-        if (OnPressNext != null)
-        {
-            OnPressNext.Invoke();
-            return;
-        }
-
-
-
-    }
-    
 
     public interface IVideoAsset
     {
@@ -64,37 +64,123 @@ public class MoodCheckHUD : MonoBehaviour
 
     public VideoPlayer videoPlayer;
     public Image image;
+    public GameObject videoImageBGObject;
     public Text text;
+    public GameObject pressNextObject;
+    public GameObject textBG;
 
-    public void Next()
+    private void Start()
     {
-        
+        HideAll();
     }
 
-    public void Show(IVideoAsset asset)
+    public void PressNext()
     {
+        if (OnPressNext != null)
+        {
+            OnPressNext.Invoke();
+            return;
+        }
+        HideAll();
+    }
+    
+    public void HideAll()
+    {
+        HideVideo();
+        HideImage();
+        HideText();
+    }
+
+    private void SetCentralImageVisible(bool set)
+    {
+        videoImageBGObject.SetActive(set);
+    }
+
+    private void SetTextVisible(bool set)
+    {
+        pressNextObject.SetActive(false);
+        textBG.SetActive(set);
+        text.gameObject.SetActive(set);
+    }
+
+    public bool IsShowingVideo()
+    {
+        return videoPlayer.gameObject.activeSelf;
+    }
+
+    public bool IsShowingImage()
+    {
+        return image.gameObject.activeSelf;
+    }
+
+    public bool IsShowingText()
+    {
+        return textBG.gameObject.activeSelf;
+    }
+
+    public bool IsShowing()
+    {
+        return IsShowingVideo() || IsShowingText() || IsShowingImage();
+    }
+    
+    public void ShowVideo(IVideoAsset asset)
+    {
+        SetCentralImageVisible(true);
         videoPlayer.clip = asset.GetClip();
         videoPlayer.Play();
         videoPlayer.gameObject.SetActive(true);
     }
-    
-    public void Show(ITalkAsset asset)
+
+    public void HideVideo()
     {
+        SetCentralImageVisible(false);
+        videoPlayer.Stop();
+        videoPlayer.gameObject.SetActive(false);
+    }
+    
+    public void ShowText(ITalkAsset asset)
+    {
+        text.text = string.Empty;
+        SetTextVisible(true);
+        StartCoroutine(Write(asset));
+    }
+    
+    public void HideText()
+    {
+        StopAllCoroutines();
+        OnPressNext -= SkipText;
+        SetTextVisible(false);
+    }
+    
+    public void ShowImage(IImageAsset asset)
+    {
+        SetCentralImageVisible(true);
+        image.sprite = asset.GetImage();
+        image.gameObject.SetActive(true);
     }
 
-    
+    public void HideImage()
+    {
+        SetCentralImageVisible(false);
+        image.gameObject.SetActive(false);
+    }
+
+
     private IEnumerator Write(ITalkAsset asset)
     {
         _skipNextText = false;
-        foreach (string str in asset.GetDialogue())
+        List<string> dialogue = asset.GetDialogue();
+        for(int i = 0, len = dialogue.Count;i<len;i++)
         {
-            yield return Write(str, asset.GetTimeBetweenChars());
+            string str = dialogue[i];
+            yield return Write(str, asset.GetTimeBetweenChars(), i == (len - 1));
         }
+        
     }
 
-    private IEnumerator Write(string dialogue, float timeBetweenChars)
+    private IEnumerator Write(string dialogue, float timeBetweenChars, bool lastDialogue)
     {
-        OnPressNext += SkipText;
+        OnPressNext += SkipText; //Careful with interruptions in text.
         string written = "";
         string toWrite = dialogue.Substring(0);
         int i = 0;
@@ -105,7 +191,18 @@ public class MoodCheckHUD : MonoBehaviour
             written += newC;
             Write(written, toWrite, "#ffffff");
             if (PassableChars.Contains(newC)) continue;
-            yield return new WaitForSecondsRealtime(timeBetweenChars);
+            if (!_skipNextText)
+            {
+                yield return new WaitForSecondsRealtime(timeBetweenChars);
+            }
+        }
+        OnPressNext -= SkipText;
+        _skipNextText = false;
+        pressNextObject.SetActive(true);
+        if (!lastDialogue)
+        {
+            yield return new WaitForNextInput(this);
+            pressNextObject.SetActive(false);
         }
     }
 
@@ -116,22 +213,8 @@ public class MoodCheckHUD : MonoBehaviour
         _skipNextText = true;
     }
     
-
     private void Write(string written, string notWritten, string color)
     {
         text.text = $"<color={color}>{written}</color><color='#00000000'>{notWritten}</color>";
-    }
-    
-    public void Show(IImageAsset asset)
-    {
-        image.sprite = asset.GetImage();
-        image.gameObject.SetActive(true);
-    }
-
-    public void HideAll()
-    {
-        image.gameObject.SetActive(false);
-        text.gameObject.SetActive(false);
-        videoPlayer.gameObject.SetActive(false);
     }
 }

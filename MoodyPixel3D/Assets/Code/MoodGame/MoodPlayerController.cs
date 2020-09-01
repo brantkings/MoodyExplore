@@ -41,6 +41,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
 
     public MoodCommandController command;
+    public MoodInteractor interactor;
+    public MoodCheckHUD checkHud;
 
     public Animator animatorCamera;
     public string animatorCameraCommandBoolean;
@@ -270,12 +272,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
         else //The command is not open
         {
+            if (executeAction.down)
+            {
+                if (checkHud.IsShowing())
+                {
+                    checkHud.PressNext();
+                }
+                else if (interactor.HasInteractable())
+                {
+                    interactor.Interact();
+                }
+            }
+            
+            
             pawn.SetLookAt(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up));
             pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * 5f), Vector3.up));
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
-        
-
     }
     
     
