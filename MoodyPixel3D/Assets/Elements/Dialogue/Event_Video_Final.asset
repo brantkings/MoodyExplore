@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 087434ed7bd47f24990acded50a12885, type: 3}
-  m_Name: Event_Video_Example
+  m_Name: Event_Video_Final
   m_EditorClassIdentifier: 
-  clip: {fileID: 32900000, guid: 4fded1133a04b374ab3ea96b2dc0184b, type: 3}
+  clip: {fileID: 32900000, guid: 2fc4029d89a19d34888ff3814cd668f5, type: 3}

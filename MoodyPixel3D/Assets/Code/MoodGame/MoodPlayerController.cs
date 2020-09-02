@@ -267,6 +267,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             if (!IsExecutingCommand())
             {
                 pawn.SetLookAt(currentDirection);
+                _lookAtVector = currentDirection;
                 pawn.SetHorizontalDirection(currentDirection);
             }
         }
@@ -285,13 +286,22 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             }
             
             
-            pawn.SetLookAt(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up));
+            pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
             pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * 5f), Vector3.up));
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
     }
-    
-    
+
+    private Vector3 _lookAtVector;
+    private Vector3 _lookAtVel;
+
+    private Vector3 GetLookAtVector(Vector3 lookAtTarget)
+    {
+        _lookAtVector = Vector3.SmoothDamp(_lookAtVector, lookAtTarget, ref _lookAtVel, 0.1f, 5f, Time.deltaTime);
+        return _lookAtVector;
+    }
+
+
     private void ChangeThreat(MoodPawn moodPawn)
     {
         SolveSlowDown();

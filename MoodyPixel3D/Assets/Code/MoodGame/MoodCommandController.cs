@@ -76,9 +76,12 @@ public class MoodCommandController : MonoBehaviour
     
     private void PaintOptions(MoodPawn pawn, Vector3 direction)
     {
-        foreach (OptionTuple opt in _options)
+        if (_options != null)
         {
-            PaintOption(opt, opt.skill.CanExecute(pawn, direction));
+            foreach (OptionTuple opt in _options)
+            {
+                PaintOption(opt, opt.skill.CanExecute(pawn, direction));
+            }
         }
     }
 

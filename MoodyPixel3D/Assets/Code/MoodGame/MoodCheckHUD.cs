@@ -63,8 +63,9 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     }
 
     public VideoPlayer videoPlayer;
+    public GameObject videoBG;
     public Image image;
-    public GameObject videoImageBGObject;
+    public GameObject imageBG;
     public Text text;
     public GameObject pressNextObject;
     public GameObject textBG;
@@ -91,9 +92,14 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
         HideText();
     }
 
-    private void SetCentralImageVisible(bool set)
+    private void SetImageBGVisible(bool set)
     {
-        videoImageBGObject.SetActive(set);
+        imageBG.SetActive(set);
+    }
+
+    private void SetVideoBGVisible(bool set)
+    {
+        videoBG.SetActive(set);
     }
 
     private void SetTextVisible(bool set)
@@ -125,7 +131,7 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     
     public void ShowVideo(IVideoAsset asset)
     {
-        SetCentralImageVisible(true);
+        SetVideoBGVisible(true);
         videoPlayer.clip = asset.GetClip();
         videoPlayer.Play();
         videoPlayer.gameObject.SetActive(true);
@@ -133,7 +139,7 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
 
     public void HideVideo()
     {
-        SetCentralImageVisible(false);
+        SetVideoBGVisible(false);
         videoPlayer.Stop();
         videoPlayer.gameObject.SetActive(false);
     }
@@ -154,14 +160,14 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     
     public void ShowImage(IImageAsset asset)
     {
-        SetCentralImageVisible(true);
+        SetImageBGVisible(true);
         image.sprite = asset.GetImage();
         image.gameObject.SetActive(true);
     }
 
     public void HideImage()
     {
-        SetCentralImageVisible(false);
+        SetImageBGVisible(false);
         image.gameObject.SetActive(false);
     }
 

@@ -9,7 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 087434ed7bd47f24990acded50a12885, type: 3}
-  m_Name: Event_Video_Example
+  m_Script: {fileID: 11500000, guid: 37bb403b838b28b41bcbead53b7d7b42, type: 3}
+  m_Name: Event_Dialogue_Final
   m_EditorClassIdentifier: 
-  clip: {fileID: 32900000, guid: 4fded1133a04b374ab3ea96b2dc0184b, type: 3}
+  dialogue:
+  - You reached the end of the demo.
+  - Congratulations.
+  - Tomara que vc curtiu.
