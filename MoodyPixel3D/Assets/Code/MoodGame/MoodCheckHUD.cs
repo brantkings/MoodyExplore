@@ -189,7 +189,6 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
         OnPressNext += SkipText; //Careful with interruptions in text.
         string written = "";
         string toWrite = dialogue.Substring(0);
-        int i = 0;
         while (toWrite.Length > 0)
         {
             char newC = toWrite[0];

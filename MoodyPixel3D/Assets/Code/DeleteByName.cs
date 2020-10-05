@@ -6,12 +6,12 @@ namespace Code
     {
         public GameObject toDelete;
 
-        public string name;
+        public string searchName;
 
         [ContextMenu("GetObject")]
         public void GetObject()
         {
-            toDelete = GameObject.Find(name);
+            toDelete = GameObject.Find(searchName);
         }
 
         [ContextMenu("Delete object")]

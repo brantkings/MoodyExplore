@@ -86,6 +86,22 @@ public class MoodPawn : MonoBehaviour
         }
     }
 
+    public bool Grounded
+    {
+        get
+        {
+            return mover.Grounded;
+        }
+    }
+
+    public bool Walled
+    {
+        get
+        {
+            return mover.Walled;
+        }
+    }
+
 
     private void Start()
     {
@@ -99,11 +115,10 @@ public class MoodPawn : MonoBehaviour
         float staminaRecovery = IsMoving() ? staminaRecoveryMoving : staminaRecoveryIdle; 
         RecoverStamina(staminaRecovery, Time.deltaTime);
 
-        Direction = _directionTarget;
-        //Vector3 forward = mover.transform.forward;
-        //if (Vector3.Dot(forward, _directionTarget) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
-        //mover.transform.forward = Vector3.SmoothDamp(forward, _directionTarget, ref _directionVel, turningTime, float.MaxValue,
-        //Time.deltaTime);
+        //Direction = _directionTarget;
+        Vector3 forward = mover.transform.forward;
+        if (Vector3.Dot(forward, _directionTarget) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
+        Direction = Vector3.SmoothDamp(forward, _directionTarget, ref _directionVel, turningTime, float.MaxValue, Time.deltaTime);
     }
     
     private void FixedUpdate()
@@ -239,7 +254,7 @@ public class MoodPawn : MonoBehaviour
     public void SetHorizontalDirection(Vector3 direction)
     {
         _directionTarget = direction;
-        Direction = Vector3.ProjectOnPlane(direction, Vector3.up);
+        //Direction = Vector3.ProjectOnPlane(direction, Vector3.up);
     }
 
     public void SetLookAt(Vector3 direction)
@@ -266,7 +281,7 @@ public class MoodPawn : MonoBehaviour
         _threatDirection = direction;
     }
 
-    public void QuitThreatening()
+    public void StopThreatening()
     {
         _threatDirection = Vector3.zero;
     }

@@ -447,8 +447,8 @@ public class KinematicPlatformer : MonoBehaviour
         if (movement != Vector3.zero)
         {
             if (Debugging)
-                Debug.LogFormat("{0} going to {1} + {2} [{4}] = {3}", 
-                    this, Position, movement.ToString("F4"), Position + movement, _lastValidVelDebug.ToString("F2"));
+                Debug.LogFormat("{0} going to {1} + {2} = {3}", 
+                    this, Position, movement.ToString("F4"), Position + movement);
             Position = Position + movement;
         }
     }

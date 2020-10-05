@@ -24,14 +24,14 @@ public class WaitUntilObjectDeactivated : CustomYieldInstruction
 
     private bool IsActive(GameObject o)
     {
-        switch (_deactivatedSelfOnly)
+        if(_deactivatedSelfOnly)
         {
-            case true:
-                return o.activeSelf;
-            case false:
-                return o.activeInHierarchy;
+            return o.activeSelf;
         }
-        return false;
+        else
+        {
+            return o.activeInHierarchy;
+        }
     }
 }
 public class OrderedSelfDeactivatedObjects : OrderedActivatedObjects

@@ -1,6 +1,4 @@
 using System.Collections;
-using LHH.Utils;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace Code.MoodGame.Skills
@@ -64,7 +62,7 @@ namespace Code.MoodGame.Skills
             DispatchExecuteEvent(pawn, skillDirection);
             yield return new WaitForSecondsRealtime(executingTime);
             
-            pawn.QuitThreatening();
+            pawn.StopThreatening();
             pawn.FinishSkillAnimation(this);
             yield return new WaitForSeconds(postTime);
             pawn.UnmarkUsingSkill(this);
@@ -73,7 +71,7 @@ namespace Code.MoodGame.Skills
         public override void Interrupt(MoodPawn pawn)
         {
             base.Interrupt(pawn);
-            pawn.QuitThreatening();
+            pawn.StopThreatening();
             pawn.FinishSkillAnimation(this);
         }
 

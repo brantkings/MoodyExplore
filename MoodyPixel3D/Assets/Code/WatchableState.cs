@@ -13,6 +13,11 @@ public class WatchableState<T>
         return b.state;
     }
 
+    public static explicit operator WatchableState<T>(T b)
+    {
+        return new WatchableState<T>(){state = b};
+    }
+
     internal void Update(T newState)
     {
         if (!state.Equals(newState))

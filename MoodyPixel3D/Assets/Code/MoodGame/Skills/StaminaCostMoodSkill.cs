@@ -12,10 +12,14 @@ public abstract class StaminaCostMoodSkill : MoodSkill
         return _cost;
     }
 
+    public bool HasPawnEnoughStamina(MoodPawn pawn)
+    {
+        return pawn.HasStamina(GetStaminaCost());
+    }
+
     public override bool CanExecute(MoodPawn pawn, Vector3 where)
     {
-       //Debug.LogFormat("Can {0} execute {1}? {2} and {3}", pawn, this, pawn.HasStamina(GetStaminaCost()),  base.CanExecute(pawn, where));
-        return pawn.HasStamina(GetStaminaCost()) && base.CanExecute(pawn, where);
+        return HasPawnEnoughStamina(pawn) && base.CanExecute(pawn, where);
     }
 
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)

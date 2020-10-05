@@ -68,6 +68,28 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             }
         }
     }
+
+    [TaskCategory("Mood/Pawn")]
+    public class IsTouchingWall : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+
+        public override TaskStatus OnUpdate()
+        {
+            return (pawn.Value?.Walled).Value ? TaskStatus.Success : TaskStatus.Failure;
+        }
+    }
+
+    [TaskCategory("Mood/Pawn")]
+    public class IsGrounded : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+
+        public override TaskStatus OnUpdate()
+        {
+            return (pawn.Value?.Grounded).Value ? TaskStatus.Success : TaskStatus.Failure;
+        }
+    }
     
     [TaskCategory("Mood")]
     public class GetPlayerPosition : PlayerReferenceAction
@@ -129,7 +151,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
     }
     
     [TaskCategory("Mood/Pawn")]
-    public class SetVelocity : Action
+    public class SetPawnVelocity : Action
     {
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
         [SerializeField] private SharedVector3 velocity;
@@ -328,6 +350,23 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             Debug.LogFormat("{0} can execute {1} on {2}? {3}", pawn, skill, direction,
                 skill.Value.CanExecute(pawn.Value, direction.Value));
             return skill.Value.CanExecute(pawn.Value, direction.Value) ? TaskStatus.Success : TaskStatus.Failure;
+        }
+    }
+
+    [TaskCategory("Mood/Pawn")]
+    public class HasStaminaForSkill : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodSkill skill;
+
+        public override TaskStatus OnUpdate()
+        {
+            StaminaCostMoodSkill stSkill = skill.Value as StaminaCostMoodSkill;
+            if(stSkill != null && pawn.Value != null)
+            {
+                return stSkill.HasPawnEnoughStamina(pawn.Value) ? TaskStatus.Success : TaskStatus.Failure;
+            }
+            return TaskStatus.Failure;
         }
     }
 

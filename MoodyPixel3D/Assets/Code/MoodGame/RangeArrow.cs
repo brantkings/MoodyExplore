@@ -15,6 +15,15 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>
     }
     
     private SpriteRenderer _rend;
+    
+    private SpriteRenderer Renderer
+    {
+        get
+        {
+            if(_rend == null) _rend = GetComponentInChildren<SpriteRenderer>();
+            return _rend;
+        }
+    }
 
     public float durationIn = 1f;
     public Ease easeIn;
@@ -31,10 +40,6 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>
 
     private Properties _parametersInEffect;
 
-    private void Awake()
-    {
-        _rend = GetComponentInChildren<SpriteRenderer>();
-    }
 
     public override void Show(Properties arrowParameters)
     {
@@ -43,11 +48,11 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>
         Sequence seq = DOTween.Sequence();
 
         
-        _rend.size = Vector2.zero;
+        Renderer.size = Vector2.zero;
         //seq.Insert(0f, TweenDirection(direction, durationIn * durationRotateFactor));
         seq.Insert(0f, TweenSpriteWidth(arrowParameters.width, durationIn, easeIn));
         seq.Insert(0f, TweenColor(colorIn, durationIn));
-        seq.Insert(0f, _rend.DOFade(0.5f, durationIn).SetEase(easeIn));
+        seq.Insert(0f, Renderer.DOFade(0.5f, durationIn).SetEase(easeIn));
         seq.SetUpdate(true);
         
         _tweenNow = seq;
@@ -61,7 +66,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>
 
         seq.Insert(0f, TweenSpriteWidth(GetSpriteWidth() * expandOutFactor, durationOut, easeOut));
         seq.Insert(0f, TweenColor(colorOut, durationOut));
-        seq.Insert(0f, _rend.DOFade(0f, durationOut).SetEase(easeOut));
+        seq.Insert(0f, Renderer.DOFade(0f, durationOut).SetEase(easeOut));
         seq.SetUpdate(true);
         
         _tweenNow = seq;
@@ -82,18 +87,18 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>
     
     public void SetDirection(Vector3 direction)
     {
-        _rend.transform.rotation = Quaternion.LookRotation(Vector3.up, direction.normalized);
-        _rend.size = new Vector2(_targetWidth, GetArrowLength(direction.magnitude));
+        Renderer.transform.rotation = Quaternion.LookRotation(Vector3.up, direction.normalized);
+        Renderer.size = new Vector2(_targetWidth, GetArrowLength(direction.magnitude));
     }
     
     private Tween TweenColor(Gradient to, float duration)
     {
-        return _rend.DOGradientColor(to, duration).SetEase(Ease.Linear);
+        return Renderer.DOGradientColor(to, duration).SetEase(Ease.Linear);
     }
     
     private Tween TweenDirection(Vector3 to, float duration)
     {
-        return _rend.transform.DOLookAt(to, duration, AxisConstraint.None, Vector3.up);
+        return Renderer.transform.DOLookAt(to, duration, AxisConstraint.None, Vector3.up);
     }
 
     private Tween TweenSpriteWidth(float width, float duration, Ease ease)

@@ -11,6 +11,7 @@ using UnityEditor.SceneManagement;
 [CreateAssetMenu(fileName = "SCENES_", menuName = "Long Hat House/Scenes/Scene Set")]
 public class SceneSet : ScriptableObject
 {
+#if UNITY_EDITOR
     public SceneAsset mainScene;
 
     public SceneAsset[] scenes;
@@ -32,15 +33,7 @@ public class SceneSet : ScriptableObject
         yield return GetBuildScene(mainScene, enabled);
         foreach (var scene in scenes) yield return GetBuildScene(scene, enabled);
     }
-
-
-    [ContextMenu("Load all scenes")]
-    public void LoadScenesEditor()
-    {
-        LoadSceneEditor(mainScene);
-        foreach (var scene in scenes) LoadSceneEditor(scene, OpenSceneMode.Additive);
-    }
-
+    
     public void LoadScenes()
     {
         LoadScene(mainScene.name);
@@ -63,10 +56,17 @@ public class SceneSet : ScriptableObject
         return new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(scene), enabled);
     }
 
+#if UNITY_EDITOR
+    [ContextMenu("Load all scenes")]
+    public void LoadScenesEditor()
+    {
+        LoadSceneEditor(mainScene);
+        foreach (var scene in scenes) LoadSceneEditor(scene, OpenSceneMode.Additive);
+    }
     private void LoadSceneEditor(SceneAsset scene, OpenSceneMode mode = OpenSceneMode.Single)
     {
-#if UNITY_EDITOR
         EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(scene), mode);
-#endif
     }
+#endif
+#endif
 }

@@ -19,6 +19,9 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     public float postTime = 1f;
     private RangeTarget.Properties _targetProp;
 
+    [SerializeField]
+    private bool threatens;
+
     private RangeTarget.Properties TargetProperties =>
         _targetProp ??= new RangeTarget.Properties()
         {
@@ -59,12 +62,14 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         pawn.MarkUsingSkill(this);
         pawn.SetHorizontalDirection(skillDirection);
         pawn.StartSkillAnimation(this);
+        if(threatens) pawn.StartThreatening(skillDirection);
         yield return new WaitForSeconds(preTime);
 
         ExecuteEffect(pawn, skillDirection);
         DispatchExecuteEvent(pawn, skillDirection);
         
         pawn.FinishSkillAnimation(this);
+        if(threatens) pawn.StopThreatening();
         yield return new WaitForSeconds(postTime);
         pawn.UnmarkUsingSkill(this);
     }

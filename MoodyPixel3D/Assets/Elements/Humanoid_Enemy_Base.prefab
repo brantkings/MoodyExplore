@@ -177,7 +177,7 @@ MonoBehaviour:
   pawnRadius: 0.5
   extraRangeBase: 0
   cantMoveWhileThreatened: 1
-  maxStamina: 20
+  maxStamina: 1
   infiniteStamina: 0
   staminaRecoveryIdle: 0
   staminaRecoveryMoving: 0
