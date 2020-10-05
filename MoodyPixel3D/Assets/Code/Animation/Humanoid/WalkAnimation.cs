@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Code.Animation.Humanoid
 {
-    [RequireComponent(typeof(Animator))]
     public class WalkAnimation : MonoBehaviour
     {
+        [SerializeField]
         private Animator _anim;
 
         
@@ -18,11 +18,6 @@ namespace Code.Animation.Humanoid
         public float speedAnimationWalk = 1f;
         public float speedAnimationRun = 1f;
         
-
-        private void Awake()
-        {
-            _anim = GetComponent<Animator>();
-        }
 
         public void SetSpeed(Vector3 speed)
         {
