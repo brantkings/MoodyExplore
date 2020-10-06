@@ -29,11 +29,17 @@ public static class ScriptableEventExtensions
 {
     public static void Execute(this ScriptableEvent[] collection, Transform where)
     {
-        foreach(ScriptableEvent evt in collection) evt.Execute(where);
+        if(collection != null)
+        {
+            foreach(ScriptableEvent evt in collection) evt.Execute(where);
+        }
     }
 
     public static void Execute(this List<ScriptableEvent> collection, Transform where)
     {
-        foreach(ScriptableEvent evt in collection) evt.Execute(where);
+        if(collection != null)
+        {
+            foreach(ScriptableEvent evt in collection) evt.Execute(where);
+        }
     }
 }

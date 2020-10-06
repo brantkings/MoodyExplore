@@ -52,6 +52,12 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     [SerializeField]
     private float _scaleMultiplier = 1f;
 
+    
+    [SerializeField]
+    private ScriptableEvent[] onRangeEnlarge;
+    [SerializeField]
+    private ScriptableEvent[] onRangeShrink;
+
     public Color showColor = new Color(0.5f,1f,0.5f,1);
     public Color hideColor = new Color(1,1,0,0);
 
@@ -80,6 +86,7 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     {
         SetRadius(0f);
         TweenRadius(duration, param.radius, true, showColor);
+        onRangeEnlarge.Execute(transform);
     }
     
     public override void Hide()
@@ -90,6 +97,7 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     public void HideDuration(float duration)
     {
         TweenRadius(duration, _toRotate.lossyScale.x * 1.05f, false, hideColor);
+        onRangeShrink.Execute(transform);
     }
 
     private void Update()
