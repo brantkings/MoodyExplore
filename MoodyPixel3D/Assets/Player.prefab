@@ -1618,7 +1618,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5868027984071883862}
-  m_LocalRotation: {x: -0.0930704, y: 0.9063068, z: -0.30861065, w: -0.27332285}
+  m_LocalRotation: {x: -0.09307042, y: 0.9063068, z: -0.30861065, w: -0.27332288}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
   m_Children:
@@ -1853,7 +1853,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5938188665409695490}
-  m_LocalRotation: {x: -0.09307042, y: 0.9063068, z: -0.30861065, w: -0.27332288}
+  m_LocalRotation: {x: -0.0930704, y: 0.9063068, z: -0.30861062, w: -0.27332288}
   m_LocalPosition: {x: 6.6344852, y: 16, z: 9.99918}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2343,6 +2343,7 @@ GameObject:
   - component: {fileID: 5938188666411864150}
   - component: {fileID: 5938188666411864146}
   - component: {fileID: 2026666750789948610}
+  - component: {fileID: 7623217334395380936}
   m_Layer: 0
   m_Name: RangeSphere
   m_TagString: Untagged
@@ -4615,6 +4616,29 @@ MonoBehaviour:
   showColor: {r: 0.5, g: 1, b: 0.5, a: 1}
   hideColor: {r: 1, g: 0.64123744, b: 0, a: 0}
   _currentRotationVelocity: {x: 0, y: 0, z: 0}
+--- !u!114 &7623217334395380936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938188666411864148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Player/New Event
+  PlayEvent: 0
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 50
 --- !u!1 &5938188666564908154
 GameObject:
   m_ObjectHideFlags: 0
@@ -6620,7 +6644,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.09307042
+      value: -0.0930704
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.y
@@ -6628,7 +6652,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.30861065
+      value: -0.30861062
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6666,8 +6690,7 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1703411701898651866, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
 --- !u!20 &5938188667041364039 stripped
 Camera:
@@ -6868,6 +6891,10 @@ PrefabInstance:
       propertyPath: onDeath.prefab
       value: 
       objectReference: {fileID: 3515859749712276643, guid: 04e26b9b40677b24782f8b6f1c59471d, type: 3}
+    - target: {fileID: 7644132106322022631, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
+      propertyPath: onDeath.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: dff9295df0f379248b787a0c017059d2, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
 --- !u!4 &5938188666130470340 stripped

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class HealthFeedback : AddonBehaviour<Health>
 {
-    public InstantiateUtility onDeath;
-    public InstantiateUtility onDamage;
+    public ScriptableEvent[] onDeath;
+    public ScriptableEvent[] onDamage;
 
     private void OnEnable()
     {
@@ -27,11 +27,11 @@ public class HealthFeedback : AddonBehaviour<Health>
 
     private void OnDamage(int amount, Health health)
     {
-        if(onDamage.IsValid()) onDamage.Instantiate(transform);
+        onDamage.Execute(transform);
     }
 
     private void OnDeath(Health health)
     {
-        if(onDeath.IsValid()) onDeath.Instantiate(transform);
+        onDeath.Execute(transform);
     }
 }
