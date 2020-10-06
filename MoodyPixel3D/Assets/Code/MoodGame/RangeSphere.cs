@@ -107,7 +107,6 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         seq.Insert(0f, DOTween.To(() => _currentRotationVelocity, (x) => _currentRotationVelocity = x, _minEulerRotation, duration * _velocityDurationMultiplier.GetValue(appearing)).SetEase(_ease));
         seq.SetUpdate(true);
         _tween = seq;
-        FMODUnity.RuntimeManager.PlayOneShotAttached("event:/Player/New Event", this.gameObject);
         return seq;
     }
 

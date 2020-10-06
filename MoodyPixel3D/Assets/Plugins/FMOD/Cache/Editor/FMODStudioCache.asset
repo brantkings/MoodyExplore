@@ -74,7 +74,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.strings.bank
   Name: Master.strings
-  lastModified: 637375233288369511
+  lastModified: 637375274776740479
   LoadResult: 0
   FileSizes:
   - Name: 
@@ -122,7 +122,7 @@ MonoBehaviour:
   - {fileID: 2190200171302275168}
   StringsBanks:
   - {fileID: -2438602080190283409}
-  stringsBankWriteTime: 637375233288369511
+  stringsBankWriteTime: 637375274776740479
   cacheVersion: 5
 --- !u!114 &2190200171302275168
 MonoBehaviour:
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.bank
   Name: Master
-  lastModified: 637375233288299498
+  lastModified: 637375274776660497
   LoadResult: 0
   FileSizes: []
   Exists: 1
@@ -182,9 +182,9 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 1
   Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
+  MinDistance: 0
+  MaxDistance: 50
+  Length: 1000
 --- !u!114 &5540834076268767742
 MonoBehaviour:
   m_ObjectHideFlags: 0
