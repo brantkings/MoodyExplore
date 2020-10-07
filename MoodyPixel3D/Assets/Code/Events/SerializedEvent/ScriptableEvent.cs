@@ -31,7 +31,7 @@ public static class ScriptableEventExtensions
     {
         if(collection != null)
         {
-            foreach(ScriptableEvent evt in collection) evt.Execute(where);
+            foreach(ScriptableEvent evt in collection) if(evt != null) evt.Execute(where);
         }
     }
 
@@ -39,7 +39,7 @@ public static class ScriptableEventExtensions
     {
         if(collection != null)
         {
-            foreach(ScriptableEvent evt in collection) evt.Execute(where);
+            foreach(ScriptableEvent evt in collection) if(evt != null) evt.Execute(where);
         }
     }
 }
