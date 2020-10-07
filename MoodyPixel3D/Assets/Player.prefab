@@ -2219,7 +2219,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: faff409dd0d90be428ac3b9bf2f45416, type: 2}
   - {fileID: 11400000, guid: 363c841ba86c05d44ace22d566699bbb, type: 2}
   - {fileID: 11400000, guid: 99922a7655ca5b541a7df8c8a9d65949, type: 2}
-  - {fileID: 11400000, guid: 6f0787220c707994d8d2f1fa3c0053b5, type: 2}
+  - {fileID: 11400000, guid: bd9910f472f3b084a9bd473df9976343, type: 2}
   _canvas: {fileID: 1348723331549321439}
   _canvasGroup: {fileID: 7658221994546802168}
   canvasGroupFadeDuration: 0.45
