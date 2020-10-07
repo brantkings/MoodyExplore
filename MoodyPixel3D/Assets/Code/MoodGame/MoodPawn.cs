@@ -51,6 +51,8 @@ public class MoodPawn : MonoBehaviour
 
     public delegate void PawnEvent();
 
+    private HashSet<MoodStance> _currentStances;
+
 
     public Vector3 Position => mover.Position;
     
@@ -103,6 +105,7 @@ public class MoodPawn : MonoBehaviour
     }
 
 
+
     private void Start()
     {
         _stamina = maxStamina;
@@ -110,10 +113,23 @@ public class MoodPawn : MonoBehaviour
         _wasThreatened = IsThreatened();
     }
 
+    private void OnGUI() 
+    {
+        if(damageTeam == DamageTeam.Neutral)
+        {
+            string stances = "";
+            foreach(var st in Stances)
+            {
+                stances += st.name;
+                stances += " ";
+            }
+            GUI.Label(new Rect(50,Screen.height - 100, 100, 100), string.Format("Current stances {0}: {1}", name, stances));
+        }
+    }
+
     private void Update()
     {
-        float staminaRecovery = IsMoving() ? staminaRecoveryMoving : staminaRecoveryIdle; 
-        RecoverStamina(staminaRecovery, Time.deltaTime);
+        RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
 
         //Direction = _directionTarget;
         Vector3 forward = mover.transform.forward;
@@ -154,6 +170,62 @@ public class MoodPawn : MonoBehaviour
     public MoodSkill CurrentlyUsingSkill()
     {
         return _currentSkill;
+    }
+    #endregion
+
+    #region Stances
+
+    private HashSet<MoodStance> Stances
+    {
+        get
+        {
+            if(_currentStances == null) _currentStances = new HashSet<MoodStance>();
+            return _currentStances;
+        }
+    }
+    
+    public bool AddStance(MoodStance stance)
+    {
+        return Stances.Add(stance);
+    }
+
+    public bool ToggleStance(MoodStance stance)
+    {
+        if(Stances.Contains(stance)) return Stances.Remove(stance);
+        else return Stances.Add(stance);
+    }
+
+
+    public bool RemoveStance(MoodStance stance)
+    {
+        return Stances.Remove(stance);
+    }
+
+    public bool HasStance(MoodStance stance)
+    {
+        return Stances.Contains(stance);
+    }
+
+    public bool HasAnyStances(bool ifEmpty = true, params MoodStance[] stances)
+    {
+        if(stances == null || stances.Length == 0) return ifEmpty;
+
+        foreach(var st in stances)
+        {
+            if(HasStance(st)) return true;
+        }
+        return false;
+    }
+
+    public bool HasAllStances(bool ifEmpty = false, params MoodStance[] stances)
+    {
+        if(stances == null || stances.Length == 0) return ifEmpty;
+
+        foreach(var st in stances)
+        {
+            if(!HasStance(st)) return false;
+        }
+        return true;
     }
     #endregion
 
@@ -357,6 +429,17 @@ public class MoodPawn : MonoBehaviour
     #endregion
     
     #region Stamina
+
+    private float GetCurrentStaminaRecoverValue()
+    {
+        bool isMoving = IsMoving();
+        float value = isMoving ? staminaRecoveryMoving : staminaRecoveryIdle;
+        foreach(MoodStance stance in Stances)
+        {
+            stance.ModifyStamina(ref value, isMoving);
+        }
+        return value;
+    }
 
     private void RecoverStamina(float recovery, float timeDelta)
     {

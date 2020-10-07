@@ -158,9 +158,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onDeath:
-    prefab: {fileID: 4534425579592918402, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
+  - {fileID: 11400000, guid: 13d37aecf79268f44aad6fe61764a389, type: 2}
   onDamage:
-    prefab: {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &5645552138947826779
 GameObject:
   m_ObjectHideFlags: 0
