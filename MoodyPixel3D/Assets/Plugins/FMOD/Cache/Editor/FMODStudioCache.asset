@@ -101,11 +101,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.strings.bank
   Name: Master.strings
-  lastModified: 637376953922801277
+  lastModified: 637377493079191138
   LoadResult: 0
   FileSizes:
   - Name: 
-    Value: 1074
+    Value: 1112
   Exists: 1
 --- !u!114 &-4187000005544225378
 MonoBehaviour:
@@ -167,8 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: event:/Player/New Event
   guid: fa8779deeb34ae4ca54c7b365ef85475
-  Banks:
-  - {fileID: 1765560307829669672}
+  Banks: []
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
@@ -192,19 +191,43 @@ MonoBehaviour:
   - {fileID: -4503151341007156806}
   - {fileID: 1765560307829669672}
   EditorEvents:
-  - {fileID: -1271247491915676809}
   - {fileID: -7501129241442559270}
   - {fileID: -4512861868389683591}
   - {fileID: -2538557084190135575}
   - {fileID: -5979776178134569736}
+  - {fileID: 3362231583267003026}
+  - {fileID: 593597030797816300}
   EditorParameters:
   - {fileID: 5998920598663987540}
   MasterBanks:
   - {fileID: 1765560307829669672}
   StringsBanks:
   - {fileID: -4503151341007156806}
-  stringsBankWriteTime: 637376953922801277
+  stringsBankWriteTime: 637377493079191138
   cacheVersion: 5
+--- !u!114 &593597030797816300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Interacting
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Interacting
+  guid: 4c47f175c5962b4fa52bdbc6310f6a6e
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 6
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &1765560307829669672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,7 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.bank
   Name: Master
-  lastModified: 637376953922731317
+  lastModified: 637377493079111183
   LoadResult: 0
   FileSizes: []
   Exists: 1
@@ -243,6 +266,29 @@ MonoBehaviour:
   - Name: 
     Value: 754
   Exists: 1
+--- !u!114 &3362231583267003026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Threat
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Threat
+  guid: 355aa1e74da9514294441d05222dd33d
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 3297
 --- !u!114 &5998920598663987540
 MonoBehaviour:
   m_ObjectHideFlags: 0
