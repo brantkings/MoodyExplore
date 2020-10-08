@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   staminaOverTimeIdle:
     add: 0
-    multiplier: 0
+    multiplier: 0.8
   staminaOverTimeMoving:
-    add: -5
+    add: -1
     multiplier: 0
+  movementVelocity:
+    add: 0
+    multiplier: 0.5
+  _stanceAnimParamBool: LiftWeapon

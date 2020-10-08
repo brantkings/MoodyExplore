@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &2298531800503082148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5929697886324249627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ae1b4d14eded76458e8e00dd15f945f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  headTransform: {fileID: 540178418064717107}
+  anim: {fileID: 1144328510193554651}
+--- !u!114 &8111539321747548930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5929697886324249627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2172d847bd090f947b6f764e6d652c14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ikEnabled: 0
+  rightHand: {fileID: 7803441157319928867}
+  leftHand: {fileID: 9115353958514017152}
+  rightHandStartPosition: {fileID: 0}
+  leftHandStartPosition: {fileID: 0}
+  anim: {fileID: 1144328510193554651}
 --- !u!1 &7273907392517274814
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,8 +42,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1972091802758274956}
   - component: {fileID: 1542898206696380414}
-  - component: {fileID: 541241167625710778}
-  - component: {fileID: 3543173093136315519}
   - component: {fileID: 7212984170368144716}
   m_Layer: 0
   m_Name: HumanoidFirstModel_Render
@@ -58,38 +88,6 @@ MonoBehaviour:
     _id: SpeedMultiplierRun
   speedAnimationWalk: 1
   speedAnimationRun: 1
---- !u!114 &541241167625710778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7273907392517274814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ae1b4d14eded76458e8e00dd15f945f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  headTransform: {fileID: 540178418064717107}
-  anim: {fileID: 1144328510193554651}
---- !u!114 &3543173093136315519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7273907392517274814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2172d847bd090f947b6f764e6d652c14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ikEnabled: 0
-  rightHand: {fileID: 7803441157319928867}
-  leftHand: {fileID: 9115353958514017152}
-  rightHandStartPosition: {fileID: 0}
-  leftHandStartPosition: {fileID: 0}
-  anim: {fileID: 1144328510193554651}
 --- !u!114 &7212984170368144716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,6 +193,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: a50308a4d420e4846ba3b607b3233a1b, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
+--- !u!1 &5929697886324249627 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
+  m_PrefabInstance: {fileID: 6812799576306673994}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6413500128816893601 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}

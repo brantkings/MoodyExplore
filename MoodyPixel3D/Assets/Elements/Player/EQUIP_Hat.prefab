@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   part: 1
   whereToAttach: {fileID: 0}
+  cancelSelfRotation: 1
   localPosition: {x: 0, y: 0, z: 0}
   attachOnStart: 0
 --- !u!1001 &4221357533468619100

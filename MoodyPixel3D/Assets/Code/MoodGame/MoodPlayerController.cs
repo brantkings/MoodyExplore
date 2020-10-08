@@ -45,6 +45,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     public MoodCheckHUD checkHud;
 
     public Animator animatorCamera;
+    public ScriptableEvent[] onCameraOut;
+    public ScriptableEvent[] onCameraIn;
     public string animatorCameraCommandBoolean;
     public CinemachineBlendListCamera cameraBlendList;
 
@@ -323,10 +325,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         });
     }
     
-    private void SetCommandMode(bool set)
+
+    private bool? _wasInCommand = null;
+    private void SetCommandMode(bool set, bool feedback = true)
     {
-        animatorCamera.SetBool(animatorCameraCommandBoolean, set);
-        //_backToCameraControl.enabled = !set;
+        if(_wasInCommand != set)
+        {
+            animatorCamera.SetBool(animatorCameraCommandBoolean, set);
+            if(feedback)
+            {
+                if(set) onCameraOut.Execute(transform);
+                else onCameraIn.Execute(transform);
+            }
+
+            //_backToCameraControl.enabled = !set;  
+        }
+
+        _wasInCommand = set;
     }
     
     private Vector3 ToWorldPosition(Vector3 vec)

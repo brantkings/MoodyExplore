@@ -74,7 +74,7 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     private void Start()
     {
         _currentRotationVelocity = _minEulerRotation;
-        HideDuration(0f);
+        HideDuration(0f, false);
     }
 
     public override void Show(Properties param)
@@ -82,11 +82,11 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         ShowDuration(param, _duration);
     }
 
-    public void ShowDuration(Properties param, float duration)
+    public void ShowDuration(Properties param, float duration, bool feedback = true)
     {
         SetRadius(0f);
         TweenRadius(duration, param.radius, true, showColor);
-        onRangeEnlarge.Execute(transform);
+        if(feedback) onRangeEnlarge.Execute(transform);
     }
     
     public override void Hide()
@@ -94,10 +94,10 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         HideDuration(_duration);
     }
     
-    public void HideDuration(float duration)
+    public void HideDuration(float duration, bool feedback = false)
     {
         TweenRadius(duration, _toRotate.lossyScale.x * 1.05f, false, hideColor);
-        onRangeShrink.Execute(transform);
+        if(feedback) onRangeShrink.Execute(transform);
     }
 
     private void Update()
