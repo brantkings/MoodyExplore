@@ -36,12 +36,23 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public event MoodSkillEvent OnExecute;
     public event MoodSkillEvent OnPreview;
+
     
     [SerializeField]
     private Texture2D _icon;
     
     [SerializeField]
     private string _name;
+
+    
+    [SerializeField]
+    private MoodStance[] needs;
+    [SerializeField]
+    private bool consumeNeededStances;
+    [SerializeField]
+    private MoodStance[] toConsume;
+    [SerializeField]
+    private MoodStance[] restrictions;
 
     public Texture2D GetIcon()
     {
@@ -55,7 +66,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
-        return true;
+        return pawn.HasAllStances(true, needs) && !pawn.HasAnyStances(false, restrictions);
     }
 
     /// <summary>
@@ -73,7 +84,14 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         {
             yield return new WaitForSecondsRealtime(duration);
         }
+        ConsumeStances(pawn);
         pawn.UnmarkUsingSkill(this);
+    }
+
+    protected void ConsumeStances(MoodPawn pawn)
+    {
+        foreach(var stance in toConsume) pawn.RemoveStance(stance);
+        if(consumeNeededStances) foreach(var stance in needs) pawn.RemoveStance(stance);
     }
 
     protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection)
