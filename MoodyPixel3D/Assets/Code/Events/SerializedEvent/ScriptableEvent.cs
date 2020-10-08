@@ -25,6 +25,18 @@ public abstract class ScriptableEvent : ScriptableObject
     #endif
 }
 
+
+public abstract class ScriptableEvent<T> : ScriptableEvent
+{
+    public override void Execute(Transform where)
+    {
+        ExecuteReturn(where);
+    }
+
+    public abstract T ExecuteReturn(Transform where);
+
+}
+
 public static class ScriptableEventExtensions
 {
     public static void Execute(this ScriptableEvent[] collection, Transform where)
