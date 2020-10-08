@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: SND_CircleEnlarge
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  oneShotString: event:/Player/New Event
+  oneShotString: event:/UI/Option

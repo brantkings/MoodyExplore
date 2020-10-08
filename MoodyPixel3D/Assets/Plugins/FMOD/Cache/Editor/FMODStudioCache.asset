@@ -1,6 +1,93 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7368799566476940723
+--- !u!114 &-8931012835596436147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/FMOD Bank/Desktop/Master.bank
+  Name: Master
+  lastModified: 637375249946403993
+  LoadResult: 0
+  FileSizes: []
+  Exists: 1
+--- !u!114 &-7501129241442559270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/Movement/Step
+  m_EditorClassIdentifier: 
+  Path: event:/Player/Movement/Step
+  guid: 0e2983b393e6ae43b8971ce1ad46fa15
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &-5979776178134569736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ambience/Level 1/Static
+  m_EditorClassIdentifier: 
+  Path: event:/Ambience/Level 1/Static
+  guid: 936404685105e44d90ddc8d199b07b8a
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 54000
+--- !u!114 &-4512861868389683591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Option
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Option
+  guid: 6bdf2eb2bd87ac409e0cab63e148349a
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
+--- !u!114 &-4503151341007156806
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14,13 +101,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.strings.bank
   Name: Master.strings
-  lastModified: 637375224840989100
+  lastModified: 637376953922801277
   LoadResult: 0
   FileSizes:
   - Name: 
-    Value: 754
+    Value: 1074
   Exists: 1
---- !u!114 &-6960868684345550780
+--- !u!114 &-4187000005544225378
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29,18 +116,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Desktop/Master.bank
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/New Event
   m_EditorClassIdentifier: 
-  Path: G:/_PROJECTS/MoodyExplore/MoodyPixel3D/Assets/FMOD Bank/Desktop/Master.bank
-  Name: Desktop/Master
-  lastModified: 637375232125394424
-  LoadResult: 0
-  FileSizes:
-  - Name: 
-    Value: 56256
-  Exists: 0
---- !u!114 &-3820881666812446373
+  Path: event:/Player/New Event
+  guid: fa8779deeb34ae4ca54c7b365ef85475
+  Banks:
+  - {fileID: -8931012835596436147}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 50
+  Length: 1000
+--- !u!114 &-2538557084190135575
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -49,18 +139,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.strings.bank
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/Movement/Breath
   m_EditorClassIdentifier: 
-  Path: G:/_PROJECTS/MoodyExplore/MoodyPixel3D/Assets/FMOD Bank/Desktop/Master.strings.bank
-  Name: Master.strings
-  lastModified: 637375232125474375
-  LoadResult: 0
-  FileSizes:
-  - Name: 
-    Value: 754
-  Exists: 1
---- !u!114 &-2438602080190283409
+  Path: event:/Player/Movement/Breath
+  guid: 77c5ea91c92516429a44a30314df7c6d
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 2200
+  Length: 0
+--- !u!114 &-1271247491915676809
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,37 +162,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.strings.bank
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/New Event
   m_EditorClassIdentifier: 
-  Path: Assets/FMOD Bank/Desktop/Master.strings.bank
-  Name: Master.strings
-  lastModified: 637375274776740479
-  LoadResult: 0
-  FileSizes:
-  - Name: 
-    Value: 754
-  Exists: 1
---- !u!114 &-1052354402999743917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Desktop/Master.strings.bank
-  m_EditorClassIdentifier: 
-  Path: G:/_PROJECTS/MoodyExplore/MoodyPixel3D/Assets/FMOD Bank/Desktop/Master.strings.bank
-  Name: Desktop/Master.strings
-  lastModified: 637375232125474375
-  LoadResult: 0
-  FileSizes:
-  - Name: 
-    Value: 754
-  Exists: 0
+  Path: event:/Player/New Event
+  guid: fa8779deeb34ae4ca54c7b365ef85475
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 50
+  Length: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,18 +189,23 @@ MonoBehaviour:
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
   EditorBanks:
-  - {fileID: -2438602080190283409}
-  - {fileID: 2190200171302275168}
+  - {fileID: -4503151341007156806}
+  - {fileID: 1765560307829669672}
   EditorEvents:
-  - {fileID: 3120119080184321512}
-  EditorParameters: []
+  - {fileID: -1271247491915676809}
+  - {fileID: -7501129241442559270}
+  - {fileID: -4512861868389683591}
+  - {fileID: -2538557084190135575}
+  - {fileID: -5979776178134569736}
+  EditorParameters:
+  - {fileID: 5998920598663987540}
   MasterBanks:
-  - {fileID: 2190200171302275168}
+  - {fileID: 1765560307829669672}
   StringsBanks:
-  - {fileID: -2438602080190283409}
-  stringsBankWriteTime: 637375274776740479
+  - {fileID: -4503151341007156806}
+  stringsBankWriteTime: 637376953922801277
   cacheVersion: 5
---- !u!114 &2190200171302275168
+--- !u!114 &1765560307829669672
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,11 +219,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.bank
   Name: Master
-  lastModified: 637375274776660497
+  lastModified: 637376953922731317
   LoadResult: 0
   FileSizes: []
   Exists: 1
---- !u!114 &2384508884559854266
+--- !u!114 &1926067537920440557
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,17 +233,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
+  m_Name: bank:/Master.strings.bank
   m_EditorClassIdentifier: 
-  Path: G:/_PROJECTS/MoodyExplore/MoodyPixel3D/Assets/FMOD Bank/Desktop/Master.bank
-  Name: Master
-  lastModified: 637375232125394424
+  Path: Assets/FMOD Bank/Desktop/Master.strings.bank
+  Name: Master.strings
+  lastModified: 637375249946493940
   LoadResult: 0
   FileSizes:
   - Name: 
-    Value: 56256
+    Value: 754
   Exists: 1
---- !u!114 &3120119080184321512
+--- !u!114 &5998920598663987540
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -171,58 +252,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Player/New Event
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Intensity Breath
   m_EditorClassIdentifier: 
-  Path: event:/Player/New Event
-  guid: fa8779deeb34ae4ca54c7b365ef85475
-  Banks:
-  - {fileID: 2190200171302275168}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 50
-  Length: 1000
---- !u!114 &5540834076268767742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/FMOD Bank/Desktop/Master.bank
-  Name: Master
-  lastModified: 637375224840949137
-  LoadResult: 0
-  FileSizes: []
+  Name: Intensity Breath
+  Min: 0
+  Max: 100
+  Default: 0
+  ID:
+    data1: 3235881986
+    data2: 3111688039
   Exists: 1
---- !u!114 &8696040696902833453
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Player/New Event
-  m_EditorClassIdentifier: 
-  Path: event:/Player/New Event
-  guid: fa8779deeb34ae4ca54c7b365ef85475
-  Banks:
-  - {fileID: 2384508884559854266}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
