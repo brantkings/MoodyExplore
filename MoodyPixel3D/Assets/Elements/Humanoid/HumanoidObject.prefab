@@ -160,7 +160,7 @@ MonoBehaviour:
   onDeath:
   - {fileID: 11400000, guid: 13d37aecf79268f44aad6fe61764a389, type: 2}
   onDamage:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: f72bc4dfa1c57404aa59c6396c5d5795, type: 2}
 --- !u!1 &5645552138947826779
 GameObject:
   m_ObjectHideFlags: 0

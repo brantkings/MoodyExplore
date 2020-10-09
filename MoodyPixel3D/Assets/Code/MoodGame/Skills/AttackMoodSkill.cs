@@ -15,6 +15,10 @@ namespace Code.MoodGame.Skills
         public float attackCapsuleHeight = 1.5f;
         public LayerMask targetLayer;
 
+        public SoundEffect onStartAttack;
+        public SoundEffect onExecuteAttack;
+        public SoundEffect onEndAttack;
+
         [Space] 
         public float preTime = 0.5f;
         public float postTime = 1f;
@@ -59,14 +63,17 @@ namespace Code.MoodGame.Skills
             pawn.StartThreatening(skillDirection);
             ConsumeStances(pawn);
             pawn.StartSkillAnimation(this);
+            onStartAttack.ExecuteIfNotNull(pawn.transform);
             yield return new WaitForSeconds(preTime);
 
             float executingTime = ExecuteEffect(pawn, skillDirection);
             DispatchExecuteEvent(pawn, skillDirection);
+            onExecuteAttack.ExecuteIfNotNull(pawn.transform);
             yield return new WaitForSecondsRealtime(executingTime);
             
             pawn.StopThreatening();
             pawn.FinishSkillAnimation(this);
+            onEndAttack.ExecuteIfNotNull(pawn.transform);
             yield return new WaitForSeconds(postTime);
             pawn.UnmarkUsingSkill(this);
         }

@@ -30,6 +30,9 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
+  onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
+  onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
+  onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
   preTime: 0.5
   postTime: 1
   addedStancesWithAttack: []

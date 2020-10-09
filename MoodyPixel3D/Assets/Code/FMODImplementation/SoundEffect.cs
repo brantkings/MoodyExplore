@@ -60,6 +60,12 @@ public static class SoundEffectInstanceUtils
     {
         return SoundEffectInstance.IsNotNullAndPlaying(sf);
     }
+
+    public static SoundEffectInstance ExecuteIfNotNull(this SoundEffect sf, Transform where)
+    {
+        if(sf != null) return sf.ExecuteReturn(where);
+        else return null;
+    }
 }
 
 [CreateAssetMenu(menuName = "Long Hat House/Sound/Sound Effect", fileName = "SND_", order = 0)]

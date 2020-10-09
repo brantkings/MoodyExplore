@@ -19,8 +19,15 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     public float postTime = 1f;
     private RangeTarget.Properties _targetProp;
 
+    
     [SerializeField]
     private bool threatens;
+
+    
+    public SoundEffect onStartInstantiate;
+    public SoundEffect onExecuteInstantiate;
+    public SoundEffect onEndInstantiate;
+
 
     private RangeTarget.Properties TargetProperties =>
         _targetProp ??= new RangeTarget.Properties()
@@ -62,6 +69,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         pawn.MarkUsingSkill(this);
         pawn.SetHorizontalDirection(skillDirection);
         pawn.StartSkillAnimation(this);
+        onStartInstantiate.ExecuteIfNotNull(pawn.transform);
         if(threatens) pawn.StartThreatening(skillDirection);
         yield return new WaitForSeconds(preTime);
 
@@ -70,8 +78,10 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         
         pawn.FinishSkillAnimation(this);
         if(threatens) pawn.StopThreatening();
+        onExecuteInstantiate.ExecuteIfNotNull(pawn.transform);
         yield return new WaitForSeconds(postTime);
         pawn.UnmarkUsingSkill(this);
+        onEndInstantiate.ExecuteIfNotNull(pawn.transform);
     }
 
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)

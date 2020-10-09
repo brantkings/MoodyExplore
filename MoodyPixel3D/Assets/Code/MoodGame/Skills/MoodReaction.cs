@@ -12,6 +12,8 @@ public class MoodReaction : ScriptableObject
 
     public string animationTrigger;
 
+    public SoundEffect sfx;
+
     public virtual bool CanReact(MoodPawn pawn)
     {
         return pawn.HasStamina(cost);
@@ -25,5 +27,6 @@ public class MoodReaction : ScriptableObject
         {
             pawn.animator.SetTrigger(animationTrigger);
         }
+        sfx.ExecuteIfNotNull(pawn.transform);
     }
 }
