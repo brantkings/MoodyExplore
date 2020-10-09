@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.strings.bank
   Name: Master.strings
-  lastModified: 637378417880654341
+  lastModified: 637378455728426395
   LoadResult: 0
   FileSizes:
   - Name: 
@@ -140,9 +140,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.bank
   Name: Master
-  lastModified: 637378417880574391
+  lastModified: 637378455728346442
   LoadResult: 0
   FileSizes: []
+  Exists: 1
+--- !u!114 &-4100209299523969564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Rotation/Switch
+  m_EditorClassIdentifier: 
+  Name: Switch
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 0
+--- !u!114 &-3916252275514166993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/SlowMotion Script/SlowMotion
+  m_EditorClassIdentifier: 
+  Name: SlowMotion
+  Min: 0
+  Max: 1
+  Default: 1
+  ID:
+    data1: 0
+    data2: 0
   Exists: 1
 --- !u!114 &-3665339796914579131
 MonoBehaviour:
@@ -184,7 +224,7 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 3960515305720149941}
+  - {fileID: 8730207016765169675}
   MinDistance: 0
   MaxDistance: 35
   Length: 2522
@@ -311,10 +351,30 @@ MonoBehaviour:
   Is3D: 0
   IsOneShot: 0
   Parameters:
-  - {fileID: -6465314258482558996}
+  - {fileID: -3916252275514166993}
   MinDistance: 0
   MaxDistance: 0
   Length: 0
+--- !u!114 &-797169968626506179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/SlowMotion Script/SlowMotion
+  m_EditorClassIdentifier: 
+  Name: SlowMotion
+  Min: 0
+  Max: 1
+  Default: 1
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 0
 --- !u!114 &-708622266866250477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,7 +454,7 @@ MonoBehaviour:
   - {fileID: -4223190081597589372}
   StringsBanks:
   - {fileID: -8444114382837187191}
-  stringsBankWriteTime: 637378417880654341
+  stringsBankWriteTime: 637378455728426395
   cacheVersion: 5
 --- !u!114 &311786458849974304
 MonoBehaviour:
@@ -742,6 +802,46 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1000
+--- !u!114 &5783199099006725327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Rotation/Switch
+  m_EditorClassIdentifier: 
+  Name: Switch
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 0
+--- !u!114 &6540395083939051746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/SlowMotion Script/SlowMotion
+  m_EditorClassIdentifier: 
+  Name: SlowMotion
+  Min: 0
+  Max: 1
+  Default: 1
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 0
 --- !u!114 &6885832989866532005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -788,3 +888,23 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 2200
   Length: 0
+--- !u!114 &8730207016765169675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Rotation/Switch
+  m_EditorClassIdentifier: 
+  Name: Switch
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1

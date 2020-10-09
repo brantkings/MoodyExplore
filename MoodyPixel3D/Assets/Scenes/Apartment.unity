@@ -8980,6 +8980,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2026666750789948610, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
+      propertyPath: onRangeSphere
+      value: 
+      objectReference: {fileID: 11400000, guid: 58fc34be669529f4a97092705ff788c9, type: 2}
     - target: {fileID: 2170990508782712487, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
