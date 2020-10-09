@@ -32,6 +32,19 @@ MonoBehaviour:
   rightHandStartPosition: {fileID: 0}
   leftHandStartPosition: {fileID: 0}
   anim: {fileID: 1144328510193554651}
+--- !u!114 &1515388730033542578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5929697886324249627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6bf2903b2124a44b97364f30008e5cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfx: {fileID: 11400000, guid: 3df4688b73f07194dae95f7e35917ab8, type: 2}
 --- !u!1 &7273907392517274814
 GameObject:
   m_ObjectHideFlags: 0
