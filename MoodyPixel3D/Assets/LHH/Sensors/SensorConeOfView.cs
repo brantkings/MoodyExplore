@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 namespace LHH.Sensors
 {
@@ -26,20 +27,31 @@ namespace LHH.Sensors
             };
         }
 
-        public override void SetSensorLevel(float level)
+        protected override void ApplySensorLevel(float level)
         {
             levelsSetup.CalculateLerpedSetup(level, ref _currentInterpolatedLevel);
 
+            if(_currentInterpolatedLevel.maxAngle <= 0)
+            {
+                leftLineFeedback.gameObject.SetActive(false);
+                rightLineFeedback.gameObject.SetActive(false);
+            }
+            else
+            {
+                leftLineFeedback.gameObject.SetActive(true);
+                rightLineFeedback.gameObject.SetActive(true);
+            }
+
             if(leftLineFeedback != null)
             {
-                leftLineFeedback.forward = transform.forward;
-                leftLineFeedback.Rotate(0, -_currentInterpolatedLevel.maxAngle, 0);
+                leftLineFeedback.DOKill();
+                leftLineFeedback.DOLocalRotate(new Vector3(0, -_currentInterpolatedLevel.maxAngle, 0), .2f, RotateMode.Fast);
             }
 
             if(rightLineFeedback != null)
             {
-                rightLineFeedback.forward = rightLineFeedback.forward;
-                rightLineFeedback.Rotate(0, _currentInterpolatedLevel.maxAngle, 0);
+                rightLineFeedback.DOKill();
+                rightLineFeedback.DOLocalRotate(new Vector3(0, _currentInterpolatedLevel.maxAngle, 0), .2f, RotateMode.Fast);
             }
         }
 

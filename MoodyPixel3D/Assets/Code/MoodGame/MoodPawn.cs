@@ -185,6 +185,17 @@ public class MoodPawn : MonoBehaviour
             return _currentStances;
         }
     }
+
+    public IEnumerable<MoodReaction> GetActiveReactions()
+    {
+        foreach(MoodStance stance in Stances)
+        {
+            foreach(MoodReaction react in stance.GetReactions())
+            {
+                yield return react;
+            }
+        }
+    }
     
     public bool AddStance(MoodStance stance)
     {

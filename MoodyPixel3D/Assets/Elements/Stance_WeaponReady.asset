@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   staminaOverTimeIdle:
     add: 0
-    multiplier: 0.8
+    multiplier: 0.25
   staminaOverTimeMoving:
-    add: -1
-    multiplier: 0
+    add: 0
+    multiplier: 0.1
   movementVelocity:
     add: 0
     multiplier: 0.5
+  _reactions: []
+  _hasTimeLimit: 0
+  _timeLimit: 0
   _stanceAnimParamBool: LiftWeapon

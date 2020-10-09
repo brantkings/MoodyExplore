@@ -20,6 +20,8 @@ namespace Code.MoodGame.Skills
         public float postTime = 1f;
         private RangeTarget.Properties _targetProp;
 
+        public MoodStance[] addedStancesWithAttack;
+
         private RangeTarget.Properties TargetProperties =>
             _targetProp ??= new RangeTarget.Properties()
             {
@@ -50,11 +52,12 @@ namespace Code.MoodGame.Skills
             Target = pawn.FindTarget(direction, attackRange);
         }
 
-        public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
+        public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
             pawn.MarkUsingSkill(this);
             pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection);
+            ConsumeStances(pawn);
             pawn.StartSkillAnimation(this);
             yield return new WaitForSeconds(preTime);
 
@@ -82,6 +85,10 @@ namespace Code.MoodGame.Skills
             {
                 t.GetComponentInChildren<Health>()?.Damage(damage, pawn.DamageTeam);
             }
+
+            if(addedStancesWithAttack != null)
+                foreach(MoodStance stance in addedStancesWithAttack)    
+                    pawn.AddStance(stance);
 
             return base.ExecuteEffect(pawn, skillDirection);
         }

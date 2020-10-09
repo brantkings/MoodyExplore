@@ -83,7 +83,8 @@ public class MoodCommandController : MonoBehaviour
         {
             foreach (OptionTuple opt in _options)
             {
-                PaintOption(opt, opt.skill.CanExecute(pawn, direction));
+                bool canExecute = opt.skill.CanExecute(pawn, direction);
+                PaintOption(opt, canExecute);
             }
         }
     }
@@ -108,14 +109,14 @@ public class MoodCommandController : MonoBehaviour
         _activated = false;
     }
 
-    private MoodSkill GetCurrentSkill()
+    public MoodSkill GetCurrentSkill()
     {
         return _equippedSkills[_currentOption];
     }
 
     public IEnumerator ExecuteCurrent(MoodPawn pawn, Vector3 direction)
     {
-        yield return GetCurrentSkill().Execute(pawn, direction);
+        yield return GetCurrentSkill().ExecuteRoutine(pawn, direction);
     }
 
     public void MoveSelected(int add)
@@ -176,9 +177,14 @@ public class MoodCommandController : MonoBehaviour
         PaintOptions(pawn, direction);
     }
 
-
-    public bool CanExecuteCurrent(MoodPawn pawn, Vector3 where)
+    public IEnumerable<MoodSkill> GetMoodSkills()
     {
-        return GetCurrentSkill().CanExecute(pawn, where);
+        if (_options != null)
+        {
+            foreach (OptionTuple opt in _options)
+            {
+                yield return opt.skill;
+            }
+        }
     }
 }

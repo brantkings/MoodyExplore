@@ -41,7 +41,7 @@ public class Health : MonoBehaviour {
         return _lifeNow > 0;
     }
 
-    public bool Damage(int amount, DamageTeam team)
+    public virtual bool Damage(int amount, DamageTeam team, GameObject origin = null)
     {
         if (CanDamage(team))
         {
@@ -53,9 +53,9 @@ public class Health : MonoBehaviour {
         return false;
     }
 
-    public void Kill(DamageTeam origin = DamageTeam.Neutral)
+    public void Kill(DamageTeam team = DamageTeam.Neutral, GameObject origin = null)
     {
-        Damage(maxLife, origin);
+        Damage(maxLife, team, origin);
     }
 
     private bool CanDamage(DamageTeam from)

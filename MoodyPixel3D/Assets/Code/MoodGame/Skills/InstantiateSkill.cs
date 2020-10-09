@@ -57,7 +57,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         Target = pawn.FindTarget(direction, range);
     }
 
-    public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
+    public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
         pawn.MarkUsingSkill(this);
         pawn.SetHorizontalDirection(skillDirection);

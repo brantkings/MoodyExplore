@@ -30,6 +30,18 @@ ModelImporter:
   - first:
       74: -3456707546342655602
     second: DudeArmature|LiftWeapon
+  - first:
+      74: -8536754411710366221
+    second: DudeArmature|LiftWeapon (1)
+  - first:
+      74: -3547782321320573189
+    second: DudeArmature|LiftWeapon (2)
+  - first:
+      74: -604199682375316993
+    second: DudeArmature|Defend
+  - first:
+      74: -4194194657327227043
+    second: DudeArmature|Defended
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -148,6 +160,64 @@ ModelImporter:
     - serializedVersion: 16
       name: DudeArmature|LiftWeapon
       takeName: DudeArmature|LiftWeapon
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: f4353c6696356b1438d2219ad51bd7be, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DudeArmature|Defend
+      takeName: DudeArmature|Defend
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: f4353c6696356b1438d2219ad51bd7be, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DudeArmature|Defended
+      takeName: DudeArmature|Defended
       internalID: 0
       firstFrame: 0
       lastFrame: 1

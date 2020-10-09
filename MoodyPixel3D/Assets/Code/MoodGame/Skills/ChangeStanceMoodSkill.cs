@@ -6,6 +6,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Mood/Skill/Change Stance")]
 public class ChangeStanceMoodSkill : StaminaCostMoodSkill
 {
+    [Header("Stance change")]
+    public float stanceChangeTime = 0f;
     public MoodStance[] toAdd;
     public MoodStance[] toToggle;
 
@@ -21,9 +23,13 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
         return changed;
     }
 
-    public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
+    protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
-        ChangeStances(pawn);
-        return base.Execute(pawn, skillDirection);
+        float cost = 0f;
+
+        if(ChangeStances(pawn)) 
+            cost = stanceChangeTime;
+
+        return base.ExecuteEffect(pawn, skillDirection) + cost;
     }
 }

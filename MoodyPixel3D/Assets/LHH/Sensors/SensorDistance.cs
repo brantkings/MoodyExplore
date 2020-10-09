@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 namespace LHH.Sensors
 {
@@ -25,22 +26,37 @@ namespace LHH.Sensors
             public float maxDistance;
         }
 
+        public Transform minRadiusFeedback;
+        public Transform maxRadiusFeedback;
+
         public SensorLevelSetupList<LevelSetup> levelsSetup;
 
         LevelSetup _currentInterpolatedLevel;
 
         protected override void Awake()
         {
-            levelsSetup.lerpFunction = (ref LevelSetup a, LevelSetup small, LevelSetup big, float factor) => {
+            levelsSetup.lerpFunction = (ref LevelSetup lerped, LevelSetup small, LevelSetup big, float factor) => {
 
-                a.minDistance = Mathf.Lerp(small.minDistance, big.minDistance, factor);
-                a.maxDistance = Mathf.Lerp(small.maxDistance, big.maxDistance, factor);
+                lerped.minDistance = Mathf.Lerp(small.minDistance, big.minDistance, factor);
+                lerped.maxDistance = Mathf.Lerp(small.maxDistance, big.maxDistance, factor);
             };
         }
 
-        public override void SetSensorLevel(float level)
+        protected override void ApplySensorLevel(float level)
         {  
             levelsSetup.CalculateLerpedSetup(level, ref _currentInterpolatedLevel);
+
+            if(minRadiusFeedback != null)
+            {
+                minRadiusFeedback.DOKill();
+                minRadiusFeedback.DOScale(_currentInterpolatedLevel.minDistance, 0.5f);
+            }
+
+            if (maxRadiusFeedback != null)
+            {
+                maxRadiusFeedback.DOKill();
+                maxRadiusFeedback.DOScale(_currentInterpolatedLevel.maxDistance, 0.5f);
+            }
         }
 
         // Update is called once per frame

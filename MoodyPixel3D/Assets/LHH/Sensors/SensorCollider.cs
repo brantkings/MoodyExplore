@@ -15,7 +15,7 @@ namespace LHH.Sensors
             base.Awake();
         }
 
-        public override void SetSensorLevel(float level)
+        protected override void ApplySensorLevel(float level)
         {
             _levelSettings.UpdateForSensorLevel(level);
         }

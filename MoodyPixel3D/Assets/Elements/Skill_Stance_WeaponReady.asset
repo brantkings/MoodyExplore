@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: Skill_Stance_WeaponReady
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Lift Weapon
+  _name: Toggle Stance
   needs: []
   consumeNeededStances: 0
   toConsume: []
   restrictions: []
-  _cost: 2
+  _shortcut: 118
+  _cost: 1
+  stanceChangeTime: 1
   toAdd: []
   toToggle:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}

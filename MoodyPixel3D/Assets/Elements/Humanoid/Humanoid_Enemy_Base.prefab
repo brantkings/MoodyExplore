@@ -171,7 +171,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mover: {fileID: 6543790190532030750}
   animator: {fileID: 4745266871561790116}
-  _lookAtControl: {fileID: 5312334800798554821}
   turningTime: 0.1
   height: 2
   pawnRadius: 0.5
@@ -197,9 +196,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onDeath:
-    prefab: {fileID: 0}
+  - {fileID: 0}
   onDamage:
-    prefab: {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &7398380335450163879
 GameObject:
   m_ObjectHideFlags: 0
@@ -809,17 +808,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1972091802758274956, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
   m_PrefabInstance: {fileID: 5637358446441330303}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5312334800798554821 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 541241167625710778, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
-  m_PrefabInstance: {fileID: 5637358446441330303}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3083267684393716417}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ae1b4d14eded76458e8e00dd15f945f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &4745266871561790116 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1144328510193554651, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
@@ -909,6 +897,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5637358447622213147}
     - target: {fileID: 4143015248171041201, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
+      propertyPath: toDestroy
+      value: 
+      objectReference: {fileID: 5637358447622213147}
+    - target: {fileID: 8801125704076035546, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
       propertyPath: toDestroy
       value: 
       objectReference: {fileID: 5637358447622213147}

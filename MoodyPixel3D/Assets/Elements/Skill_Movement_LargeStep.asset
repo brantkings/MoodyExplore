@@ -14,6 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Large Step
+  needs: []
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions:
+  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  _shortcut: 0
   _cost: 1
   minDistance: 0
   maxDistance: 5
