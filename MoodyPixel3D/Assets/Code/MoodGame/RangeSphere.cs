@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
 using UnityEngine;
 
@@ -54,9 +55,10 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
 
     
     [SerializeField]
-    private ScriptableEvent[] onRangeEnlarge;
-    [SerializeField]
-    private ScriptableEvent[] onRangeShrink;
+    private SoundEffect onRangeSphere;
+    /*[SerializeField]
+    private ScriptableEvent[] onRangeShrink;*/
+    private SoundEffectInstance onRangeSphereInstance;
 
     public Color showColor = new Color(0.5f,1f,0.5f,1);
     public Color hideColor = new Color(1,1,0,0);
@@ -86,7 +88,14 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     {
         SetRadius(0f);
         TweenRadius(duration, param.radius, true, showColor);
-        if(feedback) onRangeEnlarge.Execute(transform);
+        if(feedback)
+        {
+            if (onRangeSphereInstance.IsPlaying()) {
+                onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 1f);
+                onRangeSphereInstance.instance.start();
+            }
+            else onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
+        }
     }
     
     public override void Hide()
@@ -94,10 +103,10 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         HideDuration(_duration);
     }
     
-    public void HideDuration(float duration, bool feedback = false)
+    public void HideDuration(float duration, bool feedback = true)
     {
         TweenRadius(duration, _toRotate.lossyScale.x * 1.05f, false, hideColor);
-        if(feedback) onRangeShrink.Execute(transform);
+        if (feedback && onRangeSphereInstance != null) onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 0f);
     }
 
     private void Update()

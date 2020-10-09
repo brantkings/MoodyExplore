@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SND_CameraOut
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  oneShotString: event:/Player/New Event
+  oneShotString: event:/UI/Camera/Camera Out
   doNotPlayAtCreation: 0
   initialParametersOnStart: []
