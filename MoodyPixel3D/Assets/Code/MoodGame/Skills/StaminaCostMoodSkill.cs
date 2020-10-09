@@ -7,7 +7,7 @@ public abstract class StaminaCostMoodSkill : MoodSkill
     [SerializeField]
     private float _cost;
 
-    protected virtual float GetStaminaCost()
+    public virtual float GetStaminaCost()
     {
         return _cost;
     }

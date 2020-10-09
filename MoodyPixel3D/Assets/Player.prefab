@@ -1853,7 +1853,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5938188665409695490}
-  m_LocalRotation: {x: -0.0930704, y: 0.9063068, z: -0.30861065, w: -0.27332285}
+  m_LocalRotation: {x: -0.0930704, y: 0.9063068, z: -0.30861062, w: -0.27332288}
   m_LocalPosition: {x: 6.6344852, y: 16, z: 9.99918}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2199,8 +2199,8 @@ MonoBehaviour:
   cantMoveWhileThreatened: 1
   maxStamina: 5
   infiniteStamina: 0
-  staminaRecoveryIdle: 0.4
-  staminaRecoveryMoving: 0.2
+  staminaRecoveryIdle: 0.6
+  staminaRecoveryMoving: 0.3
   handPosition: {fileID: 2006006488835595782}
   damageTeam: 2
   _debug: 0
@@ -2222,7 +2222,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: faff409dd0d90be428ac3b9bf2f45416, type: 2}
   - {fileID: 11400000, guid: 363c841ba86c05d44ace22d566699bbb, type: 2}
   - {fileID: 11400000, guid: 99922a7655ca5b541a7df8c8a9d65949, type: 2}
+  - {fileID: 11400000, guid: 8660aab51faf10544b863a11cdc608ce, type: 2}
   - {fileID: 11400000, guid: bd9910f472f3b084a9bd473df9976343, type: 2}
+  - {fileID: 11400000, guid: fa2f6fab4e405d746819ee18aad09240, type: 2}
   _canvas: {fileID: 1348723331549321439}
   _canvasGroup: {fileID: 7658221994546802168}
   canvasGroupFadeDuration: 0.45
@@ -6405,6 +6407,22 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 8452307907098529927, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_Name
       value: Character HUD
@@ -6749,7 +6767,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.093070425
+      value: -0.0930704
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.y
@@ -6761,7 +6779,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.2733229
+      value: -0.27332285
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_RootOrder
@@ -7000,6 +7018,10 @@ PrefabInstance:
       propertyPath: onDeath.Array.data[0]
       value: 
       objectReference: {fileID: 11400000, guid: dff9295df0f379248b787a0c017059d2, type: 2}
+    - target: {fileID: 8801125704076035546, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
+      propertyPath: toDestroy
+      value: 
+      objectReference: {fileID: 5938188665427771940}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
 --- !u!114 &5938188666130470341 stripped

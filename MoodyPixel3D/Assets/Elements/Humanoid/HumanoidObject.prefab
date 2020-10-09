@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1507541639985700248}
   - component: {fileID: 1507541639985700251}
-  - component: {fileID: 2207673818168770897}
+  - component: {fileID: 8801125704076035546}
   - component: {fileID: 7644132106322022631}
   m_Layer: 9
   m_Name: Collider
@@ -129,7 +129,7 @@ CapsuleCollider:
   m_Height: 4
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2207673818168770897
+--- !u!114 &8801125704076035546
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1507541639985700249}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d57547e3789c4e6448c577768bfad3ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 3dfb27117d352bc4aa71babe534726a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxLife: 10

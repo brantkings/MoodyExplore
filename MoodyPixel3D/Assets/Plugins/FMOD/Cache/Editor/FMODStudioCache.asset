@@ -18,6 +18,29 @@ MonoBehaviour:
   LoadResult: 0
   FileSizes: []
   Exists: 1
+--- !u!114 &-8749353089668542291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ambience/Level 1/Static
+  m_EditorClassIdentifier: 
+  Path: event:/Ambience/Level 1/Static
+  guid: 936404685105e44d90ddc8d199b07b8a
+  Banks:
+  - {fileID: 2190200171302275168}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 54000
 --- !u!114 &-7501129241442559270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41,6 +64,26 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &-6040426071860521614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Intensity Breath
+  m_EditorClassIdentifier: 
+  Name: Intensity Breath
+  Min: 0
+  Max: 100
+  Default: 0
+  ID:
+    data1: 3235881986
+    data2: 3111688039
+  Exists: 1
 --- !u!114 &-5979776178134569736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,6 +107,29 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 54000
+--- !u!114 &-5849770644006806000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/Movement/Step
+  m_EditorClassIdentifier: 
+  Path: event:/Player/Movement/Step
+  guid: 0e2983b393e6ae43b8971ce1ad46fa15
+  Banks:
+  - {fileID: 2190200171302275168}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-4512861868389683591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +219,26 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 2200
   Length: 0
+--- !u!114 &-2438602080190283409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.strings.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/FMOD Bank/Desktop/Master.strings.bank
+  Name: Master.strings
+  lastModified: 637377720919917468
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 1074
+  Exists: 1
 --- !u!114 &-1271247491915676809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,21 +275,21 @@ MonoBehaviour:
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
   EditorBanks:
-  - {fileID: -4503151341007156806}
-  - {fileID: 1765560307829669672}
+  - {fileID: -2438602080190283409}
+  - {fileID: 2190200171302275168}
   EditorEvents:
-  - {fileID: -1271247491915676809}
-  - {fileID: -7501129241442559270}
-  - {fileID: -4512861868389683591}
-  - {fileID: -2538557084190135575}
-  - {fileID: -5979776178134569736}
+  - {fileID: 3120119080184321512}
+  - {fileID: -5849770644006806000}
+  - {fileID: 6915420057383353427}
+  - {fileID: 7106506604933871453}
+  - {fileID: -8749353089668542291}
   EditorParameters:
-  - {fileID: 5998920598663987540}
+  - {fileID: -6040426071860521614}
   MasterBanks:
-  - {fileID: 1765560307829669672}
+  - {fileID: 2190200171302275168}
   StringsBanks:
-  - {fileID: -4503151341007156806}
-  stringsBankWriteTime: 637376953922801277
+  - {fileID: -2438602080190283409}
+  stringsBankWriteTime: 637377720919917468
   cacheVersion: 5
 --- !u!114 &1765560307829669672
 MonoBehaviour:
@@ -243,6 +329,47 @@ MonoBehaviour:
   - Name: 
     Value: 754
   Exists: 1
+--- !u!114 &2190200171302275168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/FMOD Bank/Desktop/Master.bank
+  Name: Master
+  lastModified: 637377720919877476
+  LoadResult: 0
+  FileSizes: []
+  Exists: 1
+--- !u!114 &3120119080184321512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/New Event
+  m_EditorClassIdentifier: 
+  Path: event:/Player/New Event
+  guid: fa8779deeb34ae4ca54c7b365ef85475
+  Banks:
+  - {fileID: 2190200171302275168}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 50
+  Length: 0
 --- !u!114 &5998920598663987540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,3 +390,49 @@ MonoBehaviour:
     data1: 3235881986
     data2: 3111688039
   Exists: 1
+--- !u!114 &6915420057383353427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Option
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Option
+  guid: 6bdf2eb2bd87ac409e0cab63e148349a
+  Banks:
+  - {fileID: 2190200171302275168}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
+--- !u!114 &7106506604933871453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/Movement/Breath
+  m_EditorClassIdentifier: 
+  Path: event:/Player/Movement/Breath
+  guid: 77c5ea91c92516429a44a30314df7c6d
+  Banks:
+  - {fileID: 2190200171302275168}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 2200
+  Length: 0
