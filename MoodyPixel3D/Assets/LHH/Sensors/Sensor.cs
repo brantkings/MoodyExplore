@@ -79,7 +79,8 @@ namespace LHH.Sensors
         public event DetectedTargetChange OnTargetAdded;
         public event DetectedTargetChange OnTargetRemoved;
 
-        public float startingLevel = 1;
+        bool _wasEverInitalized;
+        float _currentLevel;
 
         HashSet<SensorTarget> _targets = new HashSet<SensorTarget>();
 
@@ -89,10 +90,27 @@ namespace LHH.Sensors
 
         protected virtual void Start()
         {
-            SetSensorLevel(startingLevel);
+            if(!_wasEverInitalized)
+                SetLevel(0);
         }
 
-        public abstract void SetSensorLevel(float level);
+        protected abstract void ApplySensorLevel(float level);
+
+        public void SetLevel(float level)
+        {
+            _wasEverInitalized = true;
+
+            if (_currentLevel != level)
+            {
+                _currentLevel = level;
+                ApplySensorLevel(_currentLevel);
+            }
+        }
+
+        public float GetLevel()
+        {
+            return _currentLevel;
+        }
 
         public bool AddSensorTarget(SensorTarget target)
         {
