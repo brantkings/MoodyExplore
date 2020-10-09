@@ -16,6 +16,7 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
     {
         bool changed = false;
         foreach(var stance in toAdd) changed |= pawn.AddStance(stance);
+        foreach(var stance in toToggle) changed |= pawn.ToggleStance(stance);
         //foreach(var stance in toRemove) changed |= pawn.RemoveStance(stance);
         return changed;
     }

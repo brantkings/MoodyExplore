@@ -347,8 +347,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
 
         public override TaskStatus OnUpdate()
         {
-            Debug.LogFormat("{0} can execute {1} on {2}? {3}", pawn, skill, direction,
-                skill.Value.CanExecute(pawn.Value, direction.Value));
+            //Debug.LogFormat("{0} can execute {1} on {2}? {3}", pawn, skill, direction, skill.Value.CanExecute(pawn.Value, direction.Value));
             return skill.Value.CanExecute(pawn.Value, direction.Value) ? TaskStatus.Success : TaskStatus.Failure;
         }
     }

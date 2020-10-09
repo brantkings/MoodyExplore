@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4286cfc42e6596b4f98466c13c977690, type: 3}
   m_Name: Skill_Stance_WeaponReady
   m_EditorClassIdentifier: 
-  needs: []
-  toConsume: []
-  consumeNeededStances: 0
-  restrictions: []
   _icon: {fileID: 0}
   _name: Lift Weapon
+  needs: []
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions: []
   _cost: 2
   toAdd: []
   toToggle:

@@ -39,6 +39,9 @@ public class MoodCommandController : MonoBehaviour
         public MoodCommandOption command;
     }
 
+
+    public SoundEffect[] onChangeOption;
+
     private void Awake()
     {
         _sphereIndicator = GetComponentInChildren<RangeSphere>();
@@ -121,6 +124,7 @@ public class MoodCommandController : MonoBehaviour
         _currentOption = Mathf.RoundToInt(Mathf.Repeat(_currentOption + add, _options.Count));
         SetSelected(_currentOption, true );
         SetActiveObjects(IsActivated(), GetCurrentSkill());
+        onChangeOption.Execute(transform);
     }
 
     private void SetSelected(int index, bool selected)

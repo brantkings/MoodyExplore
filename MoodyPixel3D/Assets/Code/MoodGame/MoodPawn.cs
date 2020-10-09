@@ -26,7 +26,6 @@ public class MoodPawn : MonoBehaviour
     
     public KinematicPlatformer mover;
     public Animator animator;
-    [SerializeField]
     private LookAtIK _lookAtControl;
 
     [Space()] 
@@ -104,6 +103,9 @@ public class MoodPawn : MonoBehaviour
         }
     }
 
+    private void Awake() {
+        _lookAtControl = animator.GetComponent<LookAtIK>();
+    }
 
 
     private void Start()
@@ -186,20 +188,27 @@ public class MoodPawn : MonoBehaviour
     
     public bool AddStance(MoodStance stance)
     {
-        return Stances.Add(stance);
+        bool ok = Stances.Add(stance);
+        if(ok) stance.ApplyStance(this, true);
+        return ok;
     }
+
+    
+    public bool RemoveStance(MoodStance stance)
+    {
+        bool ok = Stances.Remove(stance);
+        if(ok) stance.ApplyStance(this, false);
+        return ok;
+    }
+
 
     public bool ToggleStance(MoodStance stance)
     {
-        if(Stances.Contains(stance)) return Stances.Remove(stance);
-        else return Stances.Add(stance);
+        if(Stances.Contains(stance)) return RemoveStance(stance);
+        else return AddStance(stance);
     }
 
 
-    public bool RemoveStance(MoodStance stance)
-    {
-        return Stances.Remove(stance);
-    }
 
     public bool HasStance(MoodStance stance)
     {
@@ -260,8 +269,17 @@ public class MoodPawn : MonoBehaviour
         }
     }
 
+    private void StanceChangeVelocity(ref Vector3 velocity)
+    {
+        foreach(MoodStance stance in Stances)
+        {
+            stance.ModifyVelocity(ref velocity);
+        }
+    }
+
     public void SetVelocity(Vector3 velocity)
     {
+        StanceChangeVelocity(ref velocity);
         _targetVelocity = velocity;
         SolveFinalVelocity();
     }
