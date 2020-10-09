@@ -2240,6 +2240,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mover: {fileID: 5938188666130470341}
   animator: {fileID: 4171312185703095712}
+  focus: {fileID: 0}
+  sensorGroup: {fileID: 0}
   turningTime: 0.1
   height: 4
   pawnRadius: 0.5
@@ -2297,7 +2299,7 @@ MonoBehaviour:
   respirationFeedback: {fileID: 11400000, guid: 5378f1f9885327d4db970c1781f46d15, type: 2}
   respirationFeedbackIntensityParameter: IntensityBreath
   minValue: 0
-  maxValue: 1
+  maxValue: 100
 --- !u!1 &5938188666182314998
 GameObject:
   m_ObjectHideFlags: 0
