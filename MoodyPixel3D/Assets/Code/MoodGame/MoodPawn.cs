@@ -474,7 +474,7 @@ public class MoodPawn : MonoBehaviour
             foreach (ThreatStruct threat in _threatList)
             {
                 if (threat.threatObject != null && 
-                    (threat.sensorTarget == null || (sensorGroup.IsSensingTarget(threat.sensorTarget)))) 
+                    (threat.sensorTarget == null || (sensorGroup == null || sensorGroup.IsSensingTarget(threat.sensorTarget)))) 
                     return true;
             }
         }
