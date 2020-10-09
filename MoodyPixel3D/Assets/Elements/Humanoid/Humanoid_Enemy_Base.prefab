@@ -42,7 +42,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3031996098223997465}
-  m_LocalRotation: {x: -0.2840314, y: 0.4475872, z: -0.15240996, w: -0.83412415}
+  m_LocalRotation: {x: -0.0930704, y: 0.9063068, z: -0.30861065, w: -0.27332285}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
   m_Children:
@@ -110,7 +110,6 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 16
-  m_PresetInfoIsWorld: 0
 --- !u!114 &4844936405752070856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5637358447622213140}
   - component: {fileID: 5637358447622213141}
+  - component: {fileID: 1165887686459921071}
   m_Layer: 10
   m_Name: Humanoid_Enemy_Base
   m_TagString: Untagged
@@ -184,6 +184,25 @@ MonoBehaviour:
   handPosition: {fileID: 115938510025388480}
   damageTeam: 1
   _debug: 0
+--- !u!114 &1165887686459921071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5637358447622213147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0f03d8b2e1274543a52ddf05b5d3374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  threatFeedback: {fileID: 0}
+  onThreatAppear: []
+  onThreatRelax: []
+  respirationFeedback: {fileID: 11400000, guid: 5378f1f9885327d4db970c1781f46d15, type: 2}
+  respirationFeedbackIntensityParameter: IntensityBreath
+  minValue: 0.146
+  maxValue: 0.568
 --- !u!114 &7325510342689100543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1090,19 +1109,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 8452307907098529927, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_Name
