@@ -143,8 +143,9 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
 
     public void SetParameter(FMOD.Studio.EventInstance inst, string param, float value, bool ignoreSeekSpeed = false)
     {
-        Debug.LogFormat("Setting parameter {0} to {1} with instance {2}", param, value, inst);
-        inst.setParameterByID(GetParameter(param).ID, value, ignoreSeekSpeed);
+        //inst.setParameterByID(GetParameter(param).ID, value, ignoreSeekSpeed);
+        inst.setParameterByName(param, value, ignoreSeekSpeed);
+        Debug.LogFormat("Setted parameter {0} to {1} with instance {2}", param, value, inst);
     }
 
 }

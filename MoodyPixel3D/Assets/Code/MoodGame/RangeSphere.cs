@@ -88,7 +88,14 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     {
         SetRadius(0f);
         TweenRadius(duration, param.radius, true, showColor);
-        if (feedback) onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
+        if(feedback)
+        {
+            if (onRangeSphereInstance != null) {
+                onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 1f);
+                onRangeSphereInstance.instance.start();
+            }
+            else onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
+        }
     }
     
     public override void Hide()
@@ -96,10 +103,10 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         HideDuration(_duration);
     }
     
-    public void HideDuration(float duration, bool feedback = false)
+    public void HideDuration(float duration, bool feedback = true)
     {
         TweenRadius(duration, _toRotate.lossyScale.x * 1.05f, false, hideColor);
-        if (feedback && onRangeSphereInstance != null ) onRangeSphere.SetParameter(onRangeSphereInstance.instance, "Switch", 0f);
+        if (feedback && onRangeSphereInstance != null) onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 0f);
     }
 
     private void Update()
