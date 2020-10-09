@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SND_UIOption
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  oneShotString: event:/Player/New Event
+  oneShotString: event:/UI/Action/Move
   doNotPlayAtCreation: 0
   initialParametersOnStart: []
