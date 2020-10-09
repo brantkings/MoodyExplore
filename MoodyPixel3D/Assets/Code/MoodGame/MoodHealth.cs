@@ -26,6 +26,7 @@ public class MoodHealth : Health
 
         if(amount != 0)
         {
+            Debug.LogErrorFormat("Is going to damage {0}!", this);
             return base.Damage(amount, team, origin);
         }
         else return false;

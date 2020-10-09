@@ -127,7 +127,7 @@ public class MoodPawn : MonoBehaviour
         _wasThreatened = IsThreatened();
     }
 
-    private void OnGUI() 
+    /*private void OnGUI() 
     {
         if(damageTeam == DamageTeam.Neutral)
         {
@@ -139,7 +139,7 @@ public class MoodPawn : MonoBehaviour
             }
             GUI.Label(new Rect(50,Screen.height - 100, 100, 100), string.Format("Current stances {0}: {1}", name, stances));
         }
-    }
+    }*/
 
     private void Update()
     {

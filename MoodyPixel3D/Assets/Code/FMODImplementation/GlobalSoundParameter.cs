@@ -15,7 +15,8 @@ public class GlobalSoundParameter : ScriptableObject
 
     public void SetParameter(float value)
     {
-        RuntimeManager.StudioSystem.setParameterByName(parameter, value);
+        if(string.IsNullOrEmpty(parameter))
+            RuntimeManager.StudioSystem.setParameterByName(parameter, value);
     }
 
     public void ResetParameterToNeutralValue()
