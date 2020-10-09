@@ -11,10 +11,10 @@ public class MoodPawnFeedback : AddonBehaviour<MoodPawn>
     public ScriptableEvent[] onThreatRelax;
     public SoundEffect respirationFeedback;
     public string respirationFeedbackIntensityParameter;
-    [Range(0f,1f)]
+    [Range(0f,100f)]
     public float minValue = 0f;
-    [Range(0f,1f)]
-    public float maxValue = 1f;
+    [Range(0f,100f)]
+    public float maxValue = 100f;
     
     private void OnEnable()
     {
