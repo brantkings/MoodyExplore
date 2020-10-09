@@ -7,6 +7,7 @@ using UnityEngine;
 using DG.Tweening;
 using JetBrains.Annotations;
 using LHH.Utils;
+using LHH.Sensors;
 
 public interface IMoodPawnPeeker
 {
@@ -27,6 +28,9 @@ public class MoodPawn : MonoBehaviour
     public KinematicPlatformer mover;
     public Animator animator;
     private LookAtIK _lookAtControl;
+
+    public FocusController focus;
+    public SensorGroup sensorGroup;
 
     [Space()] 
     public float turningTime = 0.1f;
@@ -370,7 +374,19 @@ public class MoodPawn : MonoBehaviour
     #endregion
 
     #region Threat
-    private HashSet<GameObject> _threatList;
+    struct ThreatStruct
+    {
+        public GameObject threatObject;
+        public SensorTarget sensorTarget;
+
+        public ThreatStruct(GameObject obj)
+        {
+            threatObject = obj;
+            sensorTarget = obj.GetComponentInChildren<SensorTarget>();
+        }
+    }
+
+    private HashSet<ThreatStruct> _threatList;
     public event DelMoodPawnEvent OnThreatAppear;
     public event DelMoodPawnEvent OnThreatRelief;
 
@@ -417,9 +433,9 @@ public class MoodPawn : MonoBehaviour
     public void AddThreat(GameObject origin)
     {
         Debug.LogFormat("Add threat {0} to {1}", origin, this);
-        if(_threatList == null) _threatList = new HashSet<GameObject>();
+        if(_threatList == null) _threatList = new HashSet<ThreatStruct>();
         _wasThreatened = IsThreatened();
-        _threatList.Add(origin);
+        _threatList.Add(new ThreatStruct(origin));
         bool isThreatened = IsThreatened();
         if (!_wasThreatened && isThreatened)
         {
@@ -433,7 +449,7 @@ public class MoodPawn : MonoBehaviour
     {
         Debug.LogFormat("Remove threat {0} to {1}", origin, this);
         _wasThreatened = IsThreatened();
-        _threatList?.Remove(origin);
+        _threatList?.RemoveWhere((threatStruct) => threatStruct.threatObject == origin);
         bool isThreatened = IsThreatened();
         if (_wasThreatened && !IsThreatened())
         {
@@ -447,9 +463,11 @@ public class MoodPawn : MonoBehaviour
     {
         if (_threatList != null)
         {
-            foreach (GameObject o in _threatList)
+            foreach (ThreatStruct threat in _threatList)
             {
-                if (o != null) return true;
+                if (threat.threatObject != null && 
+                    (threat.sensorTarget == null || (!sensorGroup.IsSensingTarget(threat.sensorTarget)))) 
+                    return true;
             }
         }
 

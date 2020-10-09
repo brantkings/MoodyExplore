@@ -135,5 +135,10 @@ namespace LHH.Sensors
             }
             return false;
         }
+
+        public bool IsSensingTarget(SensorTarget target)
+        {
+            return _targets.Contains(target);
+        }
     }
 }
