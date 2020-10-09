@@ -192,7 +192,7 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
     {
         //inst.setParameterByID(GetParameter(param).ID, value, ignoreSeekSpeed);
         inst.setParameterByName(param, value, ignoreSeekSpeed);
-        Debug.LogFormat("Setted parameter {0} to {1} with instance {2}", param, value, inst);
+        //Debug.LogFormat("Setted parameter {0} to {1} with instance {2}", param, value, inst);
     }
 
 }

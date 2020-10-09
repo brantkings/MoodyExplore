@@ -31,6 +31,18 @@ public class TimeManager : CreateableSingleton<TimeManager>
     
     private Tween _currentTween;
 
+    public GlobalSoundParameter fmodTimescaleParameter;
+
+    private void Update() 
+    {
+        if(fmodTimescaleParameter != null) fmodTimescaleParameter.SetParameter(Time.timeScale);
+    }
+
+    private void OnDisable() 
+    {
+        if(fmodTimescaleParameter != null) fmodTimescaleParameter.ResetParameterToNeutralValue();
+    }
+
     public void StopTime(FrameFreezeData data)
     {
         StartCoroutine(StopTimeRoutine(data));

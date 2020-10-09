@@ -27,6 +27,6 @@ public class MoodReaction : ScriptableObject
         {
             pawn.animator.SetTrigger(animationTrigger);
         }
-        sfx.ExecuteIfNotNull(pawn.transform);
+        sfx.ExecuteIfNotNull(pawn.ObjectTransform);
     }
 }

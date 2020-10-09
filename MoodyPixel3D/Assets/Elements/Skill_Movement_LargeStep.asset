@@ -28,3 +28,4 @@ MonoBehaviour:
   durationAdd: 0.2
   showArrowWidth: 1
   ease: 3
+  sfx: {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
