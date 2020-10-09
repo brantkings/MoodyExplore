@@ -100,7 +100,7 @@ public class FocusController : MonoBehaviour
         if (focusableList.Length <= 0)
             return;
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.mouseScrollDelta.y < 0)
         {
             _selectedFocusableIndex += 1;
 
@@ -111,7 +111,7 @@ public class FocusController : MonoBehaviour
 
             OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
         }
-        else if (Input.GetKeyDown(KeyCode.Q))
+        else if (Input.mouseScrollDelta.y > 0)
         {
             _selectedFocusableIndex -= 1;
 
@@ -123,7 +123,7 @@ public class FocusController : MonoBehaviour
             OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && _availableFocusPoints > 0)
+        if (Input.GetKeyDown(KeyCode.E) && _availableFocusPoints > 0)
         {
             Focusable focusable = focusableList[_selectedFocusableIndex];
 
@@ -133,7 +133,7 @@ public class FocusController : MonoBehaviour
                 OnAvailablePointsChanged?.Invoke(_availableFocusPoints);
             }
         }
-        else if (Input.GetKeyDown(KeyCode.F))
+        else if (Input.GetKeyDown(KeyCode.Q))
         {
             Focusable focusable = focusableList[_selectedFocusableIndex];
 

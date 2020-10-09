@@ -20,7 +20,41 @@ public class SoundEffectInstance
     public static implicit operator SoundEffectInstance(FMOD.Studio.EventInstance sound)
     {
         return new SoundEffectInstance(){instance = sound};
-    } 
+    }
+
+    public PLAYBACK_STATE GetPlayState()
+    {
+        instance.getPlaybackState(out PLAYBACK_STATE state);
+        return state;
+    }
+
+}
+
+public static class SoundEffectInstanceUtils
+{
+    public static bool IsPlaying(this SoundEffectInstance sf)
+    {
+        if(sf == null) return false;
+        if(!sf.instance.isValid()) return false;
+        
+        sf.instance.getPlaybackState(out PLAYBACK_STATE state);
+
+        switch (state)
+        {
+            case PLAYBACK_STATE.PLAYING:
+            return true;
+            case PLAYBACK_STATE.STARTING:
+            return true;
+            case PLAYBACK_STATE.STOPPED:
+            return false;
+            case PLAYBACK_STATE.STOPPING:
+            return true;
+            case PLAYBACK_STATE.SUSTAINING:
+            return true;
+            default:
+            return false;
+        }
+    }
 }
 
 [CreateAssetMenu(menuName = "Long Hat House/Sound/Sound Effect", fileName = "SND_", order = 0)]
@@ -118,6 +152,10 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
         return new SoundEffectInstance(){instance = inst};
     }
 
+    private ParameterInfo FindCachedParameter(string name)
+    {   
+        return cachedParameters.ContainsKey(name)? cachedParameters[name] : null;
+    }
 
     private ParameterInfo GetParameter(string name)
     {
@@ -129,11 +167,6 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
         }
 
         return info;
-    }
-
-    private ParameterInfo FindCachedParameter(string name)
-    {   
-        return cachedParameters.ContainsKey(name)? cachedParameters[name] : null;
     }
 
     public void SetParameter(SoundEffectInstance inst, string param, float value, bool ignoreSeekSpeed = false)
