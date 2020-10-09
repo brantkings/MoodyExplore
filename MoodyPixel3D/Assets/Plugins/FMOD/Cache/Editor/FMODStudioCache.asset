@@ -1,46 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8894584511824816745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/Rotation/Switch
-  m_EditorClassIdentifier: 
-  Name: Switch
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
---- !u!114 &-8444114382837187191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.strings.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/FMOD Bank/Desktop/Master.strings.bank
-  Name: Master.strings
-  lastModified: 637378458748443911
-  LoadResult: 0
-  FileSizes:
-  - Name: 
-    Value: 1826
-  Exists: 1
---- !u!114 &-8384549270895678969
+--- !u!114 &-8695695817898825485
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,308 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Action/Circle/Loop
+  m_Name: event:/UI/Threat/Threat Count
   m_EditorClassIdentifier: 
-  Path: event:/UI/Action/Circle/Loop
-  guid: 027fcdfc3a045b468352a4f58b187d42
+  Path: event:/UI/Threat/Threat Count
+  guid: ff48f5a29209cc40aa8e0dedd53b6d4a
   Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 1900
---- !u!114 &-8382228225716024878
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-6662777787584002918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-6656797400527929357
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Camera/Camera Out
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Camera/Camera Out
-  guid: b43b29ac4694b44b85167538fbd71017
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
---- !u!114 &-6465314258482558996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
---- !u!114 &-4223190081597589372
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
-  m_EditorClassIdentifier: 
-  Path: Assets/FMOD Bank/Desktop/Master.bank
-  Name: Master
-  lastModified: 637378461085433295
-  LoadResult: 0
-  FileSizes: []
-  Exists: 1
---- !u!114 &-4100209299523969564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/Rotation/Switch
-  m_EditorClassIdentifier: 
-  Name: Switch
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-3916252275514166993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
---- !u!114 &-3665339796914579131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/Rotation/Switch
-  m_EditorClassIdentifier: 
-  Name: Switch
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-3594531574619568234
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Action/Circle/Rotation
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Action/Circle/Rotation
-  guid: 62d905e83f1d924f8ea1ea6cdbde1463
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 0
-  Parameters:
-  - {fileID: -8894584511824816745}
-  MinDistance: 0
-  MaxDistance: 35
-  Length: 2522
---- !u!114 &-3297957855021374076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-3147116260531689150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-2718524602846044424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Action/Circle/Shrink
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Action/Circle/Shrink
-  guid: c75a0bb771f7b44fae0602fda840ee16
-  Banks:
-  - {fileID: -4223190081597589372}
+  - {fileID: 1765560307829669672}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 522
---- !u!114 &-2103906536727571831
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-1962562341977556200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/Rotation/Switch
-  m_EditorClassIdentifier: 
-  Name: Switch
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
---- !u!114 &-1486199273349522612
+  Length: 3128
+--- !u!114 &-7501129241442559270
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -361,41 +33,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: snapshot:/SlowMotion Script
+  m_Name: event:/Player/Movement/Step
   m_EditorClassIdentifier: 
-  Path: snapshot:/SlowMotion Script
-  guid: 100d5c0fbeaaa14b87e4d6118648e65f
+  Path: event:/Player/Movement/Step
+  guid: 0e2983b393e6ae43b8971ce1ad46fa15
   Banks:
-  - {fileID: -4223190081597589372}
+  - {fileID: 1765560307829669672}
   IsStream: 0
-  Is3D: 0
-  IsOneShot: 0
-  Parameters:
-  - {fileID: 260044946493516444}
-  MinDistance: 0
-  MaxDistance: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
   Length: 0
---- !u!114 &-797169968626506179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &-708622266866250477
+--- !u!114 &-6941914610418865817
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -405,11 +56,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Threat/Threat
+  m_Name: event:/UI/Threat/PopUp
   m_EditorClassIdentifier: 
-  Path: event:/UI/Threat/Threat
+  Path: event:/UI/Threat/PopUp
   guid: 355aa1e74da9514294441d05222dd33d
-  Banks: []
+  Banks:
+  - {fileID: 1765560307829669672}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -417,86 +69,7 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 2500
---- !u!114 &-331895178776703974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d32cf7c32a3ed8347bac48ef5ed56d82, type: 3}
-  m_Name: FMODStudioCache
-  m_EditorClassIdentifier: 
-  EditorBanks:
-  - {fileID: -8444114382837187191}
-  - {fileID: -4223190081597589372}
-  EditorEvents:
-  - {fileID: 4385026695096664999}
-  - {fileID: -1486199273349522612}
-  - {fileID: 4390085835361321218}
-  - {fileID: 7016513002902644691}
-  - {fileID: 311786458849974304}
-  - {fileID: 3738266808837322497}
-  - {fileID: 4512225939093826228}
-  - {fileID: 2759258680306765182}
-  - {fileID: -6656797400527929357}
-  - {fileID: 5669519616734411131}
-  - {fileID: -2718524602846044424}
-  - {fileID: -8384549270895678969}
-  - {fileID: -3594531574619568234}
-  - {fileID: 3478900757269571306}
-  - {fileID: 6885832989866532005}
-  EditorParameters:
-  - {fileID: 2751992493829004586}
-  MasterBanks:
-  - {fileID: -4223190081597589372}
-  StringsBanks:
-  - {fileID: -8444114382837187191}
-  stringsBankWriteTime: 637378458748443911
-  cacheVersion: 5
---- !u!114 &260044946493516444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
---- !u!114 &311786458849974304
+--- !u!114 &-6462846907559565364
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -511,7 +84,7 @@ MonoBehaviour:
   Path: event:/UI/Action/Click
   guid: 8c54879e0af9e541ac95c8f391c34640
   Banks:
-  - {fileID: -4223190081597589372}
+  - {fileID: 1765560307829669672}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -519,7 +92,135 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 0
---- !u!114 &2361503306108988708
+--- !u!114 &-5979776178134569736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ambience/Level 1/Static
+  m_EditorClassIdentifier: 
+  Path: event:/Ambience/Level 1/Static
+  guid: 936404685105e44d90ddc8d199b07b8a
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 54000
+--- !u!114 &-4503151341007156806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.strings.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/FMOD Bank/Desktop/Master.strings.bank
+  Name: Master.strings
+  lastModified: 637378514458353688
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 1826
+  Exists: 1
+--- !u!114 &-2538557084190135575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Player/Movement/Breath
+  m_EditorClassIdentifier: 
+  Path: event:/Player/Movement/Breath
+  guid: 77c5ea91c92516429a44a30314df7c6d
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 2200
+  Length: 0
+--- !u!114 &-2484184535602226483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Camera/Camera Out
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Camera/Camera Out
+  guid: b43b29ac4694b44b85167538fbd71017
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d32cf7c32a3ed8347bac48ef5ed56d82, type: 3}
+  m_Name: FMODStudioCache
+  m_EditorClassIdentifier: 
+  EditorBanks:
+  - {fileID: -4503151341007156806}
+  - {fileID: 1765560307829669672}
+  EditorEvents:
+  - {fileID: -7501129241442559270}
+  - {fileID: -2538557084190135575}
+  - {fileID: -5979776178134569736}
+  - {fileID: 5579844495666260058}
+  - {fileID: 7648787032599347091}
+  - {fileID: -6462846907559565364}
+  - {fileID: 7131997541039585221}
+  - {fileID: -6941914610418865817}
+  - {fileID: 9182575811250485941}
+  - {fileID: 4748221128956653109}
+  - {fileID: 5833846885446945199}
+  - {fileID: 6135856077636599192}
+  - {fileID: -2484184535602226483}
+  - {fileID: 4042235188244663439}
+  - {fileID: -8695695817898825485}
+  EditorParameters:
+  - {fileID: 5998920598663987540}
+  MasterBanks:
+  - {fileID: 1765560307829669672}
+  StringsBanks:
+  - {fileID: -4503151341007156806}
+  stringsBankWriteTime: 637378514458353688
+  cacheVersion: 5
+--- !u!114 &302364882405159970
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -538,8 +239,140 @@ MonoBehaviour:
   ID:
     data1: 0
     data2: 0
-  Exists: 0
---- !u!114 &2751992493829004586
+  Exists: 1
+--- !u!114 &1595979212767481113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/SlowMotion Script/SlowMotion
+  m_EditorClassIdentifier: 
+  Name: SlowMotion
+  Min: 0
+  Max: 1
+  Default: 1
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1
+--- !u!114 &1765560307829669672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/FMOD Bank/Desktop/Master.bank
+  Name: Master
+  lastModified: 637378514458343701
+  LoadResult: 0
+  FileSizes: []
+  Exists: 1
+--- !u!114 &4042235188244663439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Action/Circle/Shrink
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Action/Circle/Shrink
+  guid: c75a0bb771f7b44fae0602fda840ee16
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 522
+--- !u!114 &4748221128956653109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Interaction/PopUp
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Interaction/PopUp
+  guid: 4c47f175c5962b4fa52bdbc6310f6a6e
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
+--- !u!114 &5579844495666260058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: snapshot:/SlowMotion Script
+  m_EditorClassIdentifier: 
+  Path: snapshot:/SlowMotion Script
+  guid: 100d5c0fbeaaa14b87e4d6118648e65f
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 1595979212767481113}
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
+--- !u!114 &5833846885446945199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Action/Circle/Rotation
+  m_EditorClassIdentifier: 
+  Path: event:/UI/Action/Circle/Rotation
+  guid: 62d905e83f1d924f8ea1ea6cdbde1463
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 302364882405159970}
+  MinDistance: 0
+  MaxDistance: 35
+  Length: 2522
+--- !u!114 &5998920598663987540
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -559,303 +392,7 @@ MonoBehaviour:
     data1: 3235881986
     data2: 3111688039
   Exists: 1
---- !u!114 &2759258680306765182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Camera/Camera In
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Camera/Camera In
-  guid: 36c5b765b7943343b2801b095f1c4625
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
---- !u!114 &3001746726486543265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Interacting
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Interacting
-  guid: 4c47f175c5962b4fa52bdbc6310f6a6e
-  Banks: []
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
---- !u!114 &3194133295440308689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
---- !u!114 &3478900757269571306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Threat/PopUp
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Threat/PopUp
-  guid: 355aa1e74da9514294441d05222dd33d
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 2500
---- !u!114 &3738266808837322497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Ambience/Level 1/Static
-  m_EditorClassIdentifier: 
-  Path: event:/Ambience/Level 1/Static
-  guid: 936404685105e44d90ddc8d199b07b8a
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 1
-  Is3D: 0
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 54000
---- !u!114 &3742703882511468811
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-<<<<<<< HEAD
-  Path: Assets/FMOD Bank/Desktop/Master.strings.bank
-  Name: Master.strings
-  lastModified: 637378461489382714
-  LoadResult: 0
-  FileSizes:
-  - Name: 
-    Value: 1446
-  Exists: 1
---- !u!114 &-4465210981797979597
-=======
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &3770068571214830083
->>>>>>> 992cd4f0cc391ad27332bad5056ccaac5a10d14b
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &3960515305720149941
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/Rotation/Switch
-  m_EditorClassIdentifier: 
-  Name: Switch
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
---- !u!114 &4385026695096664999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Player/Movement/Step
-  m_EditorClassIdentifier: 
-  Path: event:/Player/Movement/Step
-  guid: 0e2983b393e6ae43b8971ce1ad46fa15
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &4390085835361321218
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Action/Move
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Action/Move
-  guid: 6bdf2eb2bd87ac409e0cab63e148349a
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
---- !u!114 &4512225939093826228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Threat/Threat Count
-  m_EditorClassIdentifier: 
-  Path: event:/UI/Threat/Threat Count
-  guid: ff48f5a29209cc40aa8e0dedd53b6d4a
-  Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 3128
---- !u!114 &5460947877801611521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-<<<<<<< HEAD
-  EditorBanks:
-  - {fileID: -4503151341007156806}
-  - {fileID: 1765560307829669672}
-  EditorEvents:
-  - {fileID: -7501129241442559270}
-  - {fileID: -2538557084190135575}
-  - {fileID: -5979776178134569736}
-  - {fileID: 593597030797816300}
-  - {fileID: 5579844495666260058}
-  - {fileID: 3054297137868733080}
-  - {fileID: 7648787032599347091}
-  - {fileID: -6462846907559565364}
-  EditorParameters:
-  - {fileID: 5998920598663987540}
-  MasterBanks:
-  - {fileID: 1765560307829669672}
-  StringsBanks:
-  - {fileID: -4503151341007156806}
-  stringsBankWriteTime: 637378461489382714
-  cacheVersion: 5
---- !u!114 &593597030797816300
-=======
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &5669519616734411131
->>>>>>> 992cd4f0cc391ad27332bad5056ccaac5a10d14b
+--- !u!114 &6135856077636599192
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -870,7 +407,7 @@ MonoBehaviour:
   Path: event:/UI/Action/Circle/Enlarge
   guid: 638a6b9c8e52a24aa6565ab109a61604
   Banks:
-  - {fileID: -4223190081597589372}
+  - {fileID: 1765560307829669672}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1
@@ -878,57 +415,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1000
---- !u!114 &5783199099006725327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/Rotation/Switch
-  m_EditorClassIdentifier: 
-<<<<<<< HEAD
-  Path: Assets/FMOD Bank/Desktop/Master.bank
-  Name: Master
-  lastModified: 637378461489382714
-  LoadResult: 0
-  FileSizes: []
-  Exists: 1
---- !u!114 &1926067537920440557
-=======
-  Name: Switch
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &6540395083939051746
->>>>>>> 992cd4f0cc391ad27332bad5056ccaac5a10d14b
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
-  m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 0
---- !u!114 &6885832989866532005
+--- !u!114 &7131997541039585221
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -938,70 +425,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/Interaction/PopUp
+  m_Name: event:/UI/Action/Circle/Loop
   m_EditorClassIdentifier: 
-  Path: event:/UI/Interaction/PopUp
-  guid: 4c47f175c5962b4fa52bdbc6310f6a6e
+  Path: event:/UI/Action/Circle/Loop
+  guid: 027fcdfc3a045b468352a4f58b187d42
   Banks:
-  - {fileID: -4223190081597589372}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 0
-  MaxDistance: 0
-  Length: 0
---- !u!114 &7016513002902644691
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Player/Movement/Breath
-  m_EditorClassIdentifier: 
-  Path: event:/Player/Movement/Breath
-  guid: 77c5ea91c92516429a44a30314df7c6d
-  Banks:
-  - {fileID: -4223190081597589372}
+  - {fileID: 1765560307829669672}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
-<<<<<<< HEAD
-  Parameters:
-  - {fileID: 7651561831567444983}
-  MinDistance: 0
-  MaxDistance: 0
-=======
   Parameters: []
   MinDistance: 1
-  MaxDistance: 2200
->>>>>>> 992cd4f0cc391ad27332bad5056ccaac5a10d14b
-  Length: 0
---- !u!114 &8730207016765169675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/Rotation/Switch
-  m_EditorClassIdentifier: 
-  Name: Switch
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
-<<<<<<< HEAD
+  MaxDistance: 20
+  Length: 1900
 --- !u!114 &7648787032599347091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1025,7 +461,7 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 0
---- !u!114 &7651561831567444983
+--- !u!114 &9182575811250485941
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1034,16 +470,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/SlowMotion Script/SlowMotion
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/UI/Camera/Camera In
   m_EditorClassIdentifier: 
-  Name: SlowMotion
-  Min: 0
-  Max: 1
-  Default: 1
-  ID:
-    data1: 0
-    data2: 0
-  Exists: 1
-=======
->>>>>>> 992cd4f0cc391ad27332bad5056ccaac5a10d14b
+  Path: event:/UI/Camera/Camera In
+  guid: 36c5b765b7943343b2801b095f1c4625
+  Banks:
+  - {fileID: 1765560307829669672}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 0
+  MaxDistance: 0
+  Length: 0
