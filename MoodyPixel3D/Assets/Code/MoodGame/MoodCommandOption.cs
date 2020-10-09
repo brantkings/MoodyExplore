@@ -13,6 +13,9 @@ public class MoodCommandOption : MonoBehaviour
     public Color unselectedOutlineColor;
     public Color possibleColor = Color.white;
     public Color impossibleColor = Color.gray;
+    public Color costColor = Color.gray;
+
+    public int costSize = 24;
     public Gradient selectedOutlineColorAnimation;
     public float selectedColorAnimationDuration;
 
@@ -28,7 +31,9 @@ public class MoodCommandOption : MonoBehaviour
     public void SetOption(MoodSkill skill)
     {
         _skill = skill;
-        text.text = _skill.GetName();
+        StaminaCostMoodSkill stamina = skill as StaminaCostMoodSkill;
+        Debug.Log($"{costColor} = {costColor.ToHexStringRGB()}");
+        text.text = _skill.GetName() +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}SP</color></size>" : string.Empty);
         text.enabled = true;
     }
 

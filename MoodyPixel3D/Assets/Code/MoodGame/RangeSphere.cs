@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
 using UnityEngine;
 
@@ -52,6 +53,13 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     [SerializeField]
     private float _scaleMultiplier = 1f;
 
+    
+    [SerializeField]
+    private SoundEffect onRangeSphere;
+    /*[SerializeField]
+    private ScriptableEvent[] onRangeShrink;*/
+    private SoundEffectInstance onRangeSphereInstance;
+
     public Color showColor = new Color(0.5f,1f,0.5f,1);
     public Color hideColor = new Color(1,1,0,0);
 
@@ -68,7 +76,7 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
     private void Start()
     {
         _currentRotationVelocity = _minEulerRotation;
-        HideDuration(0f);
+        HideDuration(0f, false);
     }
 
     public override void Show(Properties param)
@@ -76,10 +84,19 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         ShowDuration(param, _duration);
     }
 
-    public void ShowDuration(Properties param, float duration)
+    public void ShowDuration(Properties param, float duration, bool feedback = true)
     {
         SetRadius(0f);
         TweenRadius(duration, param.radius, true, showColor);
+        if(feedback)
+        {
+            if (onRangeSphereInstance.IsPlaying()) {
+                onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 1f);
+            }
+            else 
+                onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
+            onRangeSphereInstance.instance.start();
+        }
     }
     
     public override void Hide()
@@ -87,9 +104,10 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         HideDuration(_duration);
     }
     
-    public void HideDuration(float duration)
+    public void HideDuration(float duration, bool feedback = true)
     {
         TweenRadius(duration, _toRotate.lossyScale.x * 1.05f, false, hideColor);
+        if (feedback && onRangeSphereInstance != null) onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 0f);
     }
 
     private void Update()

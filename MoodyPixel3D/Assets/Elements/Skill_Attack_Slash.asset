@@ -13,7 +13,14 @@ MonoBehaviour:
   m_Name: Skill_Attack_Slash
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Slap
+  _name: Bonk
+  needs:
+  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions:
+  - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  _shortcut: 120
   _cost: 1
   damage: 10
   attackRadius: 1
@@ -23,5 +30,9 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
+  onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
+  onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
+  onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
   preTime: 0.5
   postTime: 1
+  addedStancesWithAttack: []

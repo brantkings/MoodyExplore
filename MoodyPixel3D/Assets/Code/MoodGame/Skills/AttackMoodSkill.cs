@@ -15,10 +15,16 @@ namespace Code.MoodGame.Skills
         public float attackCapsuleHeight = 1.5f;
         public LayerMask targetLayer;
 
+        public SoundEffect onStartAttack;
+        public SoundEffect onExecuteAttack;
+        public SoundEffect onEndAttack;
+
         [Space] 
         public float preTime = 0.5f;
         public float postTime = 1f;
         private RangeTarget.Properties _targetProp;
+
+        public MoodStance[] addedStancesWithAttack;
 
         private RangeTarget.Properties TargetProperties =>
             _targetProp ??= new RangeTarget.Properties()
@@ -50,20 +56,24 @@ namespace Code.MoodGame.Skills
             Target = pawn.FindTarget(direction, attackRange);
         }
 
-        public override IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
+        public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
             pawn.MarkUsingSkill(this);
             pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection);
+            ConsumeStances(pawn);
             pawn.StartSkillAnimation(this);
+            onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(preTime);
 
             float executingTime = ExecuteEffect(pawn, skillDirection);
             DispatchExecuteEvent(pawn, skillDirection);
+            onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSecondsRealtime(executingTime);
             
             pawn.StopThreatening();
             pawn.FinishSkillAnimation(this);
+            onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(postTime);
             pawn.UnmarkUsingSkill(this);
         }
@@ -82,6 +92,10 @@ namespace Code.MoodGame.Skills
             {
                 t.GetComponentInChildren<Health>()?.Damage(damage, pawn.DamageTeam);
             }
+
+            if(addedStancesWithAttack != null)
+                foreach(MoodStance stance in addedStancesWithAttack)    
+                    pawn.AddStance(stance);
 
             return base.ExecuteEffect(pawn, skillDirection);
         }

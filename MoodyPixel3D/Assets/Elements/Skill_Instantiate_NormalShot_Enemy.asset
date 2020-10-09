@@ -14,9 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Power Blast
+  needs: []
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions: []
+  _shortcut: 0
   _cost: 1
   prefab: {fileID: 2242556836230007570, guid: db9eb4a7933d38446a9220a98312a84a, type: 3}
   range: 50
   resetDamageTeamAsPawnTeam: 1
   preTime: 0.5
   postTime: 1
+  threatens: 0
+  onStartInstantiate: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
+  onExecuteInstantiate: {fileID: 11400000, guid: 4712b65d487728043a91675abf4ccf89, type: 2}
+  onEndInstantiate: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}

@@ -19,7 +19,7 @@ public interface IMoodSkill
     /// <param name="pawn">The pawn that is executing the skill.</param>
     /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
     /// <returns></returns>
-    IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection);
+    IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection);
     
     /// <summary>
     /// An skill can be interrupted at any time. Implement this to tell what should still happen, what shouldn't, kill tweens.
@@ -36,12 +36,30 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public event MoodSkillEvent OnExecute;
     public event MoodSkillEvent OnPreview;
+
     
     [SerializeField]
     private Texture2D _icon;
     
     [SerializeField]
     private string _name;
+
+    
+    [SerializeField]
+    private MoodStance[] needs;
+    [SerializeField]
+    private bool consumeNeededStances;
+    [SerializeField]
+    private MoodStance[] toConsume;
+    [SerializeField]
+    private MoodStance[] restrictions;
+
+    [SerializeField]
+    private KeyCode  _shortcut;
+    public KeyCode GetShortCut()
+    {
+        return _shortcut;
+    }
 
     public Texture2D GetIcon()
     {
@@ -55,7 +73,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
-        return true;
+        return pawn.HasAllStances(true, needs) && !pawn.HasAnyStances(false, restrictions);
     }
 
     /// <summary>
@@ -64,8 +82,9 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// <param name="pawn">The pawn that is executing the skill.</param>
     /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
     /// <returns></returns>
-    public virtual IEnumerator Execute(MoodPawn pawn, Vector3 skillDirection)
+    public virtual IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
+        Debug.LogFormat("Executing {0}", this);
         pawn.MarkUsingSkill(this);
         float duration = ExecuteEffect(pawn, skillDirection);
         DispatchExecuteEvent(pawn, skillDirection);
@@ -73,7 +92,14 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         {
             yield return new WaitForSecondsRealtime(duration);
         }
+        ConsumeStances(pawn);
         pawn.UnmarkUsingSkill(this);
+    }
+
+    protected void ConsumeStances(MoodPawn pawn)
+    {
+        foreach(var stance in toConsume) pawn.RemoveStance(stance);
+        if(consumeNeededStances) foreach(var stance in needs) pawn.RemoveStance(stance);
     }
 
     protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection)

@@ -41,21 +41,23 @@ public class Health : MonoBehaviour {
         return _lifeNow > 0;
     }
 
-    public bool Damage(int amount, DamageTeam team)
+    public virtual bool Damage(int amount, DamageTeam team, GameObject origin = null)
     {
+        Debug.LogErrorFormat("Damage {0} with {1},{2}. Can damage? {3}", this, amount, team, CanDamage(team));
         if (CanDamage(team))
         {
             _lifeNow = Mathf.Clamp(_lifeNow - amount, 0, maxLife);
             OnDamage?.Invoke(amount, this);
+            Debug.LogErrorFormat("{0} is dead? {1} <= 0 so {2}", this, _lifeNow, _lifeNow <= 0);
             if (_lifeNow <= 0) Die();
             return true;
         }
         return false;
     }
 
-    public void Kill(DamageTeam origin = DamageTeam.Neutral)
+    public void Kill(DamageTeam team = DamageTeam.Neutral, GameObject origin = null)
     {
-        Damage(maxLife, origin);
+        Damage(maxLife, team, origin);
     }
 
     private bool CanDamage(DamageTeam from)
@@ -71,6 +73,7 @@ public class Health : MonoBehaviour {
 
     public void Die()
     {
+        Debug.LogErrorFormat("{0} is dead!", this);
         OnDeath?.Invoke(this);
         if (toDestroy == null) toDestroy = gameObject;
         toDestroy.SetActive(false);

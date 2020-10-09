@@ -13,12 +13,15 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public float showArrowWidth = 1f;
     public Ease ease;
 
+    public SoundEffect sfx;
+
 
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
         CalculateMovementData(skillDirection, out Vector3 distance, out float duration);
         pawn.SetHorizontalDirection(skillDirection);
         pawn.Dash(distance, duration, ease);
+        sfx.ExecuteIfNotNull(pawn.ObjectTransform);
         duration += base.ExecuteEffect(pawn, skillDirection);
         return duration;
     }
