@@ -92,9 +92,10 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         {
             if (onRangeSphereInstance.IsPlaying()) {
                 onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 1f);
-                onRangeSphereInstance.instance.start();
             }
-            else onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
+            else 
+                onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
+            onRangeSphereInstance.instance.start();
         }
     }
     

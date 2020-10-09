@@ -28,11 +28,7 @@ public class SoundEffectInstance
         return state;
     }
 
-}
-
-public static class SoundEffectInstanceUtils
-{
-    public static bool IsPlaying(this SoundEffectInstance sf)
+    public static bool IsNotNullAndPlaying(SoundEffectInstance sf)
     {
         if(sf == null) return false;
         if(!sf.instance.isValid()) return false;
@@ -54,6 +50,15 @@ public static class SoundEffectInstanceUtils
             default:
             return false;
         }
+    }
+
+}
+
+public static class SoundEffectInstanceUtils
+{
+    public static bool IsPlaying(this SoundEffectInstance sf)
+    {
+        return SoundEffectInstance.IsNotNullAndPlaying(sf);
     }
 }
 
@@ -135,7 +140,10 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
             inst.getDescription(out eventDescription);
         }
         
-        FMODUnity.RuntimeManager.AttachInstanceToGameObject(inst, where, where.GetComponentInParent<Rigidbody>());
+        if(where != null)
+        {
+            FMODUnity.RuntimeManager.AttachInstanceToGameObject(inst, where, where.GetComponentInParent<Rigidbody>());
+        }       
 
         foreach(Parameter initialParam in initialParametersOnStart)
         {
