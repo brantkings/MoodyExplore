@@ -136,8 +136,16 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
         return cachedParameters.ContainsKey(name)? cachedParameters[name] : null;
     }
 
+    public void SetParameter(SoundEffectInstance inst, string param, float value, bool ignoreSeekSpeed = false)
+    {
+        SetParameter(inst.instance, param, value, ignoreSeekSpeed);
+    }
+
     public void SetParameter(FMOD.Studio.EventInstance inst, string param, float value, bool ignoreSeekSpeed = false)
     {
-        inst.setParameterByID(GetParameter(param).ID, value, ignoreSeekSpeed);
+        //inst.setParameterByID(GetParameter(param).ID, value, ignoreSeekSpeed);
+        inst.setParameterByName(param, value, ignoreSeekSpeed);
+        Debug.LogFormat("Setted parameter {0} to {1} with instance {2}", param, value, inst);
     }
+
 }
