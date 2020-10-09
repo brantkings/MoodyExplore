@@ -34,6 +34,14 @@ public class Damage : MonoBehaviour
         source = newTeam;
     }
 
+    public DamageTeam Team
+    {
+        get
+        {
+            return source;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!isActiveAndEnabled) return;
@@ -82,7 +90,7 @@ public class Damage : MonoBehaviour
 
     public virtual void DealDamage(Health health)
     {
-        health.Damage(_amount, source);
+        health.Damage(_amount, source, gameObject);
         OnDamage?.Invoke(health, _amount);
         if (!health.IsAlive())
         {

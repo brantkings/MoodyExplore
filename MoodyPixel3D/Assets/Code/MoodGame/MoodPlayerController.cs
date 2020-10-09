@@ -205,12 +205,17 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         return pawn.Position;
     }
 
-    private IEnumerator ExecuteCurrentCommand(Vector3 direction)
+    private void StartSkillRoutine(MoodSkill skill, Vector3 direction)
+    {
+        StartCoroutine(ExecuteSkill(skill, direction));
+    }
+
+    private IEnumerator ExecuteSkill(MoodSkill skill, Vector3 direction)
     {
         _executingCommand = true;
         OnStartCommand?.Invoke();
         Debug.LogFormat("Starting command {0}", Time.time);
-        yield return command.ExecuteCurrent(pawn, direction);
+        yield return skill.ExecuteRoutine(pawn, direction);
         _executingCommand = false;
         OnStopCommand?.Invoke();
         Debug.LogFormat("Ending command {0}", Time.time);
@@ -255,10 +260,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             }
             else if (executeAction.down)
             {
-                Debug.LogFormat("Hey {0} ", command.CanExecuteCurrent(pawn, currentDirection));
-                if (command.CanExecuteCurrent(pawn, currentDirection))
+                MoodSkill skill = command.GetCurrentSkill();
+                Debug.LogFormat("Hey {0} ", skill.CanExecute(pawn, currentDirection));
+                if (skill.CanExecute(pawn, currentDirection))
                 {
-                    StartCoroutine(ExecuteCurrentCommand(currentDirection));
+                    StartSkillRoutine(skill, currentDirection);
                     command.Deactivate();
                 }
             }
@@ -275,6 +281,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
         else //The command is not open
         {
+            //Check command shortcuts
+            Vector3 shortcutDirection = pawn.Direction;
+            foreach(MoodSkill skill in command.GetMoodSkills())
+            {
+                if(Input.GetKeyDown(skill.GetShortCut()) && skill.CanExecute(pawn, shortcutDirection))
+                {
+                    StartSkillRoutine(skill, shortcutDirection);
+                }
+            }
+
             if (executeAction.down)
             {
                 if (checkHud.IsShowing())

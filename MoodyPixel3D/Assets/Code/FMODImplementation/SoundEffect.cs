@@ -4,12 +4,32 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using System.Linq;
+using UnityEngine.Serialization;
+
+
+public class SoundEffectInstance
+{
+    public FMOD.Studio.EventInstance instance;
+
+    public static implicit operator FMOD.Studio.EventInstance?(SoundEffectInstance sound)
+    {
+        if(sound == null) return null;
+        else return sound.instance;
+    } 
+
+    public static implicit operator SoundEffectInstance(FMOD.Studio.EventInstance sound)
+    {
+        return new SoundEffectInstance(){instance = sound};
+    } 
+}
 
 [CreateAssetMenu(menuName = "Long Hat House/Sound/Sound Effect", fileName = "SND_", order = 0)]
-public class SoundEffect : ScriptableEvent<FMOD.Studio.EventInstance>
+public class SoundEffect : ScriptableEvent<SoundEffectInstance>
 {
     [FMODUnity.EventRef]
-    public string oneShotString = "event:/Player/New Event";
+    [FormerlySerializedAs("oneShotString")]
+    public string eventString = "event:/Player/New Event";
+
 
     private class ParameterInfo
     {
@@ -45,6 +65,7 @@ public class SoundEffect : ScriptableEvent<FMOD.Studio.EventInstance>
     public FMOD.Studio.PARAMETER_ID[] parameters;
 
     private FMOD.Studio.EventDescription eventDescription;
+    private bool hasEventDescription;
 
 
     //private List<FMOD.Studio.EventInstance> instances;
@@ -55,11 +76,31 @@ public class SoundEffect : ScriptableEvent<FMOD.Studio.EventInstance>
 
     private Dictionary<string, ParameterInfo> cachedParameters = new Dictionary<string, ParameterInfo>(2);
 
-    public override FMOD.Studio.EventInstance ExecuteReturn(Transform where)
+    public override SoundEffectInstance ExecuteReturn(Transform where)
     {
         //Play the sound here
-        FMOD.Studio.EventInstance inst = FMODUnity.RuntimeManager.CreateInstance(oneShotString);
+        if(eventString == "") return null;
 
+        FMOD.Studio.EventInstance inst;
+#if UNITY_EDITOR
+        try
+        {
+#endif
+            inst = FMODUnity.RuntimeManager.CreateInstance(eventString);
+#if UNITY_EDITOR
+        }
+        catch(EventNotFoundException exception)
+        {
+            Debug.LogWarningFormat("Couldnt find event {0}! ({1})", eventString, exception.Message);
+            return null;
+        }
+#endif
+        if(!hasEventDescription)
+        {
+            hasEventDescription = true;
+            inst.getDescription(out eventDescription);
+        }
+        
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(inst, where, where.GetComponentInParent<Rigidbody>());
 
         foreach(Parameter initialParam in initialParametersOnStart)
@@ -74,7 +115,7 @@ public class SoundEffect : ScriptableEvent<FMOD.Studio.EventInstance>
 
         inst.release();
 
-        return inst;
+        return new SoundEffectInstance(){instance = inst};
     }
 
 

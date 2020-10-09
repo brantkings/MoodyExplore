@@ -308,7 +308,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         {
             _running = true;
             _completed = false;
-            yield return StartCoroutine(skill.Execute(pawn, direction));
+            yield return StartCoroutine(skill.ExecuteRoutine(pawn, direction));
             _running = false;
             _completed = true;
         }

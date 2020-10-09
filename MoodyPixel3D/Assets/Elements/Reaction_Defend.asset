@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 539aaf8437cc2ae4baf3922cafe1c044, type: 3}
-  m_Name: SND_Test
+  m_Script: {fileID: 11500000, guid: 2dd804177a618714680230f9588f6e47, type: 3}
+  m_Name: Reaction_Defend
   m_EditorClassIdentifier: 
-  tagToTest: MainCamera
-  oneShotString: event:/Player/New Event
+  cost: 1
+  damageModifier:
+    add: 0
+    multiplier: 0
+  animationTrigger: Defended

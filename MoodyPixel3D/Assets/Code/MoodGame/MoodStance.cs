@@ -5,22 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Mood/Mood Stance", fileName = "Stance_")]
 public class MoodStance : ScriptableObject
 {
-    [System.Serializable]
-    public class ValueModifier
-    {
-        public float add = 0f;
-        public float multiplier = 1f;
-
-        public void Modify(ref float value)
-        {
-            value = value * multiplier + add;
-        }
-
-        public bool IsChange()
-        {
-            return add != 0f || multiplier != 1f;
-        }
-    }
+    
 
     [SerializeField]
     private ValueModifier staminaOverTimeIdle;
@@ -28,10 +13,20 @@ public class MoodStance : ScriptableObject
     private ValueModifier staminaOverTimeMoving;
     [SerializeField]
     private ValueModifier movementVelocity;
+    
+    [SerializeField]
+    private MoodReaction[] _reactions;
+
+
+    [SerializeField]
+    private bool _hasTimeLimit;
+    [SerializeField]
+    private float _timeLimit;
 
 
     [SerializeField]
     private string _stanceAnimParamBool;
+
 
     public void ModifyStamina(ref float stamina, bool moving)
     {
@@ -53,6 +48,19 @@ public class MoodStance : ScriptableObject
     {
         if(pawn.animator != null && !string.IsNullOrEmpty(_stanceAnimParamBool) )
             pawn.animator.SetBool(_stanceAnimParamBool, withStance);
+        if(_hasTimeLimit && withStance)
+            pawn.StartCoroutine(TimeoutRoutine(pawn));
+    }
+
+    private IEnumerator TimeoutRoutine(MoodPawn pawn)
+    {
+        yield return new WaitForSeconds(_timeLimit);
+        pawn.RemoveStance(this);
+    }
+
+    public IEnumerable<MoodReaction> GetReactions()
+    {
+        foreach(MoodReaction react in _reactions) yield return react;
     }
 
 }
