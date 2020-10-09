@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: SND_CircleShrink
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  oneShotString: event:/UI/Option
+  oneShotString: event:/UI/Action/Circle/Shrink
+  doNotPlayAtCreation: 0
+  initialParametersOnStart: []

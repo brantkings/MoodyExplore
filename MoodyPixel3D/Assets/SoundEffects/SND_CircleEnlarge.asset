@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: SND_CircleEnlarge
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  oneShotString: event:/UI/Option
+  oneShotString: event:/UI/Action/Circle/Enlarge
+  doNotPlayAtCreation: 0
+  initialParametersOnStart: []
