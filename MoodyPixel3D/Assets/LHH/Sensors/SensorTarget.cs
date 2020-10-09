@@ -5,7 +5,6 @@ using UnityEngine.Events;
 
 namespace LHH.Sensors
 {
-    [RequireComponent(typeof(Collider))]
     public class SensorTarget : MonoBehaviour
     {
         public static LinkedList<SensorTarget> allTargets = new LinkedList<SensorTarget>();
