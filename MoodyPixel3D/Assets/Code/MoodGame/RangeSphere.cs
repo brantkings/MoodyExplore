@@ -90,9 +90,15 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         TweenRadius(duration, param.radius, true, showColor);
         if(feedback)
         {
+<<<<<<< HEAD
+            if (onRangeSphereInstance != null) {
+=======
             if (onRangeSphereInstance.IsPlaying()) {
                 onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 1f);
+>>>>>>> origin/master
                 onRangeSphereInstance.instance.start();
+                onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 1f);
+                
             }
             else onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
         }
