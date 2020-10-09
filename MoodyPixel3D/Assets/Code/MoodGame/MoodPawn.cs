@@ -32,6 +32,14 @@ public class MoodPawn : MonoBehaviour
     public FocusController focus;
     public SensorGroup sensorGroup;
 
+    public Transform ObjectTransform
+    {
+        get
+        {
+            return mover.transform;
+        }
+    }
+
     [Space()] 
     public float turningTime = 0.1f;
     public float height = 2f;

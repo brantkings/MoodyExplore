@@ -40,7 +40,7 @@ public class MoodPawnFeedback : AddonBehaviour<MoodPawn>
         {
             if(!SoundEffectInstance.IsNotNullAndPlaying(respirationFeedbackInstance))
             {
-                respirationFeedbackInstance = respirationFeedback.ExecuteReturn(transform);
+                respirationFeedbackInstance = respirationFeedback.ExecuteReturn(Addon.ObjectTransform);
             }
 
             if(!string.IsNullOrEmpty(respirationFeedbackIntensityParameter))
@@ -59,13 +59,13 @@ public class MoodPawnFeedback : AddonBehaviour<MoodPawn>
     private void OnThreatRelief(MoodPawn pawn)
     {
         OnThreatenedChange(false);
-        onThreatRelax.Execute(transform);
+        onThreatRelax.Execute(pawn.ObjectTransform);
     }
 
     private void OnThreatAppear(MoodPawn pawn)
     {
         OnThreatenedChange(true);
-        onThreatAppear.Execute(transform);
+        onThreatAppear.Execute(pawn.ObjectTransform);
 
     }
 

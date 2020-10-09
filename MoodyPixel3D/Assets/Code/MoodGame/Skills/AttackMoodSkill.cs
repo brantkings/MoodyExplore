@@ -63,17 +63,17 @@ namespace Code.MoodGame.Skills
             pawn.StartThreatening(skillDirection);
             ConsumeStances(pawn);
             pawn.StartSkillAnimation(this);
-            onStartAttack.ExecuteIfNotNull(pawn.transform);
+            onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(preTime);
 
             float executingTime = ExecuteEffect(pawn, skillDirection);
             DispatchExecuteEvent(pawn, skillDirection);
-            onExecuteAttack.ExecuteIfNotNull(pawn.transform);
+            onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSecondsRealtime(executingTime);
             
             pawn.StopThreatening();
             pawn.FinishSkillAnimation(this);
-            onEndAttack.ExecuteIfNotNull(pawn.transform);
+            onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(postTime);
             pawn.UnmarkUsingSkill(this);
         }
