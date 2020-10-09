@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SND_UI_Action_CircleFull
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  oneShotString: event:/UI/Action/Circle/Rotation
+  eventString: event:/UI/Action/Circle/Rotation
   doNotPlayAtCreation: 0
   initialParametersOnStart:
   - name: Switch
