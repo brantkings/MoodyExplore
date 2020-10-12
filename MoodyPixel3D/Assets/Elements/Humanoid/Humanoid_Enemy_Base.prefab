@@ -202,26 +202,10 @@ MonoBehaviour:
   threatFeedback: {fileID: 0}
   onThreatAppear: []
   onThreatRelax: []
-  respirationFeedback: {fileID: 11400000, guid: 5378f1f9885327d4db970c1781f46d15, type: 2}
+  respirationFeedback: {fileID: 11400000, guid: 70b9c1b364a544944b4af29731b84177, type: 2}
   respirationFeedbackIntensityParameter: IntensityBreath
   minValue: 0
   maxValue: 100
---- !u!114 &7325510342689100543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6543790190532030736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84ff8f769545e2d4eae66bc7284cc280, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onDeath:
-  - {fileID: 0}
-  onDamage:
-  - {fileID: 0}
 --- !u!114 &3569909607973292266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,6 +249,22 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &7325510342689100543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6543790190532030736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84ff8f769545e2d4eae66bc7284cc280, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDeath:
+  - {fileID: 0}
+  onDamage:
+  - {fileID: 0}
 --- !u!1 &7398380335450163879
 GameObject:
   m_ObjectHideFlags: 0
@@ -418,6 +418,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 1515388730033542578, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
+      propertyPath: sfx
+      value: 
+      objectReference: {fileID: 11400000, guid: 81d2682391ad84f4984b3896d366fdf4, type: 2}
     - target: {fileID: 1518274912276391909, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -1155,19 +1159,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 5216011089363897089, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 8452307907098529927, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
       propertyPath: m_Name

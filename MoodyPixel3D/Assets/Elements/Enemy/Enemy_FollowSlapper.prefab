@@ -415,6 +415,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_FollowSlapper
       objectReference: {fileID: 0}
+    - target: {fileID: 6574223731565618125, guid: 8bbb5f8beea13d84fbde5e7bf3aed967, type: 3}
+      propertyPath: sfx
+      value: 
+      objectReference: {fileID: 11400000, guid: 81d2682391ad84f4984b3896d366fdf4, type: 2}
     - target: {fileID: 8229838838835742810, guid: 8bbb5f8beea13d84fbde5e7bf3aed967, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
