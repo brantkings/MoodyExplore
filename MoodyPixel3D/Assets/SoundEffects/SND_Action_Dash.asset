@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SND_Action_Dash
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  eventString: event:/UI/Action/Move
+  eventString: event:/Player/Action/Dash
   doNotPlayAtCreation: 0
   initialParametersOnStart: []

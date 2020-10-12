@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SND_Action_Defend
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  eventString: event:/UI/Camera/Camera Out
+  eventString: event:/Player/Action/Defend
   doNotPlayAtCreation: 0
   initialParametersOnStart: []

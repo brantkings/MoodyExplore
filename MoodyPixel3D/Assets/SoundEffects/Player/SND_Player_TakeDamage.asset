@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SND_Player_TakeDamage
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  eventString: event:/UI/Action/Move
+  eventString: event:/Player/Damage
   doNotPlayAtCreation: 0
   initialParametersOnStart: []

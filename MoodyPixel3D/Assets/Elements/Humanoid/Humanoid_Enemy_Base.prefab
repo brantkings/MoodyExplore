@@ -202,7 +202,7 @@ MonoBehaviour:
   threatFeedback: {fileID: 0}
   onThreatAppear: []
   onThreatRelax: []
-  respirationFeedback: {fileID: 11400000, guid: 5378f1f9885327d4db970c1781f46d15, type: 2}
+  respirationFeedback: {fileID: 11400000, guid: 70b9c1b364a544944b4af29731b84177, type: 2}
   respirationFeedbackIntensityParameter: IntensityBreath
   minValue: 0
   maxValue: 100
@@ -418,6 +418,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 1515388730033542578, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
+      propertyPath: sfx
+      value: 
+      objectReference: {fileID: 11400000, guid: 81d2682391ad84f4984b3896d366fdf4, type: 2}
     - target: {fileID: 1518274912276391909, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
       propertyPath: m_Layer
       value: 10

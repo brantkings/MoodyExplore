@@ -10,18 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4286cfc42e6596b4f98466c13c977690, type: 3}
-  m_Name: Skill_Stance_WeaponReady
+  m_Name: Skill_Stance_WeaponRemove
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Toggle Stance
-  needs: []
-  consumeNeededStances: 0
+  _name: Relax Weapon
+  needs:
+  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  consumeNeededStances: 1
   toConsume: []
-  restrictions:
-  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  restrictions: []
   _shortcut: 118
-  _cost: 1
+  _cost: 0
   stanceChangeTime: 1
-  toAdd:
-  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  toAdd: []
   toToggle: []
