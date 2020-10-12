@@ -15,12 +15,22 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
 
     public SoundEffect sfx;
 
+    public MoodStance[] toAdd;
+
+    private void AddStances(MoodPawn pawn)
+    {
+        foreach(MoodStance s in toAdd)
+        {
+            pawn.AddStance(s);
+        }
+    }
 
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
         CalculateMovementData(skillDirection, out Vector3 distance, out float duration);
         pawn.SetHorizontalDirection(skillDirection);
         pawn.Dash(distance, duration, ease);
+        AddStances(pawn);
         sfx.ExecuteIfNotNull(pawn.ObjectTransform);
         duration += base.ExecuteEffect(pawn, skillDirection);
         return duration;
