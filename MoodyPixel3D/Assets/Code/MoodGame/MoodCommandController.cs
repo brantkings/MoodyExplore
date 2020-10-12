@@ -55,7 +55,8 @@ public class MoodCommandController : MonoBehaviour
     private void Start()
     {
         MakeOptions();
-        SetSelected(0, true);
+        _currentOption = -1;
+        MoveSelected(1);
     }
 
     private void MakeOptions()
@@ -83,14 +84,23 @@ public class MoodCommandController : MonoBehaviour
         {
             foreach (OptionTuple opt in _options)
             {
-                bool canExecute = opt.skill.CanExecute(pawn, direction);
-                PaintOption(opt, canExecute);
+                bool canBeShown = opt.skill.CanBeShown(pawn);
+                if(!canBeShown)
+                {
+                    PaintOption(opt, canBeShown, false);
+                }
+                else
+                {
+                    bool canExecute = opt.skill.CanExecute(pawn, direction);
+                    PaintOption(opt, canBeShown, canExecute);
+                }
             }
         }
     }
 
-    private void PaintOption(OptionTuple opt, bool canExecute)
+    private void PaintOption(OptionTuple opt, bool canBeShown, bool canExecute)
     {
+        opt.command.gameObject.SetActive(canBeShown);
         opt.command.SetPossible(canExecute);
     }
 
@@ -98,6 +108,7 @@ public class MoodCommandController : MonoBehaviour
     {
         transform.position = position;
         SetActiveObjects(true, GetCurrentSkill());
+        
         TimeManager.Instance.ChangeTimeDelta(0.02f, "ControlSlow");
         _activated = true;
     }
@@ -119,13 +130,39 @@ public class MoodCommandController : MonoBehaviour
         yield return GetCurrentSkill().ExecuteRoutine(pawn, direction);
     }
 
+    private void AssureSelectedOptionIsVisible()
+    {
+        if(!IsVisible(_currentOption)) 
+        {
+            Debug.LogFormat("Current selected {0} is not visible", _currentOption);
+            MoveSelected(1);
+            Debug.LogFormat("Current selected {0} is visible?", _currentOption);
+        }
+    }
+
+    private void MoveIndex(ref int current, int add)
+    {
+        current = Mathf.RoundToInt(Mathf.Repeat(current + add, _options.Count));
+    }
+
     public void MoveSelected(int add)
     {
+        int oldOption = _currentOption;
         if(_currentOption != -1) SetSelected(_currentOption, false);
-        _currentOption = Mathf.RoundToInt(Mathf.Repeat(_currentOption + add, _options.Count));
+        MoveIndex(ref _currentOption, add);
+        while(!IsVisible(_currentOption) && _currentOption != oldOption)
+        {
+            MoveIndex(ref _currentOption, Mathf.RoundToInt(Mathf.Sign(add)));
+            Debug.LogFormat("Hey trying {0}", _currentOption);
+        }
         SetSelected(_currentOption, true );
         SetActiveObjects(IsActivated(), GetCurrentSkill());
         onChangeOption.Execute(transform);
+    }
+
+    private bool IsVisible(int index) 
+    {
+        return _options[index].command.gameObject.activeSelf;
     }
 
     private void SetSelected(int index, bool selected)
@@ -171,10 +208,11 @@ public class MoodCommandController : MonoBehaviour
 
     public void UpdateCommandView(MoodPawn pawn, Vector3 direction)
     {
-        GetCurrentSkill().SetShowDirection(pawn, direction);
         
         _arrowIndicator.SetDirection(direction);
         PaintOptions(pawn, direction);
+        AssureSelectedOptionIsVisible();
+        GetCurrentSkill().SetShowDirection(pawn, direction);
     }
 
     public IEnumerable<MoodSkill> GetMoodSkills()
