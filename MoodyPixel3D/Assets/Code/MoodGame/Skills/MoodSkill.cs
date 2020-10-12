@@ -12,6 +12,7 @@ public interface IMoodSkill
 {
     void SetShowDirection(MoodPawn pawn, Vector3 direction);
     bool CanExecute(MoodPawn pawn, Vector3 where);
+    bool CanBeShown(MoodPawn pawn);
     
     /// <summary>
     /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. Dispatch execute event after you do the skill. Do not call base.
@@ -71,9 +72,19 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return _name;
     }
 
-    public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
+    private bool IsValidStanceSetup(MoodPawn pawn)
     {
         return pawn.HasAllStances(true, needs) && !pawn.HasAnyStances(false, restrictions);
+    }
+
+    public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
+    {
+        return IsValidStanceSetup(pawn);
+    }
+
+    public virtual bool CanBeShown(MoodPawn pawn)
+    {
+        return IsValidStanceSetup(pawn);
     }
 
     /// <summary>
