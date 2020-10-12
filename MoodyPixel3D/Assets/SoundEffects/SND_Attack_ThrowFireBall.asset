@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SND_Attack_ThrowFireBall
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  eventString: event:/UI/Action/Move
+  eventString: event:/Attack/Fire Ball
   doNotPlayAtCreation: 0
   initialParametersOnStart: []

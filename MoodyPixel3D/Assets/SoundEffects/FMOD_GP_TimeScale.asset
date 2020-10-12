@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23e0bc3b711554448aad7eaebbdb4d2e, type: 3}
   m_Name: FMOD_GP_TimeScale
   m_EditorClassIdentifier: 
-  parameter: 
-  neutralValue: 0
+  parameter: GP_SlowMotion
+  neutralValue: 1
