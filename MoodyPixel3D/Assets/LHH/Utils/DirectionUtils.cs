@@ -15,7 +15,7 @@ public enum Direction
 
 
 [System.Serializable]
-public struct DirectionGetter
+public struct DirectionManipulator
 {
     public Transform GetTransformOrigin(Transform myself)
     {
@@ -26,6 +26,11 @@ public struct DirectionGetter
     public Vector3 Get(Transform defaultTransform)
     {
         return DirectionUtils.GetDirectionFrom(direction, GetTransformOrigin(defaultTransform));
+    }
+
+    public void Set(Transform defaultTransform, Vector3 value)
+    {
+        DirectionUtils.SetDirectionTo(direction, GetTransformOrigin(defaultTransform), value);
     }
 
     public Direction direction;
@@ -53,6 +58,34 @@ public static class DirectionUtils
                 return -from.up;
             default:
                 return from.forward;
+        }
+    }
+
+    public static void SetDirectionTo(Direction dir, Transform from, Vector3 value)
+    {
+        switch (dir)
+        {
+            case Direction.Forward:
+                from.forward = value;
+                break;
+            case Direction.Back:
+                from.forward = -value;
+                break;
+            case Direction.Right:
+                from.right = value;
+                break;
+            case Direction.Left:
+                from.right = -value;
+                break;
+            case Direction.Up:
+                from.up = value;
+                break;
+            case Direction.Down:
+                from.up = -value;
+                break;
+            default:
+                from.forward = value;
+                break;
         }
     }
 }
