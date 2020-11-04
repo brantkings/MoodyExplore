@@ -6,7 +6,7 @@ using LHH.Utils;
 public class AI_ConstantForceToDirection : AI_ForceRigibody
 {
     [Header("Direction")]
-    public DirectionGetter direction;
+    public DirectionManipulator direction;
     public bool useAbsoluteDirection;
     public Vector3 absoluteDirection = Vector3.forward;
 

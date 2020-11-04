@@ -22,7 +22,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
   _shortcut: 0
   _cost: 1
-  minDistance: 0
+  minDistance: 3
   maxDistance: 5
   velocityAdd: 0
   durationAdd: 0.2
