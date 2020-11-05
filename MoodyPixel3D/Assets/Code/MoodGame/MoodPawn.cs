@@ -8,6 +8,8 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using LHH.Utils;
 using LHH.Sensors;
+using LHH.Structures;
+using System.Runtime.CompilerServices;
 
 public interface IMoodPawnPeeker
 {
@@ -119,6 +121,17 @@ public class MoodPawn : MonoBehaviour
         _lookAtControl = animator.GetComponent<LookAtIK>();
     }
 
+    private void OnEnable()
+    {
+        _movementLock.OnLock += OnLockMovement;
+        _movementLock.OnUnlock += OnUnlockMovement;
+    }
+
+    private void OnDisable()
+    {
+        _movementLock.OnLock -= OnLockMovement;
+        _movementLock.OnUnlock -= OnUnlockMovement;
+    }
 
     private void Start()
     {
@@ -127,19 +140,6 @@ public class MoodPawn : MonoBehaviour
         _wasThreatened = IsThreatened();
     }
 
-    /*private void OnGUI() 
-    {
-        if(damageTeam == DamageTeam.Neutral)
-        {
-            string stances = "";
-            foreach(var st in Stances)
-            {
-                stances += st.name;
-                stances += " ";
-            }
-            GUI.Label(new Rect(50,Screen.height - 100, 100, 100), string.Format("Current stances {0}: {1}", name, stances));
-        }
-    }*/
 
     private void Update()
     {
@@ -270,7 +270,7 @@ public class MoodPawn : MonoBehaviour
 
     private void SolveFinalVelocity()
     {
-        if (_movementTween != null && _movementTween.IsActive())
+        if (_movementTween != null && _movementTween.IsActive() || _movementLock.IsLocked())
         {
             mover.SetVelocity(Vector3.zero);
         }
@@ -379,6 +379,33 @@ public class MoodPawn : MonoBehaviour
     {
         return mover.transform.rotation;
     }
+
+
+    #region Locking
+
+    private Lock<string> _movementLock;
+
+    private void OnLockMovement()
+    {
+        mover.CancelVelocity();
+    }
+    private void OnUnlockMovement()
+    {
+        mover.CancelVelocity();
+    }
+
+    public void AddMovementLock(string str)
+    {
+        _movementLock.Add(str);
+    }
+
+    public void RemoveMovementLock(string str)
+    {
+        _movementLock.Remove(str);
+    }
+
+    #endregion
+
     #endregion
 
     #region Threat
@@ -588,6 +615,6 @@ public class MoodPawn : MonoBehaviour
         }
     }
     #endregion
-    
-    
+
+
 }

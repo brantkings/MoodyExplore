@@ -19,6 +19,8 @@ MonoBehaviour:
   consumeNeededStances: 1
   toConsume: []
   restrictions: []
+  _lockCamera: 0
+  lockMovement: 0
   _shortcut: 118
   _cost: 0
   stanceChangeTime: 1

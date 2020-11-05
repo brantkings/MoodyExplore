@@ -56,6 +56,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private MoodStance[] restrictions;
 
     [SerializeField]
+    private bool _lockCamera = true;
+    [SerializeField]
+    private bool lockMovement;
+
+    [SerializeField]
     private KeyCode  _shortcut;
     public KeyCode GetShortCut()
     {
@@ -136,4 +141,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     {
         pawn.InterruptedSkill(this);
     }
+
+    public virtual bool NeedsCameraUpwards()
+    {
+        return _lockCamera;
+    }
+
 }

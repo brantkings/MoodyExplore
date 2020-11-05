@@ -17,9 +17,12 @@ MonoBehaviour:
   needs:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   consumeNeededStances: 1
-  toConsume: []
+  toConsume:
+  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   restrictions:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  _lockCamera: 1
+  lockMovement: 0
   _shortcut: 0
   _cost: 2
   damage: 10

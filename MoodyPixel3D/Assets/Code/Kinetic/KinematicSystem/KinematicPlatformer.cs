@@ -198,7 +198,7 @@ public class KinematicPlatformer : MonoBehaviour
         _currentInputVelocity += vel;
     }
 
-    public void CancelVelocity(Vector3 vel)
+    public void CancelVelocity()
     {
         _currentInputVelocity = Vector3.zero;
     }

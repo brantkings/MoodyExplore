@@ -51,7 +51,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     public CinemachineBlendListCamera cameraBlendList;
 
     private Vector3 _mouseWorldPosition;
-    private bool _executingCommand;
+    private MoodSkill _executingCommand;
 
     public float timeSlowOnThreat = 0.2f;
 
@@ -181,7 +181,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         showCommand = new ButtonState(KeyCode.Space);
         executeAction = new ButtonState(0);
 
-
         move.up = new ButtonState(ButtonState.Join.Or, KeyCode.UpArrow, KeyCode.W);
         move.left = new ButtonState(ButtonState.Join.Or, KeyCode.LeftArrow, KeyCode.A);
         move.down = new ButtonState(ButtonState.Join.Or, KeyCode.DownArrow, KeyCode.S);
@@ -212,18 +211,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private IEnumerator ExecuteSkill(MoodSkill skill, Vector3 direction)
     {
-        _executingCommand = true;
-        OnStartCommand?.Invoke();
         Debug.LogFormat("Starting command {0}", Time.time);
+        _executingCommand = skill;
+        OnStartCommand?.Invoke();
         yield return skill.ExecuteRoutine(pawn, direction);
-        _executingCommand = false;
+        _executingCommand = null;
         OnStopCommand?.Invoke();
         Debug.LogFormat("Ending command {0}", Time.time);
     }
 
     private bool IsExecutingCommand()
     {
-        return _executingCommand;
+        return _executingCommand != null;
+    }
+
+    private bool IsSkillNeedingStrategicCamera()
+    {
+        return _executingCommand != null && _executingCommand.NeedsCameraUpwards();
     }
 
 
@@ -243,8 +247,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
 
         bool isInCommand = command.IsActivated() || IsExecutingCommand();
+        bool isCameraUpwards = command.IsActivated() || IsSkillNeedingStrategicCamera();
+
 
         SetCommandMode(isInCommand);
+        SetCameraMode(isCameraUpwards);
         if (isInCommand) //The command is open
         {
             Vector3 currentDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
@@ -347,17 +354,26 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     {
         if(_wasInCommand != set)
         {
-            animatorCamera.SetBool(animatorCameraCommandBoolean, set);
-            if(feedback)
-            {
-                if(set) onCameraOut.Execute(transform);
-                else onCameraIn.Execute(transform);
-            }
-
-            //_backToCameraControl.enabled = !set;  
+            _wasInCommand = set;
         }
 
-        _wasInCommand = set;
+    }
+
+
+    private bool? _wasInCamera = null;
+
+    private void SetCameraMode(bool upwards, bool feedback = true)
+    {
+        if(_wasInCamera != upwards)
+        {
+            animatorCamera.SetBool(animatorCameraCommandBoolean, upwards);
+            if (feedback)
+            {
+                if (upwards) onCameraOut.Execute(transform);
+                else onCameraIn.Execute(transform);
+            }
+            _wasInCamera = upwards;
+        }
     }
     
     private Vector3 ToWorldPosition(Vector3 vec)
