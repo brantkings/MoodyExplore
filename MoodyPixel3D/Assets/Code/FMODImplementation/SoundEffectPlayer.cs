@@ -12,7 +12,7 @@ public class SoundEffectPlayer : MonoBehaviour
 
     public SoundEffectInstance Play()
     {
-        latestInstance = sfx.ExecuteReturn(transform);
+        latestInstance = sfx.InvokeReturn(transform);
         return latestInstance;
     }
 

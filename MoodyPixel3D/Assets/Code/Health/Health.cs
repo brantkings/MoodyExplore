@@ -11,10 +11,29 @@ public enum DamageTeam
     Neutral
 }
 
+public struct DamageInfo
+{
+    public int amount;
+    public DamageTeam team;
+    public GameObject origin;
+
+    public DamageInfo(int damage = 0, DamageTeam damageTeam = DamageTeam.Neutral, GameObject damageOrigin = null)
+    {
+        amount = damage;
+        team = damageTeam;
+        origin = damageOrigin;
+    }
+
+    public override string ToString()
+    {
+        return string.Format("[{0} damage with '{1}' by '{2}']", amount, team, origin);
+    }
+}
+
 public class Health : MonoBehaviour {
 
     [SerializeField]
-    private int maxLife = 10;
+    private int _maxLife = 10;
 
     [SerializeField]
     [ReadOnly]
@@ -24,16 +43,37 @@ public class Health : MonoBehaviour {
 
     public GameObject toDestroy;
 
-    public delegate void DelHealthFeedback(Health health);
-    public delegate void DelDamageFeedback(int amount, Health health);
-    public event DelDamageFeedback OnDamage;
+    public delegate void DelHealthFeedback(DamageInfo damage, Health damaged);
+    public event DelHealthFeedback OnDamage;
     public event DelHealthFeedback OnDeath;
 
-
-
-    private void Awake()
+    public int MaxLife
     {
-        _lifeNow = maxLife;
+        get
+        {
+            return _maxLife;
+        }
+    }
+
+    public int Life
+    {
+        get
+        {
+            return _lifeNow;
+        }
+    }
+
+    public float Ratio
+    {
+        get
+        {
+            return (float)_lifeNow / _maxLife;
+        }
+    }
+
+    private void Start()
+    {
+        _lifeNow = _maxLife;
     }
 
     public bool IsAlive()
@@ -41,15 +81,18 @@ public class Health : MonoBehaviour {
         return _lifeNow > 0;
     }
 
-    public virtual bool Damage(int amount, DamageTeam team, GameObject origin = null)
+    public virtual bool Damage(DamageInfo info)
     {
-        Debug.LogErrorFormat("Damage {0} with {1},{2}. Can damage? {3}", this, amount, team, CanDamage(team));
-        if (CanDamage(team))
+        Debug.LogErrorFormat("Damage {0} with {1},{2}. Can damage? {3}. Life now is {4}", this, info.amount, info.team, CanDamage(info.team), _lifeNow);
+        if (CanDamage(info.team))
         {
-            _lifeNow = Mathf.Clamp(_lifeNow - amount, 0, maxLife);
-            OnDamage?.Invoke(amount, this);
+            _lifeNow = Mathf.Clamp(_lifeNow - info.amount, 0, _maxLife);
             Debug.LogErrorFormat("{0} is dead? {1} <= 0 so {2}", this, _lifeNow, _lifeNow <= 0);
-            if (_lifeNow <= 0) Die();
+            OnDamage?.Invoke(info, this);
+            if (_lifeNow <= 0)
+            {
+                Die(info);
+            }
             return true;
         }
         return false;
@@ -57,7 +100,7 @@ public class Health : MonoBehaviour {
 
     public void Kill(DamageTeam team = DamageTeam.Neutral, GameObject origin = null)
     {
-        Damage(maxLife, team, origin);
+        Damage(new DamageInfo(_maxLife, team, origin));
     }
 
     private bool CanDamage(DamageTeam from)
@@ -71,10 +114,9 @@ public class Health : MonoBehaviour {
         }
     }
 
-    public void Die()
+    public void Die(DamageInfo dmg)
     {
-        Debug.LogErrorFormat("{0} is dead!", this);
-        OnDeath?.Invoke(this);
+        OnDeath?.Invoke(dmg, this);
         if (toDestroy == null) toDestroy = gameObject;
         toDestroy.SetActive(false);
         Destroy(toDestroy);

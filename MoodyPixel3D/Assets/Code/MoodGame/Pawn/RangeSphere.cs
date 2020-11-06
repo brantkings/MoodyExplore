@@ -94,7 +94,7 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
                 onRangeSphere.SetParameter(onRangeSphereInstance, "Switch", 1f);
             }
             else 
-                onRangeSphereInstance = onRangeSphere.ExecuteReturn(transform);
+                onRangeSphereInstance = onRangeSphere.InvokeReturn(transform);
             onRangeSphereInstance.instance.start();
         }
     }

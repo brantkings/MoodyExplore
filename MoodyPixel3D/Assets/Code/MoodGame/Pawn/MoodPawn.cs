@@ -30,7 +30,15 @@ public class MoodPawn : MonoBehaviour
     public KinematicPlatformer mover;
     public Animator animator;
     private LookAtIK _lookAtControl;
+    [Space()]
+    [SerializeField]
+    private Health _health;
+    [SerializeField]
+    private float knockBackMultiplier;
+    [SerializeField]
+    private GameObject toDestroyOnDeath;
 
+    [Space()]
     public FocusController focus;
     public SensorGroup sensorGroup;
 
@@ -125,12 +133,22 @@ public class MoodPawn : MonoBehaviour
     {
         _movementLock.OnLock += OnLockMovement;
         _movementLock.OnUnlock += OnUnlockMovement;
+        if(_health != null)
+        {
+            _health.OnDamage += OnDamage;
+            _health.OnDeath += OnDeath;
+        }
     }
 
     private void OnDisable()
     {
         _movementLock.OnLock -= OnLockMovement;
         _movementLock.OnUnlock -= OnUnlockMovement;
+        if(_health != null)
+        {
+            _health.OnDamage -= OnDamage;
+            _health.OnDeath -= OnDeath;
+        }
     }
 
     private void Start()
@@ -165,7 +183,19 @@ public class MoodPawn : MonoBehaviour
     {
         OnInterruptSkill?.Invoke(skill);
     }
-    
+
+    #region Health
+    private void OnDamage(DamageInfo info, Health health)
+    {
+    }
+
+    private void OnDeath(DamageInfo info, Health health)
+    {
+        Debug.LogFormat("{0} is dead.", this);
+        if (toDestroyOnDeath != null) Destroy(toDestroyOnDeath);
+    }
+    #endregion
+
     #region Skills
     private MoodSkill _currentSkill;
     public void MarkUsingSkill(MoodSkill skill)

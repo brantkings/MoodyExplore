@@ -369,8 +369,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             animatorCamera.SetBool(animatorCameraCommandBoolean, upwards);
             if (feedback)
             {
-                if (upwards) onCameraOut.Execute(transform);
-                else onCameraIn.Execute(transform);
+                if (upwards) onCameraOut.Invoke(transform);
+                else onCameraIn.Invoke(transform);
             }
             _wasInCamera = upwards;
         }

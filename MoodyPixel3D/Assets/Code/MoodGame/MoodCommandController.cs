@@ -157,7 +157,7 @@ public class MoodCommandController : MonoBehaviour
         }
         SetSelected(_currentOption, true );
         SetActiveObjects(IsActivated(), GetCurrentSkill());
-        onChangeOption.Execute(transform);
+        onChangeOption.Invoke(transform);
     }
 
     private bool IsVisible(int index) 

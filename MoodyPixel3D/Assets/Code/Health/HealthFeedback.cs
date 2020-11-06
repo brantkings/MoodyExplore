@@ -25,13 +25,13 @@ public class HealthFeedback : AddonBehaviour<Health>
         }
     }
 
-    private void OnDamage(int amount, Health health)
+    private void OnDamage(DamageInfo info, Health health)
     {
-        onDamage.Execute(transform);
+        onDamage.Invoke(transform);
     }
 
-    private void OnDeath(Health health)
+    private void OnDeath(DamageInfo info, Health health)
     {
-        onDeath.Execute(transform);
+        onDeath.Invoke(transform);
     }
 }

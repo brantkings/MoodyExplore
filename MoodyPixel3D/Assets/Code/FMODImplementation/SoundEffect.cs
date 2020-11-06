@@ -63,7 +63,7 @@ public static class SoundEffectInstanceUtils
 
     public static SoundEffectInstance ExecuteIfNotNull(this SoundEffect sf, Transform where)
     {
-        if(sf != null) return sf.ExecuteReturn(where);
+        if(sf != null) return sf.InvokeReturn(where);
         else return null;
     }
 }
@@ -121,7 +121,7 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
 
     private Dictionary<string, ParameterInfo> cachedParameters = new Dictionary<string, ParameterInfo>(2);
 
-    public override SoundEffectInstance ExecuteReturn(Transform where)
+    public override SoundEffectInstance InvokeReturn(Transform where)
     {
         //Play the sound here
         if(eventString == "") return null;

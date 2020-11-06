@@ -19,10 +19,10 @@ public class MoodReaction : ScriptableObject
         return pawn.HasStamina(cost);
     }
 
-    public virtual void ReactToDamage(ref int damage, GameObject origin, MoodPawn pawn)
+    public virtual void ReactToDamage(ref DamageInfo dmg, MoodPawn pawn)
     {
         pawn.DepleteStamina(cost);
-        damageModifier.Modify(ref damage, Mathf.FloorToInt);
+        damageModifier.Modify(ref dmg.amount, Mathf.FloorToInt);
         if(!string.IsNullOrEmpty(animationTrigger))
         {
             pawn.animator.SetTrigger(animationTrigger);

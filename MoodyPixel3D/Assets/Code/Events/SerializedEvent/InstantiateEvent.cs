@@ -7,7 +7,7 @@ public class InstantiateEvent : ScriptableEvent
 {
     public InstantiateUtility instantiate;
 
-    public override void Execute(Transform where)
+    public override void Invoke(Transform where)
     {
         instantiate.Instantiate(where);
     }

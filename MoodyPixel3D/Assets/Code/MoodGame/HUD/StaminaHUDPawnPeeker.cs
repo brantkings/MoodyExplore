@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class StaminaHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 {
-    private MoodPawn _target;
-
     public Image border;
     public Image fill;
 

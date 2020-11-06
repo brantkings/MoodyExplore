@@ -6,7 +6,7 @@ public class TargetPawnGetter : PawnGetter
 {
     public MoodPawn pawn;
     
-    protected override MoodPawn GetPawn()
+    public override MoodPawn GetPawn()
     {
         return pawn;
     }

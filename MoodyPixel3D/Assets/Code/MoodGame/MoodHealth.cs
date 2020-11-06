@@ -11,7 +11,7 @@ public class MoodHealth : Health
         if(pawn == null) Debug.LogWarningFormat("No pawn in {0}'s parent '{1}'", this, transform.root.name);  
     }
 
-    public override bool Damage(int amount, DamageTeam team, GameObject origin = null)
+    public override bool Damage(DamageInfo damage)
     {
         if(pawn != null)
         {
@@ -19,15 +19,15 @@ public class MoodHealth : Health
             {
                 if(react.CanReact(pawn))
                 {
-                    react.ReactToDamage(ref amount, origin, pawn);
+                    react.ReactToDamage(ref damage, pawn);
                 }
             }
         }
 
-        if(amount != 0)
+        if(damage.amount != 0)
         {
             Debug.LogErrorFormat("Is going to damage {0}!", this);
-            return base.Damage(amount, team, origin);
+            return base.Damage(damage);
         }
         else return false;
     }

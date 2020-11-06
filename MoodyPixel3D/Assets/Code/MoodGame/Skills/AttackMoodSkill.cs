@@ -90,7 +90,7 @@ namespace Code.MoodGame.Skills
             Transform t = pawn.FindTarget(skillDirection, attackRange);
             if (t != null)
             {
-                t.GetComponentInChildren<Health>()?.Damage(damage, pawn.DamageTeam);
+                t.GetComponentInChildren<Health>()?.Damage(GetDamage(pawn));
             }
 
             if(addedStancesWithAttack != null)
@@ -98,6 +98,11 @@ namespace Code.MoodGame.Skills
                     pawn.AddStance(stance);
 
             return base.ExecuteEffect(pawn, skillDirection);
+        }
+
+        private DamageInfo GetDamage(MoodPawn pawn)
+        {
+            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject);
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()

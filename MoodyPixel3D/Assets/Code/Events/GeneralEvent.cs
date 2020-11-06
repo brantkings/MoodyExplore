@@ -13,6 +13,6 @@ public class GeneralEvent : MonoBehaviour
     public void CallEvent()
     {
         toCall.Invoke();
-        foreach(ScriptableEvent evt in scriptableEventToCall) evt.Execute(transform);
+        scriptableEventToCall.Invoke(transform);
     }
 }

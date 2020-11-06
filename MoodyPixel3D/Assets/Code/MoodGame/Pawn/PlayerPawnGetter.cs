@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerPawnGetter : PawnGetter
 {
-    
-
     [SerializeField]
     [ReadOnly]
     private MoodPawn pawn;
@@ -15,7 +13,7 @@ public class PlayerPawnGetter : PawnGetter
         pawn = MoodPlayerController.Instance.Pawn;
     }
 
-    protected override MoodPawn GetPawn()
+    public override MoodPawn GetPawn()
     {
         return pawn;
     }

@@ -12,9 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5158c9713c269494ab1d91e94c827f71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  getters:
-    toGetFrom:
-    - {fileID: 1480115801704481186}
+  control: {fileID: 0}
+  pawn: {fileID: 5637358447622213141}
+--- !u!114 &9169036133265920247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2716376964094504017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5158c9713c269494ab1d91e94c827f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  control: {fileID: 3406134953702068075}
   pawn: {fileID: 5637358447622213141}
 --- !u!1 &3031996098223997465
 GameObject:
@@ -173,6 +185,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mover: {fileID: 6543790190532030750}
   animator: {fileID: 4745266871561790116}
+  _health: {fileID: 0}
+  knockBackMultiplier: 0
+  toDestroyOnDeath: {fileID: 0}
   focus: {fileID: 0}
   sensorGroup: {fileID: 0}
   turningTime: 0.1
@@ -1213,6 +1228,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 474883184020072681, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
   m_PrefabInstance: {fileID: 5836140884810104022}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3406134953702068075 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9203992624963875773, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}
+  m_PrefabInstance: {fileID: 5836140884810104022}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2716376964094504017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15307cd21a604dd43babc6470a2c72b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1480115801704481186 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4932653581832863092, guid: 0b7e8cb641aecc744be3b71a892b9eae, type: 3}

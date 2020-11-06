@@ -88,9 +88,14 @@ public class Damage : MonoBehaviour
         return null;
     }
 
+    private DamageInfo GetDamage()
+    {
+        return new DamageInfo(_amount, source, gameObject);
+    }
+
     public virtual void DealDamage(Health health)
     {
-        health.Damage(_amount, source, gameObject);
+        health.Damage(GetDamage());
         OnDamage?.Invoke(health, _amount);
         if (!health.IsAlive())
         {

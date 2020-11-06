@@ -3,8 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PawnGetter : MonoBehaviour
+public interface IPawnFinder
 {
+    MoodPawn GetPawn();
+}
+
+public class PawnPeekerControl : MonoBehaviour
+{
+
     [Serializable]
     public class PeekerGetter : InterfaceGetter<IMoodPawnPeeker>
     {
@@ -14,27 +20,8 @@ public abstract class PawnGetter : MonoBehaviour
 
     public PeekerGetter getters;
     
-    protected abstract MoodPawn GetPawn();
 
-    private void OnEnable()
-    {
-        MoodPawn pawn = GetPawn();
-        if (pawn != null)
-        {
-            AddPawn(pawn);
-        }
-    }
-    
-    private void OnDisable()
-    {
-        MoodPawn pawn = GetPawn();
-        if (pawn != null)
-        {
-            RemovePawn(pawn);
-        }
-    }
-
-    protected void AddPawn(MoodPawn pawn)
+    public void AddPawn(MoodPawn pawn)
     {
         foreach (IMoodPawnPeeker peeker in getters)
         {
@@ -42,7 +29,7 @@ public abstract class PawnGetter : MonoBehaviour
         }
     }
 
-    protected void RemovePawn(MoodPawn pawn)
+    public void RemovePawn(MoodPawn pawn)
     {
         foreach (IMoodPawnPeeker peeker in getters)
         {

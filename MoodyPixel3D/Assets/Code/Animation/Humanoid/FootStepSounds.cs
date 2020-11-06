@@ -18,6 +18,6 @@ public class FootStepSounds : MonoBehaviour
 
     private void PlaySound()
     {
-        sfx.ExecuteReturn(transform);
+        sfx.InvokeReturn(transform);
     }
 }
