@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dfb27117d352bc4aa71babe534726a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxLife: 10
+  _maxLife: 10
   _lifeNow: 0
   damageFrom: 0
   toDestroy: {fileID: 0}
@@ -161,6 +161,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 13d37aecf79268f44aad6fe61764a389, type: 2}
   onDamage:
   - {fileID: 11400000, guid: f72bc4dfa1c57404aa59c6396c5d5795, type: 2}
+  - {fileID: 11400000, guid: f7587c8687681794aaf1feb19585ded5, type: 2}
 --- !u!1 &5645552138947826779
 GameObject:
   m_ObjectHideFlags: 0

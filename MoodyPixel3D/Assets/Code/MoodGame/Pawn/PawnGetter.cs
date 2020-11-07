@@ -11,7 +11,7 @@ public abstract class PawnGetter : MonoBehaviour, IPawnFinder
         control = GetComponentInChildren<PawnPeekerControl>();
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if(control != null)
         {
@@ -19,7 +19,7 @@ public abstract class PawnGetter : MonoBehaviour, IPawnFinder
         }
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if(control != null)
         {

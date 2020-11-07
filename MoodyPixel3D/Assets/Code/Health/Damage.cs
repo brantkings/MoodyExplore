@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using LHH.Unity;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class Damage : MonoBehaviour
 {
@@ -12,6 +15,8 @@ public class Damage : MonoBehaviour
 
     private List<Health> alreadyDamaged;
 
+
+
     [SerializeField]
     private DamageTeam source = DamageTeam.Enemy;
 
@@ -21,8 +26,14 @@ public class Damage : MonoBehaviour
     [SerializeField]
     private bool _onlyDamageOnce;
 
+    [Space()]
+    public MorphableProperty<KnockbackSolver> knockback;
+
+    [Space()]
     [SerializeField]
     private bool _debug;
+
+
 
     private void Awake()
     {
@@ -88,14 +99,15 @@ public class Damage : MonoBehaviour
         return null;
     }
 
-    private DamageInfo GetDamage()
+    private DamageInfo GetDamage(Transform target)
     {
-        return new DamageInfo(_amount, source, gameObject);
+        return new DamageInfo(_amount, source, gameObject).SetForce(knockback.Get().GetKnockback(transform, target), knockback.Get().GetDuration());
     }
+
 
     public virtual void DealDamage(Health health)
     {
-        health.Damage(GetDamage());
+        health.Damage(GetDamage(health.transform));
         OnDamage?.Invoke(health, _amount);
         if (!health.IsAlive())
         {

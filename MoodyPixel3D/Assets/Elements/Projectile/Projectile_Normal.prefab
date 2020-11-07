@@ -48,6 +48,19 @@ MonoBehaviour:
   source: 2
   _amount: 10
   _onlyDamageOnce: 1
+  knockback:
+    _directProperty:
+      knockbackByTransform:
+        direction: 0
+        customFrom: {fileID: 0}
+        magnitude: 1
+      knockbackConstant: {x: 0, y: 0, z: 0}
+      knockbackPositionDifferenceNormalized: 0
+      knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
+      totalMagnitudeConstant: 0
+      constantTotalMagnitude: 1
+      knockbackDuration: 0.25
+    _getter: {fileID: 11400000, guid: 970155ae019ddf346a34636334ebb944, type: 2}
   _debug: 0
 --- !u!114 &4189596125018046067
 MonoBehaviour:

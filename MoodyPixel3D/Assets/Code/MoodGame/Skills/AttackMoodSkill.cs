@@ -14,6 +14,7 @@ namespace Code.MoodGame.Skills
         public float attackY = 0.5f;
         public float attackCapsuleHeight = 1.5f;
         public LayerMask targetLayer;
+        public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
 
         public SoundEffect onStartAttack;
         public SoundEffect onExecuteAttack;
@@ -90,7 +91,7 @@ namespace Code.MoodGame.Skills
             Transform t = pawn.FindTarget(skillDirection, attackRange);
             if (t != null)
             {
-                t.GetComponentInChildren<Health>()?.Damage(GetDamage(pawn));
+                t.GetComponentInChildren<Health>()?.Damage(GetDamage(pawn, t));
             }
 
             if(addedStancesWithAttack != null)
@@ -100,9 +101,9 @@ namespace Code.MoodGame.Skills
             return base.ExecuteEffect(pawn, skillDirection);
         }
 
-        private DamageInfo GetDamage(MoodPawn pawn)
+        private DamageInfo GetDamage(MoodPawn pawn, Transform target)
         {
-            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject);
+            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetForce(knockback.Get().GetKnockback(pawn.transform, target), knockback.Get().GetDuration());
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()

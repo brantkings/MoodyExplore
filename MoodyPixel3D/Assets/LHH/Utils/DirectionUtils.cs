@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,8 +16,12 @@ public enum Direction
 
 
 [System.Serializable]
-public struct DirectionManipulator
+public struct RelativeVector3
 {
+    public Direction direction;
+    public Transform customFrom;
+    public float magnitude;
+
     public Transform GetTransformOrigin(Transform myself)
     {
         if (customFrom != null) return customFrom;
@@ -25,7 +30,7 @@ public struct DirectionManipulator
 
     public Vector3 Get(Transform defaultTransform)
     {
-        return DirectionUtils.GetDirectionFrom(direction, GetTransformOrigin(defaultTransform));
+        return DirectionUtils.GetDirectionFrom(direction, GetTransformOrigin(defaultTransform)) * magnitude;
     }
 
     public void Set(Transform defaultTransform, Vector3 value)
@@ -33,8 +38,16 @@ public struct DirectionManipulator
         DirectionUtils.SetDirectionTo(direction, GetTransformOrigin(defaultTransform), value);
     }
 
-    public Direction direction;
-    public Transform customFrom;
+    public static implicit operator RelativeVector3(Direction dir)
+    {
+        return new RelativeVector3()
+        {
+            direction = dir,
+            magnitude = 1f
+        };
+
+    }
+
 }
 
 

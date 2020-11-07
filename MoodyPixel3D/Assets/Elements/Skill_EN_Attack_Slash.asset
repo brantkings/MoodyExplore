@@ -18,6 +18,8 @@ MonoBehaviour:
   consumeNeededStances: 0
   toConsume: []
   restrictions: []
+  _lockCamera: 1
+  lockMovement: 0
   _shortcut: 120
   _cost: 1
   damage: 10
@@ -28,6 +30,19 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
+  knockback:
+    _directProperty:
+      knockbackByTransform:
+        direction: 0
+        customFrom: {fileID: 0}
+        magnitude: 1
+      knockbackConstant: {x: 0, y: 0, z: 0}
+      knockbackPositionDifferenceNormalized: 1
+      knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
+    _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
+  onStartAttack: {fileID: 0}
+  onExecuteAttack: {fileID: 0}
+  onEndAttack: {fileID: 0}
   preTime: 0.5
   postTime: 1
   addedStancesWithAttack: []

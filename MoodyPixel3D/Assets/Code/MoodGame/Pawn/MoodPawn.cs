@@ -187,6 +187,8 @@ public class MoodPawn : MonoBehaviour
     #region Health
     private void OnDamage(DamageInfo info, Health health)
     {
+        Debug.LogFormat("{0} took damage! {1} -> dash is {2} distance with {3} duration.", this, info, info.distanceKnockback, info.durationKnockback);
+        Dash(info.distanceKnockback, info.durationKnockback, AnimationCurve.Linear(0f, 0f, 1f, 1f));
     }
 
     private void OnDeath(DamageInfo info, Health health)
@@ -530,7 +532,7 @@ public class MoodPawn : MonoBehaviour
         {
             foreach (ThreatStruct threat in _threatList)
             {
-                if (threat.threatObject != null && 
+                if (threat.threatObject != null && threat.threatObject.activeSelf &&
                     (threat.sensorTarget == null || (sensorGroup == null || sensorGroup.IsSensingTarget(threat.sensorTarget)))) 
                     return true;
             }

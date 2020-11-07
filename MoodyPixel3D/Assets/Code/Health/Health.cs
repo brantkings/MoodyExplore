@@ -17,11 +17,30 @@ public struct DamageInfo
     public DamageTeam team;
     public GameObject origin;
 
+    public Vector3 distanceKnockback;
+    public float durationKnockback;
+
     public DamageInfo(int damage = 0, DamageTeam damageTeam = DamageTeam.Neutral, GameObject damageOrigin = null)
     {
         amount = damage;
         team = damageTeam;
         origin = damageOrigin;
+        distanceKnockback = Vector3.zero;
+        durationKnockback = 0.25f;
+    }
+
+    public DamageInfo SetForce(Vector3 knockback, float duration)
+    {
+        distanceKnockback = knockback;
+        durationKnockback = duration;
+        return this;
+    }
+
+
+    public DamageInfo SetForce(KnockbackSolver solver, Transform origin, Transform to)
+    {
+        distanceKnockback = solver.GetKnockback(origin, to);
+        return this;
     }
 
     public override string ToString()

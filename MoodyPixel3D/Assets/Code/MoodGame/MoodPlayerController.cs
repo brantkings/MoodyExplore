@@ -34,6 +34,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     
     [SerializeField]
     private MoodPawn pawn;
+    public float maxVelocity = 5f;
     [SerializeField]
     private RangeSphere sphere;
     private Camera _mainCamera;
@@ -312,7 +313,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             
             
             pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
-            pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * 5f), Vector3.up));
+            pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * maxVelocity), Vector3.up));
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
     }
@@ -355,8 +356,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         if(_wasInCommand != set)
         {
             _wasInCommand = set;
+            SetMouseMode(set);
         }
 
+    }
+
+    private void SetMouseMode(bool visible)
+    {
+        Debug.LogFormat("Setting mouse mode as visible? {0}", visible);
+        UnityEngine.Cursor.visible = visible;
+        UnityEngine.Cursor.lockState = visible? CursorLockMode.None : CursorLockMode.Locked;
     }
 
 

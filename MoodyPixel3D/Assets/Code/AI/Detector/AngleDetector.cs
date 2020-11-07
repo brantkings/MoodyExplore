@@ -7,7 +7,7 @@ public class AngleDetector : PreTargetDetector
 {
 
     [Header("Angle")]
-    public DirectionManipulator angleGetter;
+    public RelativeVector3 angleGetter = Direction.Forward;
     public float maxAngleThatCountsAsIn = 90f;
     public bool useMaxDistance;
     public float maxDistance = 50f;

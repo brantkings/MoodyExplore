@@ -9,17 +9,29 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     [SerializeField]
     private HealthHUDObject prefab;
 
+    [SerializeField]
+    [ReadOnly]
     private int _maxHealth;
+
+    [SerializeField]
+    [ReadOnly]
     private int _currentHealth;
     public int unitAmount = 1;
     private List<HealthHUDObject> _children;
+
+    private bool started;
 
     private void Start()
     {
         foreach (Transform t in transform) 
             Destroy(t.gameObject);
-        CheckMaxHealth(_health.MaxLife);
-        CheckHealth(_health.Life, false);
+
+        if(_health != null)
+        {
+            CheckMaxHealth(_health.MaxLife);
+            CheckHealth(_health.Life, false);
+        }
+        started = true;
     }
 
     public void SetTarget(MoodPawn pawn)
@@ -29,6 +41,12 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         {
             _health.OnDamage += OnDamage;
             _health.OnDeath += OnDeath;
+
+            if(enabled && started)
+            {
+                CheckMaxHealth(_health.MaxLife);
+                CheckHealth(_health.Life, false);
+            }
         }
     }
 
@@ -42,9 +60,18 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         _health = null;
     }
 
+    private void OnEnable()
+    {
+        if(started && _health != null)
+        {
+            CheckMaxHealth(_health.MaxLife);
+            CheckHealth(_health.Life, false);
+        }
+    }
+
     private void OnDamage(DamageInfo damage, Health damaged)
     {
-        Debug.LogWarningFormat("{0} took notice that {1} took damage {2}", this, damaged, damage);
+        Debug.LogWarningFormat("{0} took notice that {1} took damage {2}. It has now {3} HP.", this, damaged, damage, damaged.Life);
         CheckHealth(damaged.Life, true);
     }
 
@@ -80,6 +107,7 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     private void CheckHealth(int current,  bool feedback)
     {
+        Debug.LogFormat("Checking health {0} with feedback? {1}. By {2} ({3})", current, feedback, this, transform.root);
         ChangeProportional(ref current);
         if (_currentHealth != current)
         {
