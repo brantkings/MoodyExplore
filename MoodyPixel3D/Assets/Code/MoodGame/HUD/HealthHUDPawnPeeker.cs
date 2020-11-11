@@ -26,10 +26,10 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         foreach (Transform t in transform) 
             Destroy(t.gameObject);
 
-        if(_health != null)
+        Debug.LogErrorFormat("{0} Starting with target {1}", this, _health != null ? _health.ToString() : "<null>");
+        if (_health != null)
         {
-            CheckMaxHealth(_health.MaxLife);
-            CheckHealth(_health.Life, false);
+            CheckHealth(_health, false);
         }
         started = true;
     }
@@ -37,6 +37,7 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     public void SetTarget(MoodPawn pawn)
     {
         _health = pawn.GetComponentInChildren<Health>();
+        Debug.LogErrorFormat("{0} Setting target {1}", this, _health);
         if(_health != null)
         {
             _health.OnDamage += OnDamage;
@@ -44,15 +45,15 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
             if(enabled && started)
             {
-                CheckMaxHealth(_health.MaxLife);
-                CheckHealth(_health.Life, false);
+                CheckHealth(_health, false);
             }
         }
     }
 
     public void UnsetTarget(MoodPawn pawn)
     {
-        if(_health != null)
+        Debug.LogErrorFormat("{0} Unsetting target {1}", this, _health);
+        if (_health != null)
         {
             _health.OnDamage -= OnDamage;
             _health.OnDeath -= OnDeath;
@@ -64,25 +65,31 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     {
         if(started && _health != null)
         {
-            CheckMaxHealth(_health.MaxLife);
-            CheckHealth(_health.Life, false);
+            CheckHealth(_health, false);
         }
     }
 
     private void OnDamage(DamageInfo damage, Health damaged)
     {
         Debug.LogWarningFormat("{0} took notice that {1} took damage {2}. It has now {3} HP.", this, damaged, damage, damaged.Life);
-        CheckHealth(damaged.Life, true);
+        CheckCurrentHealth(damaged.Life, true);
     }
 
     private void OnDeath(DamageInfo damage, Health damaged)
     {
-        CheckHealth(0, true);
+        CheckCurrentHealth(0, true);
     }
 
     private void ChangeProportional(ref int num)
     {
         if (unitAmount != 0) num /= unitAmount;
+    }
+
+    private void CheckHealth(Health health, bool feedback)
+    {
+        Debug.LogErrorFormat("{0} has health {1} with {2}/{3}", transform.root.name, health, health.Life, health.MaxLife);
+        CheckMaxHealth(health.MaxLife);
+        CheckCurrentHealth(health.Life, feedback);
     }
 
     private void CheckMaxHealth(int max)
@@ -105,9 +112,9 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         }
     }
 
-    private void CheckHealth(int current,  bool feedback)
+    private void CheckCurrentHealth(int current,  bool feedback)
     {
-        Debug.LogFormat("Checking health {0} with feedback? {1}. By {2} ({3})", current, feedback, this, transform.root);
+        Debug.LogFormat("Checking health {0} with feedback? {1}. By {2} ({3})", current, feedback, this, transform.GetComponentInParent<MoodPawn>());
         ChangeProportional(ref current);
         if (_currentHealth != current)
         {

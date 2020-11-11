@@ -12,7 +12,8 @@ public class HealthHUDObject : MonoBehaviour
 
     public void SetDamaged(bool set, bool feedback = true)
     {
-        if(_damaged != set)
+        Debug.LogFormat("Setting {0} {1}. Current is {2}. Tests: {3} {4}", this, set, _damaged, set != _damaged, _damaged.HasValue && _damaged.Value != set);
+        if(set != _damaged)
         {
             _damaged = set;
             SetDamageFeedbackBegin(set);
@@ -20,6 +21,10 @@ public class HealthHUDObject : MonoBehaviour
             {
                 if (_damaged == true) TakeDamageFeedback();
                 else HealFeedback();
+            }
+            else
+            {
+                SetDamageFeedbackComplete(set);
             }
         }
     }

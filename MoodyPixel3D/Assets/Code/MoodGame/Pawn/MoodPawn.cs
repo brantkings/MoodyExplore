@@ -50,7 +50,11 @@ public class MoodPawn : MonoBehaviour
         }
     }
 
-    [Space()] 
+    [Space()]
+    public float timeToMaxVelocity;
+    public float timeToZeroVelocity = 0f;
+    public float snapToTargetSpeedDelta = 0.1f;
+    public float angleToBeAbleToAccelerate = 90f;
     public float turningTime = 0.1f;
     public float height = 2f;
     public float pawnRadius = 0.5f;
@@ -91,7 +95,7 @@ public class MoodPawn : MonoBehaviour
 
     public DamageTeam DamageTeam => damageTeam;
 
-    private Vector3 _directionTarget;
+    private Vector3 _currentDirection;
     private Vector3 _directionVel;
 
     [SerializeField]
@@ -154,6 +158,7 @@ public class MoodPawn : MonoBehaviour
     private void Start()
     {
         _stamina = maxStamina;
+        _currentDirection = Direction;
         OnChangeStamina?.Invoke(this);
         _wasThreatened = IsThreatened();
     }
@@ -163,14 +168,21 @@ public class MoodPawn : MonoBehaviour
     {
         RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
 
-        //Direction = _directionTarget;
-        Vector3 forward = mover.transform.forward;
-        if (Vector3.Dot(forward, _directionTarget) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
-        Direction = Vector3.SmoothDamp(forward, _directionTarget, ref _directionVel, turningTime, float.MaxValue, Time.deltaTime);
+
+        //if (name.Contains("Player")) Debug.LogFormat("Before update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
+        UpdateMovement(_inputVelocity, ref _currentSpeed, ref _currentDirection);
+        //if (name.Contains("Player")) Debug.LogFormat("After update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
+
+        Direction = _currentDirection;
+        /*Vector3 forward = mover.transform.forward;
+        if (Vector3.Dot(forward, _currentDirection) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
+        Direction = Vector3.SmoothDamp(forward, _currentDirection, ref _directionVel, turningTime, float.MaxValue, Time.deltaTime);*/
     }
     
     private void FixedUpdate()
     {
+        mover.SetVelocity(_currentSpeed);
+
         ThreatFixedUpdate(_threatDirection);
     }
     
@@ -297,29 +309,86 @@ public class MoodPawn : MonoBehaviour
     public event PawnEvent OnBeginMove;
     public event PawnEvent OnEndMove;
 
-    private Vector3 _targetVelocity;
+    private Vector3 _inputVelocity;
     private Tween _movementTween;
 
-    private void SolveFinalVelocity()
+    private Vector3 _currentSpeed;
+    private Vector3 _movementDelta;
+
+    private void UpdateMovement(Vector3 inputVelocity, ref Vector3 speed, ref Vector3 direction)
+    {
+        if(inputVelocity.sqrMagnitude < 0.1f) //Wants to stop
+        {
+            UpdateMovementVector(ref speed, 0f, timeToZeroVelocity);
+        }
+        else
+        {
+
+            Vector3 inputVelocityNormalized = inputVelocity.normalized;
+
+            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f);
+
+            if (Vector3.Angle(inputVelocity, direction) < angleToBeAbleToAccelerate) //Already looking in the direction
+            {
+                UpdateMovementVector(ref speed, inputVelocity, timeToMaxVelocity);
+            }
+            else //Has to turn first
+            {
+                float maxVelocityTurning = 1f;
+                float maxVelocityTurningSqrd = maxVelocityTurning * maxVelocityTurning;
+                float smoothTimeTurning;
+                if(speed.sqrMagnitude > maxVelocityTurningSqrd)
+                {
+                    smoothTimeTurning = timeToMaxVelocity;
+                }
+                else
+                {
+                    smoothTimeTurning = timeToZeroVelocity;
+                }
+                UpdateMovementVector(ref speed, inputVelocityNormalized * maxVelocityTurning, smoothTimeTurning);
+            }
+        }
+
+    }
+
+    private void UpdateDirectionVector(ref Vector3 direction, Vector3 targetDirection, float maxDelta)
+    {
+        float angleTurn = Vector3.SignedAngle(direction, targetDirection, Vector3.up);
+        //Debug.LogFormat("Angle between [{3} <-> {4}] is {0} when total is {1} and max is {2}", Mathf.Sign(angleTurn) * Mathf.Max(Mathf.Abs(angleTurn), maxDelta), angleTurn, maxDelta, direction, targetDirection);
+        angleTurn = Mathf.Sign(angleTurn) * Mathf.Min(Mathf.Abs(angleTurn), maxDelta);
+        direction = Quaternion.Euler(0f, angleTurn, 0f) * direction;
+    }
+
+    private void UpdateMovementVector(ref Vector3 movement, float targetMagnitude, float smoothTime)
+    {
+        UpdateMovementVector(ref movement, movement.normalized * targetMagnitude, smoothTime);
+    }
+
+    private void UpdateMovementVector(ref Vector3 movement, Vector3 destination, float smoothTime)
+    {
+        movement = Vector3.SmoothDamp(movement, destination, ref _movementDelta, smoothTime);
+        if ((movement - destination).sqrMagnitude < (snapToTargetSpeedDelta * snapToTargetSpeedDelta)) movement = destination;
+    }
+
+    private void SolveFinalVelocity(ref Vector3 finalVel)
     {
         if (_movementTween != null && _movementTween.IsActive() || _movementLock.IsLocked())
         {
-            mover.SetVelocity(Vector3.zero);
+            finalVel = Vector3.zero;
         }
         else
         {
             if (cantMoveWhileThreatened && IsThreatened())
             {
-                mover.SetVelocity(Vector3.zero);
+                finalVel = Vector3.zero;
             }
-            else
+            /*else
             {
-                mover.SetVelocity(_targetVelocity);
-                if (_targetVelocity.sqrMagnitude > 0.001f)
+                if (_inputVelocity.sqrMagnitude > 0.001f)
                 {
-                    _directionTarget = Vector3.ProjectOnPlane(_targetVelocity, Vector3.up);
+                    _directionTarget = Vector3.ProjectOnPlane(_inputVelocity, Vector3.up);
                 }
-            }
+            }*/
             
         }
     }
@@ -335,8 +404,8 @@ public class MoodPawn : MonoBehaviour
     public void SetVelocity(Vector3 velocity)
     {
         StanceChangeVelocity(ref velocity);
-        _targetVelocity = velocity;
-        SolveFinalVelocity();
+        _inputVelocity = velocity;
+        SolveFinalVelocity(ref _inputVelocity);
     }
 
     public bool IsMoving()
@@ -368,7 +437,7 @@ public class MoodPawn : MonoBehaviour
 
     private void CallEndMove()
     {
-        SolveFinalVelocity();
+        SolveFinalVelocity(ref _inputVelocity);
         OnEndMove?.Invoke();
     }
 
@@ -398,7 +467,7 @@ public class MoodPawn : MonoBehaviour
 
     public void SetHorizontalDirection(Vector3 direction)
     {
-        _directionTarget = direction;
+        _currentDirection = direction;
         //Direction = Vector3.ProjectOnPlane(direction, Vector3.up);
     }
 
@@ -507,7 +576,7 @@ public class MoodPawn : MonoBehaviour
         if (!_wasThreatened && isThreatened)
         {
             OnThreatAppear?.Invoke(this);
-            SolveFinalVelocity();
+            SolveFinalVelocity(ref _inputVelocity);
         }
         _wasThreatened = isThreatened;
     }
@@ -521,7 +590,7 @@ public class MoodPawn : MonoBehaviour
         if (_wasThreatened && !IsThreatened())
         {
             OnThreatRelief?.Invoke(this);
-            SolveFinalVelocity();
+            SolveFinalVelocity(ref _inputVelocity);
         }
         _wasThreatened = isThreatened;
     }

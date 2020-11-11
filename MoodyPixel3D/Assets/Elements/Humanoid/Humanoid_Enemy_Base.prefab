@@ -190,7 +190,11 @@ MonoBehaviour:
   toDestroyOnDeath: {fileID: 0}
   focus: {fileID: 0}
   sensorGroup: {fileID: 0}
-  turningTime: 0.1
+  timeToMaxVelocity: 0.15
+  timeToZeroVelocity: 0.1
+  snapToTargetSpeedDelta: 0.25
+  angleToBeAbleToAccelerate: 55
+  turningTime: 0.75
   height: 2
   pawnRadius: 0.5
   extraRangeBase: 0
