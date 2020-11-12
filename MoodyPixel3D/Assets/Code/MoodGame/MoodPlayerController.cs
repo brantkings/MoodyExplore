@@ -66,16 +66,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     void OnEnable()
     {
-        pawn.OnThreatAppear += ChangeThreat;
-        pawn.OnThreatRelief += ChangeThreat;
+        pawn.Threatenable.OnThreatAppear += ChangeThreat;
+        pawn.Threatenable.OnThreatRelief += ChangeThreat;
         OnStartCommand += SolveSlowDown;
         OnStopCommand += SolveSlowDown;
     }
     
     void OnDisable()
     {
-        pawn.OnThreatAppear -= ChangeThreat;
-        pawn.OnThreatRelief -= ChangeThreat;
+        pawn.Threatenable.OnThreatAppear -= ChangeThreat;
+        pawn.Threatenable.OnThreatRelief -= ChangeThreat;
         OnStartCommand += SolveSlowDown;
         OnStopCommand += SolveSlowDown;
     }
@@ -328,14 +328,14 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     }
 
 
-    private void ChangeThreat(MoodPawn moodPawn)
+    private void ChangeThreat(MoodThreatenable moodPawn)
     {
         SolveSlowDown();
     }
 
     private bool ShouldSlowDown()
     {
-        return pawn.IsThreatened() && !IsExecutingCommand();
+        return pawn.Threatenable.IsThreatened() && !IsExecutingCommand();
     }
 
     private EventfulParameter<bool> _slowedDown;

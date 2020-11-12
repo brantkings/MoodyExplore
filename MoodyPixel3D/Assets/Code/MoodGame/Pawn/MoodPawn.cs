@@ -37,6 +37,24 @@ public class MoodPawn : MonoBehaviour
     private float knockBackMultiplier;
     [SerializeField]
     private GameObject toDestroyOnDeath;
+    [SerializeField]
+    private MoodThreatenable _threatenable;
+
+    public MoodThreatenable Threatenable
+    {
+        get
+        {
+            if(_threatenable == null)
+            {
+                _threatenable = gameObject.GetComponent<MoodThreatenable>();
+                if(_threatenable == null)
+                {
+                    _threatenable = gameObject.AddComponent<MoodThreatenable>();
+                }
+            }
+            return _threatenable;
+        }
+    }
 
     [Space()]
     public FocusController focus;
@@ -137,12 +155,15 @@ public class MoodPawn : MonoBehaviour
     {
         _movementLock.OnLock += OnLockMovement;
         _movementLock.OnUnlock += OnUnlockMovement;
-        if(_health != null)
+        Threatenable.OnThreatAppear += OnThreatAppear;
+        Threatenable.OnThreatRelief += OnThreatRelief;
+        if (_health != null)
         {
             _health.OnDamage += OnDamage;
             _health.OnDeath += OnDeath;
         }
     }
+
 
     private void OnDisable()
     {
@@ -160,7 +181,6 @@ public class MoodPawn : MonoBehaviour
         _stamina = maxStamina;
         _currentDirection = Direction;
         OnChangeStamina?.Invoke(this);
-        _wasThreatened = IsThreatened();
     }
 
 
@@ -378,7 +398,7 @@ public class MoodPawn : MonoBehaviour
         }
         else
         {
-            if (cantMoveWhileThreatened && IsThreatened())
+            if (cantMoveWhileThreatened && Threatenable.IsThreatened())
             {
                 finalVel = Vector3.zero;
             }
@@ -510,23 +530,6 @@ public class MoodPawn : MonoBehaviour
     #endregion
 
     #region Threat
-    struct ThreatStruct
-    {
-        public GameObject threatObject;
-        public SensorTarget sensorTarget;
-
-        public ThreatStruct(GameObject obj)
-        {
-            threatObject = obj;
-            sensorTarget = obj.GetComponentInChildren<SensorTarget>();
-        }
-    }
-
-    private HashSet<ThreatStruct> _threatList;
-    public event DelMoodPawnEvent OnThreatAppear;
-    public event DelMoodPawnEvent OnThreatRelief;
-
-    private bool _wasThreatened;
     private Vector3 _threatDirection;
 
     public void StartThreatening(Vector3 direction)
@@ -539,7 +542,7 @@ public class MoodPawn : MonoBehaviour
         _threatDirection = Vector3.zero;
     }
     
-    private MoodPawn _threatTarget;
+    private MoodThreatenable _threatTarget;
     
     private void ThreatFixedUpdate(Vector3 threatDirection)
     {
@@ -548,10 +551,10 @@ public class MoodPawn : MonoBehaviour
             ChangeThreatTarget(null);
             return;
         }
-        ChangeThreatTarget(FindTarget(threatDirection, threatDirection.magnitude)?.GetComponentInParent<MoodPawn>());
+        ChangeThreatTarget(FindTarget(threatDirection, threatDirection.magnitude)?.GetComponentInParent<MoodThreatenable>());
     }
 
-    private void ChangeThreatTarget(MoodPawn nextTarget)
+    private void ChangeThreatTarget(MoodThreatenable nextTarget)
     {
         if (_threatTarget == nextTarget) return;
         if (_threatTarget != null)
@@ -566,51 +569,20 @@ public class MoodPawn : MonoBehaviour
         }
     }
 
-    public void AddThreat(GameObject origin)
+
+    private void OnThreatRelief(MoodThreatenable affected)
     {
-        Debug.LogFormat("Add threat {0} to {1}", origin, this);
-        if(_threatList == null) _threatList = new HashSet<ThreatStruct>();
-        _wasThreatened = IsThreatened();
-        _threatList.Add(new ThreatStruct(origin));
-        bool isThreatened = IsThreatened();
-        if (!_wasThreatened && isThreatened)
-        {
-            OnThreatAppear?.Invoke(this);
-            SolveFinalVelocity(ref _inputVelocity);
-        }
-        _wasThreatened = isThreatened;
+        SolveFinalVelocity(ref _inputVelocity);
     }
 
-    public void RemoveThreat(GameObject origin)
+    private void OnThreatAppear(MoodThreatenable affected)
     {
-        Debug.LogFormat("Remove threat {0} to {1}", origin, this);
-        _wasThreatened = IsThreatened();
-        _threatList?.RemoveWhere((threatStruct) => threatStruct.threatObject == origin);
-        bool isThreatened = IsThreatened();
-        if (_wasThreatened && !IsThreatened())
-        {
-            OnThreatRelief?.Invoke(this);
-            SolveFinalVelocity(ref _inputVelocity);
-        }
-        _wasThreatened = isThreatened;
+        SolveFinalVelocity(ref _inputVelocity);
     }
 
-    public bool IsThreatened()
-    {
-        if (_threatList != null)
-        {
-            foreach (ThreatStruct threat in _threatList)
-            {
-                if (threat.threatObject != null && threat.threatObject.activeSelf &&
-                    (threat.sensorTarget == null || (sensorGroup == null || sensorGroup.IsSensingTarget(threat.sensorTarget)))) 
-                    return true;
-            }
-        }
 
-        return false;
-    }
     #endregion
-    
+
     #region Stamina
 
     private float GetCurrentStaminaRecoverValue()

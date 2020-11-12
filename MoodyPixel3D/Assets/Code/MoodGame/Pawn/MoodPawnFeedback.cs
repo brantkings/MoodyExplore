@@ -18,8 +18,8 @@ public class MoodPawnFeedback : AddonBehaviour<MoodPawn>
     
     private void OnEnable()
     {
-        Addon.OnThreatAppear += OnThreatAppear;
-        Addon.OnThreatRelief += OnThreatRelief;
+        Addon.Threatenable.OnThreatAppear += OnThreatAppear;
+        Addon.Threatenable.OnThreatRelief += OnThreatRelief;
 
         StartCoroutine(RespirationRoutine());
     
@@ -27,8 +27,8 @@ public class MoodPawnFeedback : AddonBehaviour<MoodPawn>
     
     private void OnDisable()
     {
-        Addon.OnThreatAppear -= OnThreatAppear;
-        Addon.OnThreatRelief -= OnThreatRelief;
+        Addon.Threatenable.OnThreatAppear -= OnThreatAppear;
+        Addon.Threatenable.OnThreatRelief -= OnThreatRelief;
 
         StopAllCoroutines();
     }
@@ -56,16 +56,16 @@ public class MoodPawnFeedback : AddonBehaviour<MoodPawn>
     }
 
 
-    private void OnThreatRelief(MoodPawn pawn)
+    private void OnThreatRelief(MoodThreatenable t)
     {
         OnThreatenedChange(false);
-        onThreatRelax.Invoke(pawn.ObjectTransform);
+        onThreatRelax.Invoke(Addon.ObjectTransform);
     }
 
-    private void OnThreatAppear(MoodPawn pawn)
+    private void OnThreatAppear(MoodThreatenable t)
     {
         OnThreatenedChange(true);
-        onThreatAppear.Invoke(pawn.ObjectTransform);
+        onThreatAppear.Invoke(Addon.ObjectTransform);
 
     }
 

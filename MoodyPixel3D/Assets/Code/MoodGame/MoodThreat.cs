@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class MoodThreat : MonoBehaviour
 {
-    HashSet<MoodPawn> _threatened = new HashSet<MoodPawn>();
+    HashSet<MoodThreatenable> _threatened = new HashSet<MoodThreatenable>();
 
     private void OnTriggerEnter(Collider other)
     {
-        MoodPawn p = other.GetComponentInParent<MoodPawn>();
+        MoodThreatenable p = other.GetComponentInParent<MoodThreatenable>();
         if(p != null)
         {
             if(_threatened.Add(p))
@@ -21,7 +21,7 @@ public class MoodThreat : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        MoodPawn p = other.GetComponentInParent<MoodPawn>();
+        MoodThreatenable p = other.GetComponentInParent<MoodThreatenable>();
         if (p != null)
         {
             if(_threatened.Remove(p))
@@ -33,7 +33,7 @@ public class MoodThreat : MonoBehaviour
 
     private void OnEnable()
     {
-        foreach(MoodPawn p in _threatened)
+        foreach(MoodThreatenable p in _threatened)
         {
             p.AddThreat(gameObject);
         }
@@ -41,7 +41,7 @@ public class MoodThreat : MonoBehaviour
 
     private void OnDisable()
     {
-        foreach (MoodPawn p in _threatened)
+        foreach (MoodThreatenable p in _threatened)
         {
             p.RemoveThreat(gameObject);
         }

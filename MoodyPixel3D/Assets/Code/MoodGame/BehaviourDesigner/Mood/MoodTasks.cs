@@ -322,7 +322,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         public override TaskStatus OnUpdate()
         {
             if (pawn.Value == null) return TaskStatus.Failure;
-            return pawn.Value.IsThreatened() ? TaskStatus.Success : TaskStatus.Failure;
+            return pawn.Value.Threatenable.IsThreatened() ? TaskStatus.Success : TaskStatus.Failure;
         }
     }
     
@@ -334,7 +334,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         public override TaskStatus OnUpdate()
         {
             if (pawn.Value == null) return TaskStatus.Failure;
-            return pawn.Value.IsThreatened() ? TaskStatus.Failure : TaskStatus.Success;
+            return pawn.Value.Threatenable.IsThreatened() ? TaskStatus.Failure : TaskStatus.Success;
         }
     }
 
