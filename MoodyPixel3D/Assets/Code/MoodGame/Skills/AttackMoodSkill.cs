@@ -9,6 +9,7 @@ namespace Code.MoodGame.Skills
     {
         [Header("Attack")]
         public int damage = 10;
+        public MoodSwing swingData;
         public float attackRadius = 0.5f;
         public float attackRange = 6f;
         public float attackY = 0.5f;
