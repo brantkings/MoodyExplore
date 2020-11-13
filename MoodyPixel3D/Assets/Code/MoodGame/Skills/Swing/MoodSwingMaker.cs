@@ -11,6 +11,8 @@ public class MoodSwingMaker : MonoBehaviour
 
     public Color gizmoColor = Color.red;
     public Color arrowColor = Color.magenta;
+    public Color trailConnectColor = Color.yellow;
+    public Color trailColor = Color.white;
 
     private void SetTransform(Transform to, MoodSwing.MoodSwingNode from)
     {
@@ -35,7 +37,7 @@ public class MoodSwingMaker : MonoBehaviour
     [LHH.Unity.Button]
     public void MakeChildrenFrom()
     {
-        foreach(Transform t in transform)
+        foreach(Transform t in Nodes)
         {
             DestroyImmediate(t.gameObject);
         }
@@ -51,13 +53,13 @@ public class MoodSwingMaker : MonoBehaviour
     [LHH.Unity.Button]
     public void BakeChildrenTo()
     {
-        to.SetData(GetAllNodes(), GetAllNodesLength());
+        to.SetData(GetAllNodes(), GetNodesCount());
     }
 
 
     private IEnumerable<Transform> KeepGettingChildren()
     {
-        foreach (Transform t in transform) yield return t;
+        foreach (Transform t in Nodes) yield return t;
         while(true)
         {
             GameObject o = new GameObject("[Helper]");
@@ -66,23 +68,29 @@ public class MoodSwingMaker : MonoBehaviour
         }
     }
 
+    private int GetNodesCount()
+    {
+        int length = 0;
+        foreach (Transform t in Nodes)
+        {
+            length++;
+        }
+        return length;
+    }
 
     private IEnumerable<MoodSwing.MoodSwingNode> GetAllNodes()
     {
-        foreach(Transform t in transform) 
+        foreach(Transform t in Nodes)
+        {
             yield return GetNode(t);
-    }
-
-    private int GetAllNodesLength()
-    {
-        return transform.childCount;
+        }
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = gizmoColor;
         Color fillColor = gizmoColor * 0.25f;
-        foreach(Transform t in transform)
+        foreach(Transform t in Nodes)
         {
             MoodSwing.MoodSwingNode node = GetNode(t);
             Gizmos.color = gizmoColor;
@@ -91,6 +99,41 @@ public class MoodSwingMaker : MonoBehaviour
             GizmosUtils.DrawArrow(transform.position + node.localPosition, transform.position + node.localPosition + node.direction);
             Gizmos.color = fillColor;
             Gizmos.DrawSphere(transform.position + node.localPosition, node.radius);
+        }
+
+        Transform oldTop = null, oldBot = null;
+
+        foreach (MoodSwingMakerTrailNode t in Trail)
+        {
+            Gizmos.color = trailConnectColor;
+            Gizmos.DrawLine(t.TopNode.position, t.BottomNode.position);
+            if(oldTop != null && oldBot != null)
+            {
+                Gizmos.color = trailColor;
+                Gizmos.DrawLine(oldTop.position, t.TopNode.position);
+                Gizmos.DrawLine(oldBot.position, t.BottomNode.position);
+            }
+
+        }
+    }
+
+    private IEnumerable<Transform> Nodes
+    {
+        get
+        {
+            foreach(Transform t in transform)
+            {
+                if (t.GetComponent<MoodSwingMakerTrailNode>() != null) continue;
+                yield return t;
+            }
+        }
+    }
+
+    private IEnumerable<MoodSwingMakerTrailNode> Trail
+    {
+        get
+        {
+            return transform.GetComponentsInChildren<MoodSwingMakerTrailNode>();
         }
     }
 }

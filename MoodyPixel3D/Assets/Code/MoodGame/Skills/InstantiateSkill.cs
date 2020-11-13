@@ -21,7 +21,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 
     
     [SerializeField]
-    private bool threatens;
+    private MoodSwing threat;
 
     
     public SoundEffect onStartInstantiate;
@@ -70,14 +70,14 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         pawn.SetHorizontalDirection(skillDirection);
         pawn.StartSkillAnimation(this);
         onStartInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
-        if(threatens) pawn.StartThreatening(skillDirection);
+        if(threat != null) pawn.StartThreatening(skillDirection, threat);
         yield return new WaitForSeconds(preTime);
 
         ExecuteEffect(pawn, skillDirection);
         DispatchExecuteEvent(pawn, skillDirection);
         
         pawn.FinishSkillAnimation(this);
-        if(threatens) pawn.StopThreatening();
+        if(threat != null) pawn.StopThreatening();
         onExecuteInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
         yield return new WaitForSeconds(postTime);
         pawn.UnmarkUsingSkill(this);

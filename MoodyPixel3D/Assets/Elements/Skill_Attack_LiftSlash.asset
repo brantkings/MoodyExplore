@@ -24,20 +24,22 @@ MonoBehaviour:
   _shortcut: 120
   _cost: 3
   damage: 10
-  attackRadius: 1
-  attackRange: 3
-  attackY: 0.5
-  attackCapsuleHeight: 1.5
+  swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
   knockback:
     _directProperty:
-      knockbackByTransform:
+      knockbackByDealer:
         direction: 0
         customFrom: {fileID: 0}
         magnitude: 1
-      knockbackConstant: {x: 0, y: 0, z: 0}
+      knockbackByReceiver:
+        direction: 1
+        customFrom: {fileID: 0}
+        magnitude: 1
+      absoluteKnockback: {x: 0, y: 0, z: 0}
+      knockbackFromForce: 0
       knockbackPositionDifferenceNormalized: 1
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
       totalMagnitudeConstant: 0

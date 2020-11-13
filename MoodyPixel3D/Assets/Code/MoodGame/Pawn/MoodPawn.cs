@@ -98,7 +98,9 @@ public class MoodPawn : MonoBehaviour
 
 
     public Vector3 Position => mover.Position;
-    
+
+    public Vector3 Up => mover.transform.up;
+
     public Vector3 Direction
     {
         get => mover.transform.forward;
@@ -261,6 +263,7 @@ public class MoodPawn : MonoBehaviour
             return _currentStances;
         }
     }
+
 
     public IEnumerable<MoodReaction> GetActiveReactions()
     {
@@ -531,10 +534,12 @@ public class MoodPawn : MonoBehaviour
 
     #region Threat
     private Vector3 _threatDirection;
+    private MoodSwing _swingThreat;
 
-    public void StartThreatening(Vector3 direction)
+    public void StartThreatening(Vector3 direction, MoodSwing data)
     {
         _threatDirection = direction;
+        _swingThreat = data;
     }
 
     public void StopThreatening()

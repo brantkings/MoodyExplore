@@ -19,6 +19,17 @@ public class MoodSwing : ScriptableObject
         public float delay;
     }
 
+    public struct MoodSwingTrailNode
+    {
+        public Vector3 localPosTop;
+        public Vector3 localPosBot;
+    }
+
+    public struct MoodSwingTrail
+    {
+        public MoodSwingTrailNode[] nodes;
+    }
+
 
     public struct MoodSwingResult
     {
@@ -31,7 +42,8 @@ public class MoodSwing : ScriptableObject
             return new MoodSwingResult
             {
                 hitPosition = Vector3.Lerp(a.hitPosition, b.hitPosition, 0.5f),
-                hitDirection = Vector3.Slerp(a.hitDirection, b.hitDirection, 0.5f)
+                hitDirection = Vector3.Slerp(a.hitDirection, b.hitDirection, 0.5f),
+                collider = a.collider == b.collider ? a.collider : null
             };
         }
 
@@ -45,7 +57,6 @@ public class MoodSwing : ScriptableObject
     }
 
     public MoodSwingNode[] data;
-    public LayerMask layer;
 
     private static Collider[] _colliderCache = new Collider[CACHE_SIZE];
     private static Dictionary<Collider, MoodSwingResult> _resultsCache = new Dictionary<Collider, MoodSwingResult>(CACHE_SIZE);
@@ -60,13 +71,31 @@ public class MoodSwing : ScriptableObject
         }
     }
 
-    public static MoodSwingResult? TryHitGetFirst(MoodSwing swing, Vector3 posOrigin, Quaternion rotOrigin)
+    public MoodSwingResult? TryHitGetBest(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, Vector3 desiredDirection)
+    {
+        float minAngle = float.MaxValue;
+        MoodSwingResult? result = null;
+        foreach(MoodSwingResult r in TryHitMerged(posOrigin, rotOrigin, layer))
+        {
+            Vector3 direction = r.collider.ClosestPoint(posOrigin) - posOrigin;
+            float angle = Vector3.Angle(direction, desiredDirection);
+            if(angle < minAngle)
+            {
+                result = r;
+                minAngle = angle;
+            }            
+        }
+        return result;
+    }
+
+    public MoodSwingResult? TryHitGetFirst(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
     {
         float currentDelay = 0f;
-        for (int i = 0, len = swing.data.Length;i<len;i++)
+        for (int i = 0, len = this.data.Length;i<len;i++)
         {
-            MoodSwingNode node = swing.data[i];
-            int result = Physics.OverlapSphereNonAlloc(posOrigin + node.localPosition, node.radius, _colliderCache, swing.layer.value, QueryTriggerInteraction.Collide);
+            MoodSwingNode node = this.data[i];
+            LHH.Utils.DebugUtils.DrawCircle(posOrigin + node.localPosition, node.radius, rotOrigin * Vector3.up, Color.black, 1f);
+            int result = Physics.OverlapSphereNonAlloc(posOrigin + node.localPosition, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
             if (result > 0)
             {
                 for(int j = 0,lenA = Mathf.Min(result, CACHE_SIZE);j<lenA;j++)
@@ -79,16 +108,18 @@ public class MoodSwing : ScriptableObject
         return null;
     }
 
-    public static IEnumerable<MoodSwingResult> TryHitMerged(MoodSwing swing, Vector3 posOrigin, Quaternion rotOrigin)
+    public IEnumerable<MoodSwingResult> TryHitMerged(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
     {
         float currentDelay = 0f;
         _resultsCache.Clear();
-        for (int i = 0, len = swing.data.Length; i < len; i++)
+        for (int i = 0, len = this.data.Length; i < len; i++)
         {
-            MoodSwingNode node = swing.data[i];
-            int result = Physics.OverlapSphereNonAlloc(posOrigin + node.localPosition, node.radius, _colliderCache, swing.layer.value, QueryTriggerInteraction.Collide);
+            MoodSwingNode node = this.data[i];
+            LHH.Utils.DebugUtils.DrawCircle(posOrigin + rotOrigin * node.localPosition, node.radius, rotOrigin * Vector3.up, Color.black, 1f);
+            int result = Physics.OverlapSphereNonAlloc(posOrigin + rotOrigin * node.localPosition, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
             if (result > 0)
             {
+                UnityEngine.Debug.LogFormat("Found {0} results in {1}...", result, i);
                 for (int j = 0, lenA = Mathf.Min(result, CACHE_SIZE); j < lenA; j++)
                 {
                     Collider collider = _colliderCache[j];
@@ -105,8 +136,10 @@ public class MoodSwing : ScriptableObject
             }
             currentDelay += node.delay;
         }
+        UnityEngine.Debug.LogFormat("Found {0} results woo", _resultsCache.Values.Count);
         foreach (MoodSwingResult r in _resultsCache.Values) yield return r;
     }
+
 
     private static MoodSwingResult GetResultFrom(Vector3 posOrigin, Quaternion rotOrigin, MoodSwingNode node, Collider col)
     {
@@ -124,7 +157,7 @@ public class MoodSwing : ScriptableObject
         float range = 0f;
         foreach(var d in data)
         {
-            range = Mathf.Max(range, d.localPosition.magnitude + d.radius);
+            range = Mathf.Max(range, Vector3.ProjectOnPlane(d.localPosition, Vector3.up).magnitude + d.radius);
         }
         return range;
     }

@@ -10,10 +10,6 @@ namespace Code.MoodGame.Skills
         [Header("Attack")]
         public int damage = 10;
         public MoodSwing swingData;
-        public float attackRadius = 0.5f;
-        public float attackRange = 6f;
-        public float attackY = 0.5f;
-        public float attackCapsuleHeight = 1.5f;
         public LayerMask targetLayer;
         public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
 
@@ -31,7 +27,7 @@ namespace Code.MoodGame.Skills
         private RangeTarget.Properties TargetProperties =>
             _targetProp ??= new RangeTarget.Properties()
             {
-                radiusAround = attackRadius,
+                radiusAround = GetRange(),
                 target = null
             };
 
@@ -41,28 +37,32 @@ namespace Code.MoodGame.Skills
             set => TargetProperties.target = value;
         }
 
+        public float GetRange()
+        {
+            if (swingData != null) return swingData.GetRange();
+            else return 0f;
+        }
+
         private Transform GetTarget(Vector3 origin, Vector3 direction)
         {
-            Vector3 downPoint = origin + direction + Vector3.up * attackY;
-            Vector3 upPoint = origin + direction + Vector3.up * (attackY + attackCapsuleHeight);
-            foreach (Collider c in Physics.OverlapCapsule(downPoint, upPoint, attackRadius + 0.01f, targetLayer.value))
-            {
-                return c.transform.root;
-            }
-
-            return null;
+            return swingData.TryHitGetBest(origin, Quaternion.LookRotation(direction, Vector3.up), targetLayer, direction)?.collider.GetComponentInParent<MoodPawn>()?.transform;
         }
 
         public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
         {
-            Target = pawn.FindTarget(direction, attackRange);
+            Target = pawn.FindTarget(direction, GetRange());
         }
 
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
+            if (swingData == null)
+            {
+                Debug.LogErrorFormat("{0} has no swing data!", this);
+                yield break;
+            }
             pawn.MarkUsingSkill(this);
             pawn.SetHorizontalDirection(skillDirection);
-            pawn.StartThreatening(skillDirection);
+            pawn.StartThreatening(skillDirection, swingData);
             ConsumeStances(pawn);
             pawn.StartSkillAnimation(this);
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
@@ -89,10 +89,17 @@ namespace Code.MoodGame.Skills
 
         protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
         {
-            Transform t = pawn.FindTarget(skillDirection, attackRange);
-            if (t != null)
+
+            Debug.LogFormat("Trying to find results! {0} {1} {2}", pawn, skillDirection, targetLayer.value);
+            foreach (MoodSwing.MoodSwingResult result in swingData.TryHitMerged(pawn.Position, Quaternion.LookRotation(skillDirection, pawn.Up), targetLayer))
             {
-                t.GetComponentInChildren<Health>()?.Damage(GetDamage(pawn, t));
+                Debug.LogFormat("Result is {0}", result.collider);
+                if(result.collider != null)
+                {
+                    Health enemyHealth = result.collider.GetComponentInParent<Health>();
+                    Debug.LogFormat("{0} found collider {1}, health {2} in children {3}", this, result.collider, enemyHealth, result.collider.GetComponentInChildren<Health>());
+                    enemyHealth?.Damage(GetDamage(pawn, result.collider.transform, result.hitDirection));
+                }
             }
 
             if(addedStancesWithAttack != null)
@@ -102,16 +109,16 @@ namespace Code.MoodGame.Skills
             return base.ExecuteEffect(pawn, skillDirection);
         }
 
-        private DamageInfo GetDamage(MoodPawn pawn, Transform target)
+        private DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
-            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetForce(knockback.Get().GetKnockback(pawn.transform, target), knockback.Get().GetDuration());
+            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetForce(knockback.Get().GetKnockback(pawn.transform, target, attackDirection), knockback.Get().GetDuration());
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()
         {
             return new RangeSphere.Properties()
             {
-                radius = attackRange
+                radius = GetRange()
             };
         }
 
