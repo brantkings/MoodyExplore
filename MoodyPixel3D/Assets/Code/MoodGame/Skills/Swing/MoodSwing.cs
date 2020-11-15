@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Mood.Swing.Maker;
+using System;
 
 [CreateAssetMenu(menuName ="Mood/Swing Data", fileName = "Swing_")]
 public class MoodSwing : ScriptableObject
@@ -23,11 +25,6 @@ public class MoodSwing : ScriptableObject
     {
         public Vector3 localPosTop;
         public Vector3 localPosBot;
-    }
-
-    public struct MoodSwingTrail
-    {
-        public MoodSwingTrailNode[] nodes;
     }
 
 
@@ -56,12 +53,14 @@ public class MoodSwing : ScriptableObject
         }
     }
 
-    public MoodSwingNode[] data;
+
+    //public MoodSwingNode[] data;
+    public MoodSwingMaker maker;
 
     private static Collider[] _colliderCache = new Collider[CACHE_SIZE];
     private static Dictionary<Collider, MoodSwingResult> _resultsCache = new Dictionary<Collider, MoodSwingResult>(CACHE_SIZE);
 
-    public void SetData(IEnumerable<MoodSwingNode> nodes, int length)
+    /*public void SetData(IEnumerable<MoodSwingNode> nodes, int length)
     {
         data = new MoodSwingNode[length];
         int i = 0;
@@ -69,6 +68,17 @@ public class MoodSwing : ScriptableObject
         {
             data[i++] = node;
         }
+    }*/
+
+
+    public IEnumerable<MoodSwingTrailNode> GetTrail()
+    {
+        return maker.Trail;
+    }
+
+    public int GetTrailLength()
+    {
+        return maker.TrailLength;
     }
 
     public MoodSwingResult? TryHitGetBest(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, Vector3 desiredDirection)
@@ -91,9 +101,8 @@ public class MoodSwing : ScriptableObject
     public MoodSwingResult? TryHitGetFirst(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
     {
         float currentDelay = 0f;
-        for (int i = 0, len = this.data.Length;i<len;i++)
-        {
-            MoodSwingNode node = this.data[i];
+        foreach(MoodSwingNode node in maker.Nodes)
+        { 
             LHH.Utils.DebugUtils.DrawCircle(posOrigin + node.localPosition, node.radius, rotOrigin * Vector3.up, Color.black, 1f);
             int result = Physics.OverlapSphereNonAlloc(posOrigin + node.localPosition, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
             if (result > 0)
@@ -112,14 +121,12 @@ public class MoodSwing : ScriptableObject
     {
         float currentDelay = 0f;
         _resultsCache.Clear();
-        for (int i = 0, len = this.data.Length; i < len; i++)
-        {
-            MoodSwingNode node = this.data[i];
+        foreach(MoodSwingNode node in maker.Nodes)
+        { 
             LHH.Utils.DebugUtils.DrawCircle(posOrigin + rotOrigin * node.localPosition, node.radius, rotOrigin * Vector3.up, Color.black, 1f);
             int result = Physics.OverlapSphereNonAlloc(posOrigin + rotOrigin * node.localPosition, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
             if (result > 0)
             {
-                UnityEngine.Debug.LogFormat("Found {0} results in {1}...", result, i);
                 for (int j = 0, lenA = Mathf.Min(result, CACHE_SIZE); j < lenA; j++)
                 {
                     Collider collider = _colliderCache[j];
@@ -155,7 +162,7 @@ public class MoodSwing : ScriptableObject
     public float GetRange()
     {
         float range = 0f;
-        foreach(var d in data)
+        foreach(var d in maker.Nodes)
         {
             range = Mathf.Max(range, Vector3.ProjectOnPlane(d.localPosition, Vector3.up).magnitude + d.radius);
         }

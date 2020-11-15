@@ -26,7 +26,6 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         foreach (Transform t in transform) 
             Destroy(t.gameObject);
 
-        Debug.LogErrorFormat("{0} Starting with target {1}", this, _health != null ? _health.ToString() : "<null>");
         if (_health != null)
         {
             CheckHealth(_health, false);
@@ -37,7 +36,6 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     public void SetTarget(MoodPawn pawn)
     {
         _health = pawn.GetComponentInChildren<Health>();
-        Debug.LogErrorFormat("{0} Setting target {1}", this, _health);
         if(_health != null)
         {
             _health.OnDamage += OnDamage;
@@ -52,7 +50,6 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     public void UnsetTarget(MoodPawn pawn)
     {
-        Debug.LogErrorFormat("{0} Unsetting target {1}", this, _health);
         if (_health != null)
         {
             _health.OnDamage -= OnDamage;
@@ -71,7 +68,7 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     private void OnDamage(DamageInfo damage, Health damaged)
     {
-        Debug.LogWarningFormat("{0} took notice that {1} took damage {2}. It has now {3} HP.", this, damaged, damage, damaged.Life);
+        //Debug.LogWarningFormat("{0} took notice that {1} took damage {2}. It has now {3} HP.", this, damaged, damage, damaged.Life);
         CheckCurrentHealth(damaged.Life, true);
     }
 
@@ -87,7 +84,6 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     private void CheckHealth(Health health, bool feedback)
     {
-        Debug.LogErrorFormat("{0} has health {1} with {2}/{3}", transform.root.name, health, health.Life, health.MaxLife);
         CheckMaxHealth(health.MaxLife);
         CheckCurrentHealth(health.Life, feedback);
     }
@@ -114,14 +110,14 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     private void CheckCurrentHealth(int current,  bool feedback)
     {
-        Debug.LogFormat("Checking health {0} with feedback? {1}. By {2} ({3})", current, feedback, this, transform.GetComponentInParent<MoodPawn>());
+        //Debug.LogFormat("Checking health {0} with feedback? {1}. By {2} ({3})", current, feedback, this, transform.GetComponentInParent<MoodPawn>());
         ChangeProportional(ref current);
         if (_currentHealth != current)
         {
             for (int i = 0, len = _children.Count; i < len; i++) 
             {
                 _children[i].SetDamaged((i+1) > current, feedback);
-                Debug.LogFormat("Setting {0} damaged? {1}", i, (i + 1) > current);
+                //Debug.LogFormat("Setting {0} damaged? {1}", i, (i + 1) > current);
             }
 
             _currentHealth = current;

@@ -21,9 +21,13 @@ public class MoodPawn : MonoBehaviour
 {
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnSkillEvent(MoodSkill skill, Vector3 direction);
+    public delegate void DelMoodPawnSwingEvent(MoodSwing swing, Vector3 direction);
     public delegate void DelMoodPawnUndirectedSkillEvent(MoodSkill skill);
 
     public event DelMoodPawnEvent OnChangeStamina;
+
+    public event DelMoodPawnUndirectedSkillEvent OnBeforeSkillUse;
+    public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillEvent OnUseSKill;
     public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
     
@@ -35,6 +39,9 @@ public class MoodPawn : MonoBehaviour
     private Health _health;
     [SerializeField]
     private float knockBackMultiplier;
+    [SerializeField]
+    private MoodAttackFeedback _attackFeedback;
+    [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
     [SerializeField]
@@ -192,7 +199,7 @@ public class MoodPawn : MonoBehaviour
 
 
         //if (name.Contains("Player")) Debug.LogFormat("Before update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
-        UpdateMovement(_inputVelocity, ref _currentSpeed, ref _currentDirection);
+        UpdateMovement(_inputVelocity, _inputRotation, ref _currentSpeed, ref _currentDirection);
         //if (name.Contains("Player")) Debug.LogFormat("After update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
 
         Direction = _currentDirection;
@@ -206,6 +213,18 @@ public class MoodPawn : MonoBehaviour
         mover.SetVelocity(_currentSpeed);
 
         ThreatFixedUpdate(_threatDirection);
+    }
+
+    public void PrepareForSwing(MoodSwing swing, Vector3 direction)
+    {
+        OnBeforeSwinging?.Invoke(swing, direction);
+    }
+
+    public void ShowSwing(MoodSwing swing, Vector3 direction)
+    {
+        if (_attackFeedback != null)
+            _attackFeedback.DoFeedback(swing, direction);
+        else Debug.LogErrorFormat("No attack feedback on {0}", this);
     }
     
     public void UsedSkill(MoodSkill skill, Vector3 direction)
@@ -237,6 +256,7 @@ public class MoodPawn : MonoBehaviour
     public void MarkUsingSkill(MoodSkill skill)
     {
         _currentSkill = skill;
+        OnBeforeSkillUse?.Invoke(skill);
     }
 
     public void UnmarkUsingSkill(MoodSkill skill)
@@ -333,16 +353,23 @@ public class MoodPawn : MonoBehaviour
     public event PawnEvent OnEndMove;
 
     private Vector3 _inputVelocity;
+    private Vector3 _inputRotation;
     private Tween _movementTween;
 
     private Vector3 _currentSpeed;
     private Vector3 _movementDelta;
 
-    private void UpdateMovement(Vector3 inputVelocity, ref Vector3 speed, ref Vector3 direction)
+    private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, ref Vector3 speed, ref Vector3 direction)
     {
         if(inputVelocity.sqrMagnitude < 0.1f) //Wants to stop
         {
             UpdateMovementVector(ref speed, 0f, timeToZeroVelocity);
+
+            //Maybe it is rotating while stopped
+            if(inputDirection.sqrMagnitude >= 0.1f)
+            {
+                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f);
+            }
         }
         else
         {
@@ -488,6 +515,16 @@ public class MoodPawn : MonoBehaviour
         animator.SetBool("Attack", false);
     }
 
+    public void RotateTowards(Vector3 direction)
+    {
+        _inputRotation = direction;
+    }
+
+    public void StopRotating()
+    {
+        RotateTowards(Vector3.zero);
+    }
+
     public void SetHorizontalDirection(Vector3 direction)
     {
         _currentDirection = direction;
@@ -545,6 +582,7 @@ public class MoodPawn : MonoBehaviour
     public void StopThreatening()
     {
         _threatDirection = Vector3.zero;
+        _swingThreat = null;
     }
     
     private MoodThreatenable _threatTarget;

@@ -71,10 +71,12 @@ namespace Code.MoodGame.Skills
             float executingTime = ExecuteEffect(pawn, skillDirection);
             DispatchExecuteEvent(pawn, skillDirection);
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
+            pawn.StopThreatening();
             yield return new WaitForSecondsRealtime(executingTime);
             
-            pawn.StopThreatening();
+            pawn.PrepareForSwing(swingData, skillDirection);
             pawn.FinishSkillAnimation(this);
+            pawn.ShowSwing(swingData, skillDirection);
             onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(postTime);
             pawn.UnmarkUsingSkill(this);

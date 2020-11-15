@@ -38,6 +38,31 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public event MoodSkillEvent OnExecute;
     public event MoodSkillEvent OnPreview;
 
+    [System.Serializable]
+    public struct DirectionFixer
+    {
+        public float angleFromForward;
+        public float coneAngle;
+
+        [Tooltip("Not implemented yet.")]
+        public bool mirrored;
+
+        public float YAngleToSanitize(Vector3 direction, Vector3 mainDirection)
+        {
+            float signedAngle = Vector3.SignedAngle(mainDirection, direction, Vector3.up);
+            float coneAngleDist = coneAngle * 0.5f;
+            float angleDist = Mathf.DeltaAngle(signedAngle, angleFromForward);
+            if(Mathf.Abs(angleDist) > coneAngleDist) //If outsideAngle
+            {
+                return LHH.Utils.NumberUtils.MinAbs(angleDist - coneAngleDist, angleDist + coneAngleDist);
+            }
+            else
+            {
+                return 0f;
+            }
+        }
+    }
+
     
     [SerializeField]
     private Texture2D _icon;
@@ -54,6 +79,8 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private MoodStance[] toConsume;
     [SerializeField]
     private MoodStance[] restrictions;
+    [SerializeField]
+    private DirectionFixer[] _possibleAngles;
 
     [SerializeField]
     private bool _lockCamera = true;
@@ -91,6 +118,32 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     {
         return IsValidStanceSetup(pawn);
     }
+
+    /// <summary>
+    /// Adhere to the skill's rules of direction! It's optional, but the player's skill should always do it.
+    /// </summary>
+    /// <param name="direction"></param>
+    public virtual void SanitizeDirection(Vector3 lookingDirection, ref Vector3 direction)
+    {
+        SanitizeDirection(lookingDirection, ref direction, _possibleAngles);
+    }
+
+    protected void SanitizeDirection(Vector3 lookingDirection, ref Vector3 toSanitize, DirectionFixer[] fixers)
+    {
+        if (fixers != null && fixers.Length > 0)
+        {
+            float angleToChange = float.MaxValue;
+            foreach (DirectionFixer angle in fixers)
+            {
+                angleToChange = Mathf.Min(angleToChange, angle.YAngleToSanitize(toSanitize, lookingDirection));
+            }
+            if (angleToChange != 0f)
+            {
+                toSanitize = Quaternion.Euler(0f, angleToChange, 0f) * toSanitize;
+            }
+        }
+    }
+
 
     /// <summary>
     /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. Dispatch execute event after you do the skill. Do not call base.

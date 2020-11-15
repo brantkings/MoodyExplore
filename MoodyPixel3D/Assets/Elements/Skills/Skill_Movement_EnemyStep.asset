@@ -10,22 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90ae4c23724f4444984bad838a8ad073, type: 3}
-  m_Name: Skill_Movement_LargeStep
+  m_Name: Skill_Movement_EnemyStep
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Large Step
   needs: []
   consumeNeededStances: 0
   toConsume: []
-  restrictions:
-  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
-  - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  restrictions: []
+  _lockCamera: 1
+  lockMovement: 0
   _shortcut: 0
   _cost: 1
   minDistance: 0
   maxDistance: 5
-  velocityAdd: 0
-  durationAdd: 0.2
+  velocityAdd: 5
+  durationAdd: 0
   showArrowWidth: 1
   ease: 3
   sfx: {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
+  toAdd: []

@@ -245,6 +245,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         [SerializeField] private SharedBool keepRunningUntilCanUse;
         [SerializeField] private SharedBool waitUntilUsed = true;
         [SerializeField] private SharedBool directPawnToSkill = true;
+        [SerializeField] private SharedBool sanitizeDirection = true;
 
         private bool _running;
         private bool _completed;
@@ -274,11 +275,16 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
                 }
                 
             }
-            
-            if (skill.Value.CanExecute(pawn.Value, direction.Value))
+
+            Vector3 skillDir = direction.Value;
+            if(sanitizeDirection.Value)
             {
-                if(directPawnToSkill.Value) pawn.Value.SetHorizontalDirection(direction.Value);
-                StartCoroutine(UseSkillRoutine(skill.Value, pawn.Value, direction.Value));
+                skill.Value.SanitizeDirection(pawn.Value.Direction, ref skillDir);
+            }
+            if (skill.Value.CanExecute(pawn.Value, skillDir))
+            {
+                if(directPawnToSkill.Value) pawn.Value.SetHorizontalDirection(skillDir);
+                StartCoroutine(UseSkillRoutine(skill.Value, pawn.Value, skillDir));
                 if (waitUntilUsed.Value && _running) 
                     return TaskStatus.Running;
                 else 

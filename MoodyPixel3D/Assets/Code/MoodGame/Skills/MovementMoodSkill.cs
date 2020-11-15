@@ -6,8 +6,13 @@ using DG.Tweening;
 [CreateAssetMenu(fileName = "Skill_Movement_", menuName = "Mood/Skill/Movement", order = 0)]
 public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowPropertyGiver
 {
+    [Header("Movement")]
     public float minDistance;
     public float maxDistance;
+    [SerializeField]
+    private bool setHorizontalDirection = true;
+    [SerializeField]
+    private DirectionFixer[] setDirectionInRelationToMovement;
     public float velocityAdd = 1f;
     public float durationAdd;
     public float showArrowWidth = 1f;
@@ -28,7 +33,12 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
         CalculateMovementData(skillDirection, out Vector3 distance, out float duration);
-        pawn.SetHorizontalDirection(skillDirection);
+        if(setHorizontalDirection)
+        {
+            Vector3 setDirection = skillDirection;
+            SanitizeDirection(pawn.Direction, ref setDirection, setDirectionInRelationToMovement);
+            pawn.SetHorizontalDirection(setDirection);
+        }
         pawn.Dash(distance, duration, ease);
         AddStances(pawn);
         sfx.ExecuteIfNotNull(pawn.ObjectTransform);

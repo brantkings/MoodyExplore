@@ -51,8 +51,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     public string animatorCameraCommandBoolean;
     public CinemachineBlendListCamera cameraBlendList;
 
+    public Transform inputDirectionFeedback;
+
     private Vector3 _mouseWorldPosition;
     private MoodSkill _executingCommand;
+    private Vector3 _rotatingTarget;
 
     public float timeSlowOnThreat = 0.2f;
 
@@ -68,16 +71,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     {
         pawn.Threatenable.OnThreatAppear += ChangeThreat;
         pawn.Threatenable.OnThreatRelief += ChangeThreat;
-        OnStartCommand += SolveSlowDown;
-        OnStopCommand += SolveSlowDown;
+        OnStartCommand += SolveThreatSlowDown;
+        OnStopCommand += SolveThreatSlowDown;
     }
     
     void OnDisable()
     {
         pawn.Threatenable.OnThreatAppear -= ChangeThreat;
         pawn.Threatenable.OnThreatRelief -= ChangeThreat;
-        OnStartCommand += SolveSlowDown;
-        OnStopCommand += SolveSlowDown;
+        OnStartCommand += SolveThreatSlowDown;
+        OnStopCommand += SolveThreatSlowDown;
     }
 
     public MoodPawn Pawn => pawn;
@@ -90,34 +93,34 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             Or
         }
 
-        public bool pressed;
-        public bool up;
-        public bool down;
+        public bool pressing;
+        public bool justUp;
+        public bool justDown;
 
-        public bool Changed => up || down;
+        public bool Changed => justUp || justDown;
 
         public ButtonState(KeyCode code)
         {
             bool isPressed = IsKeyState(code);
-            pressed = isPressed;
-            down = isPressed && Input.GetKeyDown(code);
-            up = !isPressed && Input.GetKeyUp(code);
+            pressing = isPressed;
+            justDown = isPressed && Input.GetKeyDown(code);
+            justUp = !isPressed && Input.GetKeyUp(code);
         }
         
         public ButtonState(int mouseButton)
         {
             bool isPressed = Input.GetMouseButton(mouseButton);
-            pressed = isPressed;
-            down = isPressed && Input.GetMouseButtonDown(mouseButton);
-            up = !isPressed && Input.GetMouseButtonUp(mouseButton);
+            pressing = isPressed;
+            justDown = isPressed && Input.GetMouseButtonDown(mouseButton);
+            justUp = !isPressed && Input.GetMouseButtonUp(mouseButton);
         }
 
         public ButtonState(Join how, params KeyCode[] codes)
         {
             bool press = IsKeyState(codes[0]);
-            pressed = press;
-            down = press && Input.GetKeyDown(codes[0]);
-            up = !press && Input.GetKeyUp(codes[0]);
+            pressing = press;
+            justDown = press && Input.GetKeyDown(codes[0]);
+            justUp = !press && Input.GetKeyUp(codes[0]);
 
             for (int i = 1; i < codes.Length; i++)
             {
@@ -126,19 +129,19 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 switch (how)
                 {
                     case Join.And:
-                        pressed &= press;
+                        pressing &= press;
                         break;
                     default:
-                        pressed |= press;
+                        pressing |= press;
                         break;
 
                 }
-                down |= press && Input.GetKeyDown(code);
-                up |= !press && Input.GetKeyUp(code);
+                justDown |= press && Input.GetKeyDown(code);
+                justUp |= !press && Input.GetKeyUp(code);
             }
 
-            if (pressed) up = false;
-            else down = false;
+            if (pressing) justUp = false;
+            else justDown = false;
         }
 
         private static bool IsKeyState(KeyCode code)
@@ -148,12 +151,12 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
         public static implicit operator bool(ButtonState e)
         {
-            return e.pressed;
+            return e.pressing;
         }
 
         public static implicit operator int(ButtonState e)
         {
-            return e.pressed ? 1 : 0;
+            return e.pressing ? 1 : 0;
         }
     }
 
@@ -175,12 +178,13 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
     }
 
-    void GetInputUpdate(out DirectionalState move, out bool readyingWeapon, out ButtonState showCommand, out ButtonState executeAction)
+    void GetInputUpdate(out DirectionalState move, out bool readyingWeapon, out ButtonState showCommand, out ButtonState executeAction, out ButtonState secondaryExecute)
     {
         move = new DirectionalState();
         readyingWeapon = false;
         showCommand = new ButtonState(KeyCode.Space);
         executeAction = new ButtonState(0);
+        secondaryExecute = new ButtonState(1);
 
         move.up = new ButtonState(ButtonState.Join.Or, KeyCode.UpArrow, KeyCode.W);
         move.left = new ButtonState(ButtonState.Join.Or, KeyCode.LeftArrow, KeyCode.A);
@@ -234,41 +238,47 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void Update()
     {
-        GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState showCommandAction, out ButtonState executeAction);
+        GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState showCommandAction, out ButtonState executeAction, out ButtonState secondaryAction);
         GetMouseInputUpdate(_mainCamera, GetPlayerPlaneOrigin(), ref _mouseWorldPosition);
 
-        if (showCommandAction.down)
+        if (showCommandAction.justDown)
         {
             command.Activate(transform.position, 6f);
             _mouseWorldPosition = GetPlayerPlaneOrigin();
         }
-        else if (showCommandAction.up)
+        else if (showCommandAction.justUp)
         {
             command.Deactivate();
         }
 
-        bool isInCommand = command.IsActivated() || IsExecutingCommand();
+        bool isInCommandMode = IsInCommandMode();
         bool isCameraUpwards = command.IsActivated() || IsSkillNeedingStrategicCamera();
 
 
-        SetCommandMode(isInCommand);
+        SetCommandMode(isInCommandMode);
         SetCameraMode(isCameraUpwards);
-        if (isInCommand) //The command is open
+        if (isInCommandMode) //The command is open
         {
-            Vector3 currentDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
-            Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
+            Vector3 inputDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
+            Vector3 currentDirection = inputDirection;
+            inputDirectionFeedback.forward = inputDirection;
+            //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
+            MoodSkill skill = command.GetCurrentSkill();
+
+            //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.white, 0.02f);
+            //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
+            skill.SanitizeDirection(pawn.Direction, ref currentDirection);
             
-            if (moveAxis.up.down)
+            if (moveAxis.up.justDown)
             {
                 command.MoveSelected(-1);
             }
-            else if (moveAxis.down.down)
+            else if (moveAxis.down.justDown)
             {
                 command.MoveSelected(1);
             }
-            else if (executeAction.down)
+            else if (executeAction.justDown)
             {
-                MoodSkill skill = command.GetCurrentSkill();
                 Debug.LogFormat("Hey {0} ", skill.CanExecute(pawn, currentDirection));
                 if (skill.CanExecute(pawn, currentDirection))
                 {
@@ -277,19 +287,30 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 }
             }
 
+            if(secondaryAction.pressing)
+            {
+                _rotatingTarget = inputDirection.normalized;
+            }
+            else
+            {
+                _rotatingTarget = Vector3.zero;
+            }
+
             command.UpdateCommandView(pawn, currentDirection);
             pawn.SetVelocity(Vector3.zero);
+            pawn.RotateTowards(_rotatingTarget);
 
             if (!IsExecutingCommand())
             {
                 pawn.SetLookAt(currentDirection);
                 _lookAtVector = currentDirection;
-                pawn.SetHorizontalDirection(currentDirection);
+                //pawn.SetHorizontalDirection(currentDirection);
             }
         }
         else //The command is not open
         {
             //Check command shortcuts
+            _rotatingTarget = Vector3.zero;
             Vector3 shortcutDirection = pawn.Direction;
             foreach(MoodSkill skill in command.GetMoodSkills())
             {
@@ -299,7 +320,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 }
             }
 
-            if (executeAction.down)
+            if (executeAction.justDown)
             {
                 if (checkHud.IsShowing())
                 {
@@ -314,8 +335,27 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             
             pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
             pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * maxVelocity), Vector3.up));
+            pawn.RotateTowards(_rotatingTarget);
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
+
+        SolveCommandSlowDown();
+    }
+
+    public bool IsCommandOpen()
+    {
+        return command.IsActivated();
+    }
+
+    public bool IsInCommandMode()
+    {
+        return IsCommandOpen() || IsExecutingCommand();
+    }
+
+    public bool IsManuallyRotating()
+    {
+        Debug.LogFormat("{0} is manually rotating? {1} && {2} while angle is {3}", this, _rotatingTarget, Vector3.Angle(_rotatingTarget, pawn.Direction) > 1f, Vector3.Angle(_rotatingTarget, pawn.Direction));
+        return _rotatingTarget != Vector3.zero && Vector3.Angle(_rotatingTarget, pawn.Direction) > 1f;
     }
 
     private Vector3 _lookAtVector;
@@ -330,25 +370,39 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void ChangeThreat(MoodThreatenable moodPawn)
     {
-        SolveSlowDown();
+        SolveThreatSlowDown();
     }
 
-    private bool ShouldSlowDown()
+    private void SolveSlowdown(float timeSlow, string slowdownID, ref EventfulParameter<bool> boolean, bool updateValue)
     {
-        return pawn.Threatenable.IsThreatened() && !IsExecutingCommand();
-    }
-
-    private EventfulParameter<bool> _slowedDown;
-    
-    private void SolveSlowDown()
-    {
-        _slowedDown.Update(ShouldSlowDown(), (slowed) =>
+        boolean.Update(updateValue, (slowed) =>
         {
-            if(slowed) TimeManager.Instance.ChangeTimeDelta(timeSlowOnThreat, "PlayerThreat");
-            else TimeManager.Instance.RemoveTimeDeltaChange("PlayerThreat");
+            Debug.LogFormat("{2} ({3}) slowdown {0} to {1}", timeSlow, slowdownID, slowed? "Adding" : "Removing", slowed);
+            if (slowed) TimeManager.Instance.ChangeTimeDelta(timeSlow, slowdownID);
+            else TimeManager.Instance.RemoveTimeDeltaChange(slowdownID);
         });
     }
-    
+    private bool ShouldThreatSlowdown()
+    {
+        return pawn.Threatenable.IsThreatened() && !IsExecutingCommand() && !IsManuallyRotating();
+    }
+    private EventfulParameter<bool> _threatSlowedDown;
+    private void SolveThreatSlowDown()
+    {
+        SolveSlowdown(timeSlowOnThreat, "PlayerThreat", ref _threatSlowedDown, ShouldThreatSlowdown());
+    }
+
+    private bool ShouldCommandSlowdown()
+    {
+        return IsCommandOpen() && !IsExecutingCommand() && !IsManuallyRotating();
+    }
+
+    private EventfulParameter<bool> _commandSlowedDown;
+    private void SolveCommandSlowDown()
+    {
+        SolveSlowdown(0.02f, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown());
+    }
+
 
     private bool? _wasInCommand = null;
     private void SetCommandMode(bool set, bool feedback = true)
@@ -382,6 +436,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 else onCameraIn.Invoke(transform);
             }
             _wasInCamera = upwards;
+            inputDirectionFeedback.gameObject.SetActive(upwards);
         }
     }
     

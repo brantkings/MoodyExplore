@@ -187,7 +187,9 @@ MonoBehaviour:
   animator: {fileID: 4745266871561790116}
   _health: {fileID: 3753761908181155500}
   knockBackMultiplier: 1
+  _attackFeedback: {fileID: 4198177485041802825}
   toDestroyOnDeath: {fileID: 0}
+  _threatenable: {fileID: 0}
   focus: {fileID: 0}
   sensorGroup: {fileID: 0}
   timeToMaxVelocity: 0.15
@@ -881,6 +883,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1972091802758274956, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
   m_PrefabInstance: {fileID: 5637358446441330303}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4198177485041802825 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8392747685242431542, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
+  m_PrefabInstance: {fileID: 5637358446441330303}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3083267684393716417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c9d4c9b6f1daba4f85eebaca212ac16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &4745266871561790116 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1144328510193554651, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}

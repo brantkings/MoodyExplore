@@ -109,25 +109,20 @@ public class MoodCommandController : MonoBehaviour
         transform.position = position;
         SetActiveObjects(true, GetCurrentSkill());
         
-        TimeManager.Instance.ChangeTimeDelta(0.02f, "ControlSlow");
+        //TimeManager.Instance.ChangeTimeDelta(0.02f, "ControlSlow");
         _activated = true;
     }
 
     public void Deactivate()
     {
         SetActiveObjects(false, GetCurrentSkill());
-        TimeManager.Instance.RemoveTimeDeltaChange("ControlSlow");
+        //TimeManager.Instance.RemoveTimeDeltaChange("ControlSlow");
         _activated = false;
     }
 
     public MoodSkill GetCurrentSkill()
     {
         return _equippedSkills[_currentOption];
-    }
-
-    public IEnumerator ExecuteCurrent(MoodPawn pawn, Vector3 direction)
-    {
-        yield return GetCurrentSkill().ExecuteRoutine(pawn, direction);
     }
 
     private void AssureSelectedOptionIsVisible()
@@ -206,13 +201,13 @@ public class MoodCommandController : MonoBehaviour
         return _activated;
     }
 
-    public void UpdateCommandView(MoodPawn pawn, Vector3 direction)
+    public void UpdateCommandView(MoodPawn pawn, Vector3 sanitizedDirection)
     {
-        
-        _arrowIndicator.SetDirection(direction);
-        PaintOptions(pawn, direction);
+        MoodSkill skill = GetCurrentSkill();
+        _arrowIndicator.SetDirection(sanitizedDirection);
+        PaintOptions(pawn, sanitizedDirection);
         AssureSelectedOptionIsVisible();
-        GetCurrentSkill().SetShowDirection(pawn, direction);
+        skill.SetShowDirection(pawn, sanitizedDirection);
     }
 
     public IEnumerable<MoodSkill> GetMoodSkills()
