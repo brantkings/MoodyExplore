@@ -9,6 +9,8 @@ public class MoodAttackFeedback : MonoBehaviour
 
     const int MAX_QUAD = 16;
 
+    public float attackDuration = 0.08f;
+
     MoodPawn pawn;
     Mesh mesh;
     MeshFilter filter;
@@ -105,7 +107,7 @@ public class MoodAttackFeedback : MonoBehaviour
         //yield return new WaitForSeconds(0.05f);
         CreateMesh(attack, direction);
         meshObj.SetActive(true);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(attackDuration);
         meshObj.SetActive(false);
     }
 

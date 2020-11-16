@@ -8,6 +8,7 @@ public class GeneralEvent : MonoBehaviour
     [SerializeField]
     protected UnityEvent toCall;
 
+    [SerializeField]
     protected ScriptableEvent[] scriptableEventToCall;
 
     public void CallEvent()

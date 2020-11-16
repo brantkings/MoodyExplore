@@ -16,6 +16,7 @@ namespace Code.MoodGame.Skills
         public SoundEffect onStartAttack;
         public SoundEffect onExecuteAttack;
         public SoundEffect onEndAttack;
+        public ScriptableEventPositional[] onDamage;
 
         [Space] 
         public float preTime = 0.5f;
@@ -101,6 +102,7 @@ namespace Code.MoodGame.Skills
                     Health enemyHealth = result.collider.GetComponentInParent<Health>();
                     Debug.LogFormat("{0} found collider {1}, health {2} in children {3}", this, result.collider, enemyHealth, result.collider.GetComponentInChildren<Health>());
                     enemyHealth?.Damage(GetDamage(pawn, result.collider.transform, result.hitDirection));
+                    onDamage.Invoke(result.hitPosition, Quaternion.LookRotation(result.hitDirection, pawn.Up));
                 }
             }
 
@@ -113,7 +115,7 @@ namespace Code.MoodGame.Skills
 
         private DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
-            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetForce(knockback.Get().GetKnockback(pawn.transform, target, attackDirection), knockback.Get().GetDuration());
+            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection), knockback.Get().GetDuration());
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()

@@ -49,6 +49,8 @@ MonoBehaviour:
   onStartAttack: {fileID: 0}
   onExecuteAttack: {fileID: 0}
   onEndAttack: {fileID: 0}
+  onDamage:
+  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   preTime: 0.5
   postTime: 1.25
   addedStancesWithAttack: []

@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(menuName = "Long Hat House/Events/Instantiate Legacy", fileName = "E_Instantiate_", order = 0)]
-public class InstantiateEvent : ScriptableEvent<GameObject>
+public class InstantiateEvent : ScriptableEventPositional<GameObject>
 {
     public GameObject prefab;
     public bool whoInstantiatedIsParent;
@@ -20,6 +20,11 @@ public class InstantiateEvent : ScriptableEvent<GameObject>
     public override GameObject InvokeReturn(Transform where)
     {
         return Instantiate(prefab, where.position + offsetPosition, where.rotation, whoInstantiatedIsParent ? where : null);
+    }
+
+    public override GameObject InvokeReturn(Vector3 position, Quaternion rotation)
+    {
+        return Instantiate(prefab, position + offsetPosition, rotation, null);
     }
 
     private Quaternion GetRotation(Transform where, RotationStyle how)

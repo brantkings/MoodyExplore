@@ -40,6 +40,10 @@ public class KnockbackSolver
     public Vector3 GetKnockback(Transform from, Transform to, Vector3 attackForce)
     {
         Vector3 knock = knockbackByDealer.Get(from) + knockbackByReceiver.Get(from) + absoluteKnockback + GetKnockbackPositionDifference(from, to) + knockbackFromForce * attackForce;
+        Debug.LogFormat("Knockback: [From:{0} To:{1} Abs:{2}; PosDif:{3} (to:{7} - from:{8}='{9}'); Force:{4}] --> Total:{5} ({6})",
+            knockbackByDealer.Get(from), knockbackByReceiver.Get(from), absoluteKnockback, GetKnockbackPositionDifference(from, to), knockbackFromForce * attackForce,
+            knock.normalized * constantTotalMagnitude, knock,
+            to.position,from.position, to.position - from.position);
         if (totalMagnitudeConstant) knock = knock.normalized * constantTotalMagnitude;
         return knock;
     }

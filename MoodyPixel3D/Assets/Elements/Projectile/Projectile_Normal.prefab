@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4686207598160858942}
   - component: {fileID: 4189596125018046067}
   - component: {fileID: 5199182792113442897}
+  - component: {fileID: 3687781600833763132}
   m_Layer: 14
   m_Name: Damage
   m_TagString: Untagged
@@ -50,11 +51,16 @@ MonoBehaviour:
   _onlyDamageOnce: 1
   knockback:
     _directProperty:
-      knockbackByTransform:
+      knockbackByDealer:
         direction: 0
         customFrom: {fileID: 0}
         magnitude: 1
-      knockbackConstant: {x: 0, y: 0, z: 0}
+      knockbackByReceiver:
+        direction: 1
+        customFrom: {fileID: 0}
+        magnitude: 1
+      absoluteKnockback: {x: 0, y: 0, z: 0}
+      knockbackFromForce: 0
       knockbackPositionDifferenceNormalized: 0
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
       totalMagnitudeConstant: 0
@@ -77,6 +83,18 @@ MonoBehaviour:
   onDamage:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 3687781600833763132}
+        m_TargetAssemblyTypeName: GeneralEvent, Assembly-CSharp
+        m_MethodName: CallEvent
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 374836008}
         m_TargetAssemblyTypeName: DestroyFunction, Assembly-CSharp
         m_MethodName: Destroy
@@ -105,6 +123,23 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.25
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3687781600833763132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861203433333674943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af1a9ea4256306e4ab9e58a7aa5c4286, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toCall:
+    m_PersistentCalls:
+      m_Calls: []
+  scriptableEventToCall:
+  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
 --- !u!1 &2242556836230007570
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,6 +265,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  scriptableEventToCall: []
   _time: 3
 --- !u!114 &1061291822
 MonoBehaviour:

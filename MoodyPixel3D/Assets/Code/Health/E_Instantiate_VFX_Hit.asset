@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3290b48737a1b914eb506291a7cac9d3, type: 3}
-  m_Name: INSTANTIATE_VFX_Hit
+  m_Script: {fileID: 11500000, guid: f4bc32e5040e3b842802cf27cbaed624, type: 3}
+  m_Name: E_Instantiate_VFX_Hit
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  instantiate:
-    prefab: {fileID: 4534425579592918402, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
+  prefab: {fileID: 4534425579592918402, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
+  whoInstantiatedIsParent: 0
+  style: 1
+  offsetPosition: {x: 0, y: 0, z: 0}
