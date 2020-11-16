@@ -18,10 +18,11 @@ public class MoodCommandController : MonoBehaviour
 
     private List<OptionTuple> _options;
 
-    
+
     private RangeSphere _sphereIndicator;
     private RangeArrow _arrowIndicator;
     private RangeTarget _targetIndicator;
+    private RangeArea _areaOfEffectIndicator;
     [SerializeField]
     private Canvas _canvas;
     [SerializeField]
@@ -29,7 +30,7 @@ public class MoodCommandController : MonoBehaviour
 
     public float canvasGroupFadeDuration = 0.45f;
 
-    private bool _activated;
+    private bool? _activated;
 
     private int _currentOption;
     
@@ -47,6 +48,7 @@ public class MoodCommandController : MonoBehaviour
         _sphereIndicator = GetComponentInChildren<RangeSphere>();
         _arrowIndicator = GetComponentInChildren<RangeArrow>();
         _targetIndicator = GetComponentInChildren<RangeTarget>();
+        _areaOfEffectIndicator = GetComponentInChildren<RangeArea>();
 
         Deactivate();
         FadeCanvasGroup(false, 0f);
@@ -104,20 +106,23 @@ public class MoodCommandController : MonoBehaviour
         opt.command.SetPossible(canExecute);
     }
 
-    public void Activate(Vector3 position, float radius)
+    public void Activate()
     {
-        transform.position = position;
-        SetActiveObjects(true, GetCurrentSkill());
-        
-        //TimeManager.Instance.ChangeTimeDelta(0.02f, "ControlSlow");
-        _activated = true;
+        SetActive(false);
     }
 
     public void Deactivate()
     {
-        SetActiveObjects(false, GetCurrentSkill());
-        //TimeManager.Instance.RemoveTimeDeltaChange("ControlSlow");
-        _activated = false;
+        SetActive(false);
+    }
+
+    public void SetActive(bool set)
+    {
+        if(set != _activated)
+        {
+            SetActiveObjects(set, GetCurrentSkill());
+            _activated = set;
+        }
     }
 
     public MoodSkill GetCurrentSkill()
@@ -148,7 +153,7 @@ public class MoodCommandController : MonoBehaviour
         while(!IsVisible(_currentOption) && _currentOption != oldOption)
         {
             MoveIndex(ref _currentOption, Mathf.RoundToInt(Mathf.Sign(add)));
-            Debug.LogFormat("Hey trying {0}", _currentOption);
+            //Debug.LogFormat("Hey trying {0}", _currentOption);
         }
         SetSelected(_currentOption, true );
         SetActiveObjects(IsActivated(), GetCurrentSkill());
@@ -170,6 +175,14 @@ public class MoodCommandController : MonoBehaviour
         yield return _sphereIndicator;
         yield return _arrowIndicator;
         yield return _targetIndicator;
+        yield return _areaOfEffectIndicator;
+    }
+
+    private IRangeShowDirected[] directed;
+    private IRangeShowDirected[] AllRangeShowDirected()
+    {
+        if (directed == null) directed = GetComponentsInChildren<IRangeShowDirected>();
+        return directed;
     }
 
 
@@ -198,13 +211,13 @@ public class MoodCommandController : MonoBehaviour
 
     public bool IsActivated()
     {
-        return _activated;
+        return _activated.HasValue && _activated.Value;
     }
 
     public void UpdateCommandView(MoodPawn pawn, Vector3 sanitizedDirection)
     {
         MoodSkill skill = GetCurrentSkill();
-        _arrowIndicator.SetDirection(sanitizedDirection);
+        foreach (IRangeShowDirected directed in AllRangeShowDirected()) directed.SetDirection(sanitizedDirection);
         PaintOptions(pawn, sanitizedDirection);
         AssureSelectedOptionIsVisible();
         skill.SetShowDirection(pawn, sanitizedDirection);

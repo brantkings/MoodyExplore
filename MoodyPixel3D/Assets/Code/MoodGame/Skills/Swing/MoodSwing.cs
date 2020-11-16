@@ -168,4 +168,48 @@ public class MoodSwing : ScriptableObject
         }
         return range;
     }
+
+    public delegate void DelUpdateVectors(ref Vector3 top, ref Vector3 bot, int index, int length);
+
+    public static void MakeVertexTrailRightToLeft(MoodSwing data, List<Vector3> vertexData, List<int> triangleData, DelUpdateVectors changeFunc)
+    {
+        int length = data.GetTrailLength();
+        IEnumerator<MoodSwing.MoodSwingTrailNode> nodes = data.GetTrail().GetEnumerator();
+        int index = 0;
+        //float currentYLerp = deltaLerp;
+        while (nodes.MoveNext())
+        {
+            Vector3 top = nodes.Current.localPosTop, bot = nodes.Current.localPosBot;
+            changeFunc?.Invoke(ref top, ref bot, index, length);
+            MakeQuadFromLastPairToThisOne(ref index, top, bot, vertexData, triangleData);
+        }
+    }
+
+    public static void MakeQuadFromLastPairToThisOne(ref int index, Vector3 top, Vector3 bot, List<Vector3> vertex, List<int> triangles)
+    {
+        if (index < 2)
+        {
+            vertex.Add(top);
+            vertex.Add(bot);
+            index += 2;
+            return;
+        }
+
+        //There's the possibility to reuse quads
+        vertex.Add(top);
+        vertex.Add(bot);
+
+        //Add triangle 1
+        triangles.Add(index - 2);
+        triangles.Add(index - 1);
+        triangles.Add(index + 0);
+
+        //Add triangle 2
+        triangles.Add(index - 1);
+        triangles.Add(index + 1);
+        triangles.Add(index + 0);
+
+        //Advance the pair
+        index += 2;
+    }
 }

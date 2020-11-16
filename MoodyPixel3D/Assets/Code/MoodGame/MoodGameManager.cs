@@ -14,6 +14,15 @@ public class MoodGameManager : PersistentSingleton<MoodGameManager>
         return _pawnlayer;
     }
 
+    public LayerMask GetPawnBodyLayer(GameObject exceptOnesLikeMe)
+    {
+        int allOnes = int.MinValue;
+        return new LayerMask()
+        {
+            value = _pawnlayer.value & (allOnes - 1 << exceptOnesLikeMe.layer)
+        };
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))

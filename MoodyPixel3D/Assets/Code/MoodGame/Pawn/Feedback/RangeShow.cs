@@ -10,6 +10,11 @@ public interface IRangeShow
     void Hide();
 }
 
+public interface IRangeShowDirected
+{
+    void SetDirection(Vector3 directionLength);
+}
+
 public abstract class RangeShow<T> : MonoBehaviour, IRangeShow
 {
     public interface IRangeShowPropertyGiver

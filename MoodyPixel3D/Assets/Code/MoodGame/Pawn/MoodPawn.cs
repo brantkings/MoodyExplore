@@ -10,6 +10,7 @@ using LHH.Utils;
 using LHH.Sensors;
 using LHH.Structures;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 public interface IMoodPawnPeeker
 {
@@ -44,9 +45,10 @@ public class MoodPawn : MonoBehaviour
     [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
+
+
     [SerializeField]
     private MoodThreatenable _threatenable;
-
     public MoodThreatenable Threatenable
     {
         get
@@ -585,7 +587,6 @@ public class MoodPawn : MonoBehaviour
         _swingThreat = null;
     }
     
-    private MoodThreatenable _threatTarget;
     
     private void ThreatFixedUpdate(Vector3 threatDirection)
     {
@@ -594,21 +595,51 @@ public class MoodPawn : MonoBehaviour
             ChangeThreatTarget(null);
             return;
         }
-        ChangeThreatTarget(FindTarget(threatDirection, threatDirection.magnitude)?.GetComponentInParent<MoodThreatenable>());
+        if(_swingThreat)
+        {
+            ChangeThreatTargets(from result in _swingThreat.TryHitMerged(Position, GetRotation(), MoodGameManager.Instance.GetPawnBodyLayer()) select result.collider.GetComponentInParent<MoodThreatenable>());
+        }
+        else
+        {
+            ChangeThreatTarget(FindTarget(threatDirection, threatDirection.magnitude)?.GetComponentInParent<MoodThreatenable>());
+        }
+    }
+
+    private HashSet<MoodThreatenable> _threatTarget = new HashSet<MoodThreatenable>();
+    private void ChangeThreatTargets(IEnumerable<MoodThreatenable> targets)
+    {
+        foreach (MoodThreatenable threatened in _threatTarget)
+        {
+            if (targets.Contains(threatened)) continue;
+            threatened.RemoveThreat(gameObject);
+        }
+        _threatTarget.Clear();
+        foreach(MoodThreatenable nextTarget in targets)
+        {
+            if(nextTarget != null && nextTarget != Threatenable)
+            {
+                if (_threatTarget.Add(nextTarget))
+                {
+                    nextTarget.AddThreat(gameObject);
+                }
+            }
+        }
     }
 
     private void ChangeThreatTarget(MoodThreatenable nextTarget)
     {
-        if (_threatTarget == nextTarget) return;
-        if (_threatTarget != null)
+        foreach (MoodThreatenable threatened in _threatTarget)
         {
-            _threatTarget.RemoveThreat(gameObject);
-            _threatTarget = null;
+            if (threatened == nextTarget) continue;
+            threatened.RemoveThreat(gameObject);
         }
-        if (nextTarget != null)
+        _threatTarget.Clear();
+        if(nextTarget != null && nextTarget != Threatenable)
         {
-            nextTarget.AddThreat(gameObject);
-            _threatTarget = nextTarget;
+            if(_threatTarget.Add(nextTarget))
+            {
+                nextTarget.AddThreat(gameObject);
+            }
         }
     }
 
@@ -698,7 +729,10 @@ public class MoodPawn : MonoBehaviour
     #endregion
     
     #region Targetting
-
+    public Transform FindTarget(Vector3 direction, MoodSwing swing, LayerMask target)
+    {
+        return swing.TryHitGetBest(Position, GetRotation(), target, direction)?.collider.transform;
+    }
     
     public Transform FindTarget(Vector3 direction, float range)
     {

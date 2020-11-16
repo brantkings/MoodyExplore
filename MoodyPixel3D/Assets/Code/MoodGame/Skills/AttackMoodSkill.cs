@@ -5,7 +5,7 @@ namespace Code.MoodGame.Skills
 {
     
     [CreateAssetMenu(fileName = "Skill_Attack_", menuName = "Mood/Skill/Attack", order = 0)]
-    public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver
+    public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver, RangeArea.IRangeShowPropertyGiver
     {
         [Header("Attack")]
         public int damage = 10;
@@ -50,7 +50,7 @@ namespace Code.MoodGame.Skills
 
         public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
         {
-            Target = pawn.FindTarget(direction, GetRange());
+            Target = pawn.FindTarget(direction, swingData, targetLayer);
         }
 
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
@@ -127,6 +127,14 @@ namespace Code.MoodGame.Skills
         RangeTarget.Properties RangeShow<RangeTarget.Properties>.IRangeShowPropertyGiver.GetRangeProperty()
         {
             return TargetProperties;
+        }
+
+        public RangeArea.Properties GetRangeProperty()
+        {
+            return new RangeArea.Properties()
+            {
+                swingData = this.swingData
+            };
         }
     }
 }

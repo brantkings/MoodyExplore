@@ -241,15 +241,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState showCommandAction, out ButtonState executeAction, out ButtonState secondaryAction);
         GetMouseInputUpdate(_mainCamera, GetPlayerPlaneOrigin(), ref _mouseWorldPosition);
 
-        if (showCommandAction.justDown)
-        {
-            command.Activate(transform.position, 6f);
-            _mouseWorldPosition = GetPlayerPlaneOrigin();
-        }
-        else if (showCommandAction.justUp)
-        {
-            command.Deactivate();
-        }
+
+        command.SetActive(showCommandAction.pressing);
 
         bool isInCommandMode = IsInCommandMode();
         bool isCameraUpwards = command.IsActivated() || IsSkillNeedingStrategicCamera();
@@ -283,7 +276,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 if (skill.CanExecute(pawn, currentDirection))
                 {
                     StartSkillRoutine(skill, currentDirection);
-                    command.Deactivate();
                 }
             }
 
@@ -354,7 +346,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public bool IsManuallyRotating()
     {
-        Debug.LogFormat("{0} is manually rotating? {1} && {2} while angle is {3}", this, _rotatingTarget, Vector3.Angle(_rotatingTarget, pawn.Direction) > 1f, Vector3.Angle(_rotatingTarget, pawn.Direction));
         return _rotatingTarget != Vector3.zero && Vector3.Angle(_rotatingTarget, pawn.Direction) > 1f;
     }
 

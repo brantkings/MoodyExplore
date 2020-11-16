@@ -19,11 +19,12 @@ MonoBehaviour:
   toConsume: []
   restrictions:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  _possibleAngles: []
   _lockCamera: 0
   lockMovement: 0
   _shortcut: 118
   _cost: 1
-  stanceChangeTime: 1
+  stanceChangeTime: 0.25
   toAdd:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   toToggle: []

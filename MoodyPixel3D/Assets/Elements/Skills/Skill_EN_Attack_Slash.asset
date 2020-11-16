@@ -18,6 +18,7 @@ MonoBehaviour:
   consumeNeededStances: 0
   toConsume: []
   restrictions: []
+  _possibleAngles: []
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 120
@@ -49,5 +50,5 @@ MonoBehaviour:
   onExecuteAttack: {fileID: 0}
   onEndAttack: {fileID: 0}
   preTime: 0.5
-  postTime: 1
+  postTime: 1.25
   addedStancesWithAttack: []

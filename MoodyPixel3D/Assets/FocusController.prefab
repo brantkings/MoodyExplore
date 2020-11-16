@@ -156,7 +156,7 @@ GameObject:
   - component: {fileID: 1110455943544012642}
   - component: {fileID: 1110455943544012645}
   - component: {fileID: 1110455943544012643}
-  - component: {fileID: 1110455943544012644}
+  - component: {fileID: 6916268725035300984}
   m_Layer: 0
   m_Name: SensorConeOfView
   m_TagString: Untagged
@@ -219,7 +219,7 @@ MonoBehaviour:
     - level: 3
       setup:
         maxAngle: 45
---- !u!114 &1110455943544012644
+--- !u!114 &6916268725035300984
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -228,10 +228,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1110455943544012640}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f22bb7c2fe3fef41ab63aeecbd72335, type: 3}
+  m_Script: {fileID: 11500000, guid: dd8bdbd5ab30f654ea282452aa3f83bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothTime: 0
 --- !u!1 &1110455943600934797
 GameObject:
   m_ObjectHideFlags: 0

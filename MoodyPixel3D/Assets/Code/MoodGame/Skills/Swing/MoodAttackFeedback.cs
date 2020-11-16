@@ -17,7 +17,7 @@ public class MoodAttackFeedback : MonoBehaviour
 
     List<Vector3> vertexData;
     List<int> triangleData;
-    Vector3[] _quadCache = new Vector3[4];
+    static Vector3[] _quadCache = new Vector3[2];
 
     private SlashTrailProperties[] properties;
 
@@ -109,13 +109,18 @@ public class MoodAttackFeedback : MonoBehaviour
         meshObj.SetActive(false);
     }
 
+    private void ModifyHeight(ref Vector3 top, ref Vector3 bot, int index, int length)
+    {
+        top += Vector3.up * 2f;// Mathf.Lerp(iniYTop, endYTop, currentYLerp);
+        bot += Vector3.up * 2f;// Mathf.Lerp(iniYBot, endYBot, currentYLerp);
+        //currentYLerp += deltaLerp;
+    }
+
     private void CreateMesh(MoodSwing attack, Vector3 direction)
     {
         vertexData.Clear();
         triangleData.Clear();
 
-        int length = attack.GetTrailLength() + 2;
-        IEnumerator<MoodSwing.MoodSwingTrailNode> nodes = attack.GetTrail().GetEnumerator();
 
         SlashTrailProperties slash = GetBestProperties();
         Quaternion directionRotation = Quaternion.LookRotation(direction, pawn.Up);
@@ -132,26 +137,12 @@ public class MoodAttackFeedback : MonoBehaviour
         float endYBot = botPositionRelativeNow.y;
         float deltaLerp = 1f / (float)length;*/
 
-
         //_quadCache[0] = topPositionRelativeBefore;
         //_quadCache[1] = botPositionRelativeBefore;
-        nodes.MoveNext();
-        _quadCache[0] = nodes.Current.localPosTop;
-        _quadCache[1] = nodes.Current.localPosBot;
 
-        int index = 0;
-        //float currentYLerp = deltaLerp;
-        while (nodes.MoveNext())
-        {
-            _quadCache[2] = _quadCache[0];
-            _quadCache[3] = _quadCache[1];
-            _quadCache[0] = nodes.Current.localPosTop + Vector3.up * 2f;// Mathf.Lerp(iniYTop, endYTop, currentYLerp);
-            _quadCache[1] = nodes.Current.localPosBot + Vector3.up * 2f;// Mathf.Lerp(iniYBot, endYBot, currentYLerp);
-            //currentYLerp += deltaLerp;
-            //Debug.LogFormat("Current lerp for {0} is {1} ({2}-{3}) ({4}-{5})", index, currentYLerp, iniYTop, endYTop, iniYBot, endYBot);
 
-            MakeVertexFromQuad(ref index, _quadCache, vertexData, triangleData);
-        }
+        MoodSwing.MakeVertexTrailRightToLeft(attack, vertexData, triangleData, ModifyHeight);
+        
 
         /*_quadCache[2] = _quadCache[0];
         _quadCache[3] = _quadCache[1];
@@ -168,28 +159,6 @@ public class MoodAttackFeedback : MonoBehaviour
         renderer.material = slash.GetMaterial();
     }
 
-    private void MakeVertexFromQuad(ref int index, Vector3[] quad, List<Vector3> vertex, List<int> triangles)
-    {
-        //There's the possibility to reuse quads
-        vertex.Add(quad[0]);
-        vertex.Add(quad[1]);
-        vertex.Add(quad[2]);
-        vertex.Add(quad[3]);
-
-        Debug.LogFormat("Adding {0} {1} {2} {3}", quad[0], quad[1], quad[2], quad[3]);
-
-        //Add triangle 1
-        triangles.Add(index + 0);
-        triangles.Add(index + 2);
-        triangles.Add(index + 1);
-
-        //Add triangle 2
-        triangles.Add(index + 1);
-        triangles.Add(index + 2);
-        triangles.Add(index + 3);
-
-        //Advance the quad
-        index += 4;
-    }
+    
 
 }

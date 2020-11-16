@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public class RangeArrow : RangeShow<RangeArrow.Properties>
+public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 {
     [System.Serializable]
     public class Properties

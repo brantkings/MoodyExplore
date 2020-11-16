@@ -21,6 +21,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   restrictions:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  _possibleAngles:
+  - angleFromForward: 0
+    coneAngle: 0
+    mirrored: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 120
@@ -52,5 +56,5 @@ MonoBehaviour:
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
   preTime: 0.5
-  postTime: 1
+  postTime: 0.5
   addedStancesWithAttack: []
