@@ -12,6 +12,7 @@ namespace Code.MoodGame.Skills
         public MoodSwing swingData;
         public LayerMask targetLayer;
         public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
+        public bool setDirection;
 
         public SoundEffect onStartAttack;
         public SoundEffect onExecuteAttack;
@@ -62,7 +63,7 @@ namespace Code.MoodGame.Skills
                 yield break;
             }
             pawn.MarkUsingSkill(this);
-            pawn.SetHorizontalDirection(skillDirection);
+            if(setDirection) pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection, swingData);
             ConsumeStances(pawn);
             pawn.StartSkillAnimation(this);
