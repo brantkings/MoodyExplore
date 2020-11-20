@@ -1,3 +1,4 @@
+using LHH.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -135,7 +136,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
             float angleToChange = float.MaxValue;
             foreach (DirectionFixer angle in fixers)
             {
-                angleToChange = Mathf.Min(angleToChange, angle.YAngleToSanitize(toSanitize, lookingDirection));
+                angleToChange = NumberUtils.MinAbs(angleToChange, angle.YAngleToSanitize(toSanitize, lookingDirection));
             }
             if (angleToChange != 0f)
             {
@@ -163,6 +164,17 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         }
         ConsumeStances(pawn);
         pawn.UnmarkUsingSkill(this);
+    }
+
+    public virtual IEnumerable<MoodStance> GetStancesThatWillBeAdded()
+    {
+        yield break;
+    }
+
+    public virtual IEnumerable<MoodStance> GetStancesThatWillBeRemoved()
+    {
+        foreach (MoodStance stance in toConsume) yield return stance;
+        if (consumeNeededStances) foreach (MoodStance stance in needs) yield return stance;
     }
 
     protected void ConsumeStances(MoodPawn pawn)

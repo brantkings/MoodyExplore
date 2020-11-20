@@ -32,4 +32,12 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
 
         return base.ExecuteEffect(pawn, skillDirection) + cost;
     }
+
+    public override IEnumerable<MoodStance> GetStancesThatWillBeAdded()
+    {
+        foreach (MoodStance stance in toAdd) 
+            yield return stance;
+        foreach (MoodStance stance in toToggle) 
+            yield return stance;
+    }
 }

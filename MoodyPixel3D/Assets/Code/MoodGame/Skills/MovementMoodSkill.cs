@@ -67,4 +67,9 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
             width = showArrowWidth
         };
     }
+
+    public override IEnumerable<MoodStance> GetStancesThatWillBeAdded()
+    {
+        foreach (var stance in toAdd) yield return stance;
+    }
 }

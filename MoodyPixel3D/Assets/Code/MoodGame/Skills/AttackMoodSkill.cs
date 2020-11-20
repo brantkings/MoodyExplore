@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Code.MoodGame.Skills
@@ -112,6 +113,11 @@ namespace Code.MoodGame.Skills
                     pawn.AddStance(stance);
 
             return base.ExecuteEffect(pawn, skillDirection);
+        }
+
+        public override IEnumerable<MoodStance> GetStancesThatWillBeAdded()
+        {
+            foreach (MoodStance stance in addedStancesWithAttack) yield return stance;
         }
 
         private DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)

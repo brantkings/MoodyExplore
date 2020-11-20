@@ -5,7 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Mood/Mood Stance", fileName = "Stance_")]
 public class MoodStance : ScriptableObject
 {
-    
+    [SerializeField]
+    private Sprite _icon;
 
     [SerializeField]
     private ValueModifier staminaOverTimeIdle;
@@ -27,6 +28,11 @@ public class MoodStance : ScriptableObject
     [SerializeField]
     private string _stanceAnimParamBool;
 
+
+    public Sprite GetIcon()
+    {
+        return _icon;
+    }
 
     public void ModifyStamina(ref float stamina, bool moving)
     {

@@ -9,6 +9,8 @@ public class MoodCommandOption : MonoBehaviour
 {
     public Text text;
     public Outline outline;
+    public Image stanceChange;
+    public Image stanceCancel;
 
     public Color unselectedOutlineColor;
     public Color possibleColor = Color.white;
@@ -35,6 +37,40 @@ public class MoodCommandOption : MonoBehaviour
         Debug.Log($"{costColor} = {costColor.ToHexStringRGB()}");
         text.text = _skill.GetName() +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}SP</color></size>" : string.Empty);
         text.enabled = true;
+
+        bool didChangeStance = false;
+        foreach(MoodStance stance in skill.GetStancesThatWillBeAdded())
+        {
+            SetStance(stanceChange, stanceCancel, stance.GetIcon(), false);
+            didChangeStance = true;
+            break;
+        }
+        if(!didChangeStance)
+        {
+            foreach (MoodStance stance in skill.GetStancesThatWillBeRemoved())
+            {
+                SetStance(stanceChange, stanceCancel, stance.GetIcon(), true);
+                didChangeStance = true;
+                break;
+            }
+        }
+
+        if (!didChangeStance) SetStance(stanceChange, stanceCancel, null);
+    }
+
+    private void SetStance(Image image, Image cancelImage, Sprite spr = null, bool setCancel = false)
+    {
+        if(spr != null)
+        {
+            image.sprite = spr;
+            image.gameObject.SetActive(true);
+            cancelImage.gameObject.SetActive(setCancel);
+        }
+        else
+        {
+            image.gameObject.SetActive(false);
+            cancelImage.gameObject.SetActive(false);
+        }
     }
 
     public void SetSelected(bool set)

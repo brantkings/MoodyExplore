@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991741e3d359ea140b07ae9e22abc70e, type: 3}
   m_Name: Stance_Defending
   m_EditorClassIdentifier: 
+  _icon: {fileID: 21300000, guid: b9098b72266f93b428256951f91619c5, type: 3}
   staminaOverTimeIdle:
     add: 0
     multiplier: 0.1
