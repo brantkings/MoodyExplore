@@ -1,16 +1,17 @@
-using LHH.Sensors;
+
+using LHH.LeveledBehaviours;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Sensor))]
-public class FocusableSensor : Focusable
+[RequireComponent(typeof(LeveledBehaviour))]
+public class FocusableLeveledBehaviour : Focusable
 {
-    Sensor _sensor;
+    LeveledBehaviour _sensor;
 
     private void Awake()
     {
-        _sensor = GetComponent<Sensor>();
+        _sensor = GetComponent<LeveledBehaviour>();
     }
 
     protected override void ApplyFocus(int focus)

@@ -13,7 +13,10 @@ public class FocusController : MonoBehaviour
 
     public event IntParameterFocusControllerDelegate OnSelectedFocusableChanged;
 
-    public Focusable[] focusableList;
+    private Focusable[] _focusableList;
+
+    [SerializeField]
+    private Focusable[] _initialSetup;
 
     [SerializeField]
     int _maxFocusPoints;
@@ -36,6 +39,7 @@ public class FocusController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (_focusableList == null) InitFocusables();
         _availableFocusPoints = MaxMinusPainPoints;
         RebalanceFocusableList();
 
@@ -44,13 +48,40 @@ public class FocusController : MonoBehaviour
         OnPainPointsChanged?.Invoke(_currentPain);
 
         OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
+
+        GetInitialSetup();
+    }
+
+    private void GetInitialSetup()
+    {
+        if(_initialSetup != null)
+        {
+            foreach(var sensor in _initialSetup)
+            {
+                AddFocus(sensor, 1);
+            }
+        }
+    }
+
+    private void InitFocusables()
+    {
+        _focusableList = gameObject.GetComponentsInChildren<Focusable>();
+    }
+
+    public IEnumerable<Focusable> Focusables
+    {
+        get
+        {
+            if (_focusableList == null) InitFocusables();
+            foreach (Focusable f in _focusableList) yield return f;
+        }
     }
 
     public void RebalanceFocusableList()
     {
         int spentPoints = 0;
 
-        foreach (var focusable in focusableList)
+        foreach (var focusable in _focusableList)
         {
             spentPoints += focusable.GetFocus();
             if(spentPoints > MaxMinusPainPoints)
@@ -77,13 +108,13 @@ public class FocusController : MonoBehaviour
         RebalanceFocusableList();
     }
 
-    [ContextMenu("Add One Pain")]
+    [LHH.Unity.Button]
     public void AddOnePain()
     {
         AddPain(1);
     }
 
-    [ContextMenu("Remove One Pain")]
+    [LHH.Unity.Button]
     public void RemoveOnePain()
     {
         AddPain(-1);
@@ -97,16 +128,16 @@ public class FocusController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (focusableList.Length <= 0)
+        if (_focusableList.Length <= 0)
             return;
 
         if (Input.mouseScrollDelta.y < 0)
         {
             _selectedFocusableIndex += 1;
 
-            while (_selectedFocusableIndex >= focusableList.Length)
+            while (_selectedFocusableIndex >= _focusableList.Length)
             {
-                _selectedFocusableIndex = _selectedFocusableIndex - focusableList.Length;
+                _selectedFocusableIndex = _selectedFocusableIndex - _focusableList.Length;
             }
 
             OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
@@ -117,7 +148,7 @@ public class FocusController : MonoBehaviour
 
             while (_selectedFocusableIndex < 0)
             {
-                _selectedFocusableIndex = focusableList.Length + _selectedFocusableIndex;
+                _selectedFocusableIndex = _focusableList.Length + _selectedFocusableIndex;
             }
 
             OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
@@ -125,25 +156,29 @@ public class FocusController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) && _availableFocusPoints > 0)
         {
-            Focusable focusable = focusableList[_selectedFocusableIndex];
+            Focusable focusable = _focusableList[_selectedFocusableIndex];
 
-            if (focusable.TryAddOneFocus())
-            {
-                _availableFocusPoints -= 1;
-                OnAvailablePointsChanged?.Invoke(_availableFocusPoints);
-            }
+            AddFocus(focusable, 1);
         }
         else if (Input.GetKeyDown(KeyCode.Q))
         {
-            Focusable focusable = focusableList[_selectedFocusableIndex];
+            Focusable focusable = _focusableList[_selectedFocusableIndex];
 
-            if (focusable.TryRemoveOneFocus()) 
-            { 
-                _availableFocusPoints += 1;
-                OnAvailablePointsChanged?.Invoke(_availableFocusPoints);
-
+            if(AddFocus(focusable, -1))
+            {
                 Debug.Assert(_availableFocusPoints <= _maxFocusPoints, "Somehow it was possible to get more points out of the Focusables than the total points should be", this.gameObject);
             }
         }
+    }
+
+    private bool AddFocus(Focusable focusable, int amount)
+    {
+        if(focusable != null && focusable.TryAddFocus(amount) != 0)
+        {
+            _availableFocusPoints = Mathf.Clamp(_availableFocusPoints - amount, 0, MaxPoints);
+            OnAvailablePointsChanged?.Invoke(_availableFocusPoints);
+            return true;
+        }
+        return false;
     }
 }

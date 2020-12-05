@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class StaminaCostMoodSkill : MoodSkill
 {
+    [Header("Stamina")]
     [SerializeField]
     private float _cost;
 

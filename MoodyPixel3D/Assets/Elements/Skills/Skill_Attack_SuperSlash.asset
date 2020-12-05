@@ -25,11 +25,12 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 0
     mirrored: 0
+  _freeFocusCost: 1
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0
   _cost: 2
-  damage: 10
+  damage: 20
   swingData: {fileID: 11400000, guid: 6d5e5e03a9402f147af046330bf6dd50, type: 2}
   targetLayer:
     serializedVersion: 2
@@ -52,6 +53,7 @@ MonoBehaviour:
       constantTotalMagnitude: 1
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
+  setDirection: 0
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}

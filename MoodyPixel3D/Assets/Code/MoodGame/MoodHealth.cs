@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoodHealth : Health
+public class MoodHealth : Health, IMoodPawnBelonger
 {
     MoodPawn pawn;
 
@@ -26,9 +26,14 @@ public class MoodHealth : Health
 
         if(damage.amount != 0)
         {
-            Debug.LogErrorFormat("Is going to damage {0}!", this);
+            //Debug.LogErrorFormat("Is going to damage {0}!", this);
             return base.Damage(damage);
         }
         else return false;
+    }
+
+    public MoodPawn GetMoodPawnOwner()
+    {
+        return pawn;
     }
 }

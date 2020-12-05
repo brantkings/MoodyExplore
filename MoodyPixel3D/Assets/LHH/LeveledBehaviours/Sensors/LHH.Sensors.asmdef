@@ -1,0 +1,16 @@
+{
+    "name": "LHH.Sensors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:bb7868c3c9d10e1488d805df40e63420"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

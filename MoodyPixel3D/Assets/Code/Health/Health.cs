@@ -63,6 +63,8 @@ public class Health : MonoBehaviour {
     public GameObject toDestroy;
 
     public delegate void DelHealthFeedback(DamageInfo damage, Health damaged);
+    public delegate void DelHealthModifier(ref DamageInfo damage, Health damaged);
+    public event DelHealthModifier OnBeforeDamage;
     public event DelHealthFeedback OnDamage;
     public event DelHealthFeedback OnDeath;
 
@@ -102,11 +104,12 @@ public class Health : MonoBehaviour {
 
     public virtual bool Damage(DamageInfo info)
     {
-        Debug.LogErrorFormat("Damage {0} with {1},{2}. Can damage? {3}. Life now is {4}", this, info.amount, info.team, CanDamage(info.team), _lifeNow);
+        //Debug.LogErrorFormat("Damage {0} with {1},{2}. Can damage? {3}. Life now is {4}", this, info.amount, info.team, CanDamage(info.team), _lifeNow);
         if (CanDamage(info.team))
         {
+            OnBeforeDamage?.Invoke(ref info, this);
             _lifeNow = Mathf.Clamp(_lifeNow - info.amount, 0, _maxLife);
-            Debug.LogErrorFormat("{0} is dead? {1} <= 0 so {2}", this, _lifeNow, _lifeNow <= 0);
+            //Debug.LogErrorFormat("{0} is dead? {1} <= 0 so {2}", this, _lifeNow, _lifeNow <= 0);
             OnDamage?.Invoke(info, this);
             if (_lifeNow <= 0)
             {

@@ -87,9 +87,10 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
         GameObject inst = Instantiate(prefab, pawn.GetInstantiatePlace(), pawn.GetInstantiateRotation());
+        inst?.GetComponentInChildren<IMoodPawnSetter>()?.SetMoodPawnOwner(pawn);
         if (resetDamageTeamAsPawnTeam)
         {
-            foreach (Damage damage in inst.GetComponentsInChildren<Damage>())
+            foreach (Damage damage in inst?.GetComponentsInChildren<Damage>())
             {
                 damage.SetSourceDamageTeam(pawn.DamageTeam);
             }

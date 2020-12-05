@@ -60,7 +60,8 @@ public abstract class Focusable : MonoBehaviour
 
     public int TryAddFocus(int ammount)
     {
-        return TrySetFocus(_currentFocus + ammount);
+        int beforeSetting = _currentFocus;
+        return (TrySetFocus(_currentFocus + ammount) - beforeSetting);
     }
 
     protected abstract void ApplyFocus(int focus);

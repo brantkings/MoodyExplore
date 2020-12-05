@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LHH.Sensors
+namespace LHH.LeveledBehaviours.Sensors
 {
 
     public abstract class SensorColliderLevelSettings : MonoBehaviour

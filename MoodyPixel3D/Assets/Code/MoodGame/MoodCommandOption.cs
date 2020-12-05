@@ -11,6 +11,7 @@ public class MoodCommandOption : MonoBehaviour
     public Outline outline;
     public Image stanceChange;
     public Image stanceCancel;
+    public Transform focusCostGroup;
 
     public Color unselectedOutlineColor;
     public Color possibleColor = Color.white;
@@ -34,9 +35,11 @@ public class MoodCommandOption : MonoBehaviour
     {
         _skill = skill;
         StaminaCostMoodSkill stamina = skill as StaminaCostMoodSkill;
-        Debug.Log($"{costColor} = {costColor.ToHexStringRGB()}");
+        //Debug.Log($"{costColor} = {costColor.ToHexStringRGB()}");
         text.text = _skill.GetName() +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}SP</color></size>" : string.Empty);
         text.enabled = true;
+
+        SetFocusCost(skill.GetFocusCost());
 
         bool didChangeStance = false;
         foreach(MoodStance stance in skill.GetStancesThatWillBeAdded())
@@ -54,7 +57,6 @@ public class MoodCommandOption : MonoBehaviour
                 break;
             }
         }
-
         if (!didChangeStance) SetStance(stanceChange, stanceCancel, null);
     }
 
@@ -70,6 +72,22 @@ public class MoodCommandOption : MonoBehaviour
         {
             image.gameObject.SetActive(false);
             cancelImage.gameObject.SetActive(false);
+        }
+    }
+
+    private void SetFocusCost(int amountFocusCost)
+    {
+        if (amountFocusCost <= 0)
+        {
+            focusCostGroup.gameObject.SetActive(false);
+        }
+
+        int childId = 0;
+
+        foreach(Transform child in focusCostGroup)
+        {
+            child.gameObject.SetActive(childId < amountFocusCost);
+            childId++;
         }
     }
 

@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LHH.LeveledBehaviours;
 
-namespace LHH.Sensors
+namespace LHH.LeveledBehaviours.Sensors
 {
 
     [System.Serializable]
@@ -70,7 +71,7 @@ namespace LHH.Sensors
         }
     }
 
-    public abstract class Sensor : MonoBehaviour
+    public abstract class Sensor : LeveledBehaviour
     {
         public delegate void TargetsListChange();
         public event TargetsListChange OnTargetListChanged;
@@ -79,8 +80,6 @@ namespace LHH.Sensors
         public event DetectedTargetChange OnTargetAdded;
         public event DetectedTargetChange OnTargetRemoved;
 
-        bool _wasEverInitalized;
-        float _currentLevel;
 
         HashSet<SensorTarget> _targets = new HashSet<SensorTarget>();
 
@@ -88,29 +87,6 @@ namespace LHH.Sensors
         {
         }
 
-        protected virtual void Start()
-        {
-            if(!_wasEverInitalized)
-                SetLevel(0);
-        }
-
-        protected abstract void ApplySensorLevel(float level);
-
-        public void SetLevel(float level)
-        {
-            _wasEverInitalized = true;
-
-            if (_currentLevel != level)
-            {
-                _currentLevel = level;
-                ApplySensorLevel(_currentLevel);
-            }
-        }
-
-        public float GetLevel()
-        {
-            return _currentLevel;
-        }
 
         public bool AddSensorTarget(SensorTarget target)
         {

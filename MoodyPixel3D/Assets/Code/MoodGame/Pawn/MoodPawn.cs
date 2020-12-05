@@ -7,7 +7,7 @@ using UnityEngine;
 using DG.Tweening;
 using JetBrains.Annotations;
 using LHH.Utils;
-using LHH.Sensors;
+using LHH.LeveledBehaviours.Sensors;
 using LHH.Structures;
 using System.Runtime.CompilerServices;
 using System.Linq;
@@ -18,7 +18,17 @@ public interface IMoodPawnPeeker
     void UnsetTarget(MoodPawn pawn);
 }
 
-public class MoodPawn : MonoBehaviour
+public interface IMoodPawnBelonger
+{
+    MoodPawn GetMoodPawnOwner();
+}
+
+public interface IMoodPawnSetter : IMoodPawnBelonger
+{
+    void SetMoodPawnOwner(MoodPawn pawn);
+}
+
+public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 {
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnSkillEvent(MoodSkill skill, Vector3 direction);
@@ -39,9 +49,13 @@ public class MoodPawn : MonoBehaviour
     [SerializeField]
     private Health _health;
     [SerializeField]
+    public MoodDamageModifier _undetectedDamageModifier;
+    [SerializeField]
     private float knockBackMultiplier;
     [SerializeField]
     private MoodAttackFeedback _attackFeedback;
+    [SerializeField]
+    private SensorTarget _ownSensorTarget;
     [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
@@ -65,9 +79,6 @@ public class MoodPawn : MonoBehaviour
         }
     }
 
-    [Space()]
-    public FocusController focus;
-    public SensorGroup sensorGroup;
 
     public Transform ObjectTransform
     {
@@ -170,11 +181,12 @@ public class MoodPawn : MonoBehaviour
         Threatenable.OnThreatRelief += OnThreatRelief;
         if (_health != null)
         {
+            _health.OnBeforeDamage += OnBeforeDamage;
             _health.OnDamage += OnDamage;
             _health.OnDeath += OnDeath;
         }
     }
-
+    
 
     private void OnDisable()
     {
@@ -182,6 +194,7 @@ public class MoodPawn : MonoBehaviour
         _movementLock.OnUnlock -= OnUnlockMovement;
         if(_health != null)
         {
+            _health.OnBeforeDamage -= OnBeforeDamage;
             _health.OnDamage -= OnDamage;
             _health.OnDeath -= OnDeath;
         }
@@ -198,7 +211,6 @@ public class MoodPawn : MonoBehaviour
     private void Update()
     {
         RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
-
 
         //if (name.Contains("Player")) Debug.LogFormat("Before update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
         UpdateMovement(_inputVelocity, _inputRotation, ref _currentSpeed, ref _currentDirection);
@@ -240,10 +252,18 @@ public class MoodPawn : MonoBehaviour
     }
 
     #region Health
-    private void OnDamage(DamageInfo info, Health health)
+    protected virtual void OnDamage(DamageInfo info, Health health)
     {
-        Debug.LogFormat("{0} took damage! {1} -> dash is {2} distance with {3} duration.", this, info, info.distanceKnockback, info.durationKnockback);
         Dash(info.distanceKnockback, info.durationKnockback, AnimationCurve.Linear(0f, 0f, 1f, 1f));
+    }
+
+    private void OnBeforeDamage(ref DamageInfo damage, Health damaged)
+    {
+        //if (_undetectedDamageModifier != null) Debug.LogFormat("Is {0} sensing origin {1}? {2}", this, damage.origin, IsSensing(damage.origin));
+        if (_undetectedDamageModifier != null && !IsSensing(damage.origin))
+        {
+            _undetectedDamageModifier.ModifyDamage(ref damage);
+        }
     }
 
     private void OnDeath(DamageInfo info, Health health)
@@ -724,10 +744,49 @@ public class MoodPawn : MonoBehaviour
     {
         return GetRotation();
     }
-    
+
 
     #endregion
-    
+
+    #region Sensors
+    private bool _gotSensorTarget;
+    public SensorTarget SensorTarget
+    {
+        get
+        {
+            if(_ownSensorTarget == null && !_gotSensorTarget)
+            {
+                _gotSensorTarget = true;
+                _ownSensorTarget = GetComponentInChildren<SensorTarget>();
+            }
+            return _ownSensorTarget;
+        }
+    }
+
+
+    public bool IsSensing(GameObject threat)
+    {
+        SensorTarget threatTarget = threat.GetComponentInParent<SensorTarget>();
+        if (threatTarget != null) return IsSensing(threatTarget);
+        MoodPawn pawn = threat.GetComponentInParent<IMoodPawnBelonger>()?.GetMoodPawnOwner();
+        if(pawn != null)
+        {
+            return IsSensing(pawn);
+        }
+        else return false;
+    }
+
+    public bool IsSensing(MoodPawn pawn)
+    {
+        return IsSensing(pawn.SensorTarget);
+    }
+
+    public virtual bool IsSensing(SensorTarget target)
+    {
+        return false;
+    }
+    #endregion
+
     #region Targetting
     public Transform FindTarget(Vector3 direction, MoodSwing swing, LayerMask target)
     {
@@ -763,6 +822,11 @@ public class MoodPawn : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public MoodPawn GetMoodPawnOwner()
+    {
+        return this;
     }
     #endregion
 

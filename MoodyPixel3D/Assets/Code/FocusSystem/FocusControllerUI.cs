@@ -32,7 +32,7 @@ public class FocusControllerUI : MonoBehaviour
             _focusableUIList = new List<FocusableUI>(3);
         else return;
 
-        foreach (var focusable in controller.focusableList)
+        foreach (var focusable in controller.Focusables)
         {
             var uiObj = Instantiate(focusableUIObjectPrefab, focusableObjectsContainer);
             uiObj.SetFocusable(focusable);

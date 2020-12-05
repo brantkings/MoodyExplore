@@ -1,8 +1,9 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LHH.Sensors
+namespace LHH.LeveledBehaviours.Sensors
 {
     [RequireComponent(typeof(SensorColliderLevelSettings))]
     public class SensorCollider : Sensor
@@ -15,7 +16,7 @@ namespace LHH.Sensors
             base.Awake();
         }
 
-        protected override void ApplySensorLevel(float level)
+        protected override void ApplyLevel(float level)
         {
             _levelSettings.UpdateForSensorLevel(level);
         }

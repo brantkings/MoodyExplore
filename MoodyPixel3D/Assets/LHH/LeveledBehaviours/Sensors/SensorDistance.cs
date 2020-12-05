@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-namespace LHH.Sensors
+namespace LHH.LeveledBehaviours.Sensors
 {
 
     public class SensorDistance : Sensor
@@ -42,7 +42,7 @@ namespace LHH.Sensors
             };
         }
 
-        protected override void ApplySensorLevel(float level)
+        protected override void ApplyLevel(float level)
         {  
             levelsSetup.CalculateLerpedSetup(level, ref _currentInterpolatedLevel);
 

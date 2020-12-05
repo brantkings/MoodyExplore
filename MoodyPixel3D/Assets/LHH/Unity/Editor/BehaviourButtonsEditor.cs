@@ -27,7 +27,7 @@ namespace LHH.Unity.Editor
         private void OnEnable()
         {
             methods = target.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).Where(m =>
-             m.GetCustomAttributes(typeof(LHH.Unity.ButtonAttribute), false).Length == 1 &&
+             m.GetCustomAttributes(typeof(LHH.Unity.ButtonAttribute), false).Length >= 1 &&
              m.GetParameters().Length == 0 &&
              !m.ContainsGenericParameters
             ).ToList();

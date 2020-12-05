@@ -36,12 +36,18 @@ public class MoodSwing : ScriptableObject
 
         public static MoodSwingResult Merge(MoodSwingResult a, MoodSwingResult b)
         {
+            UnityEngine.Debug.LogFormat("Merge {0} and {1} result is {2}", a.hitPosition, b.hitPosition, Vector3.Lerp(a.hitPosition, b.hitPosition, 0.5f));
             return new MoodSwingResult
             {
                 hitPosition = Vector3.Lerp(a.hitPosition, b.hitPosition, 0.5f),
                 hitDirection = Vector3.Slerp(a.hitDirection, b.hitDirection, 0.5f),
                 collider = a.collider == b.collider ? a.collider : null
             };
+        }
+
+        public bool IsValid()
+        {
+            return collider != null;
         }
 
         public static MoodSwingResult DefaultValue
@@ -123,7 +129,7 @@ public class MoodSwing : ScriptableObject
         _resultsCache.Clear();
         foreach(MoodSwingNode node in maker.Nodes)
         { 
-            LHH.Utils.DebugUtils.DrawCircle(posOrigin + rotOrigin * node.localPosition, node.radius, rotOrigin * Vector3.up, Color.black, 1f);
+            LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
             int result = Physics.OverlapSphereNonAlloc(posOrigin + rotOrigin * node.localPosition, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
             if (result > 0)
             {
@@ -143,8 +149,12 @@ public class MoodSwing : ScriptableObject
             }
             currentDelay += node.delay;
         }
-        UnityEngine.Debug.LogFormat("Found {0} results woo", _resultsCache.Values.Count);
         foreach (MoodSwingResult r in _resultsCache.Values) yield return r;
+    }
+
+    private static Vector3 GetCorrectPosition(Vector3 posOrigin, Quaternion rotOrigin, MoodSwingNode node)
+    {
+        return posOrigin + rotOrigin * node.localPosition;
     }
 
 
@@ -153,7 +163,7 @@ public class MoodSwing : ScriptableObject
         return new MoodSwingResult()
         {
             hitDirection = rotOrigin * node.direction,
-            hitPosition = Vector3.Lerp(posOrigin + node.localPosition, col.transform.position, 0.5f),
+            hitPosition = Vector3.Lerp(GetCorrectPosition(posOrigin, rotOrigin, node), col.transform.position, 0.5f),
             collider = col
         };
 

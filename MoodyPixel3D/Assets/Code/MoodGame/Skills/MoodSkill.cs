@@ -71,7 +71,9 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     [SerializeField]
     private string _name;
 
-    
+
+
+    [Space()]
     [SerializeField]
     private MoodStance[] needs;
     [SerializeField]
@@ -83,11 +85,18 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     [SerializeField]
     private DirectionFixer[] _possibleAngles;
 
+
+    [Space()]
+    [SerializeField]
+    private int _freeFocusCost;
+
+    [Space()]
     [SerializeField]
     private bool _lockCamera = true;
     [SerializeField]
     private bool lockMovement;
 
+    [Space()]
     [SerializeField]
     private KeyCode  _shortcut;
     public KeyCode GetShortCut()
@@ -110,9 +119,19 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return pawn.HasAllStances(true, needs) && !pawn.HasAnyStances(false, restrictions);
     }
 
+    private bool IsFocusAvailable(MoodPawn pawn)
+    {
+        IMindPawn mind = pawn as IMindPawn;
+        if (mind != null && !mind.Equals(null))
+        {
+            return mind.GetAvailableFocusPoints() >= _freeFocusCost;
+        }
+        else return true;
+    }
+
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
-        return IsValidStanceSetup(pawn);
+        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn);
     }
 
     public virtual bool CanBeShown(MoodPawn pawn)
@@ -210,6 +229,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public virtual bool NeedsCameraUpwards()
     {
         return _lockCamera;
+    }
+
+    public int GetFocusCost()
+    {
+        return _freeFocusCost;
     }
 
 }

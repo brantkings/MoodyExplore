@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LHH.Sensors
+namespace LHH.LeveledBehaviours.Sensors
 {
-    public class SensorTarget : MonoBehaviour
+    public interface ISensorTargetGetter
+    {
+        SensorTarget GetTarget();
+    }
+
+    public class SensorTarget : MonoBehaviour, ISensorTargetGetter
     {
         public static LinkedList<SensorTarget> allTargets = new LinkedList<SensorTarget>();
 
@@ -52,7 +57,7 @@ namespace LHH.Sensors
 
         private void OnEnable()
         {
-            if(_allTargetsNode == null)
+            if (_allTargetsNode == null)
                 _allTargetsNode = allTargets.AddLast(this);
         }
 
@@ -69,6 +74,11 @@ namespace LHH.Sensors
             }
 
             _isBeingDisabled = false;
+        }
+
+        public SensorTarget GetTarget()
+        {
+            return this;
         }
     }
 }
