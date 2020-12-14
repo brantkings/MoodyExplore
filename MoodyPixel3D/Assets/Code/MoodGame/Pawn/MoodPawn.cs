@@ -106,6 +106,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     public bool infiniteStamina;
     public float staminaRecoveryIdle;
     public float staminaRecoveryMoving;
+    private Vector3 _damageAnimation;
 
     public Transform handPosition;
 
@@ -220,8 +221,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         /*Vector3 forward = mover.transform.forward;
         if (Vector3.Dot(forward, _currentDirection) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
         Direction = Vector3.SmoothDamp(forward, _currentDirection, ref _directionVel, turningTime, float.MaxValue, Time.deltaTime);*/
+
+        UpdateAnimation();
     }
-    
+
     private void FixedUpdate()
     {
         mover.SetVelocity(_currentSpeed);
@@ -251,9 +254,20 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         OnInterruptSkill?.Invoke(skill);
     }
 
+    public bool CanUseSkill(MoodSkill skill)
+    {
+        return !_stunLock.IsLocked();
+    }
+
+    
+
     #region Health
     protected virtual void OnDamage(DamageInfo info, Health health)
     {
+        float duration = 0.5f;
+        AddStunLock("damage", duration);
+
+        SetDamageAnimationTween(ObjectTransform.InverseTransformDirection(info.distanceKnockback.normalized) * 2f, duration - 0.1f, 0.1f);
         Dash(info.distanceKnockback, info.durationKnockback, AnimationCurve.Linear(0f, 0f, 1f, 1f));
     }
 
@@ -442,9 +456,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         if ((movement - destination).sqrMagnitude < (snapToTargetSpeedDelta * snapToTargetSpeedDelta)) movement = destination;
     }
 
+    private bool CanMove()
+    {
+        return !_movementLock.IsLocked() && !_stunLock.IsLocked();
+    }
+
     private void SolveFinalVelocity(ref Vector3 finalVel)
     {
-        if (_movementTween != null && _movementTween.IsActive() || _movementLock.IsLocked())
+        if (_movementTween != null && _movementTween.IsActive() || !CanMove())
         {
             finalVel = Vector3.zero;
         }
@@ -527,14 +546,49 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         _lerpPosition = set;
     }
 
+    private void UpdateAnimation()
+    {
+
+    }
+
     public void StartSkillAnimation(MoodSkill skill)
     {
-        animator.SetBool("Attack", true);
+        animator.SetBool(UnityEngine.Random.Range(0f,1f) < 0.5? "Attack_Right" : "Attack_Left", true);
     }
 
     public void FinishSkillAnimation(MoodSkill skill)
     {
-        animator.SetBool("Attack", false);
+        animator.SetBool("Attack_Right", false);
+        animator.SetBool("Attack_Left", false);
+    }
+
+    public void SetDamageAnimationTween(Vector3 direction, float duration, float delay)
+    {
+        _damageAnimation = Vector3.zero;
+        SetDamageAnimation(direction);
+        DOTween.To(GetDamageAnimationLerper, SetDamageAnimationLerper, direction, duration).From().SetEase(Ease.OutSine).SetDelay(delay);
+    }
+
+    private Vector3 GetDamageAnimationLerper()
+    {
+        return _damageAnimation;
+    }
+
+    private void SetDamageAnimationLerper(Vector3 v)
+    {
+        _damageAnimation = v;
+        SetDamageAnimation(_damageAnimation);
+    }
+
+    public void SetDamageAnimation(Vector3 direction)
+    {
+        animator.SetFloat("DamageX", direction.x);
+        animator.SetFloat("DamageZ", direction.z);
+    }
+
+    public void UnsetDamageAnimation()
+    {
+        SetDamageAnimation(Vector3.zero);
     }
 
     public void RotateTowards(Vector3 direction)
@@ -566,6 +620,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     #region Locking
 
+    private Lock<string> _stunLock;
     private Lock<string> _movementLock;
 
     private void OnLockMovement()
@@ -587,6 +642,31 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         _movementLock.Remove(str);
     }
 
+    private Coroutine _stunRoutine;
+
+    public bool IsStunned()
+    {
+        return _stunLock.IsLocked();
+    }
+
+    private void EndStun()
+    {
+        if (_stunRoutine != null) StopCoroutine(_stunRoutine);
+        _stunLock.RemoveAll();
+    }
+
+    public void AddStunLock(string str, float timeStunned)
+    {
+        _stunRoutine = StartCoroutine(StunLockRoutine(str, timeStunned));
+    }
+
+    private IEnumerator StunLockRoutine(string str, float timeStunned)
+    {
+        _stunLock.Add(str);
+        yield return new WaitForSeconds(timeStunned);
+        _stunLock.Remove(str);
+        _stunRoutine = null;
+    }
     #endregion
 
     #endregion

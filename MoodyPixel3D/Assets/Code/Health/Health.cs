@@ -20,10 +20,13 @@ public struct DamageInfo
     public Vector3 distanceKnockback;
     public float durationKnockback;
 
+    public float stunTime;
+
     public DamageInfo(int damage = 0, DamageTeam damageTeam = DamageTeam.Neutral, GameObject damageOrigin = null)
     {
         amount = damage;
         team = damageTeam;
+        stunTime = 0f;
         origin = damageOrigin;
         distanceKnockback = Vector3.zero;
         durationKnockback = 0.25f;
@@ -33,6 +36,12 @@ public struct DamageInfo
     {
         distanceKnockback = knockback;
         durationKnockback = duration;
+        return this;
+    }
+
+    public DamageInfo SetStunTime(float time)
+    {
+        stunTime = time;
         return this;
     }
 

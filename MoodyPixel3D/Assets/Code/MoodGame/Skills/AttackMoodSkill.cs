@@ -10,6 +10,7 @@ namespace Code.MoodGame.Skills
     {
         [Header("Attack")]
         public int damage = 10;
+        public float stunTime = 0.5f;
         public MoodSwing swingData;
         public LayerMask targetLayer;
         public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
@@ -122,7 +123,7 @@ namespace Code.MoodGame.Skills
 
         private DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
-            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection), knockback.Get().GetDuration());
+            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection), knockback.Get().GetDuration());
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()

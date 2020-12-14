@@ -131,7 +131,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
-        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn);
+        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && pawn.CanUseSkill(this);
     }
 
     public virtual bool CanBeShown(MoodPawn pawn)

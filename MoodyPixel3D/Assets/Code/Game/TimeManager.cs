@@ -33,6 +33,11 @@ public class TimeManager : CreateableSingleton<TimeManager>
 
     public GlobalSoundParameter fmodTimescaleParameter;
 
+    private void Start()
+    {
+        Time.timeScale = 1f;
+    }
+
     private void Update() 
     {
         if(fmodTimescaleParameter != null) fmodTimescaleParameter.SetParameter(Time.timeScale);

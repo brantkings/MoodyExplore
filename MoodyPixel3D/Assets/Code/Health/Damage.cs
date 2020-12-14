@@ -24,6 +24,9 @@ public class Damage : MonoBehaviour
     private int _amount = 10;
 
     [SerializeField]
+    private float _stunTime = 0.5f;
+
+    [SerializeField]
     private bool _onlyDamageOnce;
 
     [Space()]
@@ -101,7 +104,7 @@ public class Damage : MonoBehaviour
 
     private DamageInfo GetDamage(Transform target)
     {
-        return new DamageInfo(_amount, source, gameObject).SetForce(knockback.Get().GetKnockback(transform, target), knockback.Get().GetDuration());
+        return new DamageInfo(_amount, source, gameObject).SetForce(knockback.Get().GetKnockback(transform, target), knockback.Get().GetDuration()).SetStunTime(_stunTime);
     }
 
 

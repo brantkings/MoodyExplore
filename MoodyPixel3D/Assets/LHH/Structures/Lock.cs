@@ -50,5 +50,13 @@ namespace LHH.Structures
             if (changed && isEmpty) OnUnlock?.Invoke();
             return changed;
         }
+
+        public bool RemoveAll()
+        {
+            if (_locks == null || _locks.Count <= 0) return false;
+            _locks.Clear();
+            OnUnlock?.Invoke();
+            return true;
+        }
     }
 }
