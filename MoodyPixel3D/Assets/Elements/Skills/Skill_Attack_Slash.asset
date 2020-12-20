@@ -17,14 +17,14 @@ MonoBehaviour:
   needs:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   consumeNeededStances: 0
-  toConsume:
-  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  toConsume: []
   restrictions:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
   _possibleAngles:
   - angleFromForward: 0
     coneAngle: 45
     mirrored: 0
+  startupPriority: 2
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
@@ -52,9 +52,13 @@ MonoBehaviour:
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
       totalMagnitudeConstant: 0
       constantTotalMagnitude: 1
+      angleRotation: 0
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
   setDirection: 0
+  priorityPreAttack: 2
+  priorityAfterAttack: 1
+  priorityAfterWhiff: 2
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}

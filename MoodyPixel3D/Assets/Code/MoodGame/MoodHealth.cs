@@ -17,7 +17,7 @@ public class MoodHealth : Health, IMoodPawnBelonger
         {
             foreach(var react in pawn.GetActiveReactions())
             {
-                if(react.CanReact(pawn))
+                if(react.CanReact(pawn, damage))
                 {
                     react.ReactToDamage(ref damage, pawn);
                 }

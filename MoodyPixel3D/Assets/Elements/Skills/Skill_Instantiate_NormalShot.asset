@@ -18,6 +18,9 @@ MonoBehaviour:
   consumeNeededStances: 0
   toConsume: []
   restrictions: []
+  _possibleAngles: []
+  startupPriority: 1
+  _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0
@@ -27,6 +30,8 @@ MonoBehaviour:
   resetDamageTeamAsPawnTeam: 1
   preTime: 0.5
   postTime: 1
+  priorityPreInstantiate: 2
+  priorityAfterInstantiate: 1
   threat: {fileID: 0}
   onStartInstantiate: {fileID: 0}
   onExecuteInstantiate: {fileID: 0}

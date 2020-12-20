@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Back Dash
-  _freeFocusCost: 1
   needs: []
   consumeNeededStances: 0
   toConsume: []
@@ -24,6 +23,8 @@ MonoBehaviour:
   - angleFromForward: 180
     coneAngle: 45
     mirrored: 0
+  startupPriority: 1
+  _freeFocusCost: 1
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0

@@ -20,6 +20,8 @@ MonoBehaviour:
   toConsume: []
   restrictions: []
   _possibleAngles: []
+  startupPriority: 0
+  _freeFocusCost: 0
   _lockCamera: 0
   lockMovement: 0
   _shortcut: 118

@@ -15,10 +15,20 @@ public class Damage : MonoBehaviour
 
     private List<Health> alreadyDamaged;
 
+    public enum DirectionStyle
+    {
+        Forward,
+        PositionDifference
+    }
+
 
 
     [SerializeField]
     private DamageTeam source = DamageTeam.Enemy;
+
+
+    [SerializeField]
+    private DirectionStyle direction = DirectionStyle.PositionDifference;
 
     [SerializeField]
     private int _amount = 10;
@@ -46,6 +56,19 @@ public class Damage : MonoBehaviour
     public void SetSourceDamageTeam(DamageTeam newTeam)
     {
         source = newTeam;
+    }
+
+    public Vector3 GetDirection(Transform target)
+    {
+        switch (direction)
+        {
+            case DirectionStyle.Forward:
+                return transform.forward;
+            case DirectionStyle.PositionDifference:
+                return target.position - transform.position;
+            default:
+                return target.position - transform.position;
+        }
     }
 
     public DamageTeam Team
@@ -104,7 +127,7 @@ public class Damage : MonoBehaviour
 
     private DamageInfo GetDamage(Transform target)
     {
-        return new DamageInfo(_amount, source, gameObject).SetForce(knockback.Get().GetKnockback(transform, target), knockback.Get().GetDuration()).SetStunTime(_stunTime);
+        return new DamageInfo(_amount, source, gameObject).SetDirection(GetDirection(target)).SetForce(knockback.Get().GetKnockback(transform, target, out float angle), angle, knockback.Get().GetDuration()).SetStunTime(_stunTime);
     }
 
 

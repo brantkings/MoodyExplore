@@ -31,6 +31,28 @@ MonoBehaviour:
   changeBefore:
     overrideState: 1
     value: 1
+--- !u!114 &-5492756725922814656
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1a827f5ecdb38b44b739f4c8dd99d45, type: 3}
+  m_Name: MaskByTextureSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  mask:
+    overrideState: 1
+    value: {fileID: 8400000, guid: 2f88e656506559848a9484af5fbe5dce, type: 2}
+  material:
+    overrideState: 1
+    value: {fileID: 2100000, guid: d1a212d31915e7344954109756945878, type: 2}
 --- !u!114 &-4331611281405269405
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -43,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
   m_Name: AmbientOcclusion
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
@@ -95,6 +117,7 @@ MonoBehaviour:
   settings:
   - {fileID: -4331611281405269405}
   - {fileID: 1689735512399561390}
+  - {fileID: -5492756725922814656}
 --- !u!114 &1689735512399561390
 MonoBehaviour:
   m_ObjectHideFlags: 3

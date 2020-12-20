@@ -21,6 +21,8 @@ MonoBehaviour:
   restrictions:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
   _possibleAngles: []
+  startupPriority: 1
+  _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 118

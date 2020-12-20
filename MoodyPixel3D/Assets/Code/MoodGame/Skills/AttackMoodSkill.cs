@@ -15,6 +15,9 @@ namespace Code.MoodGame.Skills
         public LayerMask targetLayer;
         public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
         public bool setDirection;
+        public int priorityPreAttack = PRIORITY_NOT_CANCELLABLE;
+        public int priorityAfterAttack = PRIORITY_CANCELLABLE;
+        public int priorityAfterWhiff = PRIORITY_NOT_CANCELLABLE;
 
         public SoundEffect onStartAttack;
         public SoundEffect onExecuteAttack;
@@ -65,6 +68,7 @@ namespace Code.MoodGame.Skills
                 yield break;
             }
             pawn.MarkUsingSkill(this);
+            pawn.SetPlugoutPriority(priorityPreAttack);
             if(setDirection) pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection, swingData);
             ConsumeStances(pawn);
@@ -77,7 +81,7 @@ namespace Code.MoodGame.Skills
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             pawn.StopThreatening();
             yield return new WaitForSecondsRealtime(executingTime);
-            
+
             pawn.PrepareForSwing(swingData, skillDirection);
             pawn.FinishSkillAnimation(this);
             pawn.ShowSwing(swingData, skillDirection);
@@ -95,8 +99,8 @@ namespace Code.MoodGame.Skills
 
         protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
         {
-
             Debug.LogFormat("Trying to find results! {0} {1} {2}", pawn, skillDirection, targetLayer.value);
+            pawn.SetPlugoutPriority(priorityAfterWhiff);
             foreach (MoodSwing.MoodSwingResult result in swingData.TryHitMerged(pawn.Position, Quaternion.LookRotation(skillDirection, pawn.Up), targetLayer))
             {
                 Debug.LogFormat("Result is {0}", result.collider);
@@ -106,6 +110,8 @@ namespace Code.MoodGame.Skills
                     Debug.LogFormat("{0} found collider {1}, health {2} in children {3}", this, result.collider, enemyHealth, result.collider.GetComponentInChildren<Health>());
                     enemyHealth?.Damage(GetDamage(pawn, result.collider.transform, result.hitDirection));
                     onDamage.Invoke(result.hitPosition, Quaternion.LookRotation(result.hitDirection, pawn.Up));
+
+                    pawn.SetPlugoutPriority(priorityAfterAttack);
                 }
             }
 
@@ -123,7 +129,7 @@ namespace Code.MoodGame.Skills
 
         private DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
-            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection), knockback.Get().GetDuration());
+            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, out float angle), angle, knockback.Get().GetDuration());
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()

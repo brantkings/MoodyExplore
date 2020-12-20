@@ -25,6 +25,10 @@ public class KnockbackSolver
 
     [Space()]
     [SerializeField]
+    private float angleRotation;
+
+    [Space()]
+    [SerializeField]
     private float knockbackDuration = 0.25f;
 
     public float GetDuration()
@@ -32,12 +36,12 @@ public class KnockbackSolver
         return knockbackDuration;
     }
 
-    public Vector3 GetKnockback(Transform from, Transform to)
+    public Vector3 GetKnockback(Transform from, Transform to, out float knockbackAngle)
     {
-        return GetKnockback(from, to, Vector3.zero);
+        return GetKnockback(from, to, Vector3.zero, out knockbackAngle);
     }
 
-    public Vector3 GetKnockback(Transform from, Transform to, Vector3 attackForce)
+    public Vector3 GetKnockback(Transform from, Transform to, Vector3 attackForce, out float knockbackAngle)
     {
         Vector3 knock = knockbackByDealer.Get(from) + knockbackByReceiver.Get(from) + absoluteKnockback + GetKnockbackPositionDifference(from, to) + knockbackFromForce * attackForce;
         Debug.LogFormat("Knockback: [From:{0} To:{1} Abs:{2}; PosDif:{3} (to:{7} - from:{8}='{9}'); Force:{4}] --> Total:{5} ({6})",
@@ -45,6 +49,13 @@ public class KnockbackSolver
             knock.normalized * constantTotalMagnitude, knock,
             to.position,from.position, to.position - from.position);
         if (totalMagnitudeConstant) knock = knock.normalized * constantTotalMagnitude;
+
+        if (angleRotation != 0f)
+        {
+            knockbackAngle = Mathf.Sign(Vector3.SignedAngle(attackForce, to.forward, Vector3.up)) * angleRotation;
+        }
+        else knockbackAngle = 0f;
+
         return knock;
     }
 

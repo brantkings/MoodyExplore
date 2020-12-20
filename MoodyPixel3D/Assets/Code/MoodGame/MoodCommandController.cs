@@ -14,7 +14,7 @@ public class MoodCommandController : MonoBehaviour
     private GameObject _optionParent;
 
     [SerializeField]
-    private List<MoodSkill> _equippedSkills;
+    private MoodSkillSet _equippedSkills;
 
     private List<OptionTuple> _options;
 
@@ -68,7 +68,7 @@ public class MoodCommandController : MonoBehaviour
             Destroy(child.gameObject);
         }
         _options = new List<OptionTuple>(12);
-        foreach (MoodSkill skill in _equippedSkills)
+        foreach (MoodSkill skill in _equippedSkills.skills)
         {
             MoodCommandOption child = Instantiate(_optionPrefab, _optionParent.transform);
             child.SetOption(skill);
@@ -127,7 +127,7 @@ public class MoodCommandController : MonoBehaviour
 
     public MoodSkill GetCurrentSkill()
     {
-        return _equippedSkills[_currentOption];
+        return _equippedSkills.skills[_currentOption];
     }
 
     private void AssureSelectedOptionIsVisible()

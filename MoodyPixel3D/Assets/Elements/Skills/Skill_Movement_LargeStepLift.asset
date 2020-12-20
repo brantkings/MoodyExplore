@@ -24,6 +24,8 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 25
     mirrored: 0
+  startupPriority: 1
+  _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0

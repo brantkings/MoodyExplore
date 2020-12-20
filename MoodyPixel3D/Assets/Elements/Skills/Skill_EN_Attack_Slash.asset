@@ -19,11 +19,14 @@ MonoBehaviour:
   toConsume: []
   restrictions: []
   _possibleAngles: []
+  startupPriority: 1
+  _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 120
   _cost: 1
   damage: 10
+  stunTime: 0.5
   swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
   targetLayer:
     serializedVersion: 2
@@ -44,8 +47,13 @@ MonoBehaviour:
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
       totalMagnitudeConstant: 0
       constantTotalMagnitude: 1
+      angleRotation: 0
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
+  setDirection: 0
+  priorityPreAttack: 0
+  priorityAfterAttack: 0
+  priorityAfterWhiff: 0
   onStartAttack: {fileID: 0}
   onExecuteAttack: {fileID: 0}
   onEndAttack: {fileID: 0}

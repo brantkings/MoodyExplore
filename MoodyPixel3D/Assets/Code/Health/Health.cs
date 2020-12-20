@@ -17,8 +17,10 @@ public struct DamageInfo
     public DamageTeam team;
     public GameObject origin;
 
+    public Vector3 attackDirection;
     public Vector3 distanceKnockback;
     public float durationKnockback;
+    public float rotationKnockbackAngle;
 
     public float stunTime;
 
@@ -28,13 +30,22 @@ public struct DamageInfo
         team = damageTeam;
         stunTime = 0f;
         origin = damageOrigin;
+        attackDirection = Vector3.zero;
         distanceKnockback = Vector3.zero;
-        durationKnockback = 0.25f;
+        durationKnockback = 0f;
+        rotationKnockbackAngle = 0f;
     }
 
-    public DamageInfo SetForce(Vector3 knockback, float duration)
+    public DamageInfo SetDirection(Vector3 direction)
+    {
+        attackDirection = direction;
+        return this;
+    }
+
+    public DamageInfo SetForce(Vector3 knockback, float angleRotation, float duration)
     {
         distanceKnockback = knockback;
+        rotationKnockbackAngle = angleRotation;
         durationKnockback = duration;
         return this;
     }
@@ -42,13 +53,6 @@ public struct DamageInfo
     public DamageInfo SetStunTime(float time)
     {
         stunTime = time;
-        return this;
-    }
-
-
-    public DamageInfo SetForce(KnockbackSolver solver, Transform origin, Transform to)
-    {
-        distanceKnockback = solver.GetKnockback(origin, to);
         return this;
     }
 

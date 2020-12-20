@@ -18,6 +18,8 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     public float preTime = 0.5f;
     public float postTime = 1f;
     private RangeTarget.Properties _targetProp;
+    public int priorityPreInstantiate = PRIORITY_NOT_CANCELLABLE;
+    public int priorityAfterInstantiate = PRIORITY_CANCELLABLE;
 
     
     [SerializeField]
@@ -69,6 +71,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         pawn.MarkUsingSkill(this);
         pawn.SetHorizontalDirection(skillDirection);
         pawn.StartSkillAnimation(this);
+        pawn.SetPlugoutPriority(priorityPreInstantiate);
         onStartInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
         if(threat != null) pawn.StartThreatening(skillDirection, threat);
         yield return new WaitForSeconds(preTime);
@@ -77,6 +80,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         DispatchExecuteEvent(pawn, skillDirection);
         
         pawn.FinishSkillAnimation(this);
+        pawn.SetPlugoutPriority(priorityAfterInstantiate);
         if(threat != null) pawn.StopThreatening();
         onExecuteInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
         yield return new WaitForSeconds(postTime);

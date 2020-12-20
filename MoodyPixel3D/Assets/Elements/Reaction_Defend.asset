@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dd804177a618714680230f9588f6e47, type: 3}
   m_Name: Reaction_Defend
   m_EditorClassIdentifier: 
-  cost: 1
+  absoluteCost: 1
+  multiplierDamageCost: 0
+  directionToWork:
+    angleFromForward: 0
+    coneAngle: 360
+    mirrored: 0
   damageModifier:
     add: 0
     multiplier: 0

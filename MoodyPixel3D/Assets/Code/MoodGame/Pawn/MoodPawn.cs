@@ -30,6 +30,7 @@ public interface IMoodPawnSetter : IMoodPawnBelonger
 
 public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 {
+
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnSkillEvent(MoodSkill skill, Vector3 direction);
     public delegate void DelMoodPawnSwingEvent(MoodSwing swing, Vector3 direction);
@@ -59,6 +60,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
+
+    [SerializeField]
+    private MoodReaction[] defaultReactions;
 
 
     [SerializeField]
@@ -256,19 +260,29 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     public bool CanUseSkill(MoodSkill skill)
     {
-        return !_stunLock.IsLocked();
+        return !_stunLock.IsLocked() && skill.GetPluginPriority(this) > GetPlugoutPriority();
     }
-
-    
 
     #region Health
     protected virtual void OnDamage(DamageInfo info, Health health)
     {
-        float duration = 0.5f;
-        AddStunLock("damage", duration);
+        if(info.amount != 0)
+        {
+            Stagger(info, health);
+        }
+    }
 
-        SetDamageAnimationTween(ObjectTransform.InverseTransformDirection(info.distanceKnockback.normalized) * 2f, duration - 0.1f, 0.1f);
+    public void Stagger(DamageInfo info, Health health)
+    {
+        AddStunLock("damage", info.stunTime);
+        InterruptCurrentSkill();
+
+        float animationDelay = 0.125f;
+        float animationDuration = Mathf.Max(info.stunTime, info.durationKnockback, animationDelay);
+
+        SetDamageAnimationTween(ObjectTransform.InverseTransformDirection(info.distanceKnockback.normalized) * 2f, animationDuration - animationDelay, animationDelay);
         Dash(info.distanceKnockback, info.durationKnockback, AnimationCurve.Linear(0f, 0f, 1f, 1f));
+        TweenMoverDirection(info.rotationKnockbackAngle, animationDuration).SetEase(Ease.OutQuad);
     }
 
     private void OnBeforeDamage(ref DamageInfo damage, Health damaged)
@@ -289,6 +303,39 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     #region Skills
     private MoodSkill _currentSkill;
+    private Coroutine _currentSkillRoutine;
+    private int _currentPlugoutPriority;
+
+
+    public Coroutine ExecuteSkill(MoodSkill skill, Vector3 skillDirection)
+    {
+        _currentSkillRoutine = StartCoroutine(SkillRoutine(skill, skillDirection));
+        return _currentSkillRoutine;
+    }
+
+    private IEnumerator SkillRoutine(MoodSkill skill, Vector3 skillDirection)
+    {
+        MarkUsingSkill(skill);
+        yield return skill.ExecuteRoutine(this, skillDirection);
+        UnmarkUsingSkill(skill);
+    }
+
+    public void InterruptCurrentSkill()
+    {
+        InterruptSkill(_currentSkill);
+    }
+
+    public void InterruptSkill(MoodSkill skill)
+    {
+        if(_currentSkill == skill && _currentSkill != null)
+        {
+            if(_currentSkillRoutine != null) StopCoroutine(_currentSkillRoutine);
+            skill.Interrupt(this);
+            _currentSkillRoutine = null;
+            UnmarkUsingSkill(skill);
+        }
+    }
+
     public void MarkUsingSkill(MoodSkill skill)
     {
         _currentSkill = skill;
@@ -300,7 +347,20 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         if (_currentSkill == skill)
         {
             _currentSkill = null;
+            SetPlugoutPriority(0);
         }
+    }
+
+
+    public void SetPlugoutPriority(int priority = 0)
+    {
+        _currentPlugoutPriority = priority;
+    }
+
+    public int GetPlugoutPriority()
+    {
+        if (_currentSkill == null) return -1;
+        else return _currentPlugoutPriority;
     }
 
     public MoodSkill CurrentlyUsingSkill()
@@ -329,6 +389,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
             {
                 yield return react;
             }
+        }
+        if(defaultReactions != null)
+        {
+            foreach (MoodReaction react in defaultReactions) yield return react;
         }
     }
     
@@ -394,6 +458,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     private Vector3 _currentSpeed;
     private Vector3 _movementDelta;
+
+    private Tween _currentDash;
 
     private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, ref Vector3 speed, ref Vector3 direction)
     {
@@ -506,19 +572,35 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     
     public Tween Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
-        return TweenMoverPosition(direction, duration).SetEase(curve);
+        if (_currentDash != null) _currentDash.KillIfActive();
+        _currentDash = TweenMoverPosition(direction, duration).SetEase(curve);
+        return _currentDash;
     }
     
     public Tween Dash(Vector3 direction, float duration, Ease ease)
     {
-        return TweenMoverPosition(direction, duration).SetEase(ease);
+        if (_currentDash != null) _currentDash.KillIfActive();
+        _currentDash = TweenMoverPosition(direction, duration).SetEase(ease);
+        return _currentDash;
     }
 
-    private Tween TweenMoverPosition(Vector3 direction, float duration)
+    private Tween TweenMoverPosition(Vector3 movement, float duration)
     {
         CallBeginMove();
         _lerpPosition = mover.Position;
-        return DOTween.To(GetPawnLerpPosition, SetPawnLerpPosition, direction, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
+        return DOTween.To(GetPawnLerpPosition, SetPawnLerpPosition, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
+    }
+
+    private Tween TweenMoverDirection(Vector3 directionTo, float duration)
+    {
+        //CallBeginMove();
+        return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this);//.OnKill(CallEndMove);
+    }
+
+    private Tween TweenMoverDirection(float angleAdd, float duration)
+    {
+        Vector3 directionAdd = Quaternion.Euler(0f, angleAdd, 0f) * Direction;
+        return TweenMoverDirection(directionAdd, duration);
     }
 
     private void CallBeginMove()
@@ -544,6 +626,16 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         Vector3 diff = set - _lerpPosition;
         mover.AddExactNextFrameMove(set - _lerpPosition);
         _lerpPosition = set;
+    }
+
+    private Vector3 GetPawnLerpDirection()
+    {
+        return _currentDirection;
+    }
+
+    private void SetPawnLerpDirection(Vector3 set)
+    {
+        SetHorizontalDirection(set);
     }
 
     private void UpdateAnimation()

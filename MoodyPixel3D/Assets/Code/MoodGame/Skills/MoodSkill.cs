@@ -14,6 +14,9 @@ public interface IMoodSkill
     void SetShowDirection(MoodPawn pawn, Vector3 direction);
     bool CanExecute(MoodPawn pawn, Vector3 where);
     bool CanBeShown(MoodPawn pawn);
+
+    // A skill only enters play while other skill is executing if current plugout priority (got from pawn) is less than next plugin priority.
+    int GetPluginPriority(MoodPawn pawn);
     
     /// <summary>
     /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. Dispatch execute event after you do the skill. Do not call base.
@@ -31,9 +34,13 @@ public interface IMoodSkill
     /// <returns>The amount of time this should wait in real time.</returns>
     void Interrupt(MoodPawn pawn);
 }
- 
+
+
 public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 {
+    protected static int PRIORITY_CANCELLABLE = 1;
+    protected static int PRIORITY_NOT_CANCELLABLE = 2;
+
     public delegate void MoodSkillEvent(MoodPawn pawn, Vector3 direction);
 
     public event MoodSkillEvent OnExecute;
@@ -48,9 +55,9 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         [Tooltip("Not implemented yet.")]
         public bool mirrored;
 
-        public float YAngleToSanitize(Vector3 direction, Vector3 mainDirection)
+        public float YAngleToSanitize(Vector3 direction, Vector3 characterLookingDirection)
         {
-            float signedAngle = Vector3.SignedAngle(mainDirection, direction, Vector3.up);
+            float signedAngle = Vector3.SignedAngle(characterLookingDirection, direction, Vector3.up);
             float coneAngleDist = coneAngle * 0.5f;
             float angleDist = Mathf.DeltaAngle(signedAngle, angleFromForward);
             if(Mathf.Abs(angleDist) > coneAngleDist) //If outsideAngle
@@ -60,6 +67,18 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
             else
             {
                 return 0f;
+            }
+        }
+
+        public static DirectionFixer Front
+        {
+            get
+            {
+                return new DirectionFixer()
+                {
+                    angleFromForward = 0f,
+                    coneAngle = 180f
+                };
             }
         }
     }
@@ -84,6 +103,8 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private MoodStance[] restrictions;
     [SerializeField]
     private DirectionFixer[] _possibleAngles;
+    [SerializeField]
+    private int startupPriority;
 
 
     [Space()]
@@ -173,16 +194,14 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// <returns></returns>
     public virtual IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
-        Debug.LogFormat("Executing {0}", this);
-        pawn.MarkUsingSkill(this);
         float duration = ExecuteEffect(pawn, skillDirection);
+        pawn.SetPlugoutPriority(startupPriority); //By default, it is the startup priority.
         DispatchExecuteEvent(pawn, skillDirection);
         if (duration > 0f)
         {
             yield return new WaitForSecondsRealtime(duration);
         }
         ConsumeStances(pawn);
-        pawn.UnmarkUsingSkill(this);
     }
 
     public virtual IEnumerable<MoodStance> GetStancesThatWillBeAdded()
@@ -221,9 +240,14 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         OnPreview?.Invoke(pawn, direction);
     }
 
-    public virtual void Interrupt(MoodPawn pawn) 
+    public virtual void Interrupt(MoodPawn pawn)
     {
         pawn.InterruptedSkill(this);
+    }
+
+    public virtual int GetPluginPriority(MoodPawn pawn)
+    {
+        return startupPriority;
     }
 
     public virtual bool NeedsCameraUpwards()

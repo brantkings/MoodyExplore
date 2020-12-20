@@ -219,7 +219,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         Debug.LogFormat("Starting command {0}", Time.time);
         _executingCommand = skill;
         OnStartCommand?.Invoke();
-        yield return skill.ExecuteRoutine(pawn, direction);
+        yield return pawn.ExecuteSkill(skill, direction);
         _executingCommand = null;
         OnStopCommand?.Invoke();
         Debug.LogFormat("Ending command {0}", Time.time);
