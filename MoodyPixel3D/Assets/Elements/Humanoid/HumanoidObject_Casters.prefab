@@ -104,7 +104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hitMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 1537
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 0

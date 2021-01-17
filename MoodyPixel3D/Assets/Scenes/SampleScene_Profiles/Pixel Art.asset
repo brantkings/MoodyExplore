@@ -31,6 +31,37 @@ MonoBehaviour:
   changeBefore:
     overrideState: 1
     value: 1
+--- !u!114 &-5521021945785389126
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e948ca2903dac2d40b5ef239e0812a7e, type: 3}
+  m_Name: PixelArtSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  height:
+    overrideState: 1
+    value: 224
+  mode:
+    overrideState: 1
+    value: 0
+  material:
+    overrideState: 1
+    value: {fileID: 2100000, guid: 8f58268dbc0adaf4c8dc4b696aa6a978, type: 2}
+  palette:
+    overrideState: 1
+    value: {fileID: 11400000, guid: 081cbccd86440554889ffc979a951d43, type: 2}
+  changeBefore:
+    overrideState: 1
+    value: 0
 --- !u!114 &-5492756725922814656
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -43,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1a827f5ecdb38b44b739f4c8dd99d45, type: 3}
   m_Name: MaskByTextureSettings
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
@@ -65,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
   m_Name: AmbientOcclusion
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   enabled:
     overrideState: 1
     value: 1
@@ -116,8 +147,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
   - {fileID: -4331611281405269405}
-  - {fileID: 1689735512399561390}
-  - {fileID: -5492756725922814656}
+  - {fileID: -5521021945785389126}
 --- !u!114 &1689735512399561390
 MonoBehaviour:
   m_ObjectHideFlags: 3

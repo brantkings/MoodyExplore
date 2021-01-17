@@ -14,4 +14,9 @@ public static class TweenUtils
     {
         if (tween != null && tween.IsActive()) tween.Complete(withCallbacks);
     }
+
+    public static bool IsNotNullAndMoving(this Tween tween)
+    {
+        return tween != null && tween.IsPlaying();
+    }
 }

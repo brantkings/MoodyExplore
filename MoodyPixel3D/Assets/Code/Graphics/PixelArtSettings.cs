@@ -43,14 +43,22 @@ public class PixelArtRender : PostProcessEffectRenderer<PixelArtSettings>
         temp.filterMode = settings.mode;
         if(settings.changeBefore.value)
         {
-            context.command.Blit(context.source, temp); 
-            context.command.Blit(temp, temp, settings.material.value);
+            context.command.Blit(context.source, temp);
+            BlitLimitingColors(context, temp, temp);
         }
         else
         {
-            context.command.Blit(context.source, temp, settings.material.value);
+            BlitLimitingColors(context, context.source, temp);
         }
         context.command.Blit(temp, context.destination);
         RenderTexture.ReleaseTemporary(temp);
+    }
+
+    private void BlitLimitingColors(PostProcessRenderContext context, UnityEngine.Rendering.RenderTargetIdentifier source, UnityEngine.Rendering.RenderTargetIdentifier destination)
+    {
+        if (settings.material.value != null || settings.palette.value != null)
+            context.command.Blit(source, destination, settings.material.value);
+        else
+            context.command.Blit(source, destination);
     }
 }

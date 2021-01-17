@@ -14,6 +14,14 @@ public interface IKinematicPlatformerFrameVelocityGetter
 
 public class KinematicPlatformer : MonoBehaviour
 {
+    public enum CasterClass
+    {
+        Ground,
+        Ceiling,
+        Wall,
+        None
+    }
+
     public static float GRAVITY = 10f;
 
     public Caster groundCaster;
@@ -323,14 +331,14 @@ public class KinematicPlatformer : MonoBehaviour
 
         //Reflection and friction forces resolve
         Vector3 totalReflection = lateralReflection + verticalReflection;
-        if(nowGrounded && !Grounded) //Is going to be grounded
+        /*if(nowGrounded && !Grounded) //Is going to be grounded
         {
 
         }
         if(nowWalled && !Walled) //Is going to be walled
         {
 
-        }
+        }*/
 
         _grounded.Update(nowGrounded, "Grounded");
         _hittingHead.Update(nowHittingHead, "HittingHead");
@@ -409,6 +417,35 @@ public class KinematicPlatformer : MonoBehaviour
             
             
         }
+    }
+
+    public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster)
+    {
+        return WhatIsInThere(checkDistance, GetCaster(caster));
+    }
+
+    private Caster GetCaster(CasterClass caster)
+    {
+        switch (caster)
+        {
+            case CasterClass.Ground:
+                return groundCaster;
+            case CasterClass.Ceiling:
+                return ceilingCaster;
+            case CasterClass.Wall:
+                return wallCaster;
+            default:
+                return null;
+        }
+    }
+
+    private Collider WhatIsInThere(Vector3 checkDistance, Caster caster)
+    {
+        if (caster != null && caster.Cast(checkDistance, out RaycastHit hit))
+        {
+            return hit.collider;
+        }
+        else return null;
     }
 
     private void CheckAndStopMovement(ref Vector3 movement, out Vector3 reflection, out bool foundCast, Vector3 originOffset, Caster caster)

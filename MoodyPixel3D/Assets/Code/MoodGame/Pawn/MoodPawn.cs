@@ -28,7 +28,12 @@ public interface IMoodPawnSetter : IMoodPawnBelonger
     void SetMoodPawnOwner(MoodPawn pawn);
 }
 
-public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
+public interface IBumpeable
+{
+    void OnBumped(Vector3 force);
+}
+
+public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 {
 
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
@@ -137,6 +142,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         
     }
 
+    public Vector3 Velocity
+    {
+        get
+        {
+            return mover.Velocity;
+        }
+    }
+
 
     public DamageTeam DamageTeam => damageTeam;
 
@@ -182,6 +195,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     {
         _movementLock.OnLock += OnLockMovement;
         _movementLock.OnUnlock += OnUnlockMovement;
+        mover.Walled.OnChanged += OnWalledChange;
         Threatenable.OnThreatAppear += OnThreatAppear;
         Threatenable.OnThreatRelief += OnThreatRelief;
         if (_health != null)
@@ -191,13 +205,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
             _health.OnDeath += OnDeath;
         }
     }
-    
 
     private void OnDisable()
     {
         _movementLock.OnLock -= OnLockMovement;
         _movementLock.OnUnlock -= OnUnlockMovement;
-        if(_health != null)
+        mover.Walled.OnChanged -= OnWalledChange;
+        Threatenable.OnThreatAppear -= OnThreatAppear;
+        Threatenable.OnThreatRelief -= OnThreatRelief;
+        if (_health != null)
         {
             _health.OnBeforeDamage -= OnBeforeDamage;
             _health.OnDamage -= OnDamage;
@@ -371,7 +387,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     #region Stances
 
-    private HashSet<MoodStance> Stances
+    private HashSet<MoodStance> AddedStances
     {
         get
         {
@@ -383,7 +399,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     public IEnumerable<MoodReaction> GetActiveReactions()
     {
-        foreach(MoodStance stance in Stances)
+        foreach(MoodStance stance in AddedStances)
         {
             foreach(MoodReaction react in stance.GetReactions())
             {
@@ -398,7 +414,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     
     public bool AddStance(MoodStance stance)
     {
-        bool ok = Stances.Add(stance);
+        bool ok = AddedStances.Add(stance);
         if(ok) stance.ApplyStance(this, true);
         return ok;
     }
@@ -406,7 +422,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     
     public bool RemoveStance(MoodStance stance)
     {
-        bool ok = Stances.Remove(stance);
+        bool ok = AddedStances.Remove(stance);
         if(ok) stance.ApplyStance(this, false);
         return ok;
     }
@@ -414,7 +430,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     public bool ToggleStance(MoodStance stance)
     {
-        if(Stances.Contains(stance)) return RemoveStance(stance);
+        if(AddedStances.Contains(stance)) return RemoveStance(stance);
         else return AddStance(stance);
     }
 
@@ -422,7 +438,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
 
     public bool HasStance(MoodStance stance)
     {
-        return Stances.Contains(stance);
+        return AddedStances.Contains(stance);
     }
 
     public bool HasAnyStances(bool ifEmpty = true, params MoodStance[] stances)
@@ -550,9 +566,40 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
         }
     }
 
+    private void OnWalledChange(bool change)
+    {
+        if(change)
+        {
+            if(IsDashing())
+            {
+                Bump(mover.Velocity);
+            }
+        }
+    }
+
+    private void Bump(Vector3 velocity)
+    {
+        Collider col = mover.WhatIsInThere(velocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Wall);
+        col?.GetComponentInParent<IBumpeable>()?.OnBumped(velocity);
+        Debug.LogErrorFormat("{0} bumped!", this);
+        float bumpDuration = 0.25f;
+        Vector3 velNormalized = velocity.normalized;
+        AddStunLock("bump", bumpDuration);
+        SetDamageAnimationTween(-velNormalized * 0.1f, bumpDuration, 0f);
+        Dash(-velNormalized * 0.5f, bumpDuration, Ease.OutSine);
+    }
+
+    public void OnBumped(Vector3 force)
+    {
+        Debug.LogErrorFormat("{0} got bumped!", this);
+        float bumpedDuration = 0.1f;
+        AddStunLock("bump", bumpedDuration);
+        Dash(force.normalized * 0.5f, bumpedDuration, Ease.Linear);
+    }
+
     private void StanceChangeVelocity(ref Vector3 velocity)
     {
-        foreach(MoodStance stance in Stances)
+        foreach(MoodStance stance in AddedStances)
         {
             stance.ModifyVelocity(ref velocity);
         }
@@ -568,6 +615,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     public bool IsMoving()
     {
         return mover.Velocity.sqrMagnitude > 0.1f;
+    }
+
+    public bool IsDashing()
+    {
+        return _currentDash.IsNotNullAndMoving();
     }
     
     public Tween Dash(Vector3 direction, float duration, AnimationCurve curve)
@@ -855,7 +907,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger
     {
         bool isMoving = IsMoving();
         float value = isMoving ? staminaRecoveryMoving : staminaRecoveryIdle;
-        foreach(MoodStance stance in Stances)
+        foreach(MoodStance stance in AddedStances)
         {
             stance.ModifyStamina(ref value, isMoving);
         }

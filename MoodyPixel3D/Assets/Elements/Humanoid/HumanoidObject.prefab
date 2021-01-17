@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 8801125704076035546}
   - component: {fileID: 7644132106322022631}
   m_Layer: 9
-  m_Name: Collider
+  m_Name: Collider Humanoid Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dfb27117d352bc4aa71babe534726a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxLife: 10
+  _maxLife: 12
   _lifeNow: 0
   damageFrom: 0
   toDestroy: {fileID: 0}
@@ -161,8 +161,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 13d37aecf79268f44aad6fe61764a389, type: 2}
   onDamage:
   - {fileID: 11400000, guid: f72bc4dfa1c57404aa59c6396c5d5795, type: 2}
-  onDamagePositional:
-  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
 --- !u!1 &5645552138947826779
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,6 +203,10 @@ PrefabInstance:
       value: HumanoidObject_Casters
       objectReference: {fileID: 0}
     - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -217,6 +219,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
@@ -227,14 +233,6 @@ PrefabInstance:
     - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
