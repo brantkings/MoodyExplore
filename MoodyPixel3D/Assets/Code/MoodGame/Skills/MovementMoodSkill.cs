@@ -20,11 +20,11 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
 
     public SoundEffect sfx;
 
-    public MoodStance[] toAdd;
+    public ActivateableMoodStance[] toAdd;
 
     private void AddStances(MoodPawn pawn)
     {
-        foreach(MoodStance s in toAdd)
+        foreach(ActivateableMoodStance s in toAdd)
         {
             pawn.AddStance(s);
         }

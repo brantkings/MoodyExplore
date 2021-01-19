@@ -8,8 +8,8 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
 {
     [Header("Stance change")]
     public float stanceChangeTime = 0f;
-    public MoodStance[] toAdd;
-    public MoodStance[] toToggle;
+    public ActivateableMoodStance[] toAdd;
+    public ActivateableMoodStance[] toToggle;
 
     ///All mood skills consume can consume stances already, so this is duplicated.
     /// //public MoodStance[] toRemove;

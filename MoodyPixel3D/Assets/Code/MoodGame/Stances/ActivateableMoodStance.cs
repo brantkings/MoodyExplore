@@ -2,12 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Mood/Mood Stance", fileName = "Stance_")]
-public class MoodStance : ScriptableObject
+[CreateAssetMenu(menuName = "Mood/Stances/Activateable Mood Stance", fileName = "Stance_A_")]
+public class ActivateableMoodStance : MoodStance
 {
-    [SerializeField]
-    private Sprite _icon;
-
+    [Header("Activateable")]
     [SerializeField]
     private ValueModifier staminaOverTimeIdle;
     [SerializeField]
@@ -15,8 +13,6 @@ public class MoodStance : ScriptableObject
     [SerializeField]
     private ValueModifier movementVelocity;
     
-    [SerializeField]
-    private MoodReaction[] _reactions;
 
 
     [SerializeField]
@@ -27,12 +23,6 @@ public class MoodStance : ScriptableObject
 
     [SerializeField]
     private string _stanceAnimParamBool;
-
-
-    public Sprite GetIcon()
-    {
-        return _icon;
-    }
 
     public void ModifyStamina(ref float stamina, bool moving)
     {
@@ -64,9 +54,5 @@ public class MoodStance : ScriptableObject
         pawn.RemoveStance(this);
     }
 
-    public IEnumerable<MoodReaction> GetReactions()
-    {
-        foreach(MoodReaction react in _reactions) yield return react;
-    }
 
 }

@@ -68,6 +68,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     [SerializeField]
     private MoodReaction[] defaultReactions;
+    [SerializeField]
+    private FlaggeableMoodStance[] inherentStances;
 
 
     [SerializeField]
@@ -124,7 +126,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public delegate void PawnEvent();
 
-    private HashSet<MoodStance> _currentStances;
+    private HashSet<ActivateableMoodStance> _currentActivateableStances;
 
 
     public Vector3 Position => mover.Position;
@@ -387,14 +389,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     #region Stances
 
-    private HashSet<MoodStance> AddedStances
+    private HashSet<ActivateableMoodStance> AddedStances
     {
         get
         {
-            if(_currentStances == null) _currentStances = new HashSet<MoodStance>();
-            return _currentStances;
+            if(_currentActivateableStances == null) _currentActivateableStances = new HashSet<ActivateableMoodStance>();
+            return _currentActivateableStances;
         }
     }
+
 
 
     public IEnumerable<MoodReaction> GetActiveReactions()
@@ -412,34 +415,89 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
     
-    public bool AddStance(MoodStance stance)
+    public bool AddStance(ActivateableMoodStance stance)
     {
         bool ok = AddedStances.Add(stance);
-        if(ok) stance.ApplyStance(this, true);
+        if (ok)
+        {
+            stance.ApplyStance(this, true);
+        }
         return ok;
     }
 
     
-    public bool RemoveStance(MoodStance stance)
+    public bool RemoveStance(ActivateableMoodStance stance)
     {
         bool ok = AddedStances.Remove(stance);
-        if(ok) stance.ApplyStance(this, false);
+        if (ok)
+        {
+            stance.ApplyStance(this, false);
+        }
         return ok;
     }
 
+    private HashSet<MoodEffectFlag> _currentFlags;
+    private HashSet<MoodEffectFlag> AddedFlags
+    {
+        get
+        {
+            if (_currentFlags == null) _currentFlags = new HashSet<MoodEffectFlag>();
+            return _currentFlags;
+        }
+    }
 
-    public bool ToggleStance(MoodStance stance)
+    public bool AddFlag(MoodEffectFlag flag)
+    {
+        if(inherentStances.Any(x=>x.HasFlag(flag))) //Only add flag if needed. Or else
+        {
+            if(AddedFlags.Add(flag))
+            {
+                foreach(var stance in inherentStances.Where(x=>x.HasFlag(flag)))
+                {
+                    AddStance(stance);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool RemoveFlag(MoodEffectFlag flag)
+    {
+        if (AddedFlags.Remove(flag))
+        {
+            foreach (var stance in inherentStances.Where(x => x.HasFlag(flag)))
+            {
+                RemoveStance(stance);
+            }
+            return true;
+        }
+        else return false;
+    }
+
+    public bool HasFlag(MoodEffectFlag flag)
+    {
+        return _currentFlags != null && _currentFlags.Contains(flag);
+    }
+
+
+    public bool ToggleStance(ActivateableMoodStance stance)
     {
         if(AddedStances.Contains(stance)) return RemoveStance(stance);
         else return AddStance(stance);
     }
 
-
-
     public bool HasStance(MoodStance stance)
     {
-        return AddedStances.Contains(stance);
+        return AddedStances.Contains(stance) || HasConditionalStance(stance as ConditionalMoodStance);
     }
+
+    private bool HasConditionalStance(ConditionalMoodStance stance)
+    {
+        if (stance == null) return false;
+        return stance.IsItOn(this);
+    }
+
 
     public bool HasAnyStances(bool ifEmpty = true, params MoodStance[] stances)
     {
@@ -599,9 +657,12 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void StanceChangeVelocity(ref Vector3 velocity)
     {
-        foreach(MoodStance stance in AddedStances)
+        foreach(ActivateableMoodStance stance in AddedStances)
         {
-            stance.ModifyVelocity(ref velocity);
+            if(stance != null)
+            {
+                stance.ModifyVelocity(ref velocity);
+            }
         }
     }
 
@@ -907,7 +968,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         bool isMoving = IsMoving();
         float value = isMoving ? staminaRecoveryMoving : staminaRecoveryIdle;
-        foreach(MoodStance stance in AddedStances)
+        foreach(ActivateableMoodStance stance in AddedStances)
         {
             stance.ModifyStamina(ref value, isMoving);
         }

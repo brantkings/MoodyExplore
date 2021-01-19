@@ -30,7 +30,7 @@ public class MoodReaction : ScriptableObject
 
     public virtual bool CanReact(MoodPawn pawn, DamageInfo info)
     {
-        return pawn.HasStamina(absoluteCost);
+        return pawn.HasStamina(absoluteCost) && IsDirectionOK(pawn, info);
     }
 
     public virtual void ReactToDamage(ref DamageInfo dmg, MoodPawn pawn)

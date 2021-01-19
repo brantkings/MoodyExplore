@@ -29,7 +29,7 @@ namespace Code.MoodGame.Skills
         public float postTime = 1f;
         private RangeTarget.Properties _targetProp;
 
-        public MoodStance[] addedStancesWithAttack;
+        public ActivateableMoodStance[] addedStancesWithAttack;
 
         private RangeTarget.Properties TargetProperties =>
             _targetProp ??= new RangeTarget.Properties()
@@ -116,7 +116,7 @@ namespace Code.MoodGame.Skills
             }
 
             if(addedStancesWithAttack != null)
-                foreach(MoodStance stance in addedStancesWithAttack)    
+                foreach(ActivateableMoodStance stance in addedStancesWithAttack)    
                     pawn.AddStance(stance);
 
             return base.ExecuteEffect(pawn, skillDirection);

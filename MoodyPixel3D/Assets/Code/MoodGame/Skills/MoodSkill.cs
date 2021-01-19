@@ -98,7 +98,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     [SerializeField]
     private bool consumeNeededStances;
     [SerializeField]
-    private MoodStance[] toConsume;
+    private ActivateableMoodStance[] toConsume;
     [SerializeField]
     private MoodStance[] restrictions;
     [SerializeField]
@@ -218,7 +218,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     protected void ConsumeStances(MoodPawn pawn)
     {
         foreach(var stance in toConsume) pawn.RemoveStance(stance);
-        if(consumeNeededStances) foreach(var stance in needs) pawn.RemoveStance(stance);
+        if (consumeNeededStances) foreach (ActivateableMoodStance stance in needs)
+        {
+            if(stance != null) pawn.RemoveStance(stance);
+        }
     }
 
     protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection)
