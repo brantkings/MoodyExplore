@@ -2059,7 +2059,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5938188665409695490}
-  m_LocalRotation: {x: -0.08459531, y: 0.9153947, z: -0.28050882, w: -0.27606353}
+  m_LocalRotation: {x: -0.08459547, y: 0.91539466, z: -0.28050876, w: -0.2760635}
   m_LocalPosition: {x: 17.69196, y: 27.5, z: 26.664478}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2408,7 +2408,10 @@ MonoBehaviour:
   _attackFeedback: {fileID: 4790428603277664589}
   _ownSensorTarget: {fileID: 0}
   toDestroyOnDeath: {fileID: 0}
-  defaultReactions: []
+  pawnConfiguration: {fileID: 0}
+  inherentReactions:
+  - {fileID: 11400000, guid: ab58822bd476e6d42961ba817126b64b, type: 2}
+  flagInherentStances: []
   _threatenable: {fileID: 0}
   timeToMaxVelocity: 0.15
   timeToZeroVelocity: 0.1
@@ -2419,8 +2422,9 @@ MonoBehaviour:
   pawnRadius: 0.5
   extraRangeBase: 0
   cantMoveWhileThreatened: 0
-  maxStamina: 5
+  maxStamina: 2
   infiniteStamina: 0
+  recoverStaminaWhileUsingSkill: 0
   staminaRecoveryIdle: 0.7
   staminaRecoveryMoving: 0.55
   handPosition: {fileID: 0}
@@ -2442,7 +2446,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _optionPrefab: {fileID: 4116417603250767917, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
   _optionParent: {fileID: 2101265889115054658}
-  _equippedSkills: {fileID: 11400000, guid: 149b935b9689f0e4ba02b19334f9e05c, type: 2}
+  _equippedSkills: {fileID: 11400000, guid: 48014128a5f20364c9719300254eafe7, type: 2}
   _canvas: {fileID: 1348723331549321439}
   _canvasGroup: {fileID: 7658221994546802168}
   canvasGroupFadeDuration: 0.45
@@ -5552,7 +5556,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7054111352717382884}
-  m_LocalRotation: {x: -0.15069783, y: 0.81666064, z: -0.4996982, w: -0.24628715}
+  m_LocalRotation: {x: -0.15069838, y: 0.8166604, z: -0.49969804, w: -0.2462875}
   m_LocalPosition: {x: 9.951727, y: 40, z: 14.998769}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -7883,7 +7887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 17.69196
+      value: 27.393326
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7891,23 +7895,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 26.664478
+      value: 16.541023
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.27606353
+      value: -0.4737115
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.0845953
+      value: -0.15657277
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9153947
+      value: 0.83040136
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.28050876
+      value: -0.2480242
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7932,6 +7936,15 @@ PrefabInstance:
     - target: {fileID: 1703411701898651869, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_ShowCustomSorter
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1703411701898651869, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
+      propertyPath: m_AfterStackBundles.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1703411701898651869, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
+      propertyPath: m_AfterStackBundles.Array.data[1].assemblyQualifiedName
+      value: MaskByTextureSettings, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 5782086146572137203, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_Enabled

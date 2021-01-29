@@ -94,6 +94,8 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     [Space()]
     [SerializeField]
+    private bool onlyNeutralStance;
+    [SerializeField]
     private MoodStance[] needs;
     [SerializeField]
     private bool consumeNeededStances;
@@ -150,14 +152,20 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         else return true;
     }
 
+    private bool IsNeutralOK(MoodPawn pawn)
+    {
+        if (!onlyNeutralStance) return true;
+        return pawn.IsInNeutralStance();
+    }
+
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
-        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && pawn.CanUseSkill(this);
+        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && IsNeutralOK(pawn) && pawn.CanUseSkill(this);
     }
 
     public virtual bool CanBeShown(MoodPawn pawn)
     {
-        return IsValidStanceSetup(pawn);
+        return IsValidStanceSetup(pawn) && IsNeutralOK(pawn);
     }
 
     /// <summary>

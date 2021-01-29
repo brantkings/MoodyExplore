@@ -9,6 +9,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     [Header("Movement")]
     public float minDistance;
     public float maxDistance;
+    public float hopHeight;
+    public float hopDuration;
     [SerializeField]
     private bool setHorizontalDirection = true;
     [SerializeField]
@@ -21,6 +23,11 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public SoundEffect sfx;
 
     public ActivateableMoodStance[] toAdd;
+
+    [Header("Flags")]
+    public MoodEffectFlag[] onBeginningFlags;
+    public MoodEffectFlag[] onEndFlags;
+    public MoodEffectFlag[] onCompleteFlags;
 
     private void AddStances(MoodPawn pawn)
     {
@@ -39,11 +46,21 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
             SanitizeDirection(pawn.Direction, ref setDirection, setDirectionInRelationToMovement);
             pawn.SetHorizontalDirection(setDirection);
         }
-        pawn.Dash(distance, duration, ease);
+        Tween t = pawn.Dash(distance, duration, ease);
+        SetFlags(pawn, t);
         AddStances(pawn);
         sfx.ExecuteIfNotNull(pawn.ObjectTransform);
         duration += base.ExecuteEffect(pawn, skillDirection);
         return duration;
+    }
+
+    private void SetFlags(MoodPawn pawn, Tween t)
+    {
+        pawn.AddFlags(onBeginningFlags);
+        if(onEndFlags != null && onEndFlags.Length > 0)
+            t.OnKill(() => pawn.AddFlags(onEndFlags));
+        if (onCompleteFlags != null && onCompleteFlags.Length > 0)
+            t.OnComplete(() => pawn.AddFlags(onCompleteFlags));
     }
 
     private void CalculateMovementData(Vector3 skillDirection, out Vector3 distance, out float duration)

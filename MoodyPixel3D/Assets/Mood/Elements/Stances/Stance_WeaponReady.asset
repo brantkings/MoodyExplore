@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Stance_WeaponReady
   m_EditorClassIdentifier: 
   _icon: {fileID: 21300000, guid: 4e539afaae83a6743849949fba7dc6f8, type: 3}
+  _reactions: []
   staminaOverTimeIdle:
     add: 0
     multiplier: 0.25
@@ -22,7 +23,8 @@ MonoBehaviour:
   movementVelocity:
     add: 0
     multiplier: 0.5
-  _reactions: []
   _hasTimeLimit: 0
   _timeLimit: 0
+  _stun: 0
   _stanceAnimParamBool: LiftWeapon
+  flags: []

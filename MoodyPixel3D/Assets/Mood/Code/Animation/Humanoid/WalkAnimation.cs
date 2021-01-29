@@ -12,8 +12,10 @@ namespace Code.Animation.Humanoid
         
         public AnimatorID speedX = "SpeedX";
         public AnimatorID speedZ = "SpeedZ";
+        public AnimatorID notGrounded = "Aerial";
         public AnimatorID speedMultiplierWalk = "SpeedMultiplierWalk";
         public AnimatorID speedMultiplierRun = "SpeedMultiplierRun";
+        public AnimatorID crouch = "Crouch";
 
         public float speedAnimationWalk = 1f;
         public float speedAnimationRun = 1f;
@@ -26,6 +28,16 @@ namespace Code.Animation.Humanoid
             float speedNum = speed.ProjectOntoPlane(Vector3.up).magnitude;
             _anim.SetFloat(speedMultiplierWalk, speedNum * speedAnimationWalk);
             _anim.SetFloat(speedMultiplierWalk, speedNum * speedAnimationRun);
+        }
+
+        public void SetGrounded(bool grounded)
+        {
+            _anim.SetBool(notGrounded, !grounded);
+        }
+
+        public void SetCrouching(bool crouching)
+        {
+            _anim.SetBool(crouch, crouching);
         }
     }
 }

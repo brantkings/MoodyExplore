@@ -36,7 +36,7 @@ public class MoodSwing : ScriptableObject
 
         public static MoodSwingResult Merge(MoodSwingResult a, MoodSwingResult b)
         {
-            UnityEngine.Debug.LogFormat("Merge {0} and {1} result is {2}", a.hitPosition, b.hitPosition, Vector3.Lerp(a.hitPosition, b.hitPosition, 0.5f));
+            //UnityEngine.Debug.LogFormat("Merge {0} and {1} result is {2}", a.hitPosition, b.hitPosition, Vector3.Lerp(a.hitPosition, b.hitPosition, 0.5f));
             return new MoodSwingResult
             {
                 hitPosition = Vector3.Lerp(a.hitPosition, b.hitPosition, 0.5f),

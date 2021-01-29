@@ -68,7 +68,6 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 
     public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
-        pawn.MarkUsingSkill(this);
         pawn.SetHorizontalDirection(skillDirection);
         pawn.StartSkillAnimation(this);
         pawn.SetPlugoutPriority(priorityPreInstantiate);
@@ -84,8 +83,13 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         if(threat != null) pawn.StopThreatening();
         onExecuteInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
         yield return new WaitForSeconds(postTime);
-        pawn.UnmarkUsingSkill(this);
         onEndInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
+    }
+
+    public override void Interrupt(MoodPawn pawn)
+    {
+        pawn.FinishSkillAnimation(this);
+        base.Interrupt(pawn);
     }
 
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)

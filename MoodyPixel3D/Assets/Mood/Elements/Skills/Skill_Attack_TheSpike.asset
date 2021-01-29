@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: The Spike
+  onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 1
   toConsume: []
@@ -29,7 +30,7 @@ MonoBehaviour:
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0
-  _cost: 3
+  _cost: 2
   damage: 10
   stunTime: 0.5
   swingData: {fileID: 11400000, guid: cbd2e5b57bdeb9d47beac6471f9eae80, type: 2}

@@ -10,17 +10,28 @@ public class MoodReaction : ScriptableObject
     {
         Damage,
         Bump,
+        Bumped,
         All
+    }
+
+    public enum DamageStaminaCondition
+    {
+        Always,
+        WhenCanPayFullStamina,
     }
 
     [Header("Conditions")]
     public ActionType origin = ActionType.All;
     public MoodSkill.DirectionFixer directionToWork;
+    public bool canExecuteStunned;
+    public MoodStance[] needStances;
+    public MoodStance[] prohibitiveStances;
 
     [Header("Modifiers")]
     [FormerlySerializedAs("cost")]
     public float absoluteCost;
     public float multiplierDamageCost;
+    public bool alwaysExecuteEvenWithoutStamina;
 
     [Space()]
     public float absoluteKnockback = 0;
@@ -28,7 +39,9 @@ public class MoodReaction : ScriptableObject
     public float multiplierKnockbackByDamage = 0f;
 
     [Space()]
+    public DamageStaminaCondition whenModifyDamage;
     public ValueModifier damageModifier;
+    public bool interruptCurrentSkill = true;
 
 
     [Header("Feedback")]
@@ -39,7 +52,6 @@ public class MoodReaction : ScriptableObject
     public struct ReactionInfo
     {
         public GameObject origin;
-        public Vector3 direction;
         public Vector3 knockback;
         public float knockbackDuration;
         public int intensity;
@@ -50,10 +62,22 @@ public class MoodReaction : ScriptableObject
             {
                 origin = info.origin,
                 intensity = info.amount,
-                direction = info.attackDirection,
                 knockback = info.distanceKnockback,
                 knockbackDuration = info.durationKnockback
             };
+        }
+
+        public ReactionInfo(GameObject origin, Vector3 knockback, float duration)
+        {
+            this.origin = origin;
+            this.intensity = 10;
+            this.knockbackDuration = duration;
+            this.knockback = knockback;
+        }
+
+        public int GetDamage()
+        {
+            return intensity;
         }
 
     }
@@ -65,7 +89,9 @@ public class MoodReaction : ScriptableObject
 
     public virtual bool CanReact(MoodPawn pawn, ReactionInfo info, ActionType type)
     {
-        return IsValidOriginForThis(type) && pawn.HasStamina(absoluteCost) && IsDirectionOK(pawn, info);
+        Debug.LogWarningFormat("Can {0} react with {1}? Origin:{2} && Stunned:{3} && Stamina:{4} && Direction:{5}", pawn.name, name, 
+            IsValidOriginForThis(type), IsStunnedStatusValid(pawn), HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina), IsDirectionOK(pawn, info));
+        return IsValidOriginForThis(type) && IsStunnedStatusValid(pawn) && HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina) && IsDirectionOK(pawn, info);
     }
 
     private bool IsValidOriginForThis(ActionType type)
@@ -74,11 +100,37 @@ public class MoodReaction : ScriptableObject
         else return type == origin;
     }
 
+    private bool IsStunnedStatusValid(MoodPawn pawn)
+    {
+        if (canExecuteStunned) return true;
+        else return !pawn.IsStunned();
+    }
+
+    private bool IsStanceStatusValid(MoodPawn pawn)
+    {
+        if (!pawn.HasAllStances(true, needStances)) return false;
+        if (pawn.HasAnyStances(false, prohibitiveStances)) return false;
+        return true;
+
+    }
+
     public virtual void ReactToDamage(ref DamageInfo dmg, MoodPawn pawn)
     {
         ReactionInfo info = (ReactionInfo)dmg;
-        info.intensity /= 10;
-        damageModifier.Modify(ref dmg.amount, Mathf.FloorToInt);
+        switch (whenModifyDamage)
+        {
+            case DamageStaminaCondition.Always:
+                damageModifier.Modify(ref dmg.amount, Mathf.FloorToInt);
+                break;
+            case DamageStaminaCondition.WhenCanPayFullStamina:
+                if(HasStamina(pawn, dmg.amount))
+                {
+                    damageModifier.Modify(ref dmg.amount, Mathf.FloorToInt);
+                }
+                break;
+            default:
+                break;
+        }
         ChangeKnockback(ref dmg.distanceKnockback, ref dmg.durationKnockback, dmg.amount);
         React(info, pawn);
     }
@@ -91,8 +143,8 @@ public class MoodReaction : ScriptableObject
 
     protected virtual void React(ReactionInfo info, MoodPawn pawn)
     {
-        Debug.LogWarningFormat("Depleting {0} + {1} * {2}", absoluteCost, info.intensity, multiplierDamageCost);
-        pawn.DepleteStamina(absoluteCost + info.intensity * multiplierDamageCost, MoodPawn.StaminaChangeOrigin.Reaction);
+        pawn.DepleteStamina(GetStaminaCost(info.GetDamage()), MoodPawn.StaminaChangeOrigin.Reaction);
+        if (interruptCurrentSkill) pawn.InterruptCurrentSkill();
         if (!string.IsNullOrEmpty(animationTrigger))
         {
             pawn.animator.SetTrigger(animationTrigger);
@@ -116,6 +168,17 @@ public class MoodReaction : ScriptableObject
             return enemy.Position;
         }
         else return o.transform.position;
+    }
+
+    private bool HasStamina(MoodPawn pawn, int damage, bool ignore = false)
+    {
+        if (ignore) return true;
+        return pawn.HasStamina(GetStaminaCost(damage));
+    }
+
+    private float GetStaminaCost(int damage)
+    {
+        return absoluteCost + multiplierDamageCost * damage;
     }
 
     private bool IsDirectionOK(MoodPawn pawn, ReactionInfo info)

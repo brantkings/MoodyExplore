@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 991741e3d359ea140b07ae9e22abc70e, type: 3}
+  m_Name: Stance_A_StaminaBreak
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _reactions: []
+  staminaOverTimeIdle:
+    add: 0
+    multiplier: 1
+  staminaOverTimeMoving:
+    add: 0
+    multiplier: 1
+  movementVelocity:
+    add: 0
+    multiplier: 1
+  _hasTimeLimit: 0
+  _timeLimit: 0
+  _stun: 0
+  _stanceAnimParamBool: 
+  flags: []

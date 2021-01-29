@@ -68,7 +68,6 @@ namespace Code.MoodGame.Skills
                 Debug.LogErrorFormat("{0} has no swing data!", this);
                 yield break;
             }
-            pawn.MarkUsingSkill(this);
             pawn.SetPlugoutPriority(priorityPreAttack);
             if(setDirection) pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection, swingData);
@@ -88,7 +87,6 @@ namespace Code.MoodGame.Skills
             pawn.ShowSwing(swingData, skillDirection);
             onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(postTime);
-            pawn.UnmarkUsingSkill(this);
         }
 
         public override void Interrupt(MoodPawn pawn)

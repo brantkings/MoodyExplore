@@ -270,9 +270,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             {
                 command.MoveSelected(1);
             }
-            else if (executeAction.justDown)
+            else if (executeAction.pressing)
             {
-                Debug.LogFormat("Hey {0} ", skill.CanExecute(pawn, currentDirection));
                 if (skill.CanExecute(pawn, currentDirection))
                 {
                     StartSkillRoutine(skill, currentDirection);
@@ -331,7 +330,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
 
-        SolveCommandSlowDown();
+        SolveCommandSlowDown(executeAction.pressing, true);
     }
 
     public bool IsCommandOpen()
@@ -388,15 +387,15 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         SolveSlowdown(timeSlowOnThreat, "PlayerThreat", ref _threatSlowedDown, ShouldThreatSlowdown());
     }
 
-    private bool ShouldCommandSlowdown()
+    private bool ShouldCommandSlowdown(bool pressingCommand, bool highlightingImpossibleCommand)
     {
-        return IsCommandOpen() && !IsExecutingCommand() && !IsManuallyRotating() && !IsStunned();
+        return IsCommandOpen() && !IsExecutingCommand() && !IsManuallyRotating() && !IsStunned() && !(pressingCommand && highlightingImpossibleCommand);
     }
 
     private EventfulParameter<bool> _commandSlowedDown;
-    private void SolveCommandSlowDown()
+    private void SolveCommandSlowDown(bool pressingCommand, bool highlightingImpossibleCommand)
     {
-        SolveSlowdown(0.02f, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown());
+        SolveSlowdown(0.02f, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown(pressingCommand, highlightingImpossibleCommand));
     }
 
 

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Back Dash
+  onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
   toConsume: []
@@ -26,11 +27,13 @@ MonoBehaviour:
   startupPriority: 1
   _freeFocusCost: 1
   _lockCamera: 1
-  lockMovement: 0
+  lockMovement: 1
   _shortcut: 0
   _cost: 1
   minDistance: 0
   maxDistance: 5
+  hopHeight: 0
+  hopDuration: 0
   setHorizontalDirection: 0
   setDirectionInRelationToMovement:
   - angleFromForward: 180
@@ -42,3 +45,6 @@ MonoBehaviour:
   ease: 3
   sfx: {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
   toAdd: []
+  onBeginningFlags: []
+  onEndFlags: []
+  onCompleteFlags: []

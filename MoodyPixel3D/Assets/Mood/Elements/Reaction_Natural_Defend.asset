@@ -12,18 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dd804177a618714680230f9588f6e47, type: 3}
   m_Name: Reaction_Natural_Defend
   m_EditorClassIdentifier: 
-  origin: 2
+  origin: 0
   directionToWork:
     angleFromForward: 0
     coneAngle: 180
     mirrored: 0
-  absoluteCost: 0
-  multiplierDamageCost: 1.5
+  canExecuteStunned: 0
+  needStances: []
+  prohibitiveStances: []
+  absoluteCost: 1
+  multiplierDamageCost: 0
+  alwaysExecuteEvenWithoutStamina: 0
   absoluteKnockback: 0
   multiplierKnockbackByOrigin: 1
   multiplierKnockbackByDamage: 0
+  whenModifyDamage: 1
   damageModifier:
     add: 0
     multiplier: 0
+  interruptCurrentSkill: 1
   animationTrigger: Defended
   sfx: {fileID: 11400000, guid: 3ee19997104acfe40918cc09b03ac105, type: 2}

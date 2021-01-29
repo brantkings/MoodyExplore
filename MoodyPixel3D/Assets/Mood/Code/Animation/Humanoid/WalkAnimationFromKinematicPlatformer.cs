@@ -18,14 +18,8 @@ namespace Code.Animation.Humanoid
 
         private void Update()
         {
-            if (platformer.Grounded)
-            {
-                _walk.SetSpeed(platformer.Velocity);
-            }
-            else
-            {
-                _walk.SetSpeed(Vector3.zero);
-            }
+            _walk.SetSpeed(platformer.Velocity);
+            _walk.SetGrounded(platformer.Grounded);
         }
     }
 }

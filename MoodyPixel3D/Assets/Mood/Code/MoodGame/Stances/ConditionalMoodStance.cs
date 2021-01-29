@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+
+[CreateAssetMenu(menuName = "Mood/Stances/Conditional Mood Stance", fileName = "Stance_C_")]
 public class ConditionalMoodStance : MoodStance
 {
     [Header("Conditional")]

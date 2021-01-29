@@ -10,6 +10,7 @@ public class MoodPawnStanceConfiguration : ScriptableObject
     public MoodEffectFlag onStaminaDownByReaction;
 
     [Header("Default stances")]
-    public FlaggeableMoodStance[] flaggeableStances;
+    public ActivateableMoodStance[] flaggeableStances;
     public ConditionalMoodStance[] conditionalStances;
+    public MoodReaction[] reactions;
 }

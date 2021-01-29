@@ -10,20 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 991741e3d359ea140b07ae9e22abc70e, type: 3}
-  m_Name: Stance_Defending
+  m_Name: Stance_A_ThrowBody
   m_EditorClassIdentifier: 
-  _icon: {fileID: 21300000, guid: b9098b72266f93b428256951f91619c5, type: 3}
+  _icon: {fileID: 0}
+  _reactions: []
   staminaOverTimeIdle:
     add: 0
-    multiplier: 0.1
+    multiplier: 1
   staminaOverTimeMoving:
     add: 0
     multiplier: 1
   movementVelocity:
     add: 0
-    multiplier: 0
-  _reactions:
-  - {fileID: 11400000, guid: 12f3597931b40f24398442ed2fca43c8, type: 2}
-  _hasTimeLimit: 1
-  _timeLimit: 2
-  _stanceAnimParamBool: Defend
+    multiplier: 1
+  _hasTimeLimit: 0
+  _timeLimit: 0
+  _stun: 0
+  _stanceAnimParamBool: ThrowBody
+  flags:
+  - {fileID: 11400000, guid: 1834439e7e9165340a54d935600a7f5e, type: 2}
+  deactivateFlags:
+  - {fileID: 11400000, guid: ad36dd8503f79d441b22ad7f2b5c2e0c, type: 2}

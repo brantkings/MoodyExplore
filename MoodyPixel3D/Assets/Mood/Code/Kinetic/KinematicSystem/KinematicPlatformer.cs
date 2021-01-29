@@ -298,11 +298,16 @@ public class KinematicPlatformer : MonoBehaviour
 
     private bool debugWasDoingIt;
 
+    public static Vector3 GetGravityForce()
+    {
+        return Vector3.down * GRAVITY;
+    }
+
     void FixedUpdate()
     {
         Vector3 totalMovement = GetCurrentVelocity();
         
-        if (HasGravity()) totalMovement.y -= GRAVITY;
+        if (HasGravity()) totalMovement += GetGravityForce();
 
         Vector3 extractMovement = ExtractNextFrameMove(Time.fixedDeltaTime);
         Vector3 frameMovement = totalMovement * Time.fixedDeltaTime + extractMovement;

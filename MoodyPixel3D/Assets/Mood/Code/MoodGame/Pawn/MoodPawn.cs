@@ -30,7 +30,7 @@ public interface IMoodPawnSetter : IMoodPawnBelonger
 
 public interface IBumpeable
 {
-    void OnBumped(Vector3 force);
+    void OnBumped(GameObject origin, Vector3 force);
 }
 
 public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
@@ -45,7 +45,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public event DelMoodPawnUndirectedSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
-    public event DelMoodPawnSkillEvent OnUseSKill;
+    public event DelMoodPawnSkillEvent OnUseSkill;
     public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
     
     public KinematicPlatformer mover;
@@ -71,7 +71,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [SerializeField]
     private MoodReaction[] inherentReactions;
     [SerializeField]
-    private FlaggeableMoodStance[] flagInherentStances;
+    private ActivateableMoodStance[] flagInherentStances;
 
 
     [SerializeField]
@@ -117,6 +117,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public float maxStamina;
     private float _stamina;
     public bool infiniteStamina;
+    public bool recoverStaminaWhileUsingSkill;
     public float staminaRecoveryIdle;
     public float staminaRecoveryMoving;
     private Vector3 _damageAnimation;
@@ -200,6 +201,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _movementLock.OnLock += OnLockMovement;
         _movementLock.OnUnlock += OnUnlockMovement;
         mover.Walled.OnChanged += OnWalledChange;
+
         Threatenable.OnThreatAppear += OnThreatAppear;
         Threatenable.OnThreatRelief += OnThreatRelief;
         if (_health != null)
@@ -235,7 +237,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void Update()
     {
-        RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
+        if(ShouldRecoverStamina())
+            RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
 
         //if (name.Contains("Player")) Debug.LogFormat("Before update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
         UpdateMovement(_inputVelocity, _inputRotation, ref _currentSpeed, ref _currentDirection);
@@ -270,7 +273,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     
     public void UsedSkill(MoodSkill skill, Vector3 direction)
     {
-        OnUseSKill?.Invoke(skill, direction);
+        Debug.LogFormat("{0} executes {1}!", name, skill.name);
+        OnUseSkill?.Invoke(skill, direction);
     }
 
     public void InterruptedSkill(MoodSkill skill)
@@ -403,18 +407,46 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
+    private IEnumerable<ConditionalMoodStance> ConditionalStances
+    {
+        get
+        {
+            if (pawnConfiguration != null)
+                foreach (ConditionalMoodStance stance in pawnConfiguration.conditionalStances) yield return stance;
+        }
+    }
+
+    private IEnumerable<ConditionalMoodStance> GetActiveConditionalMoodStances()
+    {
+        foreach (ConditionalMoodStance stance in ConditionalStances)
+            if (stance.IsItOn(this)) yield return stance;
+    }
+
+    public IEnumerable<MoodStance> AllActiveStances
+    {
+        get
+        {
+            foreach (ActivateableMoodStance stance in AddedStances) yield return stance;
+            foreach (ConditionalMoodStance stance in GetActiveConditionalMoodStances()) yield return stance;
+        }
+    }
+
 
 
     public IEnumerable<MoodReaction> GetActiveReactions()
     {
-        foreach(MoodStance stance in AddedStances)
+        foreach(MoodStance stance in AllActiveStances)
         {
             foreach(MoodReaction react in stance.GetReactions())
             {
                 yield return react;
             }
         }
-        if(inherentReactions != null)
+        if (pawnConfiguration != null)
+        {
+            foreach (MoodReaction react in pawnConfiguration.reactions) yield return react;
+        }
+        if (inherentReactions != null)
         {
             foreach (MoodReaction react in inherentReactions) yield return react;
         }
@@ -441,59 +473,53 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return ok;
     }
 
-    private HashSet<MoodEffectFlag> _currentFlags;
-    private HashSet<MoodEffectFlag> AddedFlags
-    {
-        get
-        {
-            if (_currentFlags == null) _currentFlags = new HashSet<MoodEffectFlag>();
-            return _currentFlags;
-        }
-    }
-
     public bool AddFlag(MoodEffectFlag flag)
     {
         if (flag == null) 
             return false;
         if(AllFlaggeableStances().Any(x=>x.HasFlag(flag))) //Only add flag if needed. Or else
         {
-            if (AddedFlags.Add(flag))
+            foreach (var stance in AllFlaggeableStances().Where(x => x.HasFlag(flag)))
             {
-                foreach (var stance in AllFlaggeableStances().Where(x => x.HasFlag(flag)))
+                if(stance.HasFlagToActivate(flag))
                 {
+                    Debug.LogFormat("{0} added stance {1} due to flag {2}.", this.name, stance, flag.name);
                     AddStance(stance);
                 }
-                return true;
+                else //Yeah if not then you should remove
+                {
+                    Debug.LogFormat("{0} removed stance {1} due to flag {2}.", this.name, stance, flag.name);
+                    RemoveStance(stance);
+                }
             }
-            else return false;
+            return true;
         }
         return false;
     }
 
-    public bool RemoveFlag(MoodEffectFlag flag)
+    public bool AddFlags(IEnumerable<MoodEffectFlag> flags)
     {
-        if (flag == null)
-            return false;
-        if (AddedFlags.Remove(flag))
+        if (flags != null)
         {
-            foreach (var stance in AllFlaggeableStances().Where(x => x.HasFlag(flag)))
+            bool didIt = false;
+            foreach (var flag in flags)
             {
-                RemoveStance(stance);
+                didIt = didIt || AddFlag(flag);
             }
-            return true;
+            return didIt;
         }
         else return false;
     }
 
     public bool HasFlag(MoodEffectFlag flag)
     {
-        return _currentFlags != null && _currentFlags.Contains(flag);
+        return AddedStances.Any(x => x.HasFlagToActivate(flag));
     }
 
-    public IEnumerable<FlaggeableMoodStance> AllFlaggeableStances()
+    public IEnumerable<ActivateableMoodStance> AllFlaggeableStances()
     {
-        foreach (FlaggeableMoodStance stance in flagInherentStances) yield return stance;
-        foreach (FlaggeableMoodStance stance in pawnConfiguration.flaggeableStances) yield return stance;
+        foreach (ActivateableMoodStance stance in flagInherentStances) yield return stance;
+        foreach (ActivateableMoodStance stance in pawnConfiguration?.flaggeableStances) yield return stance;
     }
 
 
@@ -512,6 +538,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if (stance == null) return false;
         return stance.IsItOn(this);
+    }
+
+    public bool IsInNeutralStance()
+    {
+        foreach(MoodStance stance in AllActiveStances)
+        {
+            if (!stance.IsNeutralStance()) return false;
+        }
+        return true;
     }
 
 
@@ -651,28 +686,37 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
-    private void Bump(Vector3 velocity)
+    private void Bump(Vector3 currentVelocity)
     {
-        Collider col = mover.WhatIsInThere(velocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Wall);
-        col?.GetComponentInParent<IBumpeable>()?.OnBumped(velocity);
-        Debug.LogErrorFormat("{0} bumped!", this);
+        Collider col = mover.WhatIsInThere(currentVelocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Wall);
+        col?.GetComponentInParent<IBumpeable>()?.OnBumped(this.gameObject, currentVelocity);
+        Debug.LogFormat("{0} bumped!", name);
         float bumpDuration = 0.25f;
-        Vector3 velNormalized = velocity.normalized;
+        Vector3 velNormalized = currentVelocity.normalized;
         AddStunLockTimer("bump", bumpDuration);
         SetDamageAnimationTween(-velNormalized * 0.1f, bumpDuration, 0f);
         Dash(-velNormalized * 0.5f, bumpDuration, Ease.OutSine);
     }
 
-    public void OnBumped(Vector3 force)
+    private MoodReaction.ReactionInfo MakeReactionInfo(Vector3 velocity, GameObject origin, bool isGuilty)
     {
-        Debug.LogErrorFormat("{0} got bumped!", this);
-        foreach(MoodReaction react in GetActiveReactions())
+        MoodReaction.ReactionInfo info = new MoodReaction.ReactionInfo();
+    }
+
+    public void OnBumped(GameObject origin, Vector3 force)
+    {
+        Debug.LogFormat("{0} got bumped by {1}!", name, origin.name); 
+        MoodReaction.ReactionInfo info = new MoodReaction.ReactionInfo(origin, force, 0.25f);
+        foreach (MoodReaction react in GetActiveReactions())
         {
-            
+            if (react.CanReact(this, info, MoodReaction.ActionType.Bumped))
+            {
+                react.ReactToBump(ref info, this);
+            }
         }
-        float bumpedDuration = 0.1f;
+        float bumpedDuration = info.knockbackDuration;
         AddStunLockTimer("bump", bumpedDuration);
-        Dash(force.normalized * 0.5f, bumpedDuration, Ease.Linear);
+        Dash(info.knockback * 0.5f, bumpedDuration, Ease.Linear);
     }
 
     private void StanceChangeVelocity(ref Vector3 velocity)
@@ -702,6 +746,18 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         return _currentDash.IsNotNullAndMoving();
     }
+
+    public Tween Hop(float heightBeginning, float duration, bool exclusive = false)
+    {
+        Vector3 direction = Vector3.up * heightBeginning;
+        if (exclusive)
+        {
+            if (_currentDash != null) _currentDash.KillIfActive();
+            _currentDash = TweenMoverPosition(direction, duration);
+            return _currentDash;
+        }
+        else return TweenMoverPositionIgnoreGravity(direction, duration);
+    }
     
     public Tween Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
@@ -715,6 +771,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if (_currentDash != null) _currentDash.KillIfActive();
         _currentDash = TweenMoverPosition(direction, duration).SetEase(ease);
         return _currentDash;
+    }
+
+    private Tween TweenMoverPositionIgnoreGravity(Vector3 movement, float duration, bool callBeginMove = false)
+    {
+        if(callBeginMove) 
+            CallBeginMove();
+        _lerpPosition = mover.Position;
+        return DOTween.To(GetPawnLerpPosition, SetPawnLerpPositionIgnoreGravity, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
     }
 
     private Tween TweenMoverPosition(Vector3 movement, float duration)
@@ -752,6 +816,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Vector3 GetPawnLerpPosition()
     {
         return _lerpPosition;
+    }
+
+    private void SetPawnLerpPositionIgnoreGravity(Vector3 set)
+    {
+        Vector3 diff = set - _lerpPosition;
+        mover.AddExactNextFrameMove(set - _lerpPosition - KinematicPlatformer.GetGravityForce() * Time.fixedDeltaTime);
+        _lerpPosition = set;
     }
 
     private void SetPawnLerpPosition(Vector3 set)
@@ -1012,6 +1083,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return value;
     }
 
+    private bool ShouldRecoverStamina()
+    {
+        return recoverStaminaWhileUsingSkill || !CurrentlyUsingSkill();
+    }
+
     private void RecoverStamina(float recovery, float timeDelta)
     {
         ChangeStamina(recovery * timeDelta, StaminaChangeOrigin.Action);
@@ -1165,6 +1241,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public MoodPawn GetMoodPawnOwner()
     {
         return this;
+    }
+    #endregion
+
+    #region Debug
+    [LHH.Unity.Button]
+    private void DebugActiveStances()
+    {
+        foreach(var stance in AllActiveStances)
+            Debug.LogFormat("{0} is in {1}", name, stance);
     }
     #endregion
 

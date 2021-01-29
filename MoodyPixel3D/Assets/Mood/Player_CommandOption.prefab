@@ -199,6 +199,7 @@ MonoBehaviour:
   possibleColor: {r: 1, g: 1, b: 1, a: 1}
   impossibleColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   costColor: {r: 0, g: 0.5254902, b: 0.31764707, a: 1}
+  costNumberColor: {r: 0.21568628, g: 0.77254903, b: 0.4392157, a: 1}
   costSize: 24
   selectedOutlineColorAnimation:
     serializedVersion: 2

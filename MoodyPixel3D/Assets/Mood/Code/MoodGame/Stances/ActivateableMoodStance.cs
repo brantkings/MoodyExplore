@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [CreateAssetMenu(menuName = "Mood/Stances/Activateable Mood Stance", fileName = "Stance_A_")]
 public class ActivateableMoodStance : MoodStance
@@ -23,9 +24,29 @@ public class ActivateableMoodStance : MoodStance
     [SerializeField]
     private bool _stun;
 
-
     [SerializeField]
     private string _stanceAnimParamBool;
+
+    [Header("Flags")]
+    [SerializeField]
+    private MoodEffectFlag[] flags;
+    [SerializeField]
+    private MoodEffectFlag[] deactivateFlags;
+
+    public bool HasFlag(MoodEffectFlag flag)
+    {
+        return HasFlagToActivate(flag) || HasFlagToDeactivate(flag);
+    }
+
+    public bool HasFlagToActivate(MoodEffectFlag flag)
+    {
+        return flags.Contains(flag);
+    }
+
+    public bool HasFlagToDeactivate(MoodEffectFlag flag)
+    {
+        return deactivateFlags.Contains(flag);
+    }
 
     public void ModifyStamina(ref float stamina, bool moving)
     {

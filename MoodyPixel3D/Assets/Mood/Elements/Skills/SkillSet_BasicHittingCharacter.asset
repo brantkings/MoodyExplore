@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3da6e882805cc604384d85aaee242479, type: 3}
+  m_Name: SkillSet_BasicHittingCharacter
+  m_EditorClassIdentifier: 
+  skills:
+  - {fileID: 11400000, guid: feaf277a4a5525240abe9958ff8bf92f, type: 2}
+  - {fileID: 11400000, guid: 4e5fe8e374280f949a2d8293fd2d0438, type: 2}
+  - {fileID: 11400000, guid: 8f67c76044de50f4988276feace9983a, type: 2}
+  - {fileID: 11400000, guid: edfd0a180eca603489b4378b98a95ad7, type: 2}
+  - {fileID: 11400000, guid: 8f6efdc4de55f8e419293c400d69ae86, type: 2}
+  - {fileID: 11400000, guid: d4607fed9f5eee8429892e4664fc5ba9, type: 2}
+  - {fileID: 11400000, guid: c1e8c24796a8efb4396f769094569527, type: 2}
+  - {fileID: 11400000, guid: 54c3b1f81f4fbd64599b063f0e23489d, type: 2}
