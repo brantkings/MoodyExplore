@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Stance_A_ThrowBody
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _reactions: []
+  _reactions:
+  - {fileID: 11400000, guid: 10ffd943d7321bd4b81cf6b87f866eba, type: 2}
+  removeNeutralStance: 0
   staminaOverTimeIdle:
     add: 0
     multiplier: 1

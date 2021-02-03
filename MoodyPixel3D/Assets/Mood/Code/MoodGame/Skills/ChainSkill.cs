@@ -31,7 +31,7 @@ public class ChainSkill : StaminaCostMoodSkill
         bool interrupted = false;
         onInterruptSkill = (x) =>
         {
-            Debug.LogFormat("Interrupted! {0}", this);
+            //Debug.LogFormat("Interrupted! {0}", this);
             interrupted = true;
         };
         pawn.OnInterruptSkill += onInterruptSkill;
@@ -43,7 +43,6 @@ public class ChainSkill : StaminaCostMoodSkill
             yield return skill.ExecuteRoutine(pawn, skillDirection);
             pawn.UnmarkUsingSkill(skill);
 
-            Debug.LogFormat("Interrupted is {0} {1}!", interrupted , this);
             if (interrupted)
             {
                 Interrupt(pawn);

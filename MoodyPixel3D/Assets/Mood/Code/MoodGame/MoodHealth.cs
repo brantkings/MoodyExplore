@@ -15,11 +15,14 @@ public class MoodHealth : Health, IMoodPawnBelonger
     {
         if(CanDamage(damage.team) && pawn != null)
         {
-            foreach(var react in pawn.GetActiveReactions())
+            if(!damage.unreactable)
             {
-                if(react.CanReact(pawn, damage))
+                foreach(var react in pawn.GetActiveReactions())
                 {
-                    react.ReactToDamage(ref damage, pawn);
+                    if(react.CanReact(pawn, damage))
+                    {
+                        react.ReactToDamage(ref damage, pawn);
+                    }
                 }
             }
         }

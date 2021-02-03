@@ -18,7 +18,7 @@ public class KinematicPlatformer : MonoBehaviour
     {
         Ground,
         Ceiling,
-        Wall,
+        Side,
         None
     }
 
@@ -424,9 +424,9 @@ public class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster)
+    public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster, out Vector3 normal)
     {
-        return WhatIsInThere(checkDistance, GetCaster(caster));
+        return WhatIsInThere(checkDistance, GetCaster(caster), out normal);
     }
 
     private Caster GetCaster(CasterClass caster)
@@ -437,17 +437,19 @@ public class KinematicPlatformer : MonoBehaviour
                 return groundCaster;
             case CasterClass.Ceiling:
                 return ceilingCaster;
-            case CasterClass.Wall:
+            case CasterClass.Side:
                 return wallCaster;
             default:
                 return null;
         }
     }
 
-    private Collider WhatIsInThere(Vector3 checkDistance, Caster caster)
+    private Collider WhatIsInThere(Vector3 checkDistance, Caster caster, out Vector3 normal)
     {
+        normal = Vector3.zero;
         if (caster != null && caster.Cast(checkDistance, out RaycastHit hit))
         {
+            normal = hit.normal;
             return hit.collider;
         }
         else return null;

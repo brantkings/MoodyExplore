@@ -72,11 +72,13 @@ namespace Code.MoodGame.Skills
             if(setDirection) pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection, swingData);
             ConsumeStances(pawn);
+            yield return null;
             pawn.StartSkillAnimation(this);
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
-            yield return new WaitForSeconds(preTime);
+            yield return new WaitForSeconds(Mathf.Max(preTime - Time.deltaTime, 0f));
 
             float executingTime = ExecuteEffect(pawn, skillDirection);
+
             DispatchExecuteEvent(pawn, skillDirection);
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             pawn.StopThreatening();
@@ -91,6 +93,7 @@ namespace Code.MoodGame.Skills
 
         public override void Interrupt(MoodPawn pawn)
         {
+            Debug.LogErrorFormat("Interrupted {0} on {1}", name, pawn.name);
             base.Interrupt(pawn);
             pawn.StopThreatening();
             pawn.FinishSkillAnimation(this);

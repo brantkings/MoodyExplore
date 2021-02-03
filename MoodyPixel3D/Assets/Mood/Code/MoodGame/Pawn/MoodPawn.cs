@@ -30,7 +30,7 @@ public interface IMoodPawnSetter : IMoodPawnBelonger
 
 public interface IBumpeable
 {
-    void OnBumped(GameObject origin, Vector3 force);
+    void OnBumped(GameObject origin, Vector3 force, Vector3 normal);
 }
 
 public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
@@ -288,8 +288,16 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
 
     #region Health
+
+    public void Damage(DamageInfo dmg)
+    {
+        dmg.team = damageTeam;
+        _health.Damage(dmg);
+    }
+
     protected virtual void OnDamage(DamageInfo info, Health health)
     {
+        Debug.LogFormat("{0} takes damage with info {1}.", name , info);
         Stagger(info, health);
     }
 
@@ -334,8 +342,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private int _currentPlugoutPriority;
 
 
+    public bool IsExecutingSkill()
+    {
+        return _currentSkill != null && _currentSkillRoutine != null;
+    }
+
     public Coroutine ExecuteSkill(MoodSkill skill, Vector3 skillDirection)
     {
+        if (IsExecutingSkill()) InterruptCurrentSkill();
         _currentSkillRoutine = StartCoroutine(SkillRoutine(skill, skillDirection));
         return _currentSkillRoutine;
     }
@@ -344,6 +358,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         MarkUsingSkill(skill);
         yield return skill.ExecuteRoutine(this, skillDirection);
+        _currentSkillRoutine = null;
         UnmarkUsingSkill(skill);
     }
 
@@ -357,8 +372,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(_currentSkill == skill && _currentSkill != null)
         {
             if(_currentSkillRoutine != null) StopCoroutine(_currentSkillRoutine);
-            skill.Interrupt(this);
             _currentSkillRoutine = null;
+            skill.Interrupt(this);
             UnmarkUsingSkill(skill);
         }
     }
@@ -398,6 +413,19 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     #region Stances
 
+
+    private int _stancesSemaphore;
+    private bool IsRunningThroughStances()
+    {
+        return _stancesSemaphore > 0;
+    }
+
+    private void AddFlagStancesSemaphore(int add)
+    {
+        _stancesSemaphore += add;
+        if (_stancesSemaphore <= 0 && add < 0) DealWithTempFlags();
+    }
+
     private HashSet<ActivateableMoodStance> AddedStances
     {
         get
@@ -426,7 +454,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         get
         {
+            AddFlagStancesSemaphore(1);
             foreach (ActivateableMoodStance stance in AddedStances) yield return stance;
+            AddFlagStancesSemaphore(-1);
             foreach (ConditionalMoodStance stance in GetActiveConditionalMoodStances()) yield return stance;
         }
     }
@@ -473,10 +503,23 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return ok;
     }
 
+    private List<MoodEffectFlag> _tempFlags = new List<MoodEffectFlag>(8);
+
+    private void DealWithTempFlags()
+    {
+        foreach (MoodEffectFlag flag in _tempFlags) AddFlag(flag);
+        _tempFlags.Clear();
+    }
+
     public bool AddFlag(MoodEffectFlag flag)
     {
         if (flag == null) 
             return false;
+        if(IsRunningThroughStances())
+        {
+            _tempFlags.Add(flag);
+            return false;
+        }
         if(AllFlaggeableStances().Any(x=>x.HasFlag(flag))) //Only add flag if needed. Or else
         {
             foreach (var stance in AllFlaggeableStances().Where(x => x.HasFlag(flag)))
@@ -515,6 +558,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         return AddedStances.Any(x => x.HasFlagToActivate(flag));
     }
+
 
     public IEnumerable<ActivateableMoodStance> AllFlaggeableStances()
     {
@@ -686,37 +730,52 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
-    private void Bump(Vector3 currentVelocity)
+    private Vector3 GetKnockbackForce(Vector3 bumpVelocity, bool isGuilty, out float duration)
     {
-        Collider col = mover.WhatIsInThere(currentVelocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Wall);
-        col?.GetComponentInParent<IBumpeable>()?.OnBumped(this.gameObject, currentVelocity);
-        Debug.LogFormat("{0} bumped!", name);
-        float bumpDuration = 0.25f;
-        Vector3 velNormalized = currentVelocity.normalized;
-        AddStunLockTimer("bump", bumpDuration);
-        SetDamageAnimationTween(-velNormalized * 0.1f, bumpDuration, 0f);
-        Dash(-velNormalized * 0.5f, bumpDuration, Ease.OutSine);
+        duration = GetKnockbackDuration(bumpVelocity, isGuilty);
+        Vector3 bumpForce = bumpVelocity.normalized * 1f;
+        if (isGuilty) return -bumpForce;
+        else return bumpForce;
     }
 
-    private MoodReaction.ReactionInfo MakeReactionInfo(Vector3 velocity, GameObject origin, bool isGuilty)
+    private float GetKnockbackDuration(Vector3 bumpVelocity, bool isGuilty)
     {
-        MoodReaction.ReactionInfo info = new MoodReaction.ReactionInfo();
+        return isGuilty ? 0.5f : 0.125f;
     }
 
-    public void OnBumped(GameObject origin, Vector3 force)
+    private MoodReaction.ReactionInfo MakeReactionInfo(Vector3 velocity, GameObject origin, Vector3 normal, bool isGuilty)
     {
-        Debug.LogFormat("{0} got bumped by {1}!", name, origin.name); 
-        MoodReaction.ReactionInfo info = new MoodReaction.ReactionInfo(origin, force, 0.25f);
+        MoodReaction.ReactionInfo info = new MoodReaction.ReactionInfo(origin, GetKnockbackForce(velocity, isGuilty, out float duration), duration).SetNormal(normal);
+        return info;
+    }
+
+    private void HandleBumpInfo(MoodReaction.ReactionInfo bumpInfo)
+    {
         foreach (MoodReaction react in GetActiveReactions())
         {
-            if (react.CanReact(this, info, MoodReaction.ActionType.Bumped))
+            if (react.CanReact(this, bumpInfo, MoodReaction.ActionType.Bumped))
             {
-                react.ReactToBump(ref info, this);
+                react.ReactToBump(ref bumpInfo, this);
             }
         }
-        float bumpedDuration = info.knockbackDuration;
-        AddStunLockTimer("bump", bumpedDuration);
-        Dash(info.knockback * 0.5f, bumpedDuration, Ease.Linear);
+        AddStunLockTimer("bump", bumpInfo.knockbackDuration);
+        SetDamageAnimationTween(bumpInfo.direction.normalized * 0.5f, bumpInfo.knockbackDuration, 0f);
+        Dash(bumpInfo.direction, bumpInfo.knockbackDuration, Ease.OutSine);
+    }
+
+    private void Bump(Vector3 currentVelocity)
+    {
+        Collider col = mover.WhatIsInThere(currentVelocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Side, out Vector3 normal);
+        col?.GetComponentInParent<IBumpeable>()?.OnBumped(this.gameObject, currentVelocity, normal);
+        Debug.LogFormat("{0} bumped!", name);
+        HandleBumpInfo(MakeReactionInfo(currentVelocity, col?.gameObject, normal, true));
+    }
+
+    public void OnBumped(GameObject origin, Vector3 velocity, Vector3 normal)
+    {
+        Debug.LogFormat("{0} got bumped by {1}!", name, origin.name); 
+        MoodReaction.ReactionInfo info = MakeReactionInfo(velocity, origin, normal, false);
+        HandleBumpInfo(info);
     }
 
     private void StanceChangeVelocity(ref Vector3 velocity)
@@ -847,15 +906,33 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     }
 
+    private float timeStampAttack;
+    private string lastAttack;
+
     public void StartSkillAnimation(MoodSkill skill)
     {
-        animator.SetBool(UnityEngine.Random.Range(0f,1f) < 0.5? "Attack_Right" : "Attack_Left", true);
+        string attackStr;
+        if(Time.time - timeStampAttack < 1f)
+        {
+            attackStr = lastAttack == "Attack_Right" ? "Attack_Left" : "Attack_Right";
+        }
+        else
+        {
+            attackStr = UnityEngine.Random.Range(0f, 1f) < 0.5 ? "Attack_Right" : "Attack_Left";
+        }
+
+        lastAttack = attackStr;
+        timeStampAttack = Time.time;
+
+        animator.SetBool(attackStr, true);
+        Debug.LogErrorFormat("Start attack animation by {0} {1}", skill.name, Time.frameCount);
     }
 
     public void FinishSkillAnimation(MoodSkill skill)
     {
         animator.SetBool("Attack_Right", false);
         animator.SetBool("Attack_Left", false);
+        Debug.LogErrorFormat("Finish attack animation by {0} {1}", skill.name, Time.frameCount);
     }
 
     public void SetDamageAnimationTween(Vector3 direction, float duration, float delay)
@@ -1192,7 +1269,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public bool IsSensing(MoodPawn pawn)
     {
-        return IsSensing(pawn.SensorTarget);
+        return pawn == this || IsSensing(pawn.SensorTarget);
     }
 
     public virtual bool IsSensing(SensorTarget target)

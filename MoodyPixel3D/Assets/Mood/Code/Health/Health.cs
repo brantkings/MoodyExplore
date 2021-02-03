@@ -13,6 +13,8 @@ public enum DamageTeam
 
 public struct DamageInfo
 {
+    public const int BASE_SINGLE_UNIT_DAMAGE = 10;
+
     public int amount;
     public DamageTeam team;
     public GameObject origin;
@@ -22,6 +24,7 @@ public struct DamageInfo
     public float durationKnockback;
     public float rotationKnockbackAngle;
 
+    public bool unreactable;
     public bool shouldStaggerAnimation;
 
     public float stunTime;
@@ -30,13 +33,31 @@ public struct DamageInfo
     {
         amount = damage;
         team = damageTeam;
-        stunTime = 0f;
         origin = damageOrigin;
         attackDirection = Vector3.zero;
         distanceKnockback = Vector3.zero;
         durationKnockback = 0f;
         rotationKnockbackAngle = 0f;
+        unreactable = false;
         shouldStaggerAnimation = true;
+        stunTime = 0f;
+    }
+
+    public DamageInfo SetOppositeDamageTeam(DamageTeam team)
+    {
+        switch (team)
+        {
+            case DamageTeam.Ally:
+                team = DamageTeam.Enemy;
+                break;
+            case DamageTeam.Enemy:
+                team = DamageTeam.Ally;
+                break;
+            default:
+                team = DamageTeam.Neutral;
+                break;
+        }
+        return this;
     }
 
     public DamageInfo SetDirection(Vector3 direction)
@@ -64,6 +85,8 @@ public struct DamageInfo
         stunTime = time;
         return this;
     }
+
+
 
     public override string ToString()
     {
@@ -135,7 +158,7 @@ public class Health : MonoBehaviour {
 
     public virtual DamageResult Damage(DamageInfo info)
     {
-        //Debug.LogErrorFormat("Damage {0} with {1},{2}. Can damage? {3}. Life now is {4}", this, info.amount, info.team, CanDamage(info.team), _lifeNow);
+        Debug.LogErrorFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3}", this, info, CanDamage(info.team), _lifeNow);
         if (CanDamage(info.team))
         {
             OnBeforeDamage?.Invoke(ref info, this);

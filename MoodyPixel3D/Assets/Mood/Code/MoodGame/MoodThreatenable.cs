@@ -30,29 +30,33 @@ public class MoodThreatenable : MonoBehaviour
 
     public void AddThreat(GameObject origin)
     {
-        Debug.LogFormat("Add threat {0} to {1}", origin, this);
         if (_threatList == null) _threatList = new HashSet<ThreatStruct>();
         _wasThreatened = IsThreatened();
-        _threatList.Add(new ThreatStruct(origin));
-        bool isThreatened = IsThreatened();
-        if (!_wasThreatened && isThreatened)
+        if(_threatList.Add(new ThreatStruct(origin)))
         {
-            OnThreatAppear?.Invoke(this);
+            Debug.LogFormat("Add threat {0} to {1}", origin, this);
+            bool isThreatened = IsThreatened();
+            if (!_wasThreatened && isThreatened)
+            {
+                OnThreatAppear?.Invoke(this);
+            }
+            _wasThreatened = isThreatened;
         }
-        _wasThreatened = isThreatened;
     }
 
     public void RemoveThreat(GameObject origin)
     {
-        Debug.LogFormat("Remove threat {0} to {1}", origin, this);
         _wasThreatened = IsThreatened();
-        _threatList?.RemoveWhere((threatStruct) => threatStruct.threatObject == origin);
-        bool isThreatened = IsThreatened();
-        if (_wasThreatened && !IsThreatened())
+        if(_threatList?.RemoveWhere((threatStruct) => threatStruct.threatObject == origin) > 0)
         {
-            OnThreatRelief?.Invoke(this);
+            Debug.LogFormat("Remove threat {0} to {1}", origin, this);
+            bool isThreatened = IsThreatened();
+            if (_wasThreatened && !IsThreatened())
+            {
+                OnThreatRelief?.Invoke(this);
+            }
+            _wasThreatened = isThreatened;
         }
-        _wasThreatened = isThreatened;
     }
 
     public bool IsThreatened()

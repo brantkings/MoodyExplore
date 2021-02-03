@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[CreateAssetMenu(menuName = "Mood/Skill/Damage Reaction", fileName = "Reaction_")]
+[CreateAssetMenu(menuName = "Mood/Skill/General Reaction", fileName = "Reaction_")]
 public class MoodReaction : ScriptableObject
 {
     public enum ActionType
@@ -22,7 +22,8 @@ public class MoodReaction : ScriptableObject
 
     [Header("Conditions")]
     public ActionType origin = ActionType.All;
-    public MoodSkill.DirectionFixer directionToWork;
+    public bool ignoreDirection = false;
+    public MoodSkill.DirectionFixer directionToWork = MoodSkill.DirectionFixer.LetAll;
     public bool canExecuteStunned;
     public MoodStance[] needStances;
     public MoodStance[] prohibitiveStances;
@@ -47,12 +48,15 @@ public class MoodReaction : ScriptableObject
     [Header("Feedback")]
     public string animationTrigger;
 
+    public ScriptableEvent[] events;
+
     public SoundEffect sfx;
 
     public struct ReactionInfo
     {
         public GameObject origin;
-        public Vector3 knockback;
+        public Vector3 direction;
+        public Vector3 normal;
         public float knockbackDuration;
         public int intensity;
 
@@ -62,22 +66,35 @@ public class MoodReaction : ScriptableObject
             {
                 origin = info.origin,
                 intensity = info.amount,
-                knockback = info.distanceKnockback,
+                direction = info.distanceKnockback,
                 knockbackDuration = info.durationKnockback
             };
+        }
+
+        public ReactionInfo SetNormal(Vector3 normal)
+        {
+            this.normal = normal;
+            return this;
         }
 
         public ReactionInfo(GameObject origin, Vector3 knockback, float duration)
         {
             this.origin = origin;
-            this.intensity = 10;
+            this.intensity = 0;
             this.knockbackDuration = duration;
-            this.knockback = knockback;
+            this.direction = knockback;
+
+            this.normal = Vector3.zero;
         }
 
         public int GetDamage()
         {
             return intensity;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[{0} by {1}, {2} intensity, {3} duration]", direction, origin?.name, intensity, knockbackDuration);
         }
 
     }
@@ -90,11 +107,11 @@ public class MoodReaction : ScriptableObject
     public virtual bool CanReact(MoodPawn pawn, ReactionInfo info, ActionType type)
     {
         Debug.LogWarningFormat("Can {0} react with {1}? Origin:{2} && Stunned:{3} && Stamina:{4} && Direction:{5}", pawn.name, name, 
-            IsValidOriginForThis(type), IsStunnedStatusValid(pawn), HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina), IsDirectionOK(pawn, info));
-        return IsValidOriginForThis(type) && IsStunnedStatusValid(pawn) && HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina) && IsDirectionOK(pawn, info);
+            IsValidTypeForThis(type), IsStunnedStatusValid(pawn), HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina), IsDirectionOK(pawn, info));
+        return IsValidTypeForThis(type) && IsStunnedStatusValid(pawn) && HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina) && IsDirectionOK(pawn, info);
     }
 
-    private bool IsValidOriginForThis(ActionType type)
+    protected virtual bool IsValidTypeForThis(ActionType type)
     {
         if (origin == ActionType.All) return true;
         else return type == origin;
@@ -137,12 +154,13 @@ public class MoodReaction : ScriptableObject
 
     public virtual void ReactToBump(ref ReactionInfo info, MoodPawn pawn)
     {
-        ChangeKnockback(ref info.knockback, ref info.knockbackDuration, info.intensity);
+        ChangeKnockback(ref info.direction, ref info.knockbackDuration, info.intensity);
         React(info, pawn);
     }
 
     protected virtual void React(ReactionInfo info, MoodPawn pawn)
     {
+        Debug.LogFormat("{0} is reacting with {2} to {1}", pawn.name, info, name);
         pawn.DepleteStamina(GetStaminaCost(info.GetDamage()), MoodPawn.StaminaChangeOrigin.Reaction);
         if (interruptCurrentSkill) pawn.InterruptCurrentSkill();
         if (!string.IsNullOrEmpty(animationTrigger))
@@ -150,6 +168,7 @@ public class MoodReaction : ScriptableObject
             pawn.animator.SetTrigger(animationTrigger);
         }
         sfx.ExecuteIfNotNull(pawn.ObjectTransform);
+        events.Invoke(pawn.ObjectTransform);
     }
 
     private void ChangeKnockback(ref Vector3 knockbackDistance, ref float knockbackDuration, float damageIntensity)
@@ -183,7 +202,8 @@ public class MoodReaction : ScriptableObject
 
     private bool IsDirectionOK(MoodPawn pawn, ReactionInfo info)
     {
-        Vector3 attackDirection = GetPosition(info.origin) - pawn.Position;
+        if (ignoreDirection) return true;
+        Vector3 attackDirection = info.origin != null? GetPosition(info.origin) - pawn.Position : info.direction;
         if (attackDirection != Vector3.zero)
         {
             float angleToSanitize = directionToWork.YAngleToSanitize(attackDirection, pawn.Direction);

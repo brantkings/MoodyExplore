@@ -70,7 +70,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
             }
         }
 
-        public static DirectionFixer Front
+        public static DirectionFixer LetAll
         {
             get
             {
