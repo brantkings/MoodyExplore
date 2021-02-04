@@ -54,7 +54,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     public Transform inputDirectionFeedback;
 
     private Vector3 _mouseWorldPosition;
-    private MoodSkill _executingCommand;
     private Vector3 _rotatingTarget;
 
     public float timeSlowOnThreat = 0.2f;
@@ -71,14 +70,17 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     {
         pawn.Threatenable.OnThreatAppear += ChangeThreat;
         pawn.Threatenable.OnThreatRelief += ChangeThreat;
+        pawn.OnInterruptSkill += OnInterruptSkill;
         OnStartCommand += SolveThreatSlowDown;
         OnStopCommand += SolveThreatSlowDown;
     }
-    
+
+
     void OnDisable()
     {
         pawn.Threatenable.OnThreatAppear -= ChangeThreat;
         pawn.Threatenable.OnThreatRelief -= ChangeThreat;
+        pawn.OnInterruptSkill -= OnInterruptSkill;
         OnStartCommand += SolveThreatSlowDown;
         OnStopCommand += SolveThreatSlowDown;
     }
@@ -216,23 +218,28 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private IEnumerator ExecuteSkill(MoodSkill skill, Vector3 direction)
     {
-        Debug.LogFormat("Starting command {0}", Time.time);
-        _executingCommand = skill;
+        Debug.LogFormat("Starting command {0} {1}", skill.name, Time.time);
         OnStartCommand?.Invoke();
         yield return pawn.ExecuteSkill(skill, direction);
-        _executingCommand = null;
         OnStopCommand?.Invoke();
-        Debug.LogFormat("Ending command {0}", Time.time);
+        Debug.LogFormat("Ending command {0} {1}", skill.name, Time.time);
+    }
+
+
+    private void OnInterruptSkill(MoodSkill skill)
+    {
+        OnStopCommand?.Invoke();
+        Debug.LogFormat("Interrupting command {0} {1}", skill.name, Time.time);
     }
 
     private bool IsExecutingCommand()
     {
-        return _executingCommand != null;
+        return pawn.IsExecutingSkill();
     }
 
     private bool IsSkillNeedingStrategicCamera()
     {
-        return _executingCommand != null && _executingCommand.NeedsCameraUpwards();
+        return pawn.IsExecutingSkill() && pawn.GetCurrentSkill().NeedsCameraUpwards();
     }
 
 
@@ -333,6 +340,18 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         SolveCommandSlowDown(executeAction.pressing, true);
     }
 
+    public bool HasAvailableSkills()
+    {
+        foreach(var skill in command.GetMoodSkills())
+        {
+            if (skill.CanExecute(pawn, Vector3.zero))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public bool IsCommandOpen()
     {
         return command.IsActivated();
@@ -389,7 +408,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private bool ShouldCommandSlowdown(bool pressingCommand, bool highlightingImpossibleCommand)
     {
-        return IsCommandOpen() && !IsExecutingCommand() && !IsManuallyRotating() && !IsStunned() && !(pressingCommand && highlightingImpossibleCommand);
+        return IsCommandOpen() && HasAvailableSkills() && !IsManuallyRotating() && !IsStunned() && !(pressingCommand && highlightingImpossibleCommand);
     }
 
     private EventfulParameter<bool> _commandSlowedDown;

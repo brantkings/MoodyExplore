@@ -28,11 +28,11 @@ public class ChainSkill : StaminaCostMoodSkill
         pawn.DepleteStamina(base.GetStaminaCost(), MoodPawn.StaminaChangeOrigin.Action);
 
         MoodPawn.DelMoodPawnUndirectedSkillEvent onInterruptSkill = default(MoodPawn.DelMoodPawnUndirectedSkillEvent);
-        bool interrupted = false;
+        MoodSkill interrupted = null;
         onInterruptSkill = (x) =>
         {
-            //Debug.LogFormat("Interrupted! {0}", this);
-            interrupted = true;
+            Debug.LogErrorFormat("Interrupted! {0} and {1}", this, x);
+            interrupted = x;
         };
         pawn.OnInterruptSkill += onInterruptSkill;
 
@@ -43,12 +43,12 @@ public class ChainSkill : StaminaCostMoodSkill
             yield return skill.ExecuteRoutine(pawn, skillDirection);
             pawn.UnmarkUsingSkill(skill);
 
-            if (interrupted)
+            pawn.MarkUsingSkill(this);
+            if (interrupted == skill)
             {
-                Interrupt(pawn);
+                pawn.InterruptSkill(this);
                 break;
             }
-            pawn.MarkUsingSkill(this);
         }
         pawn.OnInterruptSkill -= onInterruptSkill;
     }

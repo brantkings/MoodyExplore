@@ -107,6 +107,8 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private DirectionFixer[] _possibleAngles;
     [SerializeField]
     private int startupPriority;
+    [SerializeField]
+    private MoodSkill chainSkillNext;
 
 
     [Space()]
@@ -253,7 +255,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public virtual void Interrupt(MoodPawn pawn)
     {
-        pawn.InterruptedSkill(this);
+        //Only the mood pawn itself interrupts an skill ongoing, never the skill itself. This code should be related only to the skill.
     }
 
     public virtual int GetPluginPriority(MoodPawn pawn)

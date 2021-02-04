@@ -33,6 +33,8 @@ MonoBehaviour:
     multiplier: 1
   interruptCurrentSkill: 1
   animationTrigger: 
+  events:
+  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   sfx: {fileID: 0}
   damage: 10
   stagger: 1

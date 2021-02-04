@@ -277,11 +277,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         OnUseSkill?.Invoke(skill, direction);
     }
 
-    public void InterruptedSkill(MoodSkill skill)
-    {
-        OnInterruptSkill?.Invoke(skill);
-    }
-
     public bool CanUseSkill(MoodSkill skill)
     {
         return !_stunLock.IsLocked() && skill.GetPluginPriority(this) > GetPlugoutPriority();
@@ -364,22 +359,29 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void InterruptCurrentSkill()
     {
-        InterruptSkill(_currentSkill);
+        if(_currentSkill != null)
+        {
+            Debug.LogFormat("{0} gonna interrupt current skill {1}", this.name, _currentSkill?.name);
+            InterruptSkill(_currentSkill);
+        }
     }
 
     public void InterruptSkill(MoodSkill skill)
     {
         if(_currentSkill == skill && _currentSkill != null)
         {
-            if(_currentSkillRoutine != null) StopCoroutine(_currentSkillRoutine);
+            Debug.LogFormat("{0} gonna interrupt skill {1}", this.name, skill?.name);
+            if (_currentSkillRoutine != null) StopCoroutine(_currentSkillRoutine);
             _currentSkillRoutine = null;
             skill.Interrupt(this);
+            OnInterruptSkill?.Invoke(skill);
             UnmarkUsingSkill(skill);
         }
     }
 
     public void MarkUsingSkill(MoodSkill skill)
     {
+        //Debug.LogFormat("{0} mark using skill {1}", this.name, skill?.name);
         _currentSkill = skill;
         OnBeforeSkillUse?.Invoke(skill);
     }
@@ -388,6 +390,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if (_currentSkill == skill)
         {
+            //Debug.LogFormat("{0} unmark using skill {1}", this.name, skill?.name);
             _currentSkill = null;
             SetPlugoutPriority(0);
         }
@@ -405,7 +408,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         else return _currentPlugoutPriority;
     }
 
-    public MoodSkill CurrentlyUsingSkill()
+    public MoodSkill GetCurrentSkill()
     {
         return _currentSkill;
     }
@@ -1162,7 +1165,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private bool ShouldRecoverStamina()
     {
-        return recoverStaminaWhileUsingSkill || !CurrentlyUsingSkill();
+        return recoverStaminaWhileUsingSkill || !GetCurrentSkill();
     }
 
     private void RecoverStamina(float recovery, float timeDelta)
