@@ -66,4 +66,16 @@ public class ChainSkill : StaminaCostMoodSkill
             skill.SetShowDirection(pawn, direction);
         }
     }
+
+    public override bool ImplementsRangeShow<T>()
+    {
+        foreach (MoodSkill skill in skills) if (skill.ImplementsRangeShow<T>()) return true;
+        return base.ImplementsRangeShow<T>();
+    }
+
+    public override RangeShow<T>.IRangeShowPropertyGiver GetRangeShowProperty<T>()
+    {
+        foreach (MoodSkill skill in skills) if (skill.ImplementsRangeShow<T>()) return skill.GetRangeShowProperty<T>();
+        return base.GetRangeShowProperty<T>();
+    }
 }

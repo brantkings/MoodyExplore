@@ -25,16 +25,12 @@ public abstract class RangeShow<T> : MonoBehaviour, IRangeShow
     public abstract void Show(T property);
     public abstract void Hide();
 
-    public IRangeShowPropertyGiver GetSkillProperty(MoodSkill skill)
-    {
-        return skill as IRangeShowPropertyGiver;
-    }
-
     public void ResolveSkill(MoodSkill skill)
     {
-        if (skill is IRangeShowPropertyGiver)
+        //Debug.LogFormat("Does {0} implements {1}? {2}. Is it IRangeShowPropertyGiver? {3}", skill, typeof(T), skill.ImplementsRangeShow<T>(), skill is IRangeShowPropertyGiver);
+        if (skill.ImplementsRangeShow<T>())
         {
-            Show((skill as IRangeShowPropertyGiver).GetRangeProperty());
+            Show(skill.GetRangeShowProperty<T>().GetRangeProperty());
         }
         else
         {

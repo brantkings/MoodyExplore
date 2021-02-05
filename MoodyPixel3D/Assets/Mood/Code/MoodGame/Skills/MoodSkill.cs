@@ -107,9 +107,6 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private DirectionFixer[] _possibleAngles;
     [SerializeField]
     private int startupPriority;
-    [SerializeField]
-    private MoodSkill chainSkillNext;
-
 
     [Space()]
     [SerializeField]
@@ -124,9 +121,28 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     [Space()]
     [SerializeField]
     private KeyCode  _shortcut;
+
+
     public KeyCode GetShortCut()
     {
         return _shortcut;
+    }
+
+
+    [Space()]
+    [SerializeField]
+    private bool _debug;
+
+    public bool Debugging
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return _debug;
+#else
+            return false;
+#endif
+        }
     }
 
     public Texture2D GetIcon()
@@ -162,6 +178,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
+        if(Debugging)
+        {
+            Debug.LogErrorFormat("{0} can do {1}? stance?{2} && focus?{3} && neutral?{4} && pawn?{5}", pawn.name, name, IsValidStanceSetup(pawn), IsFocusAvailable(pawn), IsNeutralOK(pawn), pawn.CanUseSkill(this));
+        }
         return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && IsNeutralOK(pawn) && pawn.CanUseSkill(this);
     }
 
@@ -240,6 +260,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         pawn.UsedSkill(this, skillDirection);
     }
 
+
     /// <summary>
     /// Execute the real effect! Return the duration of the effect that should be waited after.
     /// </summary>
@@ -271,6 +292,17 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public int GetFocusCost()
     {
         return _freeFocusCost;
+    }
+    
+    //Property for visual show
+    public virtual bool ImplementsRangeShow<T>()
+    {
+        return this is RangeShow<T>.IRangeShowPropertyGiver;
+    }
+
+    public virtual RangeShow<T>.IRangeShowPropertyGiver GetRangeShowProperty<T>()
+    {
+        return this as RangeShow<T>.IRangeShowPropertyGiver;
     }
 
 }

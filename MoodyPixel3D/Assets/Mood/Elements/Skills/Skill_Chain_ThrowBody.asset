@@ -19,8 +19,12 @@ MonoBehaviour:
   consumeNeededStances: 0
   toConsume: []
   restrictions: []
-  _possibleAngles: []
+  _possibleAngles:
+  - angleFromForward: 0
+    coneAngle: 90
+    mirrored: 0
   startupPriority: 0
+  chainSkillNext: {fileID: 0}
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0

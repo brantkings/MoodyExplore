@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90ae4c23724f4444984bad838a8ad073, type: 3}
+  m_Name: Skill_Movement_Roll
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _name: Roll
+  onlyNeutralStance: 0
+  needs:
+  - {fileID: 11400000, guid: 9817d25c84411424ab8478112e231846, type: 2}
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions: []
+  _possibleAngles:
+  - angleFromForward: 0
+    coneAngle: 15
+    mirrored: 0
+  startupPriority: 1
+  _freeFocusCost: 0
+  _lockCamera: 0
+  lockMovement: 1
+  _shortcut: 0
+  _debug: 1
+  _cost: 1
+  minDistance: 6
+  maxDistance: 6
+  hopHeight: 0
+  hopDuration: 0
+  setHorizontalDirection: 1
+  setDirectionInRelationToMovement: []
+  velocityAdd: 8
+  durationAdd: 0
+  showArrowWidth: 1
+  ease: 4
+  sfx: {fileID: 0}
+  toAdd: []
+  triggerAnim:
+    id: 
+  boolWhileInSkill:
+    id: Roll
+  onBeginningFlags: []
+  onEndFlags: []
+  onCompleteFlags: []

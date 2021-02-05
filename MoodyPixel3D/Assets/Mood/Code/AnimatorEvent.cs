@@ -22,14 +22,29 @@ public struct AnimatorID
         if(_got == false)
         {
             if (_numericalId == 0) _numericalId = Animator.StringToHash(id);
+            _got = true;
         }
-        _got = true;
-        return +_numericalId;
+        return _numericalId;
+    }
+
+    public bool IsValid()
+    {
+        return GetNumericalID() != 0;
     }
 
     public bool Equals(AnimatorID id)
     {
         return GetNumericalID() == id.GetNumericalID();
+    }
+
+    public static implicit operator int(AnimatorID animID)
+    {
+        return animID.GetNumericalID();
+    }
+
+    public static implicit operator AnimatorID(string animID)
+    {
+        return new AnimatorID() {id = animID};
     }
 }
 

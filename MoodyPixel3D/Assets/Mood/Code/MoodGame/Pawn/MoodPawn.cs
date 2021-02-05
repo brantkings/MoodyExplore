@@ -622,7 +622,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     #region Movement
     public event PawnEvent OnBeginMove;
+    public event PawnEvent OnNextBeginMove;
     public event PawnEvent OnEndMove;
+    public event PawnEvent OnNextEndMove;
+    public event PawnEvent OnCompleteMove;
+    public event PawnEvent OnNextCompleteMove;
 
     private Vector3 _inputVelocity;
     private Vector3 _inputRotation;
@@ -821,39 +825,30 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         else return TweenMoverPositionIgnoreGravity(direction, duration);
     }
     
-    public Tween Dash(Vector3 direction, float duration, AnimationCurve curve)
+    public void Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
         if (_currentDash != null) _currentDash.KillIfActive();
         _currentDash = TweenMoverPosition(direction, duration).SetEase(curve);
-        return _currentDash;
     }
     
-    public Tween Dash(Vector3 direction, float duration, Ease ease)
+    public void Dash(Vector3 direction, float duration, Ease ease)
     {
         if (_currentDash != null) _currentDash.KillIfActive();
         _currentDash = TweenMoverPosition(direction, duration).SetEase(ease);
-        return _currentDash;
     }
 
-    private Tween TweenMoverPositionIgnoreGravity(Vector3 movement, float duration, bool callBeginMove = false)
+    private Tween TweenMoverPositionIgnoreGravity(Vector3 movement, float duration, bool callBeginMove = true)
     {
-        if(callBeginMove) 
-            CallBeginMove();
         _lerpPosition = mover.Position;
-        return DOTween.To(GetPawnLerpPosition, SetPawnLerpPositionIgnoreGravity, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
+        Tween t = DOTween.To(GetPawnLerpPosition, SetPawnLerpPositionIgnoreGravity, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove).OnComplete(CallCompleteMove);
+        if (callBeginMove) t.OnStart(CallBeginMove);
+        return t;
     }
 
     private Tween TweenMoverPosition(Vector3 movement, float duration)
     {
-        CallBeginMove();
         _lerpPosition = mover.Position;
-        return DOTween.To(GetPawnLerpPosition, SetPawnLerpPosition, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove);
-    }
-
-    private Tween TweenMoverDirection(Vector3 directionTo, float duration)
-    {
-        //CallBeginMove();
-        return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this);//.OnKill(CallEndMove);
+        return DOTween.To(GetPawnLerpPosition, SetPawnLerpPosition, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
 
     private Tween TweenMoverDirection(float angleAdd, float duration)
@@ -862,15 +857,35 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return TweenMoverDirection(directionAdd, duration);
     }
 
+    private Tween TweenMoverDirection(Vector3 directionTo, float duration)
+    {
+        return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this);//.OnKill(CallEndMove).OnStart(CallBeginMove);
+    }
+
+
     private void CallBeginMove()
     {
         OnBeginMove?.Invoke();
+        OnNextBeginMove?.Invoke();
+        OnNextBeginMove = null;
     }
 
     private void CallEndMove()
     {
+        Debug.LogWarningFormat("End move {0}", this);
         SolveFinalVelocity(ref _inputVelocity);
         OnEndMove?.Invoke();
+        Debug.LogFormat("Gonna do next end move on {0} which is {1}", this, OnNextEndMove.GetInvocationList().Count());
+        OnNextEndMove?.Invoke();
+        OnNextEndMove = null;
+    }
+
+
+    private void CallCompleteMove()
+    {
+        OnCompleteMove?.Invoke();
+        OnNextCompleteMove?.Invoke();
+        OnNextCompleteMove = null;
     }
 
     private Vector3 _lerpPosition;

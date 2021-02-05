@@ -185,7 +185,6 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         [SerializeField] private Ease ease = Ease.Linear;
         [SerializeField] private VelocityKind useVelocityAs;
 
-        private Tween _tween;
         private bool _dashed;
 
         public enum VelocityKind
@@ -212,7 +211,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         {
             if (_dashed)
             {
-                if (_tween != null && _tween.IsActive())
+                if (pawn.Value.IsDashing())
                 {
                     return TaskStatus.Running;
                 }
@@ -225,7 +224,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             if (pawn.Value != null)
             {
                 _dashed = true;
-                _tween = pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
+                pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
                 return TaskStatus.Running;
             }
             else

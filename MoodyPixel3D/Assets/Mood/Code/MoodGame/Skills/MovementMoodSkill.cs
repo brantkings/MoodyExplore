@@ -20,9 +20,13 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public float showArrowWidth = 1f;
     public Ease ease;
 
+    [Header("Feedback Movement")]
     public SoundEffect sfx;
-
     public ActivateableMoodStance[] toAdd;
+    [SerializeField]
+    private AnimatorID triggerAnim;
+    [SerializeField]
+    private AnimatorID boolWhileInSkill;
 
     [Header("Flags")]
     public MoodEffectFlag[] onBeginningFlags;
@@ -46,21 +50,47 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
             SanitizeDirection(pawn.Direction, ref setDirection, setDirectionInRelationToMovement);
             pawn.SetHorizontalDirection(setDirection);
         }
-        Tween t = pawn.Dash(distance, duration, ease);
-        SetFlags(pawn, t);
+        pawn.Dash(distance, duration, ease);
+        if(HasFeedback())
+        {
+            pawn.OnNextBeginMove += () => DoFeedback(pawn, true);
+            pawn.OnNextEndMove += () => DoFeedback(pawn, false);
+        }
+        SetFlags(pawn);
         AddStances(pawn);
         sfx.ExecuteIfNotNull(pawn.ObjectTransform);
         duration += base.ExecuteEffect(pawn, skillDirection);
         return duration;
     }
 
-    private void SetFlags(MoodPawn pawn, Tween t)
+    private bool HasFeedback()
+    {
+        return triggerAnim.IsValid() || boolWhileInSkill.IsValid();
+    }
+
+
+    private void DoFeedback(MoodPawn pawn, bool set)
+    {
+        if(set)
+        {
+            if(triggerAnim.IsValid())
+                pawn.animator.SetTrigger(triggerAnim);
+        }
+
+        pawn.animator.SetBool(boolWhileInSkill, set);
+    }
+
+    private void SetFlags(MoodPawn pawn)
     {
         pawn.AddFlags(onBeginningFlags);
         if(onEndFlags != null && onEndFlags.Length > 0)
-            t.OnKill(() => pawn.AddFlags(onEndFlags));
+            pawn.OnNextEndMove += () => {
+                pawn.AddFlags(onEndFlags);
+                };
         if (onCompleteFlags != null && onCompleteFlags.Length > 0)
-            t.OnComplete(() => pawn.AddFlags(onCompleteFlags));
+            pawn.OnNextCompleteMove += () => {
+                pawn.AddFlags(onCompleteFlags);
+                };
     }
 
     private void CalculateMovementData(Vector3 skillDirection, out Vector3 distance, out float duration)
