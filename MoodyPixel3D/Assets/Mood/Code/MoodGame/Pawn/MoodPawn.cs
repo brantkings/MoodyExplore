@@ -273,7 +273,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     
     public void UsedSkill(MoodSkill skill, Vector3 direction)
     {
-        Debug.LogFormat("{0} executes {1}!", name, skill.name);
+        Debug.LogFormat("{0} executes {1} {2}!", name, skill.name, Time.time);
         OnUseSkill?.Invoke(skill, direction);
     }
 
@@ -636,6 +636,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Vector3 _movementDelta;
 
     private Tween _currentDash;
+    private Tween _currentFakeHeightHop;
 
     private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, ref Vector3 speed, ref Vector3 direction)
     {
@@ -772,10 +773,12 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void Bump(Vector3 currentVelocity)
     {
-        Collider col = mover.WhatIsInThere(currentVelocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Side, out Vector3 normal);
-        col?.GetComponentInParent<IBumpeable>()?.OnBumped(this.gameObject, currentVelocity, normal);
-        Debug.LogFormat("{0} bumped!", name);
-        HandleBumpInfo(MakeReactionInfo(currentVelocity, col?.gameObject, normal, true));
+        Collider col = mover.WhatIsInThere(currentVelocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Side, out RaycastHit hit);
+        if(col != null)
+        {
+            col.GetComponentInParent<IBumpeable>()?.OnBumped(this.gameObject, currentVelocity, hit.normal);
+            HandleBumpInfo(MakeReactionInfo(currentVelocity, col.gameObject, hit.normal, true));
+        }
     }
 
     public void OnBumped(GameObject origin, Vector3 velocity, Vector3 normal)
@@ -803,6 +806,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         SolveFinalVelocity(ref _inputVelocity);
     }
 
+    public float GetHeightFromGround()
+    {
+        return GetPawnFakeHeight(); //TODO yeah this assumes no verticality in the world
+    }
+
     public bool IsMoving()
     {
         return mover.Velocity.sqrMagnitude > 0.1f;
@@ -813,16 +821,22 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _currentDash.IsNotNullAndMoving();
     }
 
-    public Tween Hop(float heightBeginning, float duration, bool exclusive = false)
+    public Tween FakeHop(float height, float durationIn, float durationOut)
     {
-        Vector3 direction = Vector3.up * heightBeginning;
-        if (exclusive)
+        Sequence seq = DOTween.Sequence();
+        seq.Insert(0f, TweenFakeHeight(height, durationIn, Ease.OutCirc));
+        seq.Insert(durationIn, TweenFakeHeight(0f, durationOut, Ease.InCirc));
+        _currentFakeHeightHop = seq;
+        return seq;
+    }
+
+    public float CurrentDashDuration()
+    {
+        if (_currentDash != null)
         {
-            if (_currentDash != null) _currentDash.KillIfActive();
-            _currentDash = TweenMoverPosition(direction, duration);
-            return _currentDash;
+            return _currentDash.Duration();
         }
-        else return TweenMoverPositionIgnoreGravity(direction, duration);
+        else return 0f;
     }
     
     public void Dash(Vector3 direction, float duration, AnimationCurve curve)
@@ -835,6 +849,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if (_currentDash != null) _currentDash.KillIfActive();
         _currentDash = TweenMoverPosition(direction, duration).SetEase(ease);
+    }
+
+    private Tween TweenFakeHeight(float height, float duration, Ease ease)
+    {
+        _currentFakeHeightHop.CompleteIfActive();
+        _currentFakeHeightHop = null;
+
+        _currentFakeHeightHop = DOTween.To(GetPawnFakeHeight, SetPawnFakeHeight, height, duration).SetEase(ease);
+        return _currentFakeHeightHop;
     }
 
     private Tween TweenMoverPositionIgnoreGravity(Vector3 movement, float duration, bool callBeginMove = true)
@@ -865,6 +888,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void CallBeginMove()
     {
+        Debug.LogWarningFormat("Start move {0}, {1}", this, Time.time);
         OnBeginMove?.Invoke();
         OnNextBeginMove?.Invoke();
         OnNextBeginMove = null;
@@ -872,7 +896,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void CallEndMove()
     {
-        Debug.LogWarningFormat("End move {0}", this);
+        Debug.LogWarningFormat("End move {0}, {1}", this, Time.time);
         SolveFinalVelocity(ref _inputVelocity);
         OnEndMove?.Invoke();
         Debug.LogFormat("Gonna do next end move on {0} which is {1}", this, OnNextEndMove.GetInvocationList().Count());
@@ -912,6 +936,18 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Vector3 GetPawnLerpDirection()
     {
         return _currentDirection;
+    }
+
+    private float GetPawnFakeHeight()
+    {
+        return animator.transform.position.y;
+    }
+
+    private void SetPawnFakeHeight(float h)
+    {
+        Vector3 animPos = animator.transform.position;
+        animPos.y = h;
+        animator.transform.position = animPos;
     }
 
     private void SetPawnLerpDirection(Vector3 set)

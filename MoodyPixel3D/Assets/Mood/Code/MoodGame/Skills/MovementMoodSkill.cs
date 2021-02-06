@@ -10,7 +10,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public float minDistance;
     public float maxDistance;
     public float hopHeight;
-    public float hopDuration;
+    public float hopDurationInMultiplier;
+    public float hopDurationOutMultiplier;
     [SerializeField]
     private bool setHorizontalDirection = true;
     [SerializeField]
@@ -21,6 +22,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public Ease ease;
 
     [Header("Feedback Movement")]
+    public bool warningOnBumpWall;
     public SoundEffect sfx;
     public ActivateableMoodStance[] toAdd;
     [SerializeField]
@@ -58,8 +60,9 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         }
         SetFlags(pawn);
         AddStances(pawn);
-        sfx.ExecuteIfNotNull(pawn.ObjectTransform);
         duration += base.ExecuteEffect(pawn, skillDirection);
+        if (hopHeight > 0) pawn.FakeHop(hopHeight, hopDurationInMultiplier * duration, hopDurationOutMultiplier * duration);
+        Debug.LogWarningFormat("{0} has duration {1}. Distance is {2} and velocity is {3}. Duration real is {4}", this, duration, distance.magnitude, velocityAdd, pawn.CurrentDashDuration());
         return duration;
     }
 
@@ -73,7 +76,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     {
         if(set)
         {
-            if(triggerAnim.IsValid())
+            sfx.ExecuteIfNotNull(pawn.ObjectTransform);
+            if (triggerAnim.IsValid())
                 pawn.animator.SetTrigger(triggerAnim);
         }
 
@@ -111,7 +115,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         {
             minLength = minDistance,
             maxLength = maxDistance,
-            width = showArrowWidth
+            width = showArrowWidth,
+            warningOnHit = this.warningOnBumpWall
         };
     }
 

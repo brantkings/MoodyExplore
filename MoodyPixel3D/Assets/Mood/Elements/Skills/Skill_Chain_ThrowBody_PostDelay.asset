@@ -21,9 +21,17 @@ MonoBehaviour:
   restrictions: []
   _possibleAngles: []
   startupPriority: 3
+  heightCheckers: []
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0
+  _debug: 0
   delay: 1
   flags: []
+  sfx: {fileID: 0}
+  toAdd: []
+  triggerAnim:
+    id: 
+  boolWhileInSkill:
+    id: Crouch

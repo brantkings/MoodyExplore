@@ -424,12 +424,12 @@ public class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster, out Vector3 normal)
+    public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster, out RaycastHit hit)
     {
-        return WhatIsInThere(checkDistance, GetCaster(caster), out normal);
+        return WhatIsInThere(checkDistance, GetCaster(caster), out hit);
     }
 
-    private Caster GetCaster(CasterClass caster)
+    public Caster GetCaster(CasterClass caster)
     {
         switch (caster)
         {
@@ -444,12 +444,11 @@ public class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private Collider WhatIsInThere(Vector3 checkDistance, Caster caster, out Vector3 normal)
+    private Collider WhatIsInThere(Vector3 checkDistance, Caster caster, out RaycastHit hit)
     {
-        normal = Vector3.zero;
-        if (caster != null && caster.Cast(checkDistance, out RaycastHit hit))
+        hit = default(RaycastHit);
+        if (caster != null && caster.Cast(checkDistance, out hit))
         {
-            normal = hit.normal;
             return hit.collider;
         }
         else return null;

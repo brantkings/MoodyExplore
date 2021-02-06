@@ -107,6 +107,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private DirectionFixer[] _possibleAngles;
     [SerializeField]
     private int startupPriority;
+    [SerializeField] private NumberUtils.NumberComparer<float>[] heightCheckers;
 
     [Space()]
     [SerializeField]
@@ -176,13 +177,21 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return pawn.IsInNeutralStance();
     }
 
+    private bool IsHeightOK(MoodPawn pawn)
+    {
+        if (heightCheckers == null || heightCheckers.Length == 0) return true;
+        float height = pawn.GetHeightFromGround();
+        foreach (var check in heightCheckers) if (!check.Compare(height)) return false;
+        return true;
+    }
+
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
         if(Debugging)
         {
-            Debug.LogErrorFormat("{0} can do {1}? stance?{2} && focus?{3} && neutral?{4} && pawn?{5}", pawn.name, name, IsValidStanceSetup(pawn), IsFocusAvailable(pawn), IsNeutralOK(pawn), pawn.CanUseSkill(this));
+            Debug.LogErrorFormat("{0} can do {1}? stance?{2} && focus?{3} && neutral?{4} && pawn?{5} && height{6}", pawn.name, name, IsValidStanceSetup(pawn), IsFocusAvailable(pawn), IsNeutralOK(pawn), pawn.CanUseSkill(this), IsHeightOK(pawn));
         }
-        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && IsNeutralOK(pawn) && pawn.CanUseSkill(this);
+        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && IsHeightOK(pawn) && IsNeutralOK(pawn) && pawn.CanUseSkill(this);
     }
 
     public virtual bool CanBeShown(MoodPawn pawn)
@@ -229,7 +238,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         DispatchExecuteEvent(pawn, skillDirection);
         if (duration > 0f)
         {
-            yield return new WaitForSecondsRealtime(duration);
+            yield return new WaitForSeconds(duration);
         }
         ConsumeStances(pawn);
     }

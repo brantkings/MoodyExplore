@@ -40,7 +40,9 @@ public class ChainSkill : StaminaCostMoodSkill
         {
             pawn.UnmarkUsingSkill(this);
             pawn.MarkUsingSkill(skill);
+            Debug.LogFormat("Gonna use skill {0}, {1}", skill, Time.time);
             yield return skill.ExecuteRoutine(pawn, skillDirection);
+            Debug.LogFormat("Finished skill {0}, {1}", skill, Time.time);
             pawn.UnmarkUsingSkill(skill);
 
             pawn.MarkUsingSkill(this);

@@ -81,6 +81,14 @@ namespace LHH.Caster
             }
         }
 
+        public float SafetyDistance
+        {
+            get
+            {
+                return _safetyDistance;
+            }
+        }
+
         public virtual Vector3 GetOriginPosition()
         {
             return Origin.TransformPoint(_defaultOriginOffset);

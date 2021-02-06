@@ -12,6 +12,8 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         public float width = 1f;
         public float minLength;
         public float maxLength;
+        public float direction;
+        public bool warningOnHit;
     }
     
     private SpriteRenderer _rend;
@@ -34,11 +36,24 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
     public Gradient colorIn;
     public Gradient colorOut;
+    public Color colorFine;
+    public Color colorWarning;
+
+    private Gradient gradientNow;
+    private Color colorNow;
 
     private Tween _tweenNow;
     private float _targetWidth = 0f;
 
     private Properties _parametersInEffect;
+
+    private MoodPawn pawn;
+
+    private void Awake()
+    {
+        pawn = GetComponentInParent<MoodPawn>();
+        colorNow = colorFine;
+    }
 
 
     public override void Show(Properties arrowParameters)
@@ -73,27 +88,69 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         _parametersInEffect = null;
     }
 
-    private float GetArrowLength(float originalMagnitude)
+    private float GetArrowLength(Vector3 direction, out bool hitted)
     {
+        hitted = false;
         if (_parametersInEffect != null)
         {
-            return Mathf.Clamp(originalMagnitude, _parametersInEffect.minLength, _parametersInEffect.maxLength);
+            float desiredLength = Mathf.Clamp(direction.magnitude, _parametersInEffect.minLength, _parametersInEffect.maxLength);
+            LHH.Caster.Caster caster = pawn.mover.GetCaster(KinematicPlatformer.CasterClass.Side);
+            RaycastHit hit;
+            if (Physics.Raycast(caster.transform.position, direction.normalized, out hit, desiredLength, caster.HitMask | caster.ObstacleMask))
+            {
+                Debug.LogFormat("What is there is {0} ({1} to {2})", hit.collider, desiredLength, hit.distance);
+                desiredLength = hit.distance;
+                hitted = true;
+                return desiredLength;
+            }
+            /*if (caster.CastLength(direction.normalized * desiredLength, out hit))
+            {
+                Debug.LogFormat("What is there is {0} ({1} to {2})", hit.collider, desiredLength, hit.distance);
+                desiredLength = hit.distance + caster.SafetyDistance;
+            }*/
+            return desiredLength;
+            
         }
         else return 0f;
     }
 
+    private bool NeedsWarning()
+    {
+        if (_parametersInEffect != null) return _parametersInEffect.warningOnHit;
+        else return false;
+    }
 
     
     
-    public void SetDirection(Vector3 direction)
-    {
-        Renderer.transform.rotation = Quaternion.LookRotation(Vector3.up, direction.normalized);
-        Renderer.size = new Vector2(_targetWidth, GetArrowLength(direction.magnitude));
+    public void SetDirection(Vector3 skillDirection)
+    { 
+        Renderer.transform.rotation = Quaternion.LookRotation(Vector3.up, skillDirection.normalized);
+        Renderer.size = new Vector2(_targetWidth, GetArrowLength(skillDirection, out bool hitted));
+        if(NeedsWarning())
+        {
+            colorNow = hitted ? colorWarning : colorFine;
+            SetColor(_colorLerpNum);
+        }
+        
     }
     
     private Tween TweenColor(Gradient to, float duration)
     {
-        return Renderer.DOGradientColor(to, duration).SetEase(Ease.Linear);
+        gradientNow = to;
+        return DOTween.To(GetColor, SetColor, 1f, duration).SetEase(Ease.Linear);
+    }
+
+    private float _colorLerpNum;
+
+    private void SetColor(float x)
+    {
+        _colorLerpNum = x;
+        Renderer.color = Color.Lerp(gradientNow.Evaluate(x), colorNow, x);
+    }
+
+    private float GetColor()
+    {
+        return _colorLerpNum;
     }
     
     private Tween TweenDirection(Vector3 to, float duration)

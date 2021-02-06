@@ -21,23 +21,31 @@ MonoBehaviour:
   restrictions: []
   _possibleAngles: []
   startupPriority: 0
+  heightCheckers: []
   _freeFocusCost: 0
   _lockCamera: 0
   lockMovement: 1
   _shortcut: 0
+  _debug: 0
   _cost: 0
   minDistance: 6
   maxDistance: 7
-  hopHeight: 0
-  hopDuration: 0
+  hopHeight: 1
+  hopDurationInMultiplier: 0.25
+  hopDurationOutMultiplier: 0.75
   setHorizontalDirection: 1
   setDirectionInRelationToMovement: []
   velocityAdd: 16
   durationAdd: 0
   showArrowWidth: 1
   ease: 3
+  warningOnBumpWall: 1
   sfx: {fileID: 0}
   toAdd: []
+  triggerAnim:
+    id: 
+  boolWhileInSkill:
+    id: 
   onBeginningFlags:
   - {fileID: 11400000, guid: 1834439e7e9165340a54d935600a7f5e, type: 2}
   onEndFlags:
