@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 991741e3d359ea140b07ae9e22abc70e, type: 3}
+  m_Name: Stance_A_StaminaBreak_NormalLength
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _reactions: []
+  removeNeutralStance: 1
+  pawnModifiers:
+  - {fileID: 11400000, guid: 2855c5a2ad5d48744b1a04dfa690158b, type: 2}
+  - {fileID: 11400000, guid: 5836d3719bef63641818f6baabd3f829, type: 2}
+  - {fileID: 11400000, guid: 164364dbdcc586049a015ab46873cd90, type: 2}
+  - {fileID: 11400000, guid: 6d1ddb553274d7b40b5a43a808149b57, type: 2}
+  _hasTimeLimit: 1
+  _timeLimit: 2.5
+  _stanceAnimParamBool: 
+  flags:
+  - {fileID: 11400000, guid: 9364ad8f2b47d364cbe5240b079a0bae, type: 2}
+  deactivateFlags:
+  - {fileID: 11400000, guid: a09fc5f2f5ec6a1418631f5a43561720, type: 2}

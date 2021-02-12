@@ -8,21 +8,11 @@ public class ActivateableMoodStance : MoodStance
 {
     [Header("Activateable")]
     [SerializeField]
-    private ValueModifier staminaOverTimeIdle;
-    [SerializeField]
-    private ValueModifier staminaOverTimeMoving;
-    [SerializeField]
-    private ValueModifier movementVelocity;
-    
-
-
+    public MoodPawnModifier[] pawnModifiers;
     [SerializeField]
     private bool _hasTimeLimit;
     [SerializeField]
     private float _timeLimit;
-
-    [SerializeField]
-    private bool _stun;
 
     [SerializeField]
     private string _stanceAnimParamBool;
@@ -48,40 +38,33 @@ public class ActivateableMoodStance : MoodStance
         return deactivateFlags.Contains(flag);
     }
 
-    public void ModifyStamina(ref float stamina, bool moving)
-    {
-        if (moving) staminaOverTimeMoving.Modify(ref stamina);
-        else staminaOverTimeIdle.Modify(ref stamina);
-    }
-
-    public void ModifyVelocity(ref Vector3 velocity)
-    {
-        if(movementVelocity.IsChange())
-        {
-            float vel = velocity.magnitude;
-            movementVelocity.Modify(ref vel);
-            velocity = velocity.normalized * vel;
-        }
-    }
-
     public void ApplyStance(MoodPawn pawn, bool setWithStance)
     {
         if(pawn.animator != null && !string.IsNullOrEmpty(_stanceAnimParamBool) )
             pawn.animator.SetBool(_stanceAnimParamBool, setWithStance);
         if(_hasTimeLimit && setWithStance)
             pawn.StartCoroutine(TimeoutRoutine(pawn));
-        if (_stun)
+
+        foreach (var mod in pawnModifiers) mod.SetModifierApplied(this, pawn, setWithStance); 
+    }
+
+    public virtual IEnumerable<T> GetAllModifiers<T>() where T:class
+    {
+        if(pawnModifiers != null)
         {
-            if (setWithStance)
-                pawn.AddStunLock(name);
-            else
-                pawn.RemoveStunLock(name);
+            for (int i = 0, len = pawnModifiers.Length; i < len; i++)
+            {
+                MoodPawnModifier mod = pawnModifiers[i];
+                if (mod is T) yield return mod as T;
+            }
         }
     }
 
     private IEnumerator TimeoutRoutine(MoodPawn pawn)
     {
+        //Debug.LogErrorFormat("Starting timeout for {0} {1},", pawn, this);
         yield return new WaitForSeconds(_timeLimit);
+        //Debug.LogErrorFormat("Ending timeout for {0} {1},", pawn, this);
         pawn.RemoveStance(this);
     }
 

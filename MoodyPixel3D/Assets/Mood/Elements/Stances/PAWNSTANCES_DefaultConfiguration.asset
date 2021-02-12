@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: PAWNSTANCES_DefaultConfiguration
   m_EditorClassIdentifier: 
   onStaminaDownByAction: {fileID: 0}
-  onStaminaDownByReaction: {fileID: 0}
+  onStaminaDownByReaction: {fileID: 11400000, guid: 9364ad8f2b47d364cbe5240b079a0bae, type: 2}
+  onDamage: {fileID: 11400000, guid: a09fc5f2f5ec6a1418631f5a43561720, type: 2}
+  stanceOnSkill: {fileID: 11400000, guid: c26440728911a7a4395539f47dd5e992, type: 2}
   flaggeableStances:
   - {fileID: 11400000, guid: 9817d25c84411424ab8478112e231846, type: 2}
+  - {fileID: 11400000, guid: 42ca98c7db1af9642bc51de125c5f638, type: 2}
   conditionalStances:
   - {fileID: 11400000, guid: 1e3d1abdb2c9721448fc05cb2e5d17cb, type: 2}
   reactions:

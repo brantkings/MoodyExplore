@@ -61,6 +61,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [SerializeField]
     private MoodAttackFeedback _attackFeedback;
     [SerializeField]
+    private Transform _shakeFeedback;
+    [SerializeField]
     private SensorTarget _ownSensorTarget;
     [Space]
     [SerializeField]
@@ -192,6 +194,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
+    public Health Health
+    {
+        get
+        {
+            return _health;
+        }
+    }
+
     private void Awake() {
         _lookAtControl = animator.GetComponent<LookAtIK>();
     }
@@ -225,6 +235,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             _health.OnDamage -= OnDamage;
             _health.OnDeath -= OnDeath;
         }
+
+        //Remove current Threats
+        ClearCurrentThreats();
     }
 
     private void Start()
@@ -259,6 +272,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         ThreatFixedUpdate(_threatDirection);
     }
 
+    #region Feedback
+
     public void PrepareForSwing(MoodSwing swing, Vector3 direction)
     {
         OnBeforeSwinging?.Invoke(swing, direction);
@@ -268,31 +283,27 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if (_attackFeedback != null)
             _attackFeedback.DoFeedback(swing, direction);
-        else Debug.LogErrorFormat("No attack feedback on {0}", this);
-    }
-    
-    public void UsedSkill(MoodSkill skill, Vector3 direction)
-    {
-        Debug.LogFormat("{0} executes {1} {2}!", name, skill.name, Time.time);
-        OnUseSkill?.Invoke(skill, direction);
     }
 
-    public bool CanUseSkill(MoodSkill skill)
+    public Transform GetShakeTransform()
     {
-        return !_stunLock.IsLocked() && skill.GetPluginPriority(this) > GetPlugoutPriority();
+        return _shakeFeedback;
     }
+    #endregion
 
     #region Health
 
-    public void Damage(DamageInfo dmg)
+    public Health.DamageResult Damage(DamageInfo dmg)
     {
         dmg.team = damageTeam;
-        _health.Damage(dmg);
+        return _health.Damage(dmg);
     }
 
     protected virtual void OnDamage(DamageInfo info, Health health)
     {
         Debug.LogFormat("{0} takes damage with info {1}.", name , info);
+        if (info.amount > 0 && pawnConfiguration != null) 
+            AddFlag(pawnConfiguration.onDamage);
         Stagger(info, health);
     }
 
@@ -303,7 +314,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void Stagger(DamageInfo info, Health health)
     {
-        AddStunLockTimer("damage", info.stunTime);
+        AddStunLockTimer(StunType.Action, "damage", info.stunTime);
         InterruptCurrentSkill();
 
         float animationDelay = 0.125f;
@@ -352,7 +363,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private IEnumerator SkillRoutine(MoodSkill skill, Vector3 skillDirection)
     {
         MarkUsingSkill(skill);
+        if(pawnConfiguration?.stanceOnSkill != null) AddStance(pawnConfiguration.stanceOnSkill);
         yield return skill.ExecuteRoutine(this, skillDirection);
+        if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
         _currentSkillRoutine = null;
         UnmarkUsingSkill(skill);
     }
@@ -372,6 +385,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             Debug.LogFormat("{0} gonna interrupt skill {1}", this.name, skill?.name);
             if (_currentSkillRoutine != null) StopCoroutine(_currentSkillRoutine);
+            if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
             _currentSkillRoutine = null;
             skill.Interrupt(this);
             OnInterruptSkill?.Invoke(skill);
@@ -411,6 +425,16 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public MoodSkill GetCurrentSkill()
     {
         return _currentSkill;
+    }
+    public void UsedSkill(MoodSkill skill, Vector3 direction)
+    {
+        Debug.LogFormat("{0} executes {1} {2}!", name, skill.name, Time.time);
+        OnUseSkill?.Invoke(skill, direction);
+    }
+
+    public bool CanUseSkill(MoodSkill skill)
+    {
+        return !IsStunned(StunType.Action) && skill.GetPluginPriority(this) > GetPlugoutPriority();
     }
     #endregion
 
@@ -490,6 +514,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         bool ok = AddedStances.Add(stance);
         if (ok)
         {
+            Debug.LogFormat("[STANCE] {0} added stance {1}", name, stance.name);
             stance.ApplyStance(this, true);
         }
         return ok;
@@ -501,6 +526,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         bool ok = AddedStances.Remove(stance);
         if (ok)
         {
+            Debug.LogFormat("[STANCE] {0} removed stance {1}", name, stance.name);
             stance.ApplyStance(this, false);
         }
         return ok;
@@ -514,6 +540,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _tempFlags.Clear();
     }
 
+    private HashSet<ActivateableMoodStance> _toRemoveFromAddedFlags = new HashSet<ActivateableMoodStance>();
+
     public bool AddFlag(MoodEffectFlag flag)
     {
         if (flag == null) 
@@ -523,24 +551,23 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             _tempFlags.Add(flag);
             return false;
         }
-        if(AllFlaggeableStances().Any(x=>x.HasFlag(flag))) //Only add flag if needed. Or else
+        bool changedAnyFlag = false;
+        foreach (var stance in AllFlaggeableStances().Where(x => x.HasFlagToActivate(flag)))
         {
-            foreach (var stance in AllFlaggeableStances().Where(x => x.HasFlag(flag)))
-            {
-                if(stance.HasFlagToActivate(flag))
-                {
-                    Debug.LogFormat("{0} added stance {1} due to flag {2}.", this.name, stance, flag.name);
-                    AddStance(stance);
-                }
-                else //Yeah if not then you should remove
-                {
-                    Debug.LogFormat("{0} removed stance {1} due to flag {2}.", this.name, stance, flag.name);
-                    RemoveStance(stance);
-                }
-            }
-            return true;
+            Debug.LogFormat("{0} added stance {1} due to flag {2}.", this.name, stance, flag.name);
+            changedAnyFlag = AddStance(stance) || changedAnyFlag;
         }
-        return false;
+        foreach (var stance in AddedStances.Where(x => x.HasFlagToDeactivate(flag)))
+        {
+            _toRemoveFromAddedFlags.Add(stance);
+        }
+        foreach(var stance in _toRemoveFromAddedFlags)
+        {
+            Debug.LogFormat("{0} removed stance {1} due to flag {2}.", this.name, stance, flag.name);
+            changedAnyFlag = RemoveStance(stance) || changedAnyFlag;
+        }
+        _toRemoveFromAddedFlags.Clear();
+        return changedAnyFlag;
     }
 
     public bool AddFlags(IEnumerable<MoodEffectFlag> flags)
@@ -701,7 +728,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private bool CanMove()
     {
-        return !_movementLock.IsLocked() && !_stunLock.IsLocked();
+        return !IsStunned(StunType.Movement) && !IsStunned(StunType.Action);
     }
 
     private void SolveFinalVelocity(ref Vector3 finalVel)
@@ -766,7 +793,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
                 react.ReactToBump(ref bumpInfo, this);
             }
         }
-        AddStunLockTimer("bump", bumpInfo.knockbackDuration);
+        AddStunLockTimer(StunType.Action, "bump", bumpInfo.knockbackDuration);
         SetDamageAnimationTween(bumpInfo.direction.normalized * 0.5f, bumpInfo.knockbackDuration, 0f);
         Dash(bumpInfo.direction, bumpInfo.knockbackDuration, Ease.OutSine);
     }
@@ -783,7 +810,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void OnBumped(GameObject origin, Vector3 velocity, Vector3 normal)
     {
-        Debug.LogFormat("{0} got bumped by {1}!", name, origin.name); 
         MoodReaction.ReactionInfo info = MakeReactionInfo(velocity, origin, normal, false);
         HandleBumpInfo(info);
     }
@@ -794,7 +820,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             if(stance != null)
             {
-                stance.ModifyVelocity(ref velocity);
+                foreach (var mod in stance.GetAllModifiers<IMoodPawnModifierVelocity>()) mod.ModifyVelocity(ref velocity);
             }
         }
     }
@@ -888,7 +914,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void CallBeginMove()
     {
-        Debug.LogWarningFormat("Start move {0}, {1}", this, Time.time);
+        //Debug.LogWarningFormat("Start move {0}, {1}", this, Time.time);
         OnBeginMove?.Invoke();
         OnNextBeginMove?.Invoke();
         OnNextBeginMove = null;
@@ -896,10 +922,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void CallEndMove()
     {
-        Debug.LogWarningFormat("End move {0}, {1}", this, Time.time);
+        //Debug.LogWarningFormat("End move {0}, {1}", this, Time.time);
         SolveFinalVelocity(ref _inputVelocity);
         OnEndMove?.Invoke();
-        Debug.LogFormat("Gonna do next end move on {0} which is {1}", this, OnNextEndMove.GetInvocationList().Count());
+        //Debug.LogFormat("Gonna do next end move on {0} which is {1}", this, OnNextEndMove?.GetInvocationList().Count());
         OnNextEndMove?.Invoke();
         OnNextEndMove = null;
     }
@@ -979,14 +1005,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         timeStampAttack = Time.time;
 
         animator.SetBool(attackStr, true);
-        Debug.LogErrorFormat("Start attack animation by {0} {1}", skill.name, Time.frameCount);
+        //Debug.LogErrorFormat("Start attack animation by {0} {1}", skill.name, Time.frameCount);
     }
 
     public void FinishSkillAnimation(MoodSkill skill)
     {
         animator.SetBool("Attack_Right", false);
         animator.SetBool("Attack_Left", false);
-        Debug.LogErrorFormat("Finish attack animation by {0} {1}", skill.name, Time.frameCount);
+        //Debug.LogErrorFormat("Finish attack animation by {0} {1}", skill.name, Time.frameCount);
     }
 
     public void SetDamageAnimationTween(Vector3 direction, float duration, float delay)
@@ -1047,8 +1073,17 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     #region Locking
 
-    private Lock<string> _stunLock;
-    private Lock<string> _movementLock;
+    private Lock<string> _actionStunLock = new Lock<string>();
+    private Lock<string> _reactionStunLock = new Lock<string>();
+    private Lock<string> _movementLock = new Lock<string>();
+
+    public enum StunType
+    {
+        Action,
+        Reaction,
+        Movement,
+        None
+    }
 
     private void OnLockMovement()
     {
@@ -1059,50 +1094,76 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         mover.CancelVelocity();
     }
 
-    public void AddMovementLock(string str)
+
+    private Dictionary<StunType, Dictionary<string,Coroutine>> _stunRoutines = new Dictionary<StunType, Dictionary<string, Coroutine>>(4);
+
+    private Lock<string> GetLock(StunType type)
     {
-        _movementLock.Add(str);
+        switch (type)
+        {
+            case StunType.Action:
+                return _actionStunLock;
+            case StunType.Reaction:
+                return _reactionStunLock;
+            case StunType.Movement:
+                return _movementLock;
+            default:
+                return null;
+        }
     }
 
-    public void RemoveMovementLock(string str)
+    public bool IsStunned(StunType type)
     {
-        _movementLock.Remove(str);
+        return GetLock(type).IsLocked();
     }
 
-    private Coroutine _stunRoutine;
-
-    public bool IsStunned()
+    private void EndStun(StunType type)
     {
-        return _stunLock.IsLocked();
+        RemoveStunLockTimer(type);
+        GetLock(type).RemoveAll();
     }
 
-    private void EndStun()
+    public void AddStunLock(StunType type, string str)
     {
-        if (_stunRoutine != null) StopCoroutine(_stunRoutine);
-        _stunLock.RemoveAll();
+        GetLock(type).Add(str);
     }
 
-    public void AddStunLock(string str)
+    public void RemoveStunLock(StunType type, string str)
     {
-        _stunLock.Add(str);
+        GetLock(type).Remove(str);
     }
 
-    public void RemoveStunLock(string str)
+    private void RemoveStunLockTimer(StunType type)
     {
-        _stunLock.Remove(str);
+        if (_stunRoutines.ContainsKey(type))
+        {
+            foreach(var routine in _stunRoutines[type].Values)
+                StopCoroutine(routine);
+            _stunRoutines.Remove(type);
+        }
     }
 
-    public void AddStunLockTimer(string str, float timeStunned)
+    public void AddStunLockTimer(StunType type, string str, float timeStunned)
     {
-        _stunRoutine = StartCoroutine(StunLockRoutine(str, timeStunned));
+        if(!_stunRoutines.ContainsKey(type))
+        {
+            _stunRoutines.Add(type, new Dictionary<string, Coroutine>(4));
+        }
+        Dictionary<string, Coroutine> dict = _stunRoutines[type];
+        if(dict.ContainsKey(str))
+        {
+            StopCoroutine(dict[str]);
+            dict.Remove(str);
+        }
+        dict.Add(str, StartCoroutine(StunLockRoutine(type, str, timeStunned)));
     }
 
-    private IEnumerator StunLockRoutine(string str, float timeStunned)
+    private IEnumerator StunLockRoutine(StunType type, string str, float timeStunned)
     {
-        _stunLock.Add(str);
-        yield return new WaitForSeconds(timeStunned);
-        _stunLock.Remove(str);
-        _stunRoutine = null;
+        GetLock(type).Add(str);
+        if(timeStunned>0) yield return new WaitForSeconds(timeStunned);
+        GetLock(type).Remove(str);
+        _stunRoutines.Remove(type);
     }
     #endregion
 
@@ -1145,18 +1206,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private HashSet<MoodThreatenable> _threatTarget = new HashSet<MoodThreatenable>();
     private void ChangeThreatTargets(IEnumerable<MoodThreatenable> targets)
     {
-        foreach (MoodThreatenable threatened in _threatTarget)
-        {
-            if (targets.Contains(threatened)) continue;
-            threatened.RemoveThreat(gameObject);
-        }
-        _threatTarget.Clear();
+        ClearCurrentThreats(targets);
         foreach(MoodThreatenable nextTarget in targets)
         {
             if(nextTarget != null && nextTarget != Threatenable)
             {
                 if (_threatTarget.Add(nextTarget))
                 {
+                    Debug.LogFormat("{0} is threatening {1}.", name, nextTarget);
                     nextTarget.AddThreat(gameObject);
                 }
             }
@@ -1165,19 +1222,39 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void ChangeThreatTarget(MoodThreatenable nextTarget)
     {
-        foreach (MoodThreatenable threatened in _threatTarget)
-        {
-            if (threatened == nextTarget) continue;
-            threatened.RemoveThreat(gameObject);
-        }
-        _threatTarget.Clear();
+        ClearCurrentThreats(nextTarget);
         if(nextTarget != null && nextTarget != Threatenable)
         {
             if(_threatTarget.Add(nextTarget))
             {
+                Debug.LogFormat("{0} is threatening {1}.", name, nextTarget);
                 nextTarget.AddThreat(gameObject);
             }
         }
+    }
+
+    private void ClearCurrentThreats(MoodThreatenable except = null)
+    {
+        foreach (MoodThreatenable threatened in _threatTarget)
+        {
+            if (threatened == except) continue;
+
+            Debug.LogFormat("{0} is not threatening anymore {1}.", name, threatened);
+            threatened.RemoveThreat(gameObject);
+        }
+        //_threatTarget.Clear();
+    }
+
+    private void ClearCurrentThreats(IEnumerable<MoodThreatenable> except)
+    {
+        foreach (MoodThreatenable threatened in _threatTarget)
+        {
+            if (except.Contains(threatened) || threatened == null) continue;
+
+            Debug.LogFormat("{0} is not threatening anymore {1}.", name, threatened);
+            threatened.RemoveThreat(gameObject);
+        }
+        //_threatTarget.Clear();
     }
 
 
@@ -1209,7 +1286,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         float value = isMoving ? staminaRecoveryMoving : staminaRecoveryIdle;
         foreach(ActivateableMoodStance stance in AddedStances)
         {
-            stance.ModifyStamina(ref value, isMoving);
+            foreach (IMoodPawnModifierStamina mod in stance.GetAllModifiers<IMoodPawnModifierStamina>()) 
+                mod.ModifyStamina(ref value, isMoving);
         }
         return value;
     }
@@ -1377,10 +1455,21 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     #region Debug
     [LHH.Unity.Button]
-    private void DebugActiveStances()
+    [ContextMenu("Debug Stances")]
+    public void DebugActiveStances()
     {
         foreach(var stance in AllActiveStances)
             Debug.LogFormat("{0} is in {1}", name, stance);
+    }
+
+
+    [LHH.Unity.Button]
+    [ContextMenu("Debug Locks")]
+    public void DebugLocks()
+    {
+        Debug.LogFormat("[LOCK] Movement is {0}", _movementLock);
+        Debug.LogFormat("[LOCK] Action is {0}", _actionStunLock);
+        Debug.LogFormat("[LOCK] Reaction is {0}", _reactionStunLock);
     }
     #endregion
 

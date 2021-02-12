@@ -52,7 +52,6 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     private void Awake()
     {
         pawn = GetComponentInParent<MoodPawn>();
-        colorNow = colorFine;
     }
 
 
@@ -62,7 +61,9 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         _tweenNow.KillIfActive();
         Sequence seq = DOTween.Sequence();
 
-        
+        colorNow = colorFine;
+
+
         Renderer.size = Vector2.zero;
         //seq.Insert(0f, TweenDirection(direction, durationIn * durationRotateFactor));
         seq.Insert(0f, TweenSpriteWidth(arrowParameters.width, durationIn, easeIn));
@@ -98,7 +99,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
             RaycastHit hit;
             if (Physics.Raycast(caster.transform.position, direction.normalized, out hit, desiredLength, caster.HitMask | caster.ObstacleMask))
             {
-                Debug.LogFormat("What is there is {0} ({1} to {2})", hit.collider, desiredLength, hit.distance);
+                //Debug.LogFormat("What is there is {0} ({1} to {2})", hit.collider, desiredLength, hit.distance);
                 desiredLength = hit.distance;
                 hitted = true;
                 return desiredLength;
@@ -145,7 +146,11 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     private void SetColor(float x)
     {
         _colorLerpNum = x;
-        Renderer.color = Color.Lerp(gradientNow.Evaluate(x), colorNow, x);
+        Color oldColor = Renderer.color;
+        Color gradientColor = gradientNow.Evaluate(x);
+        Color resultColor = Color.Lerp(gradientColor, colorNow, x);
+        resultColor.a = oldColor.a;
+        Renderer.color = resultColor; 
     }
 
     private float GetColor()

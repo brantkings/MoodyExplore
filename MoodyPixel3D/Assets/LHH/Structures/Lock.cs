@@ -6,7 +6,7 @@ using UnityEngine;
 namespace LHH.Structures
 {
 
-    public struct Lock<T>
+    public class Lock<T>
     {
         private HashSet<T> _locks;
 
@@ -57,6 +57,22 @@ namespace LHH.Structures
             _locks.Clear();
             OnUnlock?.Invoke();
             return true;
+        }
+
+        public override string ToString()
+        {
+            string lockStr = "";
+            bool did = false;
+            if(_locks != null)
+            {
+                foreach(T l in _locks)
+                {
+                    if (did) lockStr += ", ";
+                    lockStr += l.ToString();
+                    did = true;
+                }
+            }
+            return $"{(IsLocked() ? "Locked" : "Unlocked")} - [{lockStr}]";
         }
     }
 }

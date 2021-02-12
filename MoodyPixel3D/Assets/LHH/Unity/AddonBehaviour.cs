@@ -2,30 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AddonBehaviour<T> : MonoBehaviour where T:Component
+namespace LHH.Unity
 {
-    protected T Addon
+
+    public abstract class AddonBehaviour<T> : MonoBehaviour where T:Component
     {
-        get
+        protected T Addon
         {
-            if (_addon == null) _addon = GetComponent<T>();
-            return _addon;
+            get
+            {
+                if (_addon == null) _addon = GetComponent<T>();
+                return _addon;
+            }
         }
+
+        private T _addon;
     }
 
-    private T _addon;
-}
-
-public abstract class AddonBehaviour<T, U> : AddonBehaviour<T> where T : Component where U: Component
-{
-    protected U Addon2
+    public abstract class AddonBehaviour<T, U> : AddonBehaviour<T> where T : Component where U: Component
     {
-        get
+        protected U Addon2
         {
-            if (_addon == null) _addon = GetComponent<U>();
-            return _addon;
+            get
+            {
+                if (_addon == null) _addon = GetComponent<U>();
+                return _addon;
+            }
         }
-    }
 
-    private U _addon;
+        private U _addon;
+    }
 }
+

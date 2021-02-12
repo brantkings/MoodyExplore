@@ -228,8 +228,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void OnInterruptSkill(MoodSkill skill)
     {
-        OnStopCommand?.Invoke();
         Debug.LogFormat("Interrupting command {0} {1}", skill.name, Time.time);
+        OnStopCommand?.Invoke();
     }
 
     private bool IsExecutingCommand()
@@ -364,7 +364,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public bool IsStunned()
     {
-        return pawn.IsStunned();
+        return pawn.IsStunned(MoodPawn.StunType.Action);
     }
 
     public bool IsManuallyRotating()

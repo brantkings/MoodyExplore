@@ -27,11 +27,12 @@ MonoBehaviour:
   lockMovement: 0
   _shortcut: 0
   _debug: 0
-  delay: 1
+  delay: 3
+  stuns: 000000000100000002000000
   flags: []
   sfx: {fileID: 0}
   toAdd: []
   triggerAnim:
     id: 
   boolWhileInSkill:
-    id: Crouch
+    id: GetUp

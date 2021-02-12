@@ -8,6 +8,7 @@ public class MoodReaction_TakeDamage : MoodReaction
     [Header("Damage self")]
     public int damage = DamageInfo.BASE_SINGLE_UNIT_DAMAGE;
     public bool stagger = true;
+    public bool ignorePhaseThrough = true;
     public float stunTime = 1f;
 
     public RelativeVector3 knockbackDirectionFromPawnDirection;
@@ -20,8 +21,6 @@ public class MoodReaction_TakeDamage : MoodReaction
 
     protected override void React(ReactionInfo info, MoodPawn pawn)
     {
-        base.React(info, pawn);
-
         DamageInfo dmgInfo = new DamageInfo()
         {
             amount = damage,
@@ -32,11 +31,17 @@ public class MoodReaction_TakeDamage : MoodReaction
             team = DamageTeam.Neutral,
             distanceKnockback = knockbackDirectionFromPawnDirection.Get(pawn.ObjectTransform),
             durationKnockback = knockbackDuration,
-            unreactable = true
+            unreactable = true,
+            ignorePhaseThrough = true
         };
 
         Debug.LogWarningFormat("Gonna damage {0} by {1}", dmgInfo, name);
 
-        pawn.Damage(dmgInfo);
+        if(Health.IsDamage(pawn.Damage(dmgInfo)))
+        {
+            base.React(info, pawn);
+        }
+
+
     }
 }

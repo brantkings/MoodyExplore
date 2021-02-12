@@ -25,7 +25,6 @@ namespace LHH.Utils
             public bool Compare(T with)
             {
                 float c = Comparer<T>.Default.Compare(with, number);
-                Debug.LogFormat("Height checker {0} {3} {1} = {2}", with, number, c, comparer);
 
                 switch (comparer)
                 {

@@ -75,6 +75,12 @@ ModelImporter:
   - first:
       74: 6521946555595323501
     second: DudeArmature|FlyFront
+  - first:
+      74: 1837623506956289836
+    second: DudeArmature|PreAttack (1)
+  - first:
+      74: 5738589174699959890
+    second: DudeArmature|GetUp
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -468,7 +474,7 @@ ModelImporter:
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
+      keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
@@ -530,6 +536,35 @@ ModelImporter:
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: f4353c6696356b1438d2219ad51bd7be, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DudeArmature|GetUp
+      takeName: DudeArmature|GetUp
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 95
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: -0.1
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []

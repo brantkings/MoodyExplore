@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Reaction_Natural_Defend
   m_EditorClassIdentifier: 
   origin: 0
+  ignoreDirection: 0
   directionToWork:
     angleFromForward: 0
     coneAngle: 180
@@ -22,14 +23,15 @@ MonoBehaviour:
   prohibitiveStances: []
   absoluteCost: 1
   multiplierDamageCost: 0
-  alwaysExecuteEvenWithoutStamina: 0
+  alwaysExecuteEvenWithoutStamina: 1
   absoluteKnockback: 0
   multiplierKnockbackByOrigin: 1
   multiplierKnockbackByDamage: 0
-  whenModifyDamage: 1
+  whenModifyDamage: 0
   damageModifier:
     add: 0
     multiplier: 0
   interruptCurrentSkill: 1
   animationTrigger: Defended
+  events: []
   sfx: {fileID: 11400000, guid: 3ee19997104acfe40918cc09b03ac105, type: 2}

@@ -32,7 +32,7 @@ MonoBehaviour:
   _lockCamera: 0
   lockMovement: 1
   _shortcut: 0
-  _debug: 1
+  _debug: 0
   _cost: 1
   minDistance: 6
   maxDistance: 6
@@ -49,6 +49,7 @@ MonoBehaviour:
   sfx: {fileID: 0}
   toAdd:
   - {fileID: 11400000, guid: c9db44afe41d8f648b2dd89ec3bc12da, type: 2}
+  - {fileID: 11400000, guid: cdbc977c5bd68b44f9827ec269811c1a, type: 2}
   triggerAnim:
     id: 
   boolWhileInSkill:

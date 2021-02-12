@@ -1,3 +1,18 @@
-﻿{
-	"name": "LHH.Utils.Editor"
+{
+    "name": "LHH.Utils.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e86dc1930d0060f46b2723d0dbfef748"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

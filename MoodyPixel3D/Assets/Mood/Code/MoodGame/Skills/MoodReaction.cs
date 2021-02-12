@@ -120,7 +120,7 @@ public class MoodReaction : ScriptableObject
     private bool IsStunnedStatusValid(MoodPawn pawn)
     {
         if (canExecuteStunned) return true;
-        else return !pawn.IsStunned();
+        else return !pawn.IsStunned(MoodPawn.StunType.Reaction);
     }
 
     private bool IsStanceStatusValid(MoodPawn pawn)

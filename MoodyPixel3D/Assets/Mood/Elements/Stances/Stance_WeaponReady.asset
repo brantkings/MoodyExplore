@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 21300000, guid: 4e539afaae83a6743849949fba7dc6f8, type: 3}
   _reactions: []
+  removeNeutralStance: 0
   staminaOverTimeIdle:
     add: 0
     multiplier: 0.25
@@ -23,8 +24,12 @@ MonoBehaviour:
   movementVelocity:
     add: 0
     multiplier: 0.5
+  pawnModifiers:
+  - {fileID: 11400000, guid: 39eeef3361ee18f45a5cb79a7031d765, type: 2}
+  - {fileID: 11400000, guid: 07ad8870df9c98b478c0abd86bd9472e, type: 2}
   _hasTimeLimit: 0
   _timeLimit: 0
   _stun: 0
   _stanceAnimParamBool: LiftWeapon
   flags: []
+  deactivateFlags: []

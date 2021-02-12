@@ -10,32 +10,30 @@ interface IAnimatorEvent
 }
 
 [System.Serializable]
-public struct AnimatorID
+public class AnimatorID
 {
     [SerializeField]
     private string id;
 
     private int _numericalId;
-    private bool _got;
     public int GetNumericalID()
     {
-        if(_got == false)
+        if (_numericalId == 0)
         {
-            if (_numericalId == 0) _numericalId = Animator.StringToHash(id);
-            _got = true;
+            _numericalId = Animator.StringToHash(id);
         }
         return _numericalId;
     }
 
     public bool IsValid()
     {
-        return GetNumericalID() != 0;
+        return !string.IsNullOrEmpty(id);
     }
 
-    public bool Equals(AnimatorID id)
+    /*public bool Equals(AnimatorID id)
     {
         return GetNumericalID() == id.GetNumericalID();
-    }
+    }*/
 
     public static implicit operator int(AnimatorID animID)
     {
@@ -45,6 +43,11 @@ public struct AnimatorID
     public static implicit operator AnimatorID(string animID)
     {
         return new AnimatorID() {id = animID};
+    }
+
+    public override string ToString()
+    {
+        return string.Format("'{0},{1}'", id, GetNumericalID());
     }
 }
 

@@ -58,6 +58,7 @@ public class MoodPawnFeedback : AddonBehaviour<MoodPawn>
 
     private void OnThreatRelief(MoodThreatenable t)
     {
+        Debug.LogFormat("Calling relief on threat! {0}", this);
         OnThreatenedChange(false);
         onThreatRelax.Invoke(Addon.ObjectTransform);
     }

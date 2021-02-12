@@ -7,6 +7,7 @@ public class DelaySkill : MoodSkill
 {
     [Header("Delay")]
     public float delay;
+    public MoodPawn.StunType[] stuns;
     public MoodEffectFlag[] flags;
 
     [Header("Feedback delay")]
@@ -21,13 +22,28 @@ public class DelaySkill : MoodSkill
     public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
         DoFeedback(pawn, true);
+        SolveStun(pawn, true);
         yield return base.ExecuteRoutine(pawn, skillDirection);
+        SolveStun(pawn, false);
         DoFeedback(pawn, false);
+    }
+
+    private void SolveStun(MoodPawn pawn, bool set)
+    {
+        if(set)
+        {
+            for (int i = 0, len = stuns.Length; i < len; i++) pawn.AddStunLock(stuns[i], name);
+        }
+        else
+        {
+            for (int i = 0, len = stuns.Length; i < len; i++) pawn.RemoveStunLock(stuns[i], name);
+        }
     }
 
     public override void Interrupt(MoodPawn pawn)
     {
         DoFeedback(pawn, false);
+        SolveStun(pawn, false);
         base.Interrupt(pawn);
     }
 
@@ -44,10 +60,13 @@ public class DelaySkill : MoodSkill
         if (set)
         {
             sfx.ExecuteIfNotNull(pawn.ObjectTransform);
+
+            Debug.LogFormat("Is {0} valid? {1}", triggerAnim, triggerAnim.IsValid());
             if (triggerAnim.IsValid())
                 pawn.animator.SetTrigger(triggerAnim);
         }
 
         pawn.animator.SetBool(boolWhileInSkill, set);
     }
+
 }

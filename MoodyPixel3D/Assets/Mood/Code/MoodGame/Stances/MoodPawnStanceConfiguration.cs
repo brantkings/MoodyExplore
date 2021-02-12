@@ -8,8 +8,10 @@ public class MoodPawnStanceConfiguration : ScriptableObject
     [Header("Flags")]
     public MoodEffectFlag onStaminaDownByAction;
     public MoodEffectFlag onStaminaDownByReaction;
+    public MoodEffectFlag onDamage;
 
     [Header("Default stances")]
+    public ActivateableMoodStance stanceOnSkill;
     public ActivateableMoodStance[] flaggeableStances;
     public ConditionalMoodStance[] conditionalStances;
     public MoodReaction[] reactions;

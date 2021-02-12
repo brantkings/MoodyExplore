@@ -15,6 +15,7 @@ MonoBehaviour:
   _icon: {fileID: 21300000, guid: b9098b72266f93b428256951f91619c5, type: 3}
   _reactions:
   - {fileID: 11400000, guid: 12f3597931b40f24398442ed2fca43c8, type: 2}
+  removeNeutralStance: 0
   staminaOverTimeIdle:
     add: 0
     multiplier: 0.1
@@ -24,8 +25,11 @@ MonoBehaviour:
   movementVelocity:
     add: 0
     multiplier: 0
+  pawnModifiers:
+  - {fileID: 11400000, guid: 18f9675125478c648a55e90dc450f8e2, type: 2}
   _hasTimeLimit: 1
   _timeLimit: 2
   _stun: 0
   _stanceAnimParamBool: Defend
   flags: []
+  deactivateFlags: []

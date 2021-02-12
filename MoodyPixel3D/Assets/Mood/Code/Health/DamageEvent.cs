@@ -12,7 +12,9 @@ public class DamageEvent : MonoBehaviour
     [Serializable]
     public class DamageUnityEvent : UnityEvent<int> {}
 
+    public DamageUnityEvent onConnect;
     public DamageUnityEvent onDamage;
+    public DamageUnityEvent onNonDamage;
     public DamageUnityEvent onKill;
 
     private void Awake()
@@ -32,12 +34,30 @@ public class DamageEvent : MonoBehaviour
         _damage.OnDamage -= OnDamage;
     }
 
-    private void OnDamage(Health health, int amount)
+    private void OnDamage(Health health, int amount, Health.DamageResult result)
     {
-        onDamage.Invoke(amount);
+        switch (result)
+        {
+            case Health.DamageResult.DamagingHit:
+                onConnect.Invoke(amount);
+                onDamage.Invoke(amount);
+                break;
+            case Health.DamageResult.NotDamagingHit:
+                onConnect.Invoke(amount);
+                break;
+            case Health.DamageResult.KillingHit:
+                onConnect.Invoke(amount);
+                onDamage.Invoke(amount);
+                break;
+            case Health.DamageResult.HealHit:
+                onConnect.Invoke(amount);
+                break;
+            default:
+                break;
+        }
     }
     
-    private void OnKill(Health health, int amount)
+    private void OnKill(Health health, int amount, Health.DamageResult result)
     {
         onKill.Invoke(amount);
     }

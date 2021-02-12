@@ -26,6 +26,7 @@ public struct DamageInfo
 
     public bool unreactable;
     public bool shouldStaggerAnimation;
+    public bool ignorePhaseThrough;
 
     public float stunTime;
 
@@ -39,6 +40,7 @@ public struct DamageInfo
         durationKnockback = 0f;
         rotationKnockbackAngle = 0f;
         unreactable = false;
+        ignorePhaseThrough = true;
         shouldStaggerAnimation = true;
         stunTime = 0f;
     }
@@ -109,6 +111,14 @@ public class Health : MonoBehaviour {
     private int _maxLife = 10;
 
     [SerializeField]
+    private bool _invulnerable;
+    private LHH.Utils.TimeStampSeconds _invulnerableTimer = new LHH.Utils.TimeStampSeconds();
+
+    [SerializeField]
+    private bool _phasingThroughAttacks;
+    private LHH.Utils.TimeStampSeconds _phaseTimer = new LHH.Utils.TimeStampSeconds();
+
+    [SerializeField]
     [ReadOnly]
     private int _lifeNow;
 
@@ -146,6 +156,22 @@ public class Health : MonoBehaviour {
         }
     }
 
+    public bool PhasingThroughAttacks
+    {
+        get
+        {
+            return _phasingThroughAttacks || _phaseTimer.IsInTime();
+        }
+    }
+
+    public bool Invulnerable
+    {
+        get
+        {
+            return _invulnerable || _invulnerableTimer.IsInTime();
+        }
+    }
+
     private void Start()
     {
         _lifeNow = _maxLife;
@@ -158,9 +184,12 @@ public class Health : MonoBehaviour {
 
     public virtual DamageResult Damage(DamageInfo info)
     {
-        Debug.LogErrorFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3}", this, info, CanDamage(info.team), _lifeNow);
+        Debug.LogErrorFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info.team), _lifeNow, PhasingThroughAttacks, Invulnerable);
+        if (!info.ignorePhaseThrough && PhasingThroughAttacks) return DamageResult.Nothing;
         if (CanDamage(info.team))
         {
+            if (Invulnerable) return DamageResult.NotDamagingHit;
+
             OnBeforeDamage?.Invoke(ref info, this);
             int lifeBefore = _lifeNow;
             _lifeNow = Mathf.Clamp(_lifeNow - info.amount, 0, _maxLife);
@@ -199,6 +228,26 @@ public class Health : MonoBehaviour {
             default:
                 return from == damageFrom;
         }
+    }
+
+    public void SetInvulnerable(bool set)
+    {
+        _invulnerable = set;
+    }
+
+    public void SetInvulnerableTimer(float time)
+    {
+        _invulnerableTimer.StartTimer(time);
+    }
+
+    public void SetPhaseThroughAttacks(bool set)
+    {
+        _phasingThroughAttacks = set;
+    }
+
+    public void SetPhaseTimer(float time)
+    {
+        _phaseTimer.StartTimer(time);
     }
 
     public void Die(DamageInfo dmg)

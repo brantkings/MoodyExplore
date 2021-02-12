@@ -8,7 +8,7 @@ using UnityEngine;
 public class Damage : MonoBehaviour
 {
 
-    public delegate void DelDamageEvent(Health health, int amount);
+    public delegate void DelDamageEvent(Health health, int amount, Health.DamageResult result);
 
     public event DelDamageEvent OnDamage;
     public event DelDamageEvent OnKill;
@@ -45,8 +45,6 @@ public class Damage : MonoBehaviour
     [Space()]
     [SerializeField]
     private bool _debug;
-
-
 
     private void Awake()
     {
@@ -133,11 +131,11 @@ public class Damage : MonoBehaviour
 
     public virtual void DealDamage(Health health)
     {
-        health.Damage(GetDamage(health.transform));
-        OnDamage?.Invoke(health, _amount);
+        Health.DamageResult result = health.Damage(GetDamage(health.transform));
+        OnDamage?.Invoke(health, _amount, result);
         if (!health.IsAlive())
         {
-            OnKill?.Invoke(health, _amount);
+            OnKill?.Invoke(health, _amount, result);
         }
         if (alreadyDamaged != null) alreadyDamaged.Add(health);
     }
