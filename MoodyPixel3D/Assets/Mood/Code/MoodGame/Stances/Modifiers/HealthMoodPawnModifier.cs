@@ -17,12 +17,12 @@ public class HealthMoodPawnModifier : ComponentMoodPawnModifier<Health>
     public override void ApplyModifier(MoodStance stance, Health health)
     {
         if (makeInvincible) health.SetInvulnerable(true);
-        if (makePhased) health.SetInvulnerable(true);
+        if (makePhased) health.SetPhaseThroughAttacks(true);
     }
 
     public override void RemoveModifier(MoodStance stance, Health health)
     {
         if (makeInvincible) health.SetInvulnerable(false);
-        if (makePhased) health.SetInvulnerable(false);
+        if (makePhased) health.SetPhaseThroughAttacks(false);
     }
 }

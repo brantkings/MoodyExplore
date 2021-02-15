@@ -18,7 +18,7 @@ MonoBehaviour:
   pawnModifiers:
   - {fileID: 11400000, guid: 4903f1058c197ff45b9546c3a4fc7ea4, type: 2}
   _hasTimeLimit: 1
-  _timeLimit: 0.05
+  _timeLimit: 0.1
   _stanceAnimParamBool: 
   flags: []
   deactivateFlags: []

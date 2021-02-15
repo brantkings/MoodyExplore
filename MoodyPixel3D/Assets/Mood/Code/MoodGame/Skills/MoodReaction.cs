@@ -106,8 +106,8 @@ public class MoodReaction : ScriptableObject
 
     public virtual bool CanReact(MoodPawn pawn, ReactionInfo info, ActionType type)
     {
-        Debug.LogWarningFormat("Can {0} react with {1}? Origin:{2} && Stunned:{3} && Stamina:{4} && Direction:{5}", pawn.name, name, 
-            IsValidTypeForThis(type), IsStunnedStatusValid(pawn), HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina), IsDirectionOK(pawn, info));
+        Debug.LogWarningFormat("Can {0} react to {6} with {1}? Origin:{2} && Stunned:{3} && Stamina:{4} && Direction:{5}", pawn.name, name, 
+            IsValidTypeForThis(type), IsStunnedStatusValid(pawn), HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina), IsDirectionOK(pawn, info), info);
         return IsValidTypeForThis(type) && IsStunnedStatusValid(pawn) && HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina) && IsDirectionOK(pawn, info);
     }
 
@@ -160,7 +160,7 @@ public class MoodReaction : ScriptableObject
 
     protected virtual void React(ReactionInfo info, MoodPawn pawn)
     {
-        Debug.LogFormat("{0} is reacting with {2} to {1}", pawn.name, info, name);
+        Debug.LogFormat("{0} is reacting with {2} to {1}. Is gonna deplete {3} stamina.", pawn.name, info, name, GetStaminaCost(info.GetDamage()));
         pawn.DepleteStamina(GetStaminaCost(info.GetDamage()), MoodPawn.StaminaChangeOrigin.Reaction);
         if (interruptCurrentSkill) pawn.InterruptCurrentSkill();
         if (!string.IsNullOrEmpty(animationTrigger))

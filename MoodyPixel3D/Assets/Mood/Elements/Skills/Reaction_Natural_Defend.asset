@@ -22,7 +22,7 @@ MonoBehaviour:
   needStances: []
   prohibitiveStances: []
   absoluteCost: 1
-  multiplierDamageCost: 0
+  multiplierDamageCost: 0.1
   alwaysExecuteEvenWithoutStamina: 1
   absoluteKnockback: 0
   multiplierKnockbackByOrigin: 1

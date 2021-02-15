@@ -15,19 +15,10 @@ MonoBehaviour:
   _icon: {fileID: 0}
   _reactions:
   - {fileID: 11400000, guid: 10ffd943d7321bd4b81cf6b87f866eba, type: 2}
-  removeNeutralStance: 0
-  staminaOverTimeIdle:
-    add: 0
-    multiplier: 1
-  staminaOverTimeMoving:
-    add: 0
-    multiplier: 1
-  movementVelocity:
-    add: 0
-    multiplier: 1
+  removeNeutralStance: 1
+  pawnModifiers: []
   _hasTimeLimit: 0
   _timeLimit: 0
-  _stun: 0
   _stanceAnimParamBool: Roll
   flags:
   - {fileID: 0}

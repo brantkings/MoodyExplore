@@ -447,10 +447,25 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _stancesSemaphore > 0;
     }
 
-    private void AddFlagStancesSemaphore(int add)
+    private void AddStancesSemaphore(int add)
     {
         _stancesSemaphore += add;
-        if (_stancesSemaphore <= 0 && add < 0) DealWithTempFlags();
+#if UNITY_EDITOR
+        if (_stancesSemaphore > 2) Debug.LogWarningFormat("[SEM] Semaphore of {0} is accumulating {1}!", name, _stancesSemaphore);
+#endif
+        //Debug.LogFormat("Adding {0} to semaphore: {1}", add, _stancesSemaphore);
+        if (add < 0 && !IsRunningThroughStances()) DealWithTempStances();
+    }
+
+    private void DealWithTempStances()
+    {
+        foreach (var t in _postponedModifications)
+        {
+            Debug.LogFormat("{0} is {1} stance {2} after looping.", name, t.Item1? "adding": "removing", t.Item2);
+            if (t.Item1 == true) AddStance(t.Item2);
+            else RemoveStance(t.Item2);
+        }
+        _postponedModifications.Clear();
     }
 
     private HashSet<ActivateableMoodStance> AddedStances
@@ -460,6 +475,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             if(_currentActivateableStances == null) _currentActivateableStances = new HashSet<ActivateableMoodStance>();
             return _currentActivateableStances;
         }
+    }
+
+    private IEnumerable<ActivateableMoodStance> GetSafeAddedStances()
+    {
+        AddStancesSemaphore(1);
+        foreach (var st in AddedStances) yield return st;
+        AddStancesSemaphore(-1);
     }
 
     private IEnumerable<ConditionalMoodStance> ConditionalStances
@@ -481,9 +503,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         get
         {
-            AddFlagStancesSemaphore(1);
-            foreach (ActivateableMoodStance stance in AddedStances) yield return stance;
-            AddFlagStancesSemaphore(-1);
+            foreach (ActivateableMoodStance stance in GetSafeAddedStances()) yield return stance;
             foreach (ConditionalMoodStance stance in GetActiveConditionalMoodStances()) yield return stance;
         }
     }
@@ -508,80 +528,85 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             foreach (MoodReaction react in inherentReactions) yield return react;
         }
     }
-    
-    public bool AddStance(ActivateableMoodStance stance)
+
+    private LinkedList<System.Tuple<bool, ActivateableMoodStance>> _postponedModifications = new LinkedList<Tuple<bool, ActivateableMoodStance>>();
+
+    public enum StanceModificationResult //I use the int values of this
     {
+        No = 0,
+        Postponed,
+        Yes
+    }
+
+    public StanceModificationResult AddStance(ActivateableMoodStance stance)
+    {
+        if(IsRunningThroughStances())
+        {
+            _postponedModifications.AddLast(new Tuple<bool, ActivateableMoodStance>(true, stance));
+            return StanceModificationResult.Postponed;
+        }
         bool ok = AddedStances.Add(stance);
         if (ok)
         {
             Debug.LogFormat("[STANCE] {0} added stance {1}", name, stance.name);
             stance.ApplyStance(this, true);
+            return StanceModificationResult.Yes;
         }
-        return ok;
+        return StanceModificationResult.No;
     }
 
-    
-    public bool RemoveStance(ActivateableMoodStance stance)
+    public StanceModificationResult RemoveStance(ActivateableMoodStance stance)
     {
+        if (IsRunningThroughStances())
+        {
+            _postponedModifications.AddLast(new Tuple<bool, ActivateableMoodStance>(false, stance));
+            return StanceModificationResult.Postponed;
+        }
         bool ok = AddedStances.Remove(stance);
         if (ok)
         {
             Debug.LogFormat("[STANCE] {0} removed stance {1}", name, stance.name);
             stance.ApplyStance(this, false);
+            return StanceModificationResult.Yes;
         }
-        return ok;
+        return StanceModificationResult.No;
     }
 
-    private List<MoodEffectFlag> _tempFlags = new List<MoodEffectFlag>(8);
-
-    private void DealWithTempFlags()
+    public StanceModificationResult AddFlag(MoodEffectFlag flag)
     {
-        foreach (MoodEffectFlag flag in _tempFlags) AddFlag(flag);
-        _tempFlags.Clear();
-    }
-
-    private HashSet<ActivateableMoodStance> _toRemoveFromAddedFlags = new HashSet<ActivateableMoodStance>();
-
-    public bool AddFlag(MoodEffectFlag flag)
-    {
-        if (flag == null) 
-            return false;
-        if(IsRunningThroughStances())
-        {
-            _tempFlags.Add(flag);
-            return false;
-        }
-        bool changedAnyFlag = false;
+        if (flag == null)
+            return StanceModificationResult.No;
+        StanceModificationResult changedAnyFlag = 0;
         foreach (var stance in AllFlaggeableStances().Where(x => x.HasFlagToActivate(flag)))
         {
             Debug.LogFormat("{0} added stance {1} due to flag {2}.", this.name, stance, flag.name);
-            changedAnyFlag = AddStance(stance) || changedAnyFlag;
+            changedAnyFlag = MergeStanceModResult(AddStance(stance), changedAnyFlag);
         }
-        foreach (var stance in AddedStances.Where(x => x.HasFlagToDeactivate(flag)))
+        foreach (var stance in GetSafeAddedStances().Where(x => x.HasFlagToDeactivate(flag)))
         {
-            _toRemoveFromAddedFlags.Add(stance);
+            RemoveStance(stance);
         }
-        foreach(var stance in _toRemoveFromAddedFlags)
-        {
-            Debug.LogFormat("{0} removed stance {1} due to flag {2}.", this.name, stance, flag.name);
-            changedAnyFlag = RemoveStance(stance) || changedAnyFlag;
-        }
-        _toRemoveFromAddedFlags.Clear();
         return changedAnyFlag;
     }
 
-    public bool AddFlags(IEnumerable<MoodEffectFlag> flags)
+
+    public StanceModificationResult AddFlags(IEnumerable<MoodEffectFlag> flags)
     {
         if (flags != null)
         {
-            bool didIt = false;
+            StanceModificationResult didIt = 0;
             foreach (var flag in flags)
             {
-                didIt = didIt || AddFlag(flag);
+                didIt = MergeStanceModResult(didIt, AddFlag(flag));
             }
             return didIt;
         }
-        else return false;
+        else return StanceModificationResult.No;
+    }
+
+    private StanceModificationResult MergeStanceModResult(StanceModificationResult r1, StanceModificationResult r2)
+    {
+        return (StanceModificationResult)Mathf.Max((int)r1, (int)r2);
     }
 
     public bool HasFlag(MoodEffectFlag flag)
@@ -597,7 +622,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
 
 
-    public bool ToggleStance(ActivateableMoodStance stance)
+    public StanceModificationResult ToggleStance(ActivateableMoodStance stance)
     {
         if(AddedStances.Contains(stance)) return RemoveStance(stance);
         else return AddStance(stance);
@@ -616,9 +641,22 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public bool IsInNeutralStance()
     {
-        foreach(MoodStance stance in AllActiveStances)
+        AddStancesSemaphore(1);
+        foreach(MoodStance stance in AddedStances)
         {
-            if (!stance.IsNeutralStance()) return false;
+            if (!stance.IsNeutralStance())
+            {
+                AddStancesSemaphore(-1);
+                return false;
+            }
+        }
+        AddStancesSemaphore(-1);
+        foreach (MoodStance stance in GetActiveConditionalMoodStances())
+        {
+            if (!stance.IsNeutralStance())
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -1227,8 +1265,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             if(_threatTarget.Add(nextTarget))
             {
-                Debug.LogFormat("{0} is threatening {1}.", name, nextTarget);
-                nextTarget.AddThreat(gameObject);
+                if(nextTarget.AddThreat(gameObject))
+                {
+                    Debug.LogFormat("{0} is threatening {1}.", name, nextTarget);
+                }
             }
         }
     }
@@ -1239,8 +1279,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             if (threatened == except) continue;
 
-            Debug.LogFormat("{0} is not threatening anymore {1}.", name, threatened);
-            threatened.RemoveThreat(gameObject);
+            if(threatened.RemoveThreat(gameObject))
+            {
+                Debug.LogFormat("{0} is not threatening anymore {1}.", name, threatened);
+            }
         }
         //_threatTarget.Clear();
     }
@@ -1460,6 +1502,30 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         foreach(var stance in AllActiveStances)
             Debug.LogFormat("{0} is in {1}", name, stance);
+    }
+
+    [LHH.Unity.Button]
+    [ContextMenu("Debug Possible Reactions")]
+    public void DebugActiveReactions()
+    {
+        foreach (var reaction in GetActiveReactions())
+                Debug.LogFormat("{0} can react with {1}", name, reaction);
+    }
+
+    [LHH.Unity.Button]
+    [ContextMenu("Debug Possible Reactions on stances")]
+    public void DebugActiveReactionsStances()
+    {
+        foreach (var stance in AllActiveStances)
+            foreach(var reaction in stance.GetReactions())
+                Debug.LogFormat("{0} can react with {1} because {2}", name, reaction, stance);
+
+        foreach(var reaction in pawnConfiguration?.reactions)
+            Debug.LogFormat("{0} can react with {1} because configuration {2}", name, reaction, pawnConfiguration);
+
+
+        foreach (var reaction in inherentReactions)
+            Debug.LogFormat("{0} can react with {1} because inherent reactions", name, reaction);
     }
 
 

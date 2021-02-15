@@ -60,8 +60,6 @@ public class DelaySkill : MoodSkill
         if (set)
         {
             sfx.ExecuteIfNotNull(pawn.ObjectTransform);
-
-            Debug.LogFormat("Is {0} valid? {1}", triggerAnim, triggerAnim.IsValid());
             if (triggerAnim.IsValid())
                 pawn.animator.SetTrigger(triggerAnim);
         }

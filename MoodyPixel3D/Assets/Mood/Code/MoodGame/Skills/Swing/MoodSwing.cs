@@ -127,6 +127,7 @@ public class MoodSwing : ScriptableObject
     {
         float currentDelay = 0f;
         _resultsCache.Clear();
+        int b=0;
         foreach(MoodSwingNode node in maker.Nodes)
         { 
             LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
@@ -137,6 +138,8 @@ public class MoodSwing : ScriptableObject
                 {
                     Collider collider = _colliderCache[j];
                     MoodSwingResult newResult = GetResultFrom(posOrigin, rotOrigin, node, collider);
+                    //UnityEngine.Debug.LogFormat("MoodSwing {0}: {1} (from {2}) collider is found. Has collider? {3} ({4} iteration)", this.name, collider.name, 
+                        //collider.GetComponentInParent<MoodPawn>()?.name, _resultsCache.ContainsKey(collider), ++b);
                     if (_resultsCache.ContainsKey(collider))
                     {
                         _resultsCache[collider] = MoodSwingResult.Merge(_resultsCache[collider], newResult);
@@ -150,6 +153,7 @@ public class MoodSwing : ScriptableObject
             currentDelay += node.delay;
         }
         foreach (MoodSwingResult r in _resultsCache.Values) yield return r;
+        _resultsCache.Clear();
     }
 
     private static Vector3 GetCorrectPosition(Vector3 posOrigin, Quaternion rotOrigin, MoodSwingNode node)

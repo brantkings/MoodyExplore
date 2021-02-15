@@ -28,7 +28,7 @@ public class MoodThreatenable : MonoBehaviour
 
     private bool _wasThreatened;
 
-    public void AddThreat(GameObject origin)
+    public bool AddThreat(GameObject origin)
     {
         if (_threatList == null) _threatList = new HashSet<ThreatStruct>();
         if(_threatList.Add(new ThreatStruct(origin)))
@@ -40,10 +40,12 @@ public class MoodThreatenable : MonoBehaviour
                 OnThreatAppear?.Invoke(this);
             }
             _wasThreatened = isThreatened;
+            return true;
         }
+        return false;
     }
 
-    public void RemoveThreat(GameObject origin)
+    public bool RemoveThreat(GameObject origin)
     {
         if(_threatList?.RemoveWhere((threatStruct) => threatStruct.threatObject == origin) > 0)
         {
@@ -54,7 +56,9 @@ public class MoodThreatenable : MonoBehaviour
                 OnThreatRelief?.Invoke(this);
             }
             _wasThreatened = isThreatened;
+            return true;
         }
+        return false;
     }
 
     public bool IsThreatened()

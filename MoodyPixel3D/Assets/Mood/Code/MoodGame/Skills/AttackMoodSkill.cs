@@ -108,6 +108,7 @@ namespace Code.MoodGame.Skills
                 //Debug.LogFormat("Result is {0}", result.collider);
                 if(result.collider != null)
                 {
+                    Debug.LogWarningFormat("Attack {0} found collider {1} from '{2}'", name, result.collider.name, result.collider.GetComponentInParent<MoodPawn>()?.name);
                     Health enemyHealth = result.collider.GetComponentInParent<Health>();
                     //Debug.LogFormat("{0} found collider {1}, health {2} in children {3}", this, result.collider, enemyHealth, result.collider.GetComponentInChildren<Health>());
                     Health.DamageResult? damageResult = enemyHealth?.Damage(GetDamage(pawn, result.collider.transform, result.hitDirection));

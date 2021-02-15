@@ -184,9 +184,8 @@ public class Health : MonoBehaviour {
 
     public virtual DamageResult Damage(DamageInfo info)
     {
-        Debug.LogErrorFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info.team), _lifeNow, PhasingThroughAttacks, Invulnerable);
-        if (!info.ignorePhaseThrough && PhasingThroughAttacks) return DamageResult.Nothing;
-        if (CanDamage(info.team))
+        Debug.LogErrorFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info), _lifeNow, PhasingThroughAttacks, Invulnerable);
+        if (CanDamage(info))
         {
             if (Invulnerable) return DamageResult.NotDamagingHit;
 
@@ -219,14 +218,15 @@ public class Health : MonoBehaviour {
         Damage(new DamageInfo(_maxLife, team, origin));
     }
 
-    protected bool CanDamage(DamageTeam from)
+    protected bool CanDamage(DamageInfo info)
     {
-        switch (from)
+        if (!info.ignorePhaseThrough && PhasingThroughAttacks) return false;
+        switch (info.team)
         {
             case DamageTeam.Neutral:
                 return true;
             default:
-                return from == damageFrom;
+                return info.team == damageFrom;
         }
     }
 

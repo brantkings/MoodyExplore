@@ -13,7 +13,7 @@ public class MoodHealth : Health, IMoodPawnBelonger
 
     public override DamageResult Damage(DamageInfo damage)
     {
-        if(CanDamage(damage.team) && pawn != null)
+        if(CanDamage(damage) && pawn != null)
         {
             if(!damage.unreactable)
             {

@@ -17,10 +17,25 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
     public bool ChangeStances(MoodPawn pawn)
     {
         bool changed = false;
-        foreach(var stance in toAdd) changed |= pawn.AddStance(stance);
-        foreach(var stance in toToggle) changed |= pawn.ToggleStance(stance);
+        foreach(var stance in toAdd) changed |= WhatIsResult(pawn.AddStance(stance));
+        foreach(var stance in toToggle) changed |= WhatIsResult(pawn.ToggleStance(stance));
         //foreach(var stance in toRemove) changed |= pawn.RemoveStance(stance);
         return changed;
+    }
+
+    private bool WhatIsResult(MoodPawn.StanceModificationResult result)
+    {
+        switch (result)
+        {
+            case MoodPawn.StanceModificationResult.No:
+                return false;
+            case MoodPawn.StanceModificationResult.Postponed:
+                return true;
+            case MoodPawn.StanceModificationResult.Yes:
+                return true;
+            default:
+                return false;
+        }
     }
 
     protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)

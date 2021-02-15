@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _reactions: []
-  removeNeutralStance: 0
-  pawnModifiers:
-  - {fileID: 11400000, guid: 3d54102df74937447ad3a75a6ff9ec4c, type: 2}
+  removeNeutralStance: 1
+  pawnModifiers: []
   _hasTimeLimit: 1
   _timeLimit: 2.5
   _stanceAnimParamBool: 
   flags: []
-  deactivateFlags:
-  - {fileID: 11400000, guid: a09fc5f2f5ec6a1418631f5a43561720, type: 2}
+  deactivateFlags: []

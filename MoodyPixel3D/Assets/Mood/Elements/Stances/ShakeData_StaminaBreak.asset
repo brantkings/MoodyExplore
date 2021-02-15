@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ShakeData_StaminaBreak
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  force: {x: 0.15, y: 0, z: -0.15}
-  vibrato: 120
+  force: {x: 0.075, y: 0, z: -0.075}
+  vibrato: 2000
   randomness: 75
   snapping: 0
   fadeOut: 0
