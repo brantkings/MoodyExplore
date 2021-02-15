@@ -203,7 +203,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
 
     private void Awake() {
-        _lookAtControl = animator.GetComponent<LookAtIK>();
+        if(animator != null)
+        {
+            _lookAtControl = animator.GetComponent<LookAtIK>();
+        }
     }
 
     private void OnEnable()
@@ -1073,8 +1076,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void SetDamageAnimation(Vector3 direction)
     {
-        animator.SetFloat("DamageX", direction.x);
-        animator.SetFloat("DamageZ", direction.z);
+        if(animator != null)
+        {
+            animator.SetFloat("DamageX", direction.x);
+            animator.SetFloat("DamageZ", direction.z);
+        }
     }
 
     public void UnsetDamageAnimation()
@@ -1100,7 +1106,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void SetLookAt(Vector3 direction)
     {
-        _lookAtControl.LookAt(direction);
+        _lookAtControl?.LookAt(direction);
     }
 
     public Quaternion GetRotation()

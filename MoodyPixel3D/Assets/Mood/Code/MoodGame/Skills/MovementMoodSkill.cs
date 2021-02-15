@@ -74,14 +74,17 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
 
     private void DoFeedback(MoodPawn pawn, bool set)
     {
-        if(set)
+        if(pawn.animator != null)
         {
-            sfx.ExecuteIfNotNull(pawn.ObjectTransform);
-            if (triggerAnim.IsValid())
-                pawn.animator.SetTrigger(triggerAnim);
-        }
+            if(set)
+            {
+                sfx.ExecuteIfNotNull(pawn.ObjectTransform);
+                if (triggerAnim.IsValid())
+                    pawn.animator.SetTrigger(triggerAnim);
+            }
 
-        pawn.animator.SetBool(boolWhileInSkill, set);
+            pawn.animator.SetBool(boolWhileInSkill, set);
+        }
     }
 
     private void SetFlags(MoodPawn pawn)

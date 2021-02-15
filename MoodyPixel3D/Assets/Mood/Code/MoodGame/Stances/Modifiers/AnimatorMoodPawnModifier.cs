@@ -46,6 +46,7 @@ public class AnimatorMoodPawnModifier : MoodPawnModifier
 
     private void Do(Animator anim, bool modifierOn)
     {
+        if (anim == null) return;
         switch (whatToDoWithAnimator)
         {
             case WhatToDoComponent.Nothing:

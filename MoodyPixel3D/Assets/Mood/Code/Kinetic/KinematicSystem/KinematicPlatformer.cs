@@ -424,6 +424,11 @@ public class KinematicPlatformer : MonoBehaviour
         }
     }
 
+    public Collider WhatIsWhereIAmTryingToGo(CasterClass caster, out RaycastHit hit)
+    {
+        return WhatIsInThere(_currentInputVelocity + _currentOtherSourcesInputVelocity, caster, out hit);
+    }
+
     public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster, out RaycastHit hit)
     {
         return WhatIsInThere(checkDistance, GetCaster(caster), out hit);

@@ -163,7 +163,7 @@ public class MoodReaction : ScriptableObject
         Debug.LogFormat("{0} is reacting with {2} to {1}. Is gonna deplete {3} stamina.", pawn.name, info, name, GetStaminaCost(info.GetDamage()));
         pawn.DepleteStamina(GetStaminaCost(info.GetDamage()), MoodPawn.StaminaChangeOrigin.Reaction);
         if (interruptCurrentSkill) pawn.InterruptCurrentSkill();
-        if (!string.IsNullOrEmpty(animationTrigger))
+        if (!string.IsNullOrEmpty(animationTrigger) && pawn.animator != null)
         {
             pawn.animator.SetTrigger(animationTrigger);
         }

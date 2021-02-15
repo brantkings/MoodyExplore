@@ -32,7 +32,7 @@ MonoBehaviour:
   _lockCamera: 0
   lockMovement: 1
   _shortcut: 0
-  _debug: 1
+  _debug: 0
   _cost: 1
   minDistance: 6
   maxDistance: 6
