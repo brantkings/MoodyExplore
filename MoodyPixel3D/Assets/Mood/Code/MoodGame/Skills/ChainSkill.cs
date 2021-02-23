@@ -29,7 +29,7 @@ public class ChainSkill : StaminaCostMoodSkill
 
         MoodPawn.DelMoodPawnUndirectedSkillEvent onInterruptSkill = default(MoodPawn.DelMoodPawnUndirectedSkillEvent);
         MoodSkill interrupted = null;
-        onInterruptSkill = (x) =>
+        onInterruptSkill = (p, x) =>
         {
             Debug.LogErrorFormat("Interrupted! {0} and {1}", this, x);
             interrupted = x;

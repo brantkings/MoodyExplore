@@ -215,6 +215,12 @@ public class KinematicPlatformer : MonoBehaviour
 
     public void AddExactNextFrameMove(Vector3 move)
     {
+#if UNITY_EDITOR
+        if(move.IsNaN())
+        {
+            Debug.LogErrorFormat("{0} += {1}! Putting NaN in this!", _setFrameMovement, move);
+        }
+#endif
         _setFrameMovement += move;
     }
 
@@ -348,7 +354,7 @@ public class KinematicPlatformer : MonoBehaviour
 #if UNITY_EDITOR
         if (movementMade.IsNaN())
         {
-            Debug.LogErrorFormat("[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} frame:{4} total:{5}", this, movementMade, verticalMovement, horizontalMovement, frameMovement, totalMovement);
+            Debug.LogErrorFormat("[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} frame:{4} extract:{5} total:{6}. Delta time is {7}", this, movementMade, verticalMovement, horizontalMovement, frameMovement, extractMovement, totalMovement, Time.fixedDeltaTime);
         }
 #endif
 

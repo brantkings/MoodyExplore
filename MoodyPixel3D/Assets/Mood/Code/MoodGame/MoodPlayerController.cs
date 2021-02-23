@@ -226,7 +226,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     }
 
 
-    private void OnInterruptSkill(MoodSkill skill)
+    private void OnInterruptSkill(MoodPawn pawn, MoodSkill skill)
     {
         Debug.LogFormat("Interrupting command {0} {1}", skill.name, Time.time);
         OnStopCommand?.Invoke();

@@ -64,6 +64,7 @@ public class DamageEvent : MonoBehaviour
                 break;
             case Health.DamageResult.NotDamagingHit:
                 onConnect.Invoke(where);
+                onNonDamage.Invoke(where);
                 break;
             case Health.DamageResult.KillingHit:
                 onConnect.Invoke(where);

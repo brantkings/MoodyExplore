@@ -404,7 +404,15 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         {
             _running = true;
             _completed = false;
+            pawn.OnInterruptSkill += OnInterruptSkill;
             yield return pawn.ExecuteSkill(skill, direction);
+            _running = false;
+            _completed = true;
+        }
+
+        private void OnInterruptSkill(MoodPawn pawn, MoodSkill skill)
+        {
+            pawn.OnInterruptSkill -= OnInterruptSkill;
             _running = false;
             _completed = true;
         }
@@ -471,7 +479,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
     public class WaitUntilGetHit : Action
     {
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
-        [SerializeField] private SharedVector3 outHitDirection;
+        [SerializeField] private SharedVector3 outHitKnockback;
+        [SerializeField] private SharedFloat outHitDuration;
         [SerializeField] private SharedInt outDamage;
 
         private bool damaged;
@@ -498,7 +507,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         private void OnDamage(DamageInfo damage, Health damaged)
         {
             if (!outDamage.IsNone) outDamage.Value = damage.amount;
-            if (!outHitDirection.IsNone) outHitDirection.Value = damage.distanceKnockback;
+            if (!outHitKnockback.IsNone) outHitKnockback.Value = damage.distanceKnockback;
+            if (!outHitDuration.IsNone) outHitDuration.Value = damage.durationKnockback;
             this.damaged = true;
         }
     }

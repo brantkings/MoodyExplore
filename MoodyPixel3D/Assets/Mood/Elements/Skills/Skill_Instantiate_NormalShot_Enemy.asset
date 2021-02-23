@@ -14,22 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Power Blast
+  onlyNeutralStance: 0
   needs: []
   consumeNeededStances: 0
   toConsume: []
   restrictions: []
   _possibleAngles: []
   startupPriority: 1
+  heightCheckers: []
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0
+  _debug: 0
   _cost: 1
   prefab: {fileID: 2242556836230007570, guid: db9eb4a7933d38446a9220a98312a84a, type: 3}
   range: 50
   resetDamageTeamAsPawnTeam: 1
   preTime: 0.5
-  postTime: 1
+  postTime: 2.25
   priorityPreInstantiate: 2
   priorityAfterInstantiate: 1
   threat: {fileID: 0}

@@ -184,7 +184,7 @@ public class Health : MonoBehaviour {
 
     public virtual DamageResult Damage(DamageInfo info)
     {
-        Debug.LogErrorFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info), _lifeNow, PhasingThroughAttacks, Invulnerable);
+        Debug.LogFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info), _lifeNow, PhasingThroughAttacks, Invulnerable);
         if (CanDamage(info))
         {
             if (Invulnerable) return DamageResult.NotDamagingHit;
