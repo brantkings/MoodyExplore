@@ -162,19 +162,61 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             return TaskStatus.Success;
         }
     }
-    
+
+    [TaskCategory("Mood/Pawn")]
+    public class MoveDirection : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 movementPerSecond;
+        [SerializeField] private SharedBool infinite;
+        [SerializeField] private SharedFloat amount;
+
+        private float amountWalked;
+
+        public override void OnStart()
+        {
+            amountWalked = amount.Value;
+        }
+
+        public override TaskStatus OnUpdate()
+        {
+            pawn.Value.SetVelocity(movementPerSecond.Value);
+            amountWalked -= Time.deltaTime * movementPerSecond.Value.magnitude;
+            if (infinite.Value) return TaskStatus.Running;
+            else
+            {
+                if (amountWalked <= 0f) return TaskStatus.Success;
+                return TaskStatus.Running;
+            }
+        }
+    }
+
     [TaskCategory("Mood/Pawn")]
     public class StopVelocity : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedBool alsoCancelDash;
+
+        public override TaskStatus OnUpdate()
+        {
+            pawn.Value.SetVelocity(Vector3.zero);
+            if (alsoCancelDash.Value) pawn.Value.CancelCurrentDash();
+            return TaskStatus.Success;
+        }
+    }
+
+    [TaskCategory("Mood/Pawn")]
+    public class CancelDash : Action
     {
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
 
         public override TaskStatus OnUpdate()
         {
-            pawn.Value.SetVelocity(Vector3.zero);
+            pawn.Value.CancelCurrentDash();
             return TaskStatus.Success;
         }
     }
-    
+
     [TaskCategory("Mood/Pawn")]
     public class Dash : Action
     {
@@ -233,6 +275,55 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             }
         }
 
+    }
+
+    [TaskCategory("Mood/Pawn")]
+    public class GetWhereIAmTryingToGoNormal : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 outNormal;
+        [SerializeField] private SharedBool notFindingAnythingIsNotFailure;
+        public KinematicPlatformer.CasterClass caster = KinematicPlatformer.CasterClass.Side;
+
+        public override TaskStatus OnUpdate()
+        {
+            if (pawn.Value.mover != null && pawn.Value.mover.WhatIsWhereIAmTryingToGo(caster, out RaycastHit hit))
+            {
+                outNormal.Value = hit.normal;
+                return TaskStatus.Success;
+            }
+            else
+            {
+                outNormal.Value = Vector3.zero;
+                if (notFindingAnythingIsNotFailure.Value) return TaskStatus.Success;
+                else return TaskStatus.Failure;
+            }
+        }
+    }
+
+    [TaskCategory("Mood/Pawn")]
+    public class IsMovingHorizontally : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        public override TaskStatus OnUpdate()
+        {
+            Vector3 v = pawn.Value.Velocity;
+            v.y = 0f;
+            if (v.sqrMagnitude > 0f) return TaskStatus.Success;
+            else return TaskStatus.Failure;
+        }
+    }
+
+    [TaskCategory("Mood/Pawn")]
+    public class IsMovingVertically : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        public override TaskStatus OnUpdate()
+        {
+            Vector3 v = pawn.Value.Velocity;
+            if (v.y != 0f) return TaskStatus.Success;
+            else return TaskStatus.Failure;
+        }
     }
 
     [TaskCategory("Mood/Skill")]
@@ -343,6 +434,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         }
     }
 
+    
+
     [TaskCategory("Mood/Skill")]
     public class CanUseSkill : Conditional
     {
@@ -371,6 +464,42 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
                 return stSkill.HasPawnEnoughStamina(pawn.Value) ? TaskStatus.Success : TaskStatus.Failure;
             }
             return TaskStatus.Failure;
+        }
+    }
+
+    [TaskCategory("Mood/Pawn")]
+    public class WaitUntilGetHit : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 outHitDirection;
+        [SerializeField] private SharedInt outDamage;
+
+        private bool damaged;
+
+        public override void OnStart()
+        {
+            base.OnStart();
+            damaged = false;
+            pawn.Value.Health.OnDamage += OnDamage;
+        }
+
+        public override void OnEnd()
+        {
+            base.OnEnd();
+            pawn.Value.Health.OnDamage -= OnDamage;
+        }
+
+        public override TaskStatus OnUpdate()
+        {
+            if (!damaged) return TaskStatus.Running;
+            else return TaskStatus.Success;
+        }
+
+        private void OnDamage(DamageInfo damage, Health damaged)
+        {
+            if (!outDamage.IsNone) outDamage.Value = damage.amount;
+            if (!outHitDirection.IsNone) outHitDirection.Value = damage.distanceKnockback;
+            this.damaged = true;
         }
     }
 

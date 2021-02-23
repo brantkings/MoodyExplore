@@ -23,3 +23,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1e3d1abdb2c9721448fc05cb2e5d17cb, type: 2}
   reactions:
   - {fileID: 11400000, guid: ab58822bd476e6d42961ba817126b64b, type: 2}
+  reactionsLate:
+  - {fileID: 11400000, guid: b34d3702d1472864187b125628d4ddf9, type: 2}
+  - {fileID: 11400000, guid: a9a48f84fb251ba4e9316c0f2ed0b579, type: 2}

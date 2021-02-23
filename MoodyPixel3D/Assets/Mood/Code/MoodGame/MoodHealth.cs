@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class MoodHealth : Health, IMoodPawnBelonger
 {
@@ -17,11 +18,12 @@ public class MoodHealth : Health, IMoodPawnBelonger
         {
             if(!damage.unreactable)
             {
-                foreach(var react in pawn.GetActiveReactions())
+                foreach(var react in pawn.GetActiveReactions<DamageInfo>())
                 {
-                    if(react.CanReact(pawn, damage))
+                    if(react.CanReact(damage, pawn))
                     {
-                        react.ReactToDamage(ref damage, pawn);
+                        Debug.LogFormat("{0} reacting with '{1}' to damage {2}", pawn.name, react, damage);
+                        react.React(ref damage, pawn);
                     }
                 }
             }

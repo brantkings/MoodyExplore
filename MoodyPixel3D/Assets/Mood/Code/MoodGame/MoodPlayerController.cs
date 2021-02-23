@@ -431,7 +431,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void SetMouseMode(bool visible)
     {
-        Debug.LogFormat("Setting mouse mode as visible? {0}", visible);
+        //Debug.LogFormat("Setting mouse mode as visible? {0}", visible);
         UnityEngine.Cursor.visible = visible;
         UnityEngine.Cursor.lockState = visible? CursorLockMode.None : CursorLockMode.Locked;
     }

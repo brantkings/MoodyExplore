@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Mood/Skill/Damaging Reaction", fileName = "Reaction_")]
-public class MoodReaction_TakeDamage : MoodReaction
+public class MoodPreReaction_TakeDamage : MoodPreReaction
 {
     [Header("Damage self")]
     public int damage = DamageInfo.BASE_SINGLE_UNIT_DAMAGE;
@@ -14,12 +14,7 @@ public class MoodReaction_TakeDamage : MoodReaction
     public RelativeVector3 knockbackDirectionFromPawnDirection;
     public float knockbackDuration;
 
-    protected override bool IsValidTypeForThis(ActionType type)
-    {
-        return type != ActionType.Damage;
-    }
-
-    protected override void React(ReactionInfo info, MoodPawn pawn)
+    public override void React(ref ReactionInfo info, MoodPawn pawn)
     {
         DamageInfo dmgInfo = new DamageInfo()
         {
@@ -39,7 +34,7 @@ public class MoodReaction_TakeDamage : MoodReaction
 
         if(Health.IsDamage(pawn.Damage(dmgInfo)))
         {
-            base.React(info, pawn);
+            base.React(ref info, pawn);
         }
 
 

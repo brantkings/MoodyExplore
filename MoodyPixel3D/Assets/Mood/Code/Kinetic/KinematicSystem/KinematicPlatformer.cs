@@ -64,6 +64,8 @@ public class KinematicPlatformer : MonoBehaviour
     private LinkedList<IKinematicPlatformerVelocityGetter> _velocitySources;
     private LinkedList<IKinematicPlatformerFrameVelocityGetter> _frameVelocitySources;
 
+
+    private Vector3 _latestNonZeroValidMovement;
     private Vector3 _latestValidVelocity;
 
     private HashSet<string> gravityLock;
@@ -267,6 +269,15 @@ public class KinematicPlatformer : MonoBehaviour
         }
     }
 
+    public Vector3 LatestNonZeroVelocity
+    {
+        get
+        {
+            return _latestNonZeroValidMovement / Time.fixedDeltaTime;
+        }
+    }
+
+
     private void AffectNaturalVelocityForcesCausedByVelocity(ref Vector3 vel)
     {
         vel -= (vel.sqrMagnitude * vel.normalized) * airResistanceCoefficient * Time.fixedDeltaTime; //Resistance = v^2 * K
@@ -333,6 +344,13 @@ public class KinematicPlatformer : MonoBehaviour
         else CheckAndStopMovement(ref verticalMovement, out verticalReflection, out nowGrounded, movementMade, groundCaster);
 
         movementMade += verticalMovement;
+
+#if UNITY_EDITOR
+        if (movementMade.IsNaN())
+        {
+            Debug.LogErrorFormat("[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} frame:{4} total:{5}", this, movementMade, verticalMovement, horizontalMovement, frameMovement, totalMovement);
+        }
+#endif
 
         //Reflection and friction forces resolve
         Vector3 totalReflection = lateralReflection + verticalReflection;
@@ -406,6 +424,12 @@ public class KinematicPlatformer : MonoBehaviour
                 else
                     toGlueWithWallThisTime = amountToHugWall;
 
+#if UNITY_EDITOR
+                if(movement.IsNaN() || reflection.IsNaN() || movementToGlueWithWall.IsNaN() || toGlueWithWallThisTime.IsNaN())
+                {
+                    Debug.LogErrorFormat("[PLATFORMER] {0} NAN ALERT -> mov:{1} ref:{2} movToGlue:{3} movToGlueNow:{4}", this, movement, reflection, movementToGlueWithWall, toGlueWithWallThisTime);
+                }
+#endif
                 movementToGlueWithWall += toGlueWithWallThisTime;
                 reflection += Vector3.Project(movement - toGlueWithWallThisTime, hit.normal);
 
@@ -413,7 +437,7 @@ public class KinematicPlatformer : MonoBehaviour
 
                 if (++numberOfHits > 10)
                 {
-                    Debug.LogError("Infinite loop!");
+                    Debug.LogErrorFormat("Infinite loop! {0} {1}", hit.normal, hit.collider);
                     break;
                 }
             }
@@ -486,8 +510,12 @@ public class KinematicPlatformer : MonoBehaviour
     }
 
 
+
     private void Move(Vector3 movement)
     {
+        if (movement.sqrMagnitude != 0f) 
+            _latestNonZeroValidMovement = movement;
+
         _latestValidVelocity = movement;
 #if UNITY_EDITOR
         _lastValidVelDebug = _latestValidVelocity / Time.fixedDeltaTime;

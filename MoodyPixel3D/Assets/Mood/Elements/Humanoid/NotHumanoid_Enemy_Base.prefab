@@ -208,7 +208,7 @@ MonoBehaviour:
   _attackFeedback: {fileID: 0}
   _shakeFeedback: {fileID: 3496441509559162423}
   _ownSensorTarget: {fileID: 0}
-  toDestroyOnDeath: {fileID: 0}
+  toDestroyOnDeath: {fileID: 5637358447622213147}
   pawnConfiguration: {fileID: 11400000, guid: 1876601f2e2b4eb408ce86ea4d088846, type: 2}
   inherentReactions: []
   flagInherentStances: []

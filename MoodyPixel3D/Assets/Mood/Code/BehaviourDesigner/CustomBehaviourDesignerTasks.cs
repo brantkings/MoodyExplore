@@ -29,7 +29,6 @@ namespace BehaviorDesigner.Runtime.Tasks
         public override TaskStatus OnUpdate()
         {
             outReflected.Value = Vector3.Reflect(inDirection.Value, inNormal.Value);
-            Debug.LogFormat("Reflected {0} with {1} result is {2}", inDirection.Value, inNormal.Value, outReflected.Value);
             return TaskStatus.Success;
         }
     }
@@ -56,7 +55,7 @@ namespace BehaviorDesigner.Runtime.Tasks
 
         public override TaskStatus OnUpdate()
         {
-            outVector3.Value = transform.TransformDirection(inVector.Value);
+            outVector3.Value = this.transform.TransformDirection(inVector.Value);
             return TaskStatus.Success;
         }
     }

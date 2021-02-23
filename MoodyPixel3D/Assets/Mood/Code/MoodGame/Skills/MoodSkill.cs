@@ -81,6 +81,16 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
                 };
             }
         }
+
+        public Vector3 Sanitize(Vector3 vec, float angleToChange)
+        {
+            return Quaternion.Euler(0f, angleToChange, 0f) * vec;
+        }
+
+        public Vector3 Sanitize(Vector3 vec, Vector3 characterDirection)
+        {
+            return Sanitize(vec, YAngleToSanitize(vec, characterDirection));
+        }
     }
 
     

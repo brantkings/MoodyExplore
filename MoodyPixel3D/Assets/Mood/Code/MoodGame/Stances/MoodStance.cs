@@ -8,7 +8,7 @@ public class MoodStance : ScriptableObject
     private Sprite _icon;
 
     [SerializeField]
-    private MoodReaction[] _reactions;
+    private MoodPreReaction[] _reactions;
 
     [SerializeField]
     [Tooltip("Many skills actually check if the character is in neutral to be able to execute a skill. Inform if this stance will remove the character from neutral.")]
@@ -24,9 +24,9 @@ public class MoodStance : ScriptableObject
         return _icon;
     }
 
-    public IEnumerable<MoodReaction> GetReactions()
+    public IEnumerable<MoodPreReaction> GetReactions()
     {
-        foreach (MoodReaction react in _reactions) yield return react;
+        foreach (MoodPreReaction react in _reactions) yield return react;
     }
 
 }

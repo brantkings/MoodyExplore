@@ -93,6 +93,16 @@ public static class VectorUtils
         return new Vector2(Mathf.Abs(v.x), Mathf.Abs(v.y));
     }
 
+    public static bool IsNaN(this Vector2 v)
+    {
+        return float.IsNaN(v.x) || float.IsNaN(v.y); 
+    }
+
+    public static bool IsNaN(this Vector3 v)
+    {
+        return float.IsNaN(v.x) || float.IsNaN(v.y) || float.IsNaN(v.z);
+    }
+
     #endregion
 
 }

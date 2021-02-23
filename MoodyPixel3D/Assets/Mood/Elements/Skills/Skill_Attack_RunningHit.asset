@@ -21,6 +21,8 @@ MonoBehaviour:
   toConsume: []
   restrictions:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  - {fileID: 11400000, guid: 9817d25c84411424ab8478112e231846, type: 2}
+  - {fileID: 11400000, guid: c9db44afe41d8f648b2dd89ec3bc12da, type: 2}
   _possibleAngles:
   - angleFromForward: 0
     coneAngle: 45

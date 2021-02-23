@@ -14,5 +14,15 @@ public class MoodPawnStanceConfiguration : ScriptableObject
     public ActivateableMoodStance stanceOnSkill;
     public ActivateableMoodStance[] flaggeableStances;
     public ConditionalMoodStance[] conditionalStances;
-    public MoodReaction[] reactions;
+
+    [SerializeField]
+    private MoodReaction[] reactions;
+    [SerializeField]
+    private MoodReaction[] reactionsLate;
+
+    public IEnumerable<MoodReaction> GetReactions()
+    {
+        foreach (var r in reactions) yield return r;
+        foreach (var r in reactionsLate) yield return r;
+    }
 }

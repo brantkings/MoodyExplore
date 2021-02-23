@@ -37,6 +37,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 {
 
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
+    public delegate void DelMoodPawnDamageEvent(MoodPawn pawn, DamageInfo info);
     public delegate void DelMoodPawnSkillEvent(MoodSkill skill, Vector3 direction);
     public delegate void DelMoodPawnSwingEvent(MoodSwing swing, Vector3 direction);
     public delegate void DelMoodPawnUndirectedSkillEvent(MoodSkill skill);
@@ -71,7 +72,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [SerializeField]
     private MoodPawnStanceConfiguration pawnConfiguration;
     [SerializeField]
-    private MoodReaction[] inherentReactions;
+    private MoodPreReaction[] inherentReactions;
     [SerializeField]
     private ActivateableMoodStance[] flagInherentStances;
 
@@ -147,6 +148,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
                 mover.transform.forward = value.normalized;
         }
         
+    }
+
+    public Vector3 MovingDirection
+    {
+        get
+        {
+            return mover.LatestNonZeroVelocity.normalized;
+        }
     }
 
     public Vector3 Velocity
@@ -307,7 +316,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         Debug.LogFormat("{0} takes damage with info {1}.", name , info);
         if (info.amount > 0 && pawnConfiguration != null) 
             AddFlag(pawnConfiguration.onDamage);
-        Stagger(info, health);
+        HandleDamageInfo(info, health);
     }
 
     private bool ShouldStaggerAnimation(DamageInfo info)
@@ -315,18 +324,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return info.shouldStaggerAnimation;
     }
 
-    public void Stagger(DamageInfo info, Health health)
+    public void HandleDamageInfo(DamageInfo info, Health health)
     {
-        AddStunLockTimer(StunType.Action, "damage", info.stunTime);
-        InterruptCurrentSkill();
-
-        float animationDelay = 0.125f;
-        float animationDuration = Mathf.Max(info.stunTime, info.durationKnockback, animationDelay);
-
-        if(ShouldStaggerAnimation(info)) 
-            SetDamageAnimationTween(ObjectTransform.InverseTransformDirection(info.distanceKnockback.normalized) * 2f, animationDuration - animationDelay, animationDelay);
-        Dash(info.distanceKnockback, info.durationKnockback, AnimationCurve.Linear(0f, 0f, 1f, 1f));
-        TweenMoverDirection(info.rotationKnockbackAngle, animationDuration).SetEase(Ease.OutQuad);
+        
     }
 
     private void OnBeforeDamage(ref DamageInfo damage, Health damaged)
@@ -340,7 +340,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void OnDeath(DamageInfo info, Health health)
     {
-        Debug.LogFormat("{0} is dead.", this);
+        Debug.LogFormat("{0} perished.", this);
         if (toDestroyOnDeath != null) Destroy(toDestroyOnDeath);
     }
     #endregion
@@ -349,6 +349,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private MoodSkill _currentSkill;
     private Coroutine _currentSkillRoutine;
     private int _currentPlugoutPriority;
+
+    public Tween DelayedAction(TweenCallback act, float delay)
+    {
+        return DOVirtual.DelayedCall(delay, act).SetId(this);
+    }
 
 
     public bool IsExecutingSkill()
@@ -431,7 +436,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
     public void UsedSkill(MoodSkill skill, Vector3 direction)
     {
-        Debug.LogFormat("{0} executes {1} {2}!", name, skill.name, Time.time);
+        Debug.LogFormat("{0} executes {1}! ({2})", name, skill.name, Time.frameCount);
         OnUseSkill?.Invoke(skill, direction);
     }
 
@@ -511,6 +516,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
+    public IEnumerable<IMoodReaction<T>> GetActiveReactions<T>()
+    {
+        return GetActiveReactions().OfType<IMoodReaction<T>>();
+    }
 
 
     public IEnumerable<MoodReaction> GetActiveReactions()
@@ -524,7 +533,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
         if (pawnConfiguration != null)
         {
-            foreach (MoodReaction react in pawnConfiguration.reactions) yield return react;
+            foreach (MoodReaction react in pawnConfiguration.GetReactions()) yield return react;
         }
         if (inherentReactions != null)
         {
@@ -546,6 +555,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(IsRunningThroughStances())
         {
             _postponedModifications.AddLast(new Tuple<bool, ActivateableMoodStance>(true, stance));
+            Debug.LogFormat("[STANCE] {0} is going to try to add {1} later.", name, stance.name);
             return StanceModificationResult.Postponed;
         }
         bool ok = AddedStances.Add(stance);
@@ -704,6 +714,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Vector3 _movementDelta;
 
     private Tween _currentDash;
+    private Tween _currentRotationDash;
     private Tween _currentFakeHeightHop;
 
     private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, ref Vector3 speed, ref Vector3 direction)
@@ -819,24 +830,23 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return isGuilty ? 0.5f : 0.125f;
     }
 
-    private MoodReaction.ReactionInfo MakeReactionInfo(Vector3 velocity, GameObject origin, Vector3 normal, bool isGuilty)
+    private ReactionInfo MakeReactionInfo(Vector3 velocity, GameObject origin, Vector3 normal, bool isGuilty)
     {
-        MoodReaction.ReactionInfo info = new MoodReaction.ReactionInfo(origin, GetKnockbackForce(velocity, isGuilty, out float duration), duration).SetNormal(normal);
+        ReactionInfo info = new ReactionInfo(origin, GetKnockbackForce(velocity, isGuilty, out float duration), duration).SetNormal(normal);
         return info;
     }
 
-    private void HandleBumpInfo(MoodReaction.ReactionInfo bumpInfo)
+    private void HandleBumpInfo(ReactionInfo bumpInfo)
     {
-        foreach (MoodReaction react in GetActiveReactions())
+        Debug.LogFormat("[BUMP] {0} bumped on {1}. ({2})", name, bumpInfo.origin?.name, bumpInfo);
+        foreach (IMoodReaction<ReactionInfo> react in GetActiveReactions<ReactionInfo>())
         {
-            if (react.CanReact(this, bumpInfo, MoodReaction.ActionType.Bumped))
+            if (react.CanReact(bumpInfo, this))
             {
-                react.ReactToBump(ref bumpInfo, this);
+                react.React(ref bumpInfo, this);
             }
         }
-        AddStunLockTimer(StunType.Action, "bump", bumpInfo.knockbackDuration);
-        SetDamageAnimationTween(bumpInfo.direction.normalized * 0.5f, bumpInfo.knockbackDuration, 0f);
-        Dash(bumpInfo.direction, bumpInfo.knockbackDuration, Ease.OutSine);
+        
     }
 
     private void Bump(Vector3 currentVelocity)
@@ -845,13 +855,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(col != null)
         {
             col.GetComponentInParent<IBumpeable>()?.OnBumped(this.gameObject, currentVelocity, hit.normal);
-            HandleBumpInfo(MakeReactionInfo(currentVelocity, col.gameObject, hit.normal, true));
         }
+        HandleBumpInfo(MakeReactionInfo(currentVelocity, col?.gameObject, hit.normal, true));
     }
 
     public void OnBumped(GameObject origin, Vector3 velocity, Vector3 normal)
     {
-        MoodReaction.ReactionInfo info = MakeReactionInfo(velocity, origin, normal, false);
+        ReactionInfo info = MakeReactionInfo(velocity, origin, normal, false);
         HandleBumpInfo(info);
     }
 
@@ -905,17 +915,32 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
         else return 0f;
     }
+
+    public void RotateDash(float angle, float duration, Ease ease = Ease.OutQuad)
+    {
+        CancelCurrentRotationDash();
+        _currentRotationDash = TweenMoverDirection(angle, duration).SetEase(ease);
+    }
     
     public void Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
-        if (_currentDash != null) _currentDash.KillIfActive();
+        CancelCurrentDash();
         _currentDash = TweenMoverPosition(direction, duration).SetEase(curve);
     }
     
     public void Dash(Vector3 direction, float duration, Ease ease)
     {
-        if (_currentDash != null) _currentDash.KillIfActive();
+        CancelCurrentDash();
         _currentDash = TweenMoverPosition(direction, duration).SetEase(ease);
+    }
+
+    public void CancelCurrentDash()
+    {
+        if (_currentDash != null) _currentDash.KillIfActive();
+    }
+    public void CancelCurrentRotationDash()
+    {
+        if (_currentRotationDash != null) _currentRotationDash.KillIfActive();
     }
 
     private Tween TweenFakeHeight(float height, float duration, Ease ease)
@@ -1250,7 +1275,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private HashSet<MoodThreatenable> _threatTarget = new HashSet<MoodThreatenable>();
     private void ChangeThreatTargets(IEnumerable<MoodThreatenable> targets)
     {
-        ClearCurrentThreats(targets);
+        ClearCurrentThreats(targets, false);
         foreach(MoodThreatenable nextTarget in targets)
         {
             if(nextTarget != null && nextTarget != Threatenable)
@@ -1266,7 +1291,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void ChangeThreatTarget(MoodThreatenable nextTarget)
     {
-        ClearCurrentThreats(nextTarget);
+        ClearCurrentThreats(nextTarget, false);
         if(nextTarget != null && nextTarget != Threatenable)
         {
             if(_threatTarget.Add(nextTarget))
@@ -1279,7 +1304,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
-    private void ClearCurrentThreats(MoodThreatenable except = null)
+    private void ClearCurrentThreats(MoodThreatenable except = null, bool clearList = true)
     {
         foreach (MoodThreatenable threatened in _threatTarget)
         {
@@ -1290,19 +1315,21 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
                 Debug.LogFormat("{0} is not threatening anymore {1}.", name, threatened);
             }
         }
-        //_threatTarget.Clear();
+        if(clearList) _threatTarget.Clear();
     }
 
-    private void ClearCurrentThreats(IEnumerable<MoodThreatenable> except)
+    private void ClearCurrentThreats(IEnumerable<MoodThreatenable> except, bool clearList = true)
     {
         foreach (MoodThreatenable threatened in _threatTarget)
         {
             if (except.Contains(threatened) || threatened == null) continue;
 
-            Debug.LogFormat("{0} is not threatening anymore {1}.", name, threatened);
-            threatened.RemoveThreat(gameObject);
+            if(threatened.RemoveThreat(gameObject))
+            {
+                Debug.LogFormat("{0} is not threatening anymore {1}.", name, threatened);
+            }
         }
-        //_threatTarget.Clear();
+        if(clearList) _threatTarget.Clear();
     }
 
 
@@ -1526,7 +1553,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             foreach(var reaction in stance.GetReactions())
                 Debug.LogFormat("{0} can react with {1} because {2}", name, reaction, stance);
 
-        foreach(var reaction in pawnConfiguration?.reactions)
+        foreach(var reaction in pawnConfiguration?.GetReactions())
             Debug.LogFormat("{0} can react with {1} because configuration {2}", name, reaction, pawnConfiguration);
 
 
