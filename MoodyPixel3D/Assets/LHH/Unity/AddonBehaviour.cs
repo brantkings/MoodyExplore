@@ -4,33 +4,80 @@ using UnityEngine;
 
 namespace LHH.Unity
 {
-
-    public abstract class AddonBehaviour<T> : MonoBehaviour where T:Component
+    namespace Core
     {
-        protected T Addon
+        public abstract class BehaviourGetter : MonoBehaviour
         {
-            get
-            {
-                if (_addon == null) _addon = GetComponent<T>();
-                return _addon;
-            }
+            protected abstract X Get<X>() where X : Component;
         }
 
-        private T _addon;
+        public abstract class AddonBehaviour_Base<T> : BehaviourGetter where T : Component
+        {
+
+            protected T Addon
+            {
+                get
+                {
+                    if (_addon == null) _addon = Get<T>();
+#if UNITY_EDITOR
+                    if (_addon == null) Debug.LogErrorFormat("{0} has no addon of type {1}.", this, typeof(T));
+#endif
+                    return _addon;
+                }
+            }
+
+            private T _addon;
+        }
+
+        public abstract class AddonBehaviour_Base<T,U> : AddonBehaviour_Base<T> where T : Component where U:Component
+        {
+
+            protected T Addon2
+            {
+                get
+                {
+                    if (_addon == null) _addon = Get<T>();
+#if UNITY_EDITOR
+                    if (_addon == null) Debug.LogErrorFormat("{0} has no addon of type {1}.", this, typeof(T));
+#endif
+                    return _addon;
+                }
+            }
+
+            private T _addon;
+        }
     }
 
-    public abstract class AddonBehaviour<T, U> : AddonBehaviour<T> where T : Component where U: Component
+    public abstract class AddonBehaviour<T> : Core.AddonBehaviour_Base<T> where T:Component
     {
-        protected U Addon2
+        protected override X Get<X>()
         {
-            get
-            {
-                if (_addon == null) _addon = GetComponent<U>();
-                return _addon;
-            }
+            return GetComponent<X>();
         }
+    }
 
-        private U _addon;
+    public abstract class AddonBehaviour<T, U> : Core.AddonBehaviour_Base<T, U> where T : Component where U: Component
+    {
+        protected override X Get<X>()
+        {
+            return GetComponent<X>();
+        }
+    }
+
+    public abstract class AddonParentBehaviour<T> : Core.AddonBehaviour_Base<T> where T : Component
+    {
+        protected override X Get<X>()
+        {
+            return GetComponentInParent<X>();
+        }
+    }
+
+    public abstract class AddonParentBehaviour<T, U> : Core.AddonBehaviour_Base<T, U> where T : Component where U : Component
+    {
+        protected override X Get<X>()
+        {
+            return GetComponentInParent<X>();
+        }
     }
 }
 

@@ -47,6 +47,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public event DelMoodPawnUndirectedSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillEvent OnUseSkill;
+    public event DelMoodPawnUndirectedSkillEvent OnEndSkill;
     public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
     
     public KinematicPlatformer mover;
@@ -216,6 +217,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             _lookAtControl = animator.GetComponent<LookAtIK>();
         }
+        
     }
 
     private void OnEnable()
@@ -346,6 +348,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     #endregion
 
     #region Skills
+    private float _currentSkillTimestamp;
     private MoodSkill _currentSkill;
     private Coroutine _currentSkillRoutine;
     private int _currentPlugoutPriority;
@@ -399,12 +402,24 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             OnInterruptSkill?.Invoke(this, skill);
             UnmarkUsingSkill(skill);
         }
+#if UNITY_EDITOR
+        else
+        {
+            Debug.LogErrorFormat("[PAWN] Tried interrupting skill {0} for pawn {1} but couldn't!", skill.name, name);
+        }
+#endif
+    }
+
+    public float GetTimeElapsedSinceUsingCurrentSkill()
+    {
+        return Time.time - _currentSkillTimestamp;
     }
 
     public void MarkUsingSkill(MoodSkill skill)
     {
         //Debug.LogFormat("{0} mark using skill {1}", this.name, skill?.name);
         _currentSkill = skill;
+        _currentSkillTimestamp = Time.time;
         OnBeforeSkillUse?.Invoke(this, skill);
     }
 
@@ -415,6 +430,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             //Debug.LogFormat("{0} unmark using skill {1}", this.name, skill?.name);
             _currentSkill = null;
             SetPlugoutPriority(0);
+            OnEndSkill?.Invoke(this, skill);
         }
     }
 
@@ -733,7 +749,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
 
             Vector3 inputVelocityNormalized = inputVelocity.normalized;
-
+                
             UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f);
 
             if (Vector3.Angle(inputVelocity, direction) < angleToBeAbleToAccelerate) //Already looking in the direction

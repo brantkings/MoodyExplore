@@ -27,7 +27,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
     }
 
 
-    public override void Show(Properties property)
+    public override void Show(MoodPawn pawn, Properties property)
     {
         vertexData.Clear();
         triangleData.Clear();
@@ -45,9 +45,10 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
         bot.y = 0.05f;
     }
 
-    public override void Hide()
+    public override void Hide(MoodPawn p)
     {
         meshRenderer.Get(gameObject).enabled = false;
+        Debug.LogFormat("Hiding {0} of {2} {1}", meshRenderer.Get(gameObject), meshRenderer.Get(gameObject).enabled, p.name);
     }
 
     public void SetDirection(Vector3 directionLength)

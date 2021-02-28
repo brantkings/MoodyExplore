@@ -47,9 +47,10 @@ public class DamageEvent : MonoBehaviour
         switch (where)
         {
             case WhereEvent.HealthTransform:
-                return h.transform;
+                if (h != null) return h.transform;
+                else return transform;
             default:
-                return transform.transform;
+                return transform;
         }
     }
 

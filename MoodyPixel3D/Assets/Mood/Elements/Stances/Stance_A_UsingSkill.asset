@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _reactions: []
-  removeNeutralStance: 1
+  removeNeutralStance: 0
   pawnModifiers: []
-  _hasTimeLimit: 1
-  _timeLimit: 2.5
+  _hasTimeLimit: 0
+  _timeLimit: 0
   _stanceAnimParamBool: 
   flags: []
   deactivateFlags: []

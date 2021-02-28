@@ -6,7 +6,7 @@ namespace Code.MoodGame.Skills
 {
     
     [CreateAssetMenu(fileName = "Skill_Attack_", menuName = "Mood/Skill/Attack", order = 0)]
-    public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver, RangeArea.IRangeShowPropertyGiver
+    public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver, RangeArea.IRangeShowPropertyGiver, RangeArea.IRangeShowLivePropertyGiver
     {
         [Header("Attack")]
         public int damage = 10;
@@ -27,7 +27,9 @@ namespace Code.MoodGame.Skills
 
         [Space] 
         public float preTime = 0.5f;
+        public float animationTime = 0.25f;
         public float postTime = 1f;
+        public bool showPreview;
         private RangeTarget.Properties _targetProp;
 
         public ActivateableMoodStance[] addedStancesWithAttack;
@@ -77,43 +79,65 @@ namespace Code.MoodGame.Skills
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(Mathf.Max(preTime - Time.deltaTime, 0f));
 
-            float executingTime = ExecuteEffect(pawn, skillDirection);
+            pawn.PrepareForSwing(swingData, skillDirection);
+            pawn.FinishSkillAnimation(this);
+            pawn.ShowSwing(swingData, skillDirection);
 
             DispatchExecuteEvent(pawn, skillDirection);
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             pawn.StopThreatening();
+            AddStances(pawn);
+            bool hit = DealDamage(pawn, skillDirection);
+            float executingTime = ExecuteEffect(pawn, skillDirection);
             yield return new WaitForSecondsRealtime(executingTime);
+            yield return new WaitForSeconds(animationTime);
+            if (hit)
+            {
+                pawn.SetPlugoutPriority(priorityAfterAttack);
+            }
+            else
+            {
+                pawn.SetPlugoutPriority(priorityAfterWhiff);
+            }
 
-            pawn.PrepareForSwing(swingData, skillDirection);
-            pawn.FinishSkillAnimation(this);
-            pawn.ShowSwing(swingData, skillDirection);
+            
+
+            
             onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(postTime);
         }
 
         public override void Interrupt(MoodPawn pawn)
         {
-            Debug.LogErrorFormat("Interrupted {0} on {1}", name, pawn.name);
+            Debug.LogWarningFormat("Interrupted {0} on {1}", name, pawn.name);
             base.Interrupt(pawn);
             pawn.StopThreatening();
             pawn.FinishSkillAnimation(this);
         }
 
-        protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+        private void AddStances(MoodPawn pawn)
         {
-            //Debug.LogFormat("Trying to find results! {0} {1} {2}", pawn, skillDirection, targetLayer.value);
-            pawn.SetPlugoutPriority(priorityAfterWhiff);
+            if (addedStancesWithAttack != null)
+                foreach (ActivateableMoodStance stance in addedStancesWithAttack)
+                    pawn.AddStance(stance);
+        }
+
+        private bool DealDamage(MoodPawn pawn, Vector3 skillDirection)
+        {
+            bool hit = false;
             foreach (MoodSwing.MoodSwingResult result in swingData.TryHitMerged(pawn.Position, Quaternion.LookRotation(skillDirection, pawn.Up), targetLayer))
             {
                 //Debug.LogFormat("Result is {0}", result.collider);
-                if(result.collider != null)
+                if (result.collider != null)
                 {
+                    hit = true;
+
                     Debug.LogWarningFormat("Attack {0} found collider {1} from '{2}'", name, result.collider.name, result.collider.GetComponentInParent<MoodPawn>()?.name);
                     Health enemyHealth = result.collider.GetComponentInParent<Health>();
                     //Debug.LogFormat("{0} found collider {1}, health {2} in children {3}", this, result.collider, enemyHealth, result.collider.GetComponentInChildren<Health>());
                     Health.DamageResult? damageResult = enemyHealth?.Damage(GetDamage(pawn, result.collider.transform, result.hitDirection));
 
-                    if(damageResult.HasValue)
+                    if (damageResult.HasValue)
                     {
                         switch (damageResult.Value)
                         {
@@ -136,15 +160,9 @@ namespace Code.MoodGame.Skills
                         }
                     }
 
-                    pawn.SetPlugoutPriority(priorityAfterAttack);
                 }
             }
-
-            if(addedStancesWithAttack != null)
-                foreach(ActivateableMoodStance stance in addedStancesWithAttack)    
-                    pawn.AddStance(stance);
-
-            return base.ExecuteEffect(pawn, skillDirection);
+            return hit;
         }
 
         public override IEnumerable<MoodStance> GetStancesThatWillBeAdded()
@@ -176,6 +194,12 @@ namespace Code.MoodGame.Skills
             {
                 swingData = this.swingData
             };
+        }
+
+        public bool ShouldShowNow(MoodPawn pawn)
+        {
+            return pawn.GetTimeElapsedSinceUsingCurrentSkill() < preTime;
+            //return showPreview;
         }
     }
 }

@@ -98,9 +98,14 @@ namespace LHH.Caster
             return GetOriginPosition() + offset;
         }
 
+        protected Vector3 GetDefaultDirection()
+        {
+            return Origin.TransformDirection(_defaultDirectionRelative);
+        }
+
         public Vector3 GetDefaultDirectionNormalized()
         {
-            return Origin.TransformDirection(_defaultDirectionRelative).normalized;
+            return GetDefaultDirection().normalized;
         }
 
         public float GetDefaultDistance()

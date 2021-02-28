@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Heavy Bonk
+  onlyNeutralStance: 0
   needs:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   consumeNeededStances: 1
@@ -26,10 +27,12 @@ MonoBehaviour:
     coneAngle: 0
     mirrored: 0
   startupPriority: 2
+  heightCheckers: []
   _freeFocusCost: 1
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 0
+  _debug: 0
   _cost: 3
   damage: 20
   stunTime: 1
@@ -67,6 +70,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   onGuardedDamage:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
-  preTime: 0.5
-  postTime: 0.5
+  preTime: 1
+  animationTime: 0.125
+  postTime: 2.5
   addedStancesWithAttack: []

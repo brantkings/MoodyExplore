@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Mood/Skill/Damaging Reaction", fileName = "Reaction_")]
-public class MoodPreReaction_TakeDamage : MoodPreReaction
+public class MoodReaction_TakeDamageToBump : MoodReaction, IMoodReaction<ReactionInfo>
 {
     [Header("Damage self")]
     public int damage = DamageInfo.BASE_SINGLE_UNIT_DAMAGE;
@@ -14,7 +14,12 @@ public class MoodPreReaction_TakeDamage : MoodPreReaction
     public RelativeVector3 knockbackDirectionFromPawnDirection;
     public float knockbackDuration;
 
-    public override void React(ref ReactionInfo info, MoodPawn pawn)
+    public bool CanReact(ReactionInfo info, MoodPawn pawn)
+    {
+        return true;
+    }
+
+    public void React(ref ReactionInfo info, MoodPawn pawn)
     {
         DamageInfo dmgInfo = new DamageInfo()
         {
@@ -30,13 +35,6 @@ public class MoodPreReaction_TakeDamage : MoodPreReaction
             ignorePhaseThrough = true
         };
 
-        Debug.LogWarningFormat("Gonna damage {0} by {1}", dmgInfo, name);
-
-        if(Health.IsDamage(pawn.Damage(dmgInfo)))
-        {
-            base.React(ref info, pawn);
-        }
-
-
+        pawn.Damage(dmgInfo);
     }
 }

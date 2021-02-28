@@ -19,7 +19,8 @@ MonoBehaviour:
     mirrored: 0
   canExecuteStunned: 0
   needStances: []
-  prohibitiveStances: []
+  prohibitiveStances:
+  - {fileID: 11400000, guid: c26440728911a7a4395539f47dd5e992, type: 2}
   absoluteCost: 1
   multiplierDamageCost: 0.1
   alwaysExecuteEvenWithoutStamina: 1

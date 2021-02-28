@@ -93,6 +93,12 @@ public class SmoothFixedStepWalk : MonoBehaviour
     PositionInterpolator pos;
     RotationInterpolator rot;
 
+    delegate Vector3 DelGetPosition(float time);
+    delegate Quaternion DelGetRotation(float time);
+
+    DelGetPosition getPos;
+    DelGetRotation getRot;
+
 
     private void Awake()
     {
@@ -107,6 +113,12 @@ public class SmoothFixedStepWalk : MonoBehaviour
         rot.ClearValues();
         pos.AddValue(followee.position);
         rot.AddValue(followee.rotation);
+
+        if (doPosition) getPos = (t) => pos.GetValue(t);
+        else getPos = (t) => transform.position;
+        if (doRotation) getRot = (t) => rot.GetValue(t);
+        else getRot = (t) => transform.rotation;
+
     }
 
     private void FixedUpdate()
@@ -118,6 +130,6 @@ public class SmoothFixedStepWalk : MonoBehaviour
     void LateUpdate()
     {
         float t = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
-        transform.SetPositionAndRotation(pos.GetValue(t), rot.GetValue(t));
+        transform.SetPositionAndRotation(getPos(t), getRot(t));
     }
 }

@@ -51,7 +51,7 @@ public class MoodPreReaction : MoodReaction, IMoodReaction<ReactionInfo>, IMoodR
 
     public virtual bool CanReact(ReactionInfo info, MoodPawn pawn)
     {
-        Debug.LogWarningFormat("Can {0} react to {5} with {1}? Stunned:{2} && Stamina:{3} && Direction:{4}", pawn.name, name, 
+        Debug.LogFormat("[REACT] Can {0} react to {5} with {1}? Stunned:{2} && Stamina:{3} && Direction:{4}", pawn.name, name, 
             IsStunnedStatusValid(pawn), HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina), IsDirectionOK(pawn, info), info);
         return IsStunnedStatusValid(pawn) && HasStamina(pawn, info.GetDamage(), alwaysExecuteEvenWithoutStamina) && IsDirectionOK(pawn, info);
     }

@@ -29,6 +29,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public delegate void DelPlayerEvent();
 
+    public delegate void DelPlayerBoolEvent(bool set);
+
+    public event DelPlayerBoolEvent OnChangeCommandMode;
     public event DelPlayerEvent OnStartCommand;
     public event DelPlayerEvent OnStopCommand;
     
@@ -243,6 +246,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     }
 
 
+
     private void Update()
     {
         GetInputUpdate(out DirectionalState moveAxis, out bool readyingWeapon, out ButtonState showCommandAction, out ButtonState executeAction, out ButtonState secondaryAction);
@@ -337,6 +341,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
 
+        
         SolveCommandSlowDown(executeAction.pressing, true);
     }
 
@@ -424,6 +429,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         if(_wasInCommand != set)
         {
             _wasInCommand = set;
+            OnChangeCommandMode?.Invoke(set);
             SetMouseMode(set);
         }
 

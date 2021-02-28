@@ -18,7 +18,7 @@ MonoBehaviour:
     value: 1
   height:
     overrideState: 1
-    value: 224
+    value: 256
   mode:
     overrideState: 1
     value: 0

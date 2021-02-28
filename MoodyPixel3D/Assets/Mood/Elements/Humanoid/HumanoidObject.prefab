@@ -142,6 +142,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxLife: 12
+  _invulnerable: 0
+  _phasingThroughAttacks: 0
   _lifeNow: 0
   damageFrom: 0
   toDestroy: {fileID: 0}

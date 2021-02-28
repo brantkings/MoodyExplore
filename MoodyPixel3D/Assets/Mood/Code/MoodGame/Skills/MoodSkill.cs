@@ -206,7 +206,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public virtual bool CanBeShown(MoodPawn pawn)
     {
-        return IsValidStanceSetup(pawn) && IsNeutralOK(pawn);
+        return IsValidStanceSetup(pawn);
     }
 
     /// <summary>

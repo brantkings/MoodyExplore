@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: NPCMaterial
-  m_Shader: {fileID: 4800000, guid: 29a6d554266a40e4488cb93ea3adea9d, type: 3}
+  m_Name: AreaOfEffect_Player
+  m_Shader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -40,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 41ee75eeb2bd6cc4d97782b930c7983c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -67,15 +67,12 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ShadowIntensity: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.990566, g: 0.023362402, b: 0.1331249, a: 1}
+    - _Color: {r: 0.49065503, g: 0.6981132, b: 0.51440865, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.12670603, g: 0.107467055, b: 0.21698111, a: 1}
-    - _ShadowIntensity: {r: 0, g: 0, b: 1, a: 1}
   m_BuildTextureStacks: []

@@ -79,12 +79,12 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         HideDuration(0f, false);
     }
 
-    public override void Show(Properties param)
+    public override void Show(MoodPawn pawn, Properties param)
     {
-        ShowDuration(param, _duration);
+        ShowDuration(pawn, param, _duration);
     }
 
-    public void ShowDuration(Properties param, float duration, bool feedback = true)
+    public void ShowDuration(MoodPawn pawn, Properties param, float duration, bool feedback = true)
     {
         SetRadius(0f);
         TweenRadius(duration, param.radius, true, showColor);
@@ -99,7 +99,7 @@ public class RangeSphere : RangeShow<RangeSphere.Properties>
         }
     }
     
-    public override void Hide()
+    public override void Hide(MoodPawn pawn)
     {
         HideDuration(_duration);
     }

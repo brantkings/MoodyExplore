@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e924b59c19ee499e7b791a0a5557b, type: 3}
   m_Name: DMGMOD_PlayerDamageUndetected
   m_EditorClassIdentifier: 
-  damageMultiplier: 2
+  damageMultiplier: 1
   damageAdd: 0
   backToInt: 0

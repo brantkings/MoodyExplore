@@ -55,7 +55,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     }
 
 
-    public override void Show(Properties arrowParameters)
+    public override void Show(MoodPawn pawn, Properties arrowParameters)
     {
         
         _tweenNow.KillIfActive();
@@ -75,7 +75,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         _parametersInEffect = arrowParameters;
     }
 
-    public override void Hide()
+    public override void Hide(MoodPawn pawn)
     {
         _tweenNow.KillIfActive();
         Sequence seq = DOTween.Sequence();

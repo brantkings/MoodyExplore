@@ -18,6 +18,8 @@ public class MoodCommandController : MonoBehaviour
 
     private List<OptionTuple> _options;
 
+    private MoodPawn _pawn;
+
 
     private RangeSphere _sphereIndicator;
     private RangeArrow _arrowIndicator;
@@ -49,6 +51,8 @@ public class MoodCommandController : MonoBehaviour
         _arrowIndicator = GetComponentInChildren<RangeArrow>();
         _targetIndicator = GetComponentInChildren<RangeTarget>();
         _areaOfEffectIndicator = GetComponentInChildren<RangeArea>();
+
+        _pawn = GetComponentInParent<MoodPawn>();
 
         Deactivate();
         FadeCanvasGroup(false, 0f);
@@ -192,12 +196,12 @@ public class MoodCommandController : MonoBehaviour
         {
             //TODO this sucks. The skill should be able to both execute and draw itself. Not every drawer should be asking the current skill if the drawer can draw it. This sucks.
             foreach(IRangeShow show in AllRangeShows()) 
-                show.ResolveSkill(skillTo);
+                show.ShowSkill(_pawn, skillTo);
         }
         else
         {
             foreach(IRangeShow show in AllRangeShows()) 
-                show.Hide();
+                show.Hide(_pawn);
         }
 
         FadeCanvasGroup(active, canvasGroupFadeDuration);

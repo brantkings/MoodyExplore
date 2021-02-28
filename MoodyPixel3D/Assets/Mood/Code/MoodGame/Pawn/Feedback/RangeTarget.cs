@@ -18,7 +18,7 @@ public class RangeTarget : RangeShow<RangeTarget.Properties>
     private bool _showing;
     
     
-    public override void Show(Properties properties)
+    public override void Show(MoodPawn pawn,  Properties properties)
     {
         _properties = properties;
         _showing = true;
@@ -39,7 +39,7 @@ public class RangeTarget : RangeShow<RangeTarget.Properties>
         }
     }
 
-    public override void Hide()
+    public override void Hide(MoodPawn pawn)
     {
         targetRender.gameObject.SetActive(false);
         _showing = false;

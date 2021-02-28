@@ -40,7 +40,7 @@ public struct DamageInfo
         durationKnockback = 0f;
         rotationKnockbackAngle = 0f;
         unreactable = false;
-        ignorePhaseThrough = true;
+        ignorePhaseThrough = false;
         shouldStaggerAnimation = true;
         stunTime = 0f;
     }
@@ -75,6 +75,13 @@ public struct DamageInfo
         durationKnockback = duration;
         return this;
     }
+
+    public DamageInfo SetIgnorePhaseThrough(bool ignorePhaseThrough)
+    {
+        this.ignorePhaseThrough = ignorePhaseThrough;
+        return this;
+    }
+
 
     public DamageInfo SetStaggerAnimation(bool animate)
     {
@@ -184,7 +191,7 @@ public class Health : MonoBehaviour {
 
     public virtual DamageResult Damage(DamageInfo info)
     {
-        Debug.LogFormat("Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info), _lifeNow, PhasingThroughAttacks, Invulnerable);
+        Debug.LogFormat("[DAMAGE] Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info), _lifeNow, PhasingThroughAttacks, Invulnerable);
         if (CanDamage(info))
         {
             if (Invulnerable) return DamageResult.NotDamagingHit;
