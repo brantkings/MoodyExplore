@@ -16,7 +16,12 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         public bool warningOnHit;
     }
     
+    [SerializeField]
     private SpriteRenderer _rend;
+
+    [SerializeField]
+    private Transform _resultPositionMark;
+    private SpriteRenderer _resultRend;
     
     private SpriteRenderer Renderer
     {
@@ -33,6 +38,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     public Ease easeOut;
     public float expandOutFactor = 1.1f;
     public float durationRotateFactor = 0.025f;
+    public float resultPositionAlphaValue = 1f;
 
     public Gradient colorIn;
     public Gradient colorOut;
@@ -52,6 +58,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     private void Awake()
     {
         pawn = GetComponentInParent<MoodPawn>();
+        _resultRend = _resultPositionMark.GetComponentInChildren<SpriteRenderer>();
     }
 
 
@@ -70,6 +77,8 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         seq.Insert(0f, TweenColor(colorIn, durationIn));
         seq.Insert(0f, Renderer.DOFade(0.5f, durationIn).SetEase(easeIn));
         seq.SetUpdate(true);
+
+        _resultPositionMark.gameObject.SetActive(true);
         
         _tweenNow = seq;
         _parametersInEffect = arrowParameters;
@@ -84,7 +93,9 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         seq.Insert(0f, TweenColor(colorOut, durationOut));
         seq.Insert(0f, Renderer.DOFade(0f, durationOut).SetEase(easeOut));
         seq.SetUpdate(true);
-        
+
+        _resultPositionMark.gameObject.SetActive(false);
+
         _tweenNow = seq;
         _parametersInEffect = null;
     }
@@ -126,7 +137,9 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     public void SetDirection(Vector3 skillDirection)
     { 
         Renderer.transform.rotation = Quaternion.LookRotation(Vector3.up, skillDirection.normalized);
-        Renderer.size = new Vector2(_targetWidth, GetArrowLength(skillDirection, out bool hitted));
+        float length = GetArrowLength(skillDirection, out bool hitted);
+        Renderer.size = new Vector2(_targetWidth, length);
+        _resultPositionMark.localPosition = transform.InverseTransformDirection(skillDirection.normalized * length);
         if(NeedsWarning())
         {
             colorNow = hitted ? colorWarning : colorFine;
@@ -150,7 +163,9 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         Color gradientColor = gradientNow.Evaluate(x);
         Color resultColor = Color.Lerp(gradientColor, colorNow, x);
         resultColor.a = oldColor.a;
-        Renderer.color = resultColor; 
+        Renderer.color = resultColor;
+        resultColor.a = resultPositionAlphaValue;
+        _resultRend.color = resultColor;
     }
 
     private float GetColor()
