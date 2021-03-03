@@ -112,10 +112,14 @@ MonoBehaviour:
     _id: SpeedX
   speedZ:
     _id: SpeedZ
+  notGrounded:
+    _id: Aerial
   speedMultiplierWalk:
     _id: SpeedMultiplierWalk
   speedMultiplierRun:
     _id: SpeedMultiplierRun
+  crouch:
+    _id: Crouch
   speedAnimationWalk: 1
   speedAnimationRun: 1
 --- !u!114 &7212984170368144716
@@ -131,8 +135,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   head: {fileID: 36118091152033984}
-  leftHand: {fileID: 890674062878582554}
-  rightHand: {fileID: 2131884602135910466}
+  leftHand: {fileID: 2600271558976462222}
+  rightHand: {fileID: 7815003691190753615}
   neck: {fileID: 5234134019876647177}
 --- !u!114 &8392747685242431542
 MonoBehaviour:
@@ -484,9 +488,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2309171502108191434, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
   m_PrefabInstance: {fileID: 6812799576306673994}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &890674062878582554 stripped
+--- !u!4 &2600271558976462222 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 5969418266445663824, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
+  m_CorrespondingSourceObject: {fileID: -387898722846559036, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
   m_PrefabInstance: {fileID: 6812799576306673994}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7803441157319928867 stripped
@@ -494,9 +498,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -5566297968660232855, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
   m_PrefabInstance: {fileID: 6812799576306673994}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2131884602135910466 stripped
+--- !u!4 &7815003691190753615 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -4387046041352965880, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3674820120577470469, guid: 32394cc973055fc4baaf1459c05284ef, type: 3}
   m_PrefabInstance: {fileID: 6812799576306673994}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &5234134019876647177 stripped

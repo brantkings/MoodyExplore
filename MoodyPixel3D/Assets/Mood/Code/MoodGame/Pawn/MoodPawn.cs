@@ -348,10 +348,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     #endregion
 
     #region Skills
-    private float _currentSkillTimestamp;
+    private float _currentSkillBeginTimestamp;
+    private float _currentSkillUseTimestamp;
     private MoodSkill _currentSkill;
     private Coroutine _currentSkillRoutine;
     private int _currentPlugoutPriority;
+    private Vector3? _currentSkillUsePosition;
+    private Vector3 _currentSkillOriginDirection;
+    private Vector3 _currentSkillOriginPosition;
 
     public Tween DelayedAction(TweenCallback act, float delay)
     {
@@ -410,16 +414,52 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 #endif
     }
 
-    public float GetTimeElapsedSinceUsingCurrentSkill()
+    public float GetTimeElapsedSinceBeganCurrentSkill()
     {
-        return Time.time - _currentSkillTimestamp;
+        return Time.time - _currentSkillBeginTimestamp;
+    }
+
+    public float GetTimeElapsedSinceUsedCurrentSkill()
+    {
+        return Time.time - _currentSkillUseTimestamp;
+    }
+
+    public bool UsedCurrentSkill()
+    {
+        return _currentSkillUseTimestamp > _currentSkillBeginTimestamp;
+    }
+
+    public Vector3 GetSkillPreviewOriginPosition()
+    {
+        Vector3? usePosition = GetLatestSkillUsePosition();
+        return usePosition.HasValue ? usePosition.Value : GetCurrentSkillOriginPosition();
+    }
+
+    public Vector3 GetCurrentSkillOriginPosition()
+    {
+        if (IsExecutingSkill()) return _currentSkillOriginPosition;
+        else return Position;
+    }
+
+    public Vector3 GetCurrentSkillOriginDirection()
+    {
+        if (IsExecutingSkill()) return _currentSkillOriginDirection;
+        else return Direction;
+    }
+
+    public Vector3? GetLatestSkillUsePosition()
+    {
+        return _currentSkillUsePosition;
     }
 
     public void MarkUsingSkill(MoodSkill skill)
     {
         //Debug.LogFormat("{0} mark using skill {1}", this.name, skill?.name);
         _currentSkill = skill;
-        _currentSkillTimestamp = Time.time;
+        _currentSkillBeginTimestamp = Time.time;
+        _currentSkillOriginDirection = Direction;
+        _currentSkillOriginPosition = Position;
+        _currentSkillUsePosition = null;
         OnBeforeSkillUse?.Invoke(this, skill);
     }
 
@@ -429,6 +469,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             //Debug.LogFormat("{0} unmark using skill {1}", this.name, skill?.name);
             _currentSkill = null;
+            _currentSkillUsePosition = null;
             SetPlugoutPriority(0);
             OnEndSkill?.Invoke(this, skill);
         }
@@ -453,6 +494,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public void UsedSkill(MoodSkill skill, Vector3 direction)
     {
         Debug.LogFormat("{0} executes {1}! ({2})", name, skill.name, Time.frameCount);
+        _currentSkillUseTimestamp = Time.time;
+        _currentSkillUsePosition = Position;
         OnUseSkill?.Invoke(this, skill, direction);
     }
 
@@ -540,6 +583,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public IEnumerable<MoodReaction> GetActiveReactions()
     {
+        if (IsStunned(StunType.Reaction)) 
+            yield break;
+
         foreach(MoodStance stance in AllActiveStances)
         {
             foreach(MoodReaction react in stance.GetReactions())
@@ -1310,7 +1356,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private HashSet<MoodThreatenable> _threatTarget = new HashSet<MoodThreatenable>();
     private void ChangeThreatTargets(IEnumerable<MoodThreatenable> targets)
     {
-        ClearCurrentThreats(targets, false);
+        ClearCurrentThreats(targets, true);
         foreach(MoodThreatenable nextTarget in targets)
         {
             if(nextTarget != null && nextTarget != Threatenable)
@@ -1326,7 +1372,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void ChangeThreatTarget(MoodThreatenable nextTarget)
     {
-        ClearCurrentThreats(nextTarget, false);
+        ClearCurrentThreats(nextTarget, true);
         if(nextTarget != null && nextTarget != Threatenable)
         {
             if(_threatTarget.Add(nextTarget))
@@ -1521,9 +1567,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     #endregion
 
     #region Targetting
-    public Transform FindTarget(Vector3 direction, MoodSwing swing, LayerMask target)
+    public Transform FindTarget(Vector3 offset, Vector3 direction, MoodSwing swing, LayerMask target)
     {
-        return swing.TryHitGetBest(Position, GetRotation(), target, direction)?.collider.transform;
+        return swing.TryHitGetBest(Position + offset, GetRotation(), target, direction)?.collider.transform;
     }
     
     public Transform FindTarget(Vector3 direction, float range)

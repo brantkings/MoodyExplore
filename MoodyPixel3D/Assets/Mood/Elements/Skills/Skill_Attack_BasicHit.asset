@@ -61,6 +61,27 @@ MonoBehaviour:
   priorityPreAttack: 2
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
+  preAttackDash:
+    distance: 3
+    angle:
+      angleFromForward: 0
+      coneAngle: 180
+      mirrored: 0
+    ease: 21
+  postAttackDash:
+    distance: -1
+    angle:
+      angleFromForward: 0
+      coneAngle: 180
+      mirrored: 0
+    ease: 21
+  whiffAttackDash:
+    distance: 1
+    angle:
+      angleFromForward: 0
+      coneAngle: 180
+      mirrored: 0
+    ease: 21
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
@@ -71,4 +92,5 @@ MonoBehaviour:
   preTime: 0.5
   animationTime: 0.125
   postTime: 1
+  showPreview: 0
   addedStancesWithAttack: []

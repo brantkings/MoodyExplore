@@ -12,6 +12,17 @@ public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
         Addon.OnEndSkill += OnEndSkill;
     }
 
+
+    private void OnDisable()
+    {
+        Addon.OnBeforeSkillUse -= OnUseSkill;
+        Addon.OnEndSkill -= OnEndSkill;
+
+        StopAllCoroutines();
+        HideAll();
+    }
+
+
     private void OnUseSkill(MoodPawn pawn, MoodSkill skill)
     {
         foreach (RangeShow show in shows)
@@ -21,15 +32,6 @@ public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
                 StartCoroutine(show.ShowSkillLive(pawn, skill));
             }
         }
-    }
-
-    private void OnDisable()
-    {
-        Addon.OnBeforeSkillUse -= OnUseSkill;
-        Addon.OnEndSkill -= OnEndSkill;
-
-        StopAllCoroutines();
-        HideAll();
     }
 
 

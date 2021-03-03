@@ -116,8 +116,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     {
         return new RangeArrow.Properties()
         {
-            minLength = minDistance,
-            maxLength = maxDistance,
+            directionFixer = new RangeShow<RangeArrow.Properties>.SkillDirectionSanitizer(minDistance, maxDistance),
             width = showArrowWidth,
             warningOnHit = this.warningOnBumpWall
         };

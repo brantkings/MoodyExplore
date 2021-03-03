@@ -10,9 +10,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     public class Properties
     {
         public float width = 1f;
-        public float minLength;
-        public float maxLength;
-        public float direction;
+        public SkillDirectionSanitizer directionFixer;
         public bool warningOnHit;
     }
     
@@ -39,6 +37,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     public float expandOutFactor = 1.1f;
     public float durationRotateFactor = 0.025f;
     public float resultPositionAlphaValue = 1f;
+    public Vector3 offsetPosition = Vector3.up * .15f;
 
     public Gradient colorIn;
     public Gradient colorOut;
@@ -70,7 +69,6 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
         colorNow = colorFine;
 
-
         Renderer.size = Vector2.zero;
         //seq.Insert(0f, TweenDirection(direction, durationIn * durationRotateFactor));
         seq.Insert(0f, TweenSpriteWidth(arrowParameters.width, durationIn, easeIn));
@@ -78,8 +76,6 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         seq.Insert(0f, Renderer.DOFade(0.5f, durationIn).SetEase(easeIn));
         seq.SetUpdate(true);
 
-        _resultPositionMark.gameObject.SetActive(true);
-        
         _tweenNow = seq;
         _parametersInEffect = arrowParameters;
     }
@@ -105,7 +101,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         hitted = false;
         if (_parametersInEffect != null)
         {
-            float desiredLength = Mathf.Clamp(direction.magnitude, _parametersInEffect.minLength, _parametersInEffect.maxLength);
+            float desiredLength = Mathf.Clamp(direction.magnitude, _parametersInEffect.directionFixer.minLength, _parametersInEffect.directionFixer.maxLength);
             LHH.Caster.Caster caster = pawn.mover.GetCaster(KinematicPlatformer.CasterClass.Side);
             RaycastHit hit;
             if (Physics.Raycast(caster.transform.position, direction.normalized, out hit, desiredLength, caster.HitMask | caster.ObstacleMask))
@@ -134,10 +130,12 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
     
     
-    public void SetDirection(Vector3 skillDirection)
-    { 
+    public void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 skillDirection)
+    {
+        //Renderer.transform.position = pawn.GetSkillPreviewOriginPosition() + offsetPosition;
         Renderer.transform.rotation = Quaternion.LookRotation(Vector3.up, skillDirection.normalized);
         float length = GetArrowLength(skillDirection, out bool hitted);
+        _resultPositionMark.gameObject.SetActive(length > 0f);
         Renderer.size = new Vector2(_targetWidth, length);
         _resultPositionMark.localPosition = transform.InverseTransformDirection(skillDirection.normalized * length);
         if(NeedsWarning())

@@ -28,7 +28,7 @@ MonoBehaviour:
   _shortcut: 0
   _debug: 0
   delay: 3
-  stuns: 000000000100000002000000
+  stuns: 0000000002000000
   flags: []
   sfx: {fileID: 0}
   toAdd: []

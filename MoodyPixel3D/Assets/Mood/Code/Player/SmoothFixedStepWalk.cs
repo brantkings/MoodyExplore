@@ -99,6 +99,8 @@ public class SmoothFixedStepWalk : MonoBehaviour
     DelGetPosition getPos;
     DelGetRotation getRot;
 
+    public Vector3 offsetPosition;
+
 
     private void Awake()
     {
@@ -130,6 +132,6 @@ public class SmoothFixedStepWalk : MonoBehaviour
     void LateUpdate()
     {
         float t = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
-        transform.SetPositionAndRotation(getPos(t), getRot(t));
+        transform.SetPositionAndRotation(getPos(t) + offsetPosition, getRot(t));
     }
 }

@@ -17,11 +17,72 @@ public interface IRangeShowLive : IRangeShow
 
 public interface IRangeShowDirected
 {
-    void SetDirection(Vector3 directionLength);
+    void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 sanitizedDirectionLength);
 }
 
 public abstract class RangeShow : MonoBehaviour, IRangeShowLive
 {
+    [System.Serializable]
+    public struct SkillDirectionSanitizer
+    {
+        public MoodSkill.DirectionFixer fixer;
+        public float minLength;
+        public float maxLength;
+
+        public SkillDirectionSanitizer(float max)
+        {
+            minLength = 0f; maxLength = max;
+            fixer = MoodSkill.DirectionFixer.LetAll;
+        }
+
+        public SkillDirectionSanitizer(float min, float max)
+        {
+            minLength = min; maxLength = max;
+            fixer = MoodSkill.DirectionFixer.LetAll;
+        }
+
+        public SkillDirectionSanitizer(float min, float max, MoodSkill.DirectionFixer fixer)
+        {
+            minLength = min; maxLength = max;
+            this.fixer = fixer;
+        }
+
+        public SkillDirectionSanitizer(float min, float max, float maxAngle = 180f, float maxConeAngle = 0f)
+        {
+            minLength = min; maxLength = max;
+            fixer = new MoodSkill.DirectionFixer()
+            {
+                angleFromForward = maxAngle,
+                coneAngle = maxConeAngle,
+                mirrored = false
+            };
+        }
+
+        public Vector3 Sanitize(Vector3 direction, Vector3 pawnDirection)
+        {
+            float mag = direction.magnitude;
+            return fixer.Sanitize(direction, pawnDirection).normalized * Mathf.Clamp(mag, minLength, maxLength);
+        }
+
+        public static SkillDirectionSanitizer DefaultValue
+        {
+            get
+            {
+                return new SkillDirectionSanitizer()
+                {
+                    fixer = MoodSkill.DirectionFixer.LetAll,
+                    minLength = 0f,
+                    maxLength = float.PositiveInfinity
+                };
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[SkillDirS:{0}-{1} with {2}]", minLength, maxLength, fixer);
+        }
+    }
+
     public abstract Type GetRangeType();
     public abstract void ShowSkill(MoodPawn pawn, MoodSkill skill);
     public abstract void Hide(MoodPawn pawn);
@@ -32,6 +93,8 @@ public abstract class RangeShow : MonoBehaviour, IRangeShowLive
 
 public abstract class RangeShow<T> : RangeShow
 {
+    
+
     public interface IRangeShowPropertyGiver
     {
         T GetRangeProperty();
@@ -75,6 +138,11 @@ public abstract class RangeShow<T> : RangeShow
         {
             yield return CheckSkillRoutineLive(pawn, skill, isLive, skill as IRangeShowPropertyGiver);
         }
+    }
+    
+    protected Vector3 GetPreviewDirection(MoodSkill skill, Vector3 direction)
+    {
+        return direction;
     }
 
     private IEnumerator CheckSkillRoutineLive(MoodPawn pawn, MoodSkill skill, RangeShow<T>.IRangeShowLivePropertyGiver isLive, RangeShow<T>.IRangeShowPropertyGiver propertyGetter)

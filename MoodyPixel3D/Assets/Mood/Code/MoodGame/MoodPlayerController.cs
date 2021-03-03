@@ -298,7 +298,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 _rotatingTarget = Vector3.zero;
             }
 
-            command.UpdateCommandView(pawn, currentDirection);
+            command.UpdateCommandView(pawn, skill, currentDirection);
             pawn.SetVelocity(Vector3.zero);
             pawn.RotateTowards(_rotatingTarget);
 

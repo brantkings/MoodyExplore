@@ -201,7 +201,8 @@ public class MoodCommandController : MonoBehaviour
         else
         {
             foreach(IRangeShow show in AllRangeShows()) 
-                show.Hide(_pawn);
+                if(!show.Equals(null))
+                    show.Hide(_pawn);
         }
 
         FadeCanvasGroup(active, canvasGroupFadeDuration);
@@ -218,13 +219,12 @@ public class MoodCommandController : MonoBehaviour
         return _activated.HasValue && _activated.Value;
     }
 
-    public void UpdateCommandView(MoodPawn pawn, Vector3 sanitizedDirection)
+    public void UpdateCommandView(MoodPawn pawn, MoodSkill currentSkill, Vector3 sanitizedDirection)
     {
-        MoodSkill skill = GetCurrentSkill();
-        foreach (IRangeShowDirected directed in AllRangeShowDirected()) directed.SetDirection(sanitizedDirection);
+        foreach (IRangeShowDirected directed in AllRangeShowDirected()) directed.SetDirection(pawn, currentSkill, sanitizedDirection);
         PaintOptions(pawn, sanitizedDirection);
         AssureSelectedOptionIsVisible();
-        skill.SetShowDirection(pawn, sanitizedDirection);
+        currentSkill.SetShowDirection(pawn, sanitizedDirection);
     }
 
     public IEnumerable<MoodSkill> GetMoodSkills()

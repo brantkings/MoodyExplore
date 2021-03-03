@@ -6,7 +6,7 @@ namespace Code.MoodGame.Skills
 {
     
     [CreateAssetMenu(fileName = "Skill_Attack_", menuName = "Mood/Skill/Attack", order = 0)]
-    public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver, RangeArea.IRangeShowPropertyGiver, RangeArea.IRangeShowLivePropertyGiver
+    public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver, RangeArea.IRangeShowPropertyGiver, RangeArea.IRangeShowLivePropertyGiver, RangeArrow.IRangeShowPropertyGiver
     {
         [Header("Attack")]
         public int damage = 10;
@@ -19,6 +19,46 @@ namespace Code.MoodGame.Skills
         public int priorityAfterAttack = PRIORITY_CANCELLABLE;
         public int priorityAfterWhiff = PRIORITY_NOT_CANCELLABLE;
 
+        [System.Serializable]
+        private struct DashStruct
+        {
+            public float distance;
+            public DirectionFixer angle;
+            public DG.Tweening.Ease ease;
+
+
+            public static DashStruct DefaultValue
+            {
+                get
+                {
+                    DashStruct d = new DashStruct();
+                    d.distance = 0f;
+                    d.angle = DirectionFixer.LetAll;
+                    d.ease = DG.Tweening.Ease.OutCirc;
+                    return d;
+                }
+            }
+
+            public Vector3 GetDashDistance(Vector3 pawnDirection, Vector3 skillDirection)
+            {
+                return angle.Sanitize(skillDirection, pawnDirection).normalized * distance;
+            }
+
+            public bool HasDash()
+            {
+                return distance != 0f;
+            }
+        }
+
+        [Space()]
+        [SerializeField]
+        private DashStruct preAttackDash = DashStruct.DefaultValue;
+        [SerializeField]
+        private DashStruct postAttackDash = DashStruct.DefaultValue;
+        [SerializeField]
+        private DashStruct whiffAttackDash = DashStruct.DefaultValue;
+
+        [Space()]
         public SoundEffect onStartAttack;
         public SoundEffect onExecuteAttack;
         public SoundEffect onEndAttack;
@@ -60,7 +100,7 @@ namespace Code.MoodGame.Skills
 
         public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
         {
-            Target = pawn.FindTarget(direction, swingData, targetLayer);
+            Target = pawn.FindTarget(GetSanitizerForFirstDash().Sanitize(direction, pawn.Direction), direction, swingData, targetLayer);
         }
 
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
@@ -77,7 +117,9 @@ namespace Code.MoodGame.Skills
             yield return null;
             pawn.StartSkillAnimation(this);
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
-            yield return new WaitForSeconds(Mathf.Max(preTime - Time.deltaTime, 0f));
+            float preAttackDuration = Mathf.Max(preTime - Time.deltaTime, 0f);
+            Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
+            yield return new WaitForSeconds(preAttackDuration);
 
             pawn.PrepareForSwing(swingData, skillDirection);
             pawn.FinishSkillAnimation(this);
@@ -90,21 +132,26 @@ namespace Code.MoodGame.Skills
             bool hit = DealDamage(pawn, skillDirection);
             float executingTime = ExecuteEffect(pawn, skillDirection);
             yield return new WaitForSecondsRealtime(executingTime);
-            yield return new WaitForSeconds(animationTime);
-            if (hit)
-            {
-                pawn.SetPlugoutPriority(priorityAfterAttack);
-            }
+            if(hit)
+                Dash(pawn, skillDirection, postAttackDash, postTime + animationTime);
             else
-            {
+                Dash(pawn, skillDirection, whiffAttackDash, postTime + animationTime);
+            yield return new WaitForSeconds(animationTime + animationTime);
+            if (hit)
+                pawn.SetPlugoutPriority(priorityAfterAttack);
+            else
                 pawn.SetPlugoutPriority(priorityAfterWhiff);
-            }
 
-            
-
-            
             onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(postTime);
+        }
+
+        private void Dash(MoodPawn pawn, Vector3 skillDirection, DashStruct dashData, float duration)
+        {
+            if(dashData.HasDash())
+            {
+                pawn.Dash(dashData.GetDashDistance(pawn.Direction, skillDirection), duration, dashData.ease); ;
+            }
         }
 
         public override void Interrupt(MoodPawn pawn)
@@ -179,7 +226,7 @@ namespace Code.MoodGame.Skills
         {
             return new RangeSphere.Properties()
             {
-                radius = GetRange()
+                radius = GetRange() + preAttackDash.distance
             };
         }
 
@@ -192,14 +239,29 @@ namespace Code.MoodGame.Skills
         {
             return new RangeArea.Properties()
             {
-                swingData = this.swingData
+                swingData = this.swingData,
+                skillDirectionBeginning = GetSanitizerForFirstDash(),
             };
         }
 
         public bool ShouldShowNow(MoodPawn pawn)
         {
-            return pawn.GetTimeElapsedSinceUsingCurrentSkill() < preTime;
+            return pawn.GetTimeElapsedSinceBeganCurrentSkill() < preTime;
             //return showPreview;
+        }
+
+        RangeArrow.Properties RangeShow<RangeArrow.Properties>.IRangeShowPropertyGiver.GetRangeProperty()
+        {
+            return new RangeArrow.Properties()
+            {
+                directionFixer = GetSanitizerForFirstDash(),
+                width = 0.5f
+            };
+        }
+
+        private RangeShow.SkillDirectionSanitizer GetSanitizerForFirstDash()
+        {
+            return new RangeShow.SkillDirectionSanitizer(preAttackDash.distance, preAttackDash.distance, preAttackDash.angle);
         }
     }
 }

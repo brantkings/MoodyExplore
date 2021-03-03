@@ -53,6 +53,7 @@ MonoBehaviour:
   easeOut: 2
   expandOutFactor: 0
   durationRotateFactor: 0.025
+  resultPositionAlphaValue: 1
   colorIn:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 0}
@@ -1704,7 +1705,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5674725686595938210}
-  - component: {fileID: 2137509153121348183}
+  - component: {fileID: 3707003060003764519}
   m_Layer: 5
   m_Name: UndirectedRender
   m_TagString: Untagged
@@ -1729,7 +1730,7 @@ Transform:
   m_Father: {fileID: 5938188665427771941}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2137509153121348183
+--- !u!114 &3707003060003764519
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1738,39 +1739,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 5310718256144203275}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31d2f74cf90a2474691eca35ca38274a, type: 3}
+  m_Script: {fileID: 11500000, guid: eb2eba1ecd395524b84fc7479260fc55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Target: {fileID: 5938188665133338930}
-  minDistance: 0
-  maxDistance: 0
-  lookToDirection: 0
---- !u!1773428102 &4417546207720361735
-ParentConstraint:
+  followee: {fileID: 5938188666130470340}
+  doPosition: 1
+  doRotation: 0
+  offsetPosition: {x: 0, y: 0, z: 0}
+--- !u!114 &8772861976251764087
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5489081634565504753}
   m_Enabled: 1
-  m_Weight: 1
-  m_TranslationAtRest: {x: 0, y: 0.1, z: 0}
-  m_RotationAtRest: {x: 0, y: 0, z: 0}
-  m_TranslationOffsets:
-  - {x: 0, y: 0.1, z: 0}
-  m_RotationOffsets:
-  - {x: 0, y: 0, z: 0}
-  m_AffectTranslationX: 1
-  m_AffectTranslationY: 1
-  m_AffectTranslationZ: 1
-  m_AffectRotationX: 1
-  m_AffectRotationY: 1
-  m_AffectRotationZ: 1
-  m_IsContraintActive: 1
-  m_IsLocked: 1
-  m_Sources:
-  - sourceTransform: {fileID: 5938188666130470340}
-    weight: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb2eba1ecd395524b84fc7479260fc55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followee: {fileID: 5938188666130470340}
+  doPosition: 1
+  doRotation: 0
+  offsetPosition: {x: 0, y: 0.05, z: 0}
 --- !u!1 &5646589288523654779
 GameObject:
   m_ObjectHideFlags: 0
@@ -2115,6 +2106,7 @@ MonoBehaviour:
   followee: {fileID: 5938188666130470340}
   doPosition: 1
   doRotation: 1
+  offsetPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &5938188665409695490
 GameObject:
   m_ObjectHideFlags: 0
@@ -2502,7 +2494,7 @@ MonoBehaviour:
   pawnRadius: 0.5
   extraRangeBase: 0
   cantMoveWhileThreatened: 0
-  maxStamina: 2
+  maxStamina: 3
   infiniteStamina: 0
   recoverStaminaWhileUsingSkill: 0
   staminaRecoveryIdle: 0.7
@@ -5385,7 +5377,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6818509623941978027}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1.15, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 5933902371246874704}
@@ -5726,6 +5718,7 @@ MonoBehaviour:
   followee: {fileID: 5938188666130470340}
   doPosition: 1
   doRotation: 0
+  offsetPosition: {x: 0, y: 0, z: 0}
 --- !u!95 &1606098491931263108
 Animator:
   serializedVersion: 3
