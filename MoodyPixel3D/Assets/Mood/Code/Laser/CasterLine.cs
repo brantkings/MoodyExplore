@@ -9,17 +9,27 @@ public class CasterLine : MonoBehaviour
     public Transform origin;
     public Transform endPoint;
 
+    private void OnValidate()
+    {
+        SetPositions();
+    }
+
     private void Update()
+    {
+        SetPositions();
+    }
+
+    private void SetPositions()
     {
         origin.position = caster.GetOriginPosition();
         origin.forward = caster.GetDefaultDirectionNormalized();
         int i = 0;
-        foreach(RaycastHit hit in caster.CastAll())
+        foreach (RaycastHit hit in caster.CastAll())
         {
-            if(hit.collider != null)
+            if (hit.collider != null)
             {
                 i++;
-                if(hit.distance != 0f)
+                if (hit.distance != 0f)
                 {
                     endPoint.position = hit.point;
                     endPoint.forward = hit.normal;
@@ -33,7 +43,7 @@ public class CasterLine : MonoBehaviour
                 }
             }
         }
-        if(i==0)
+        if (i == 0)
         {
             endPoint.position = caster.GetOriginPosition() + caster.GetDefaultDirectionNormalized() * caster.GetDefaultDistance();
             endPoint.forward = -caster.GetDefaultDirectionNormalized();

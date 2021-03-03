@@ -58,10 +58,31 @@ MonoBehaviour:
       angleRotation: 0
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
-  setDirection: 0
+  setDirection: 1
   priorityPreAttack: 2
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
+  preAttackDash:
+    distance: 0
+    angle:
+      angleFromForward: 0
+      coneAngle: 180
+      mirrored: 0
+    ease: 21
+  postAttackDash:
+    distance: 0
+    angle:
+      angleFromForward: 0
+      coneAngle: 180
+      mirrored: 0
+    ease: 21
+  whiffAttackDash:
+    distance: 0
+    angle:
+      angleFromForward: 0
+      coneAngle: 180
+      mirrored: 0
+    ease: 21
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
@@ -72,4 +93,5 @@ MonoBehaviour:
   preTime: 1
   animationTime: 0.125
   postTime: 2.5
+  showPreview: 0
   addedStancesWithAttack: []

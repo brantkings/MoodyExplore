@@ -10,9 +10,12 @@ public class MoodReaction_TakeDamageToBump : MoodReaction, IMoodReaction<Reactio
     public bool stagger = true;
     public bool ignorePhaseThrough = true;
     public float stunTime = 1f;
+    public bool reactable;
 
     public RelativeVector3 knockbackDirectionFromPawnDirection;
     public float knockbackDuration;
+
+    public ScriptableEvent[] events;
 
     public bool CanReact(ReactionInfo info, MoodPawn pawn)
     {
@@ -31,9 +34,11 @@ public class MoodReaction_TakeDamageToBump : MoodReaction, IMoodReaction<Reactio
             team = DamageTeam.Neutral,
             distanceKnockback = knockbackDirectionFromPawnDirection.Get(pawn.ObjectTransform),
             durationKnockback = knockbackDuration,
-            unreactable = true,
+            unreactable = !reactable,
             ignorePhaseThrough = true
         };
+
+        events.Invoke(pawn.ObjectTransform);
 
         pawn.Damage(dmgInfo);
     }

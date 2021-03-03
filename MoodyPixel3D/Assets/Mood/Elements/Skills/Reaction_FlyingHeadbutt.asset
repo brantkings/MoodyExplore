@@ -12,35 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ac87d2150a59241a9b2fc4e93adfea, type: 3}
   m_Name: Reaction_FlyingHeadbutt
   m_EditorClassIdentifier: 
-  origin: 3
-  ignoreDirection: 1
-  directionToWork:
-    angleFromForward: 0
-    coneAngle: 180
-    mirrored: 0
-  canExecuteStunned: 1
-  needStances: []
-  prohibitiveStances: []
-  absoluteCost: 0
-  multiplierDamageCost: 0
-  alwaysExecuteEvenWithoutStamina: 0
-  absoluteKnockback: 0
-  multiplierKnockbackByOrigin: 1
-  multiplierKnockbackByDamage: 0
-  whenModifyDamage: 0
-  damageModifier:
-    add: 0
-    multiplier: 1
-  interruptCurrentSkill: 1
-  animationTrigger: 
-  events:
-  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
-  sfx: {fileID: 0}
   damage: 10
   stagger: 1
+  ignorePhaseThrough: 1
   stunTime: 1
+  reactable: 1
   knockbackDirectionFromPawnDirection:
     direction: 1
     customFrom: {fileID: 0}
     magnitude: 1
   knockbackDuration: 0.25
+  events:
+  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}

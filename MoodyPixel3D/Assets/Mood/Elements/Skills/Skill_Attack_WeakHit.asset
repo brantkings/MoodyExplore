@@ -57,7 +57,7 @@ MonoBehaviour:
       angleRotation: 0
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
-  setDirection: 0
+  setDirection: 1
   priorityPreAttack: 2
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
@@ -89,7 +89,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   onGuardedDamage:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
-  preTime: 0.5
+  preTime: 0.125
   animationTime: 0.125
   postTime: 1
   showPreview: 0
