@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Attack_StrongHit
+  m_Name: Skill_Attack_WeakHit
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Fierce Bonk
+  _name: Jab Bonk
   onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
@@ -31,10 +31,10 @@ MonoBehaviour:
   lockMovement: 0
   _shortcut: 120
   _debug: 0
-  _cost: 2
-  damage: 20
+  _cost: 1
+  damage: 10
   stunTime: 1
-  swingData: {fileID: 11400000, guid: 6d5e5e03a9402f147af046330bf6dd50, type: 2}
+  swingData: {fileID: 11400000, guid: dfadf65a8e4142f4eba11a85d57b9af1, type: 2}
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -62,7 +62,7 @@ MonoBehaviour:
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
   preAttackDash:
-    distance: 2
+    distance: 1
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -76,7 +76,7 @@ MonoBehaviour:
       mirrored: 0
     ease: 21
   whiffAttackDash:
-    distance: 1
+    distance: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -89,8 +89,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   onGuardedDamage:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
-  preTime: 1
+  preTime: 0.5
   animationTime: 0.125
-  postTime: 2.5
+  postTime: 1
   showPreview: 0
   addedStancesWithAttack: []

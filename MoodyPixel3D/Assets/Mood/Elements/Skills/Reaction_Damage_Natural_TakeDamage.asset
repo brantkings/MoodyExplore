@@ -18,7 +18,7 @@ MonoBehaviour:
   maxDamage: 2147483647
   stunTimeMultiplier: 1
   knockbackMultiplier: 1
-  shouldInterruptCurrentSkill: 0
+  shouldInterruptCurrentSkill: 1
   animationParameterMultiplier: 2
   animationDelay: 0.125
   dashCurve:

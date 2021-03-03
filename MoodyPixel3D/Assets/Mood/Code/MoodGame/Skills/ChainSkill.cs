@@ -39,13 +39,13 @@ public class ChainSkill : StaminaCostMoodSkill
         foreach (MoodSkill skill in skills)
         {
             pawn.UnmarkUsingSkill(this);
-            pawn.MarkUsingSkill(skill);
+            pawn.MarkUsingSkill(skill, skillDirection);
             Debug.LogFormat("Gonna use skill {0}, {1}", skill, Time.time);
             yield return skill.ExecuteRoutine(pawn, skillDirection);
             Debug.LogFormat("Finished skill {0}, {1}", skill, Time.time);
             pawn.UnmarkUsingSkill(skill);
 
-            pawn.MarkUsingSkill(this);
+            pawn.MarkUsingSkill(this, skillDirection);
             if (interrupted == skill)
             {
                 pawn.InterruptSkill(this);

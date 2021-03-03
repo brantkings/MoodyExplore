@@ -60,6 +60,9 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
     public void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 directionLength)
     {
         transform.position = pawn.UsedCurrentSkill() || skill != pawn.GetCurrentSkill()? pawn.Position : pawn.GetSkillPreviewOriginPosition();
+
+        /*Debug.LogErrorFormat("{0} is Used? {1} or Skill different than current? {2}. Pawn Position is {3} while OriginPosition is {4} ({5})", 
+            transform.position, pawn.UsedCurrentSkill(), skill != pawn.GetCurrentSkill(), pawn.Position, pawn.GetSkillPreviewOriginPosition(), this);*/
         transform.forward = directionLength;
         transform.localPosition += transform.parent.InverseTransformVector(currentSanitizer.Sanitize(directionLength, pawn.Direction));
         //transform.localPosition = transform.parent.InverseTransformVector(directionLength);

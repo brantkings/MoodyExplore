@@ -44,7 +44,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public event DelMoodPawnEvent OnChangeStamina;
 
-    public event DelMoodPawnUndirectedSkillEvent OnBeforeSkillUse;
+    public event DelMoodPawnSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillEvent OnUseSkill;
     public event DelMoodPawnUndirectedSkillEvent OnEndSkill;
@@ -377,7 +377,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private IEnumerator SkillRoutine(MoodSkill skill, Vector3 skillDirection)
     {
-        MarkUsingSkill(skill);
+        MarkUsingSkill(skill, skillDirection);
         if(pawnConfiguration?.stanceOnSkill != null) AddStance(pawnConfiguration.stanceOnSkill);
         yield return skill.ExecuteRoutine(this, skillDirection);
         if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
@@ -452,7 +452,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _currentSkillUsePosition;
     }
 
-    public void MarkUsingSkill(MoodSkill skill)
+    public void MarkUsingSkill(MoodSkill skill, Vector3 direction)
     {
         //Debug.LogFormat("{0} mark using skill {1}", this.name, skill?.name);
         _currentSkill = skill;
@@ -460,7 +460,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _currentSkillOriginDirection = Direction;
         _currentSkillOriginPosition = Position;
         _currentSkillUsePosition = null;
-        OnBeforeSkillUse?.Invoke(this, skill);
+        OnBeforeSkillUse?.Invoke(this, skill, direction);
     }
 
     public void UnmarkUsingSkill(MoodSkill skill)

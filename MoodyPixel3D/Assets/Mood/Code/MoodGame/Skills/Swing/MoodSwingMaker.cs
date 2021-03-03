@@ -19,8 +19,8 @@ namespace Mood.Swing.Maker
             return new MoodSwing.MoodSwingNode()
             {
                 delay = 0f,
-                localPosition = from.localPosition,
-                radius = from.localScale.x,
+                localPosition = transform.TransformPoint(from.localPosition),
+                radius = from.lossyScale.x,
                 direction = from.forward
             };
         }

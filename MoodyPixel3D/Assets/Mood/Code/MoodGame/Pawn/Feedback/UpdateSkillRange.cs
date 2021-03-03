@@ -23,13 +23,13 @@ public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
     }
 
 
-    private void OnUseSkill(MoodPawn pawn, MoodSkill skill)
+    private void OnUseSkill(MoodPawn pawn, MoodSkill skill, Vector3 skillDirection)
     {
         foreach (RangeShow show in shows)
         {
             if (show.CanShowSkill(skill))
             {
-                StartCoroutine(show.ShowSkillLive(pawn, skill));
+                StartCoroutine(show.ShowSkillLive(pawn, skill, skillDirection));
             }
         }
     }

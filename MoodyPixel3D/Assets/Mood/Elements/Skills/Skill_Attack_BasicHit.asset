@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skill_Attack_BasicHit
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Bonk
+  _name: Strong Bonk
   onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
