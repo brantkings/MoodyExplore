@@ -69,7 +69,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
         pawn.SetHorizontalDirection(skillDirection);
-        pawn.StartSkillAnimation(this);
+        pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PreAttack);
         pawn.SetPlugoutPriority(priorityPreInstantiate);
         onStartInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
         if(threat != null) pawn.StartThreatening(skillDirection, threat);
@@ -77,18 +77,19 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 
         ExecuteEffect(pawn, skillDirection);
         DispatchExecuteEvent(pawn, skillDirection);
-        
-        pawn.FinishSkillAnimation(this);
+
+        pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PostAttack);
         pawn.SetPlugoutPriority(priorityAfterInstantiate);
         if(threat != null) pawn.StopThreatening();
         onExecuteInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
         yield return new WaitForSeconds(postTime);
         onEndInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
+        pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.None);
     }
 
     public override void Interrupt(MoodPawn pawn)
     {
-        pawn.FinishSkillAnimation(this);
+        pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.None);
         base.Interrupt(pawn);
     }
 

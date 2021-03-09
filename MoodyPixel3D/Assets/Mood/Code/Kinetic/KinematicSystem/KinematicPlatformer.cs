@@ -58,7 +58,7 @@ public class KinematicPlatformer : MonoBehaviour
 #if UNITY_EDITOR
     [SerializeField]
     [ReadOnly]
-    private Vector3 _currentOtherSourcesInputVelocity;
+    private Vector3 _debugCurrentOtherSourcesInputVelocity;
 #endif
     private Vector3 _setFrameMovement;
     private LinkedList<IKinematicPlatformerVelocityGetter> _velocitySources;
@@ -307,7 +307,7 @@ public class KinematicPlatformer : MonoBehaviour
             }
         }
 #if UNITY_EDITOR
-        _currentOtherSourcesInputVelocity = sourceVel;
+        _debugCurrentOtherSourcesInputVelocity = sourceVel;
 #endif
         return _currentInputVelocity + sourceVel;
     }
@@ -456,7 +456,7 @@ public class KinematicPlatformer : MonoBehaviour
 
     public Collider WhatIsWhereIAmTryingToGo(CasterClass caster, out RaycastHit hit)
     {
-        return WhatIsInThere(_currentInputVelocity + _currentOtherSourcesInputVelocity, caster, out hit);
+        return WhatIsInThere(GetCurrentVelocity(), caster, out hit);
     }
 
     public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster, out RaycastHit hit)

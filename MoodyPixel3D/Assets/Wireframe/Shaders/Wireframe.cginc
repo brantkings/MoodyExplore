@@ -88,9 +88,15 @@ void geom(triangle v2g i[3], inout TriangleStream<g2f> triangleStream)
     triangleStream.Append(o);
 }
 
+float invLerp(float from, float to, float value){
+  return (value - from) / (to - from);
+}
+
 fixed4 frag(g2f i) : SV_Target
 {
     float minDistanceToEdge = min(i.dist[0], min(i.dist[1], i.dist[2])) * i.dist[3];
+
+    minDistanceToEdge -= min(3.5 - abs(2. + i.worldSpacePosition.y), 0.) / 3.5;
 
     // Early out if we know we are not on a line segment.
     if(minDistanceToEdge > 0.9 || i.area.x > _MaxTriSize)

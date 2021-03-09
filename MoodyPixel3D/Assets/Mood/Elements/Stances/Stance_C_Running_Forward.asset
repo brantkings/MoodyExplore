@@ -16,5 +16,6 @@ MonoBehaviour:
   _reactions: []
   removeNeutralStance: 1
   conditions:
+  - {fileID: 11400000, guid: 2660df8a32765f242840ed8d6be3b30a, type: 2}
   - {fileID: 11400000, guid: 17233def3f418b84fbf634cca88407b0, type: 2}
   howToJoinConditions: 0

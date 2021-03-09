@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Mood/Pawn/Condition", fileName = "Cond_Vel_")]
+[CreateAssetMenu(menuName = "Mood/Pawn/Condition/Velocity", fileName = "Cond_Vel_")]
 public class MoodPawnVelocityCondition : MoodPawnCondition
 {
     public float minVel = 0f;

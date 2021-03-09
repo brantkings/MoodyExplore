@@ -26,6 +26,9 @@ namespace Mood.Swing.Maker
 
         private MoodSwing.MoodSwingTrailNode GetTrailNode(MoodSwingMakerTrailNode node)
         {
+            if (node == null)
+                return new MoodSwing.MoodSwingTrailNode();
+
             return new MoodSwing.MoodSwingTrailNode()
             {
                 localPosTop = node.transform.TransformVector(node.TopNode.localPosition) + node.transform.localPosition,

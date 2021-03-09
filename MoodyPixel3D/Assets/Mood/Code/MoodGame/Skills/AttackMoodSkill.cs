@@ -115,14 +115,14 @@ namespace Code.MoodGame.Skills
             pawn.StartThreatening(skillDirection, swingData);
             ConsumeStances(pawn);
             yield return null;
-            pawn.StartSkillAnimation(this);
+            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.PreAttack);
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             float preAttackDuration = Mathf.Max(preTime - Time.deltaTime, 0f);
             Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
             yield return new WaitForSeconds(preAttackDuration);
 
             pawn.PrepareForSwing(swingData, skillDirection);
-            pawn.FinishSkillAnimation(this);
+            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.PostAttack);
             pawn.ShowSwing(swingData, skillDirection);
 
             DispatchExecuteEvent(pawn, skillDirection);
@@ -144,6 +144,8 @@ namespace Code.MoodGame.Skills
 
             onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             yield return new WaitForSeconds(postTime);
+
+            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.None);
         }
 
         private void Dash(MoodPawn pawn, Vector3 skillDirection, DashStruct dashData, float duration)
@@ -159,7 +161,7 @@ namespace Code.MoodGame.Skills
             Debug.LogWarningFormat("Interrupted {0} on {1}", name, pawn.name);
             base.Interrupt(pawn);
             pawn.StopThreatening();
-            pawn.FinishSkillAnimation(this);
+            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.None);
         }
 
         private void AddStances(MoodPawn pawn)

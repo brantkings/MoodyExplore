@@ -1136,30 +1136,24 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private float timeStampAttack;
     private string lastAttack;
 
-    public void StartSkillAnimation(MoodSkill skill)
+    public enum AnimationPhase
     {
-        string attackStr;
-        if(Time.time - timeStampAttack < 1f)
-        {
-            attackStr = lastAttack == "Attack_Right" ? "Attack_Left" : "Attack_Right";
-        }
-        else
-        {
-            attackStr = UnityEngine.Random.Range(0f, 1f) < 0.5 ? "Attack_Right" : "Attack_Left";
-        }
-
-        lastAttack = attackStr;
-        timeStampAttack = Time.time;
-
-        animator.SetBool(attackStr, true);
-        //Debug.LogErrorFormat("Start attack animation by {0} {1}", skill.name, Time.frameCount);
+        None = 0,
+        PreAttack = 1,
+        PostAttack = 2
     }
 
-    public void FinishSkillAnimation(MoodSkill skill)
+    public void SetAttackSkillAnimation(string str, AnimationPhase phase)
     {
-        animator.SetBool("Attack_Right", false);
-        animator.SetBool("Attack_Left", false);
-        //Debug.LogErrorFormat("Finish attack animation by {0} {1}", skill.name, Time.frameCount);
+        lastAttack = str;
+        timeStampAttack = Time.time;
+
+        animator.SetInteger(str, (int) phase);
+    }
+
+    public void FinishSkillAnimation(string str)
+    {
+        animator.SetInteger(str, (int)AnimationPhase.None);
     }
 
     public void SetDamageAnimationTween(Vector3 direction, float duration, float delay)

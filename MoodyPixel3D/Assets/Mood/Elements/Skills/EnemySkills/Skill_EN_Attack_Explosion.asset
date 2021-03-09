@@ -27,7 +27,7 @@ MonoBehaviour:
   lockMovement: 0
   _shortcut: 120
   _debug: 0
-  _cost: 1
+  _cost: 3
   damage: 10
   stunTime: 0.5
   swingData: {fileID: 11400000, guid: eeb5344097383a44e90614ece3a4b952, type: 2}
@@ -85,8 +85,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   onGuardedDamage:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
-  preTime: 3
+  preTime: 1.75
   animationTime: 0.25
-  postTime: 4.25
+  postTime: 2.75
   showPreview: 0
   addedStancesWithAttack: []

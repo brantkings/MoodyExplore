@@ -87,6 +87,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
   preTime: 1
   animationTime: 0.25
-  postTime: 2
+  postTime: 1.5
   showPreview: 0
   addedStancesWithAttack: []

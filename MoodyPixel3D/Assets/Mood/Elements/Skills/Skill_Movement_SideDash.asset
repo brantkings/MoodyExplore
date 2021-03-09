@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skill_Movement_SideDash
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Side Dash
+  _name: Side Hop
   onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
@@ -51,7 +51,8 @@ MonoBehaviour:
   ease: 12
   warningOnBumpWall: 0
   sfx: {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
-  toAdd: []
+  toAdd:
+  - {fileID: 11400000, guid: cdbc977c5bd68b44f9827ec269811c1a, type: 2}
   triggerAnim:
     id: 
   boolWhileInSkill:
