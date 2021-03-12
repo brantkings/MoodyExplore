@@ -68,5 +68,11 @@ public class ActivateableMoodStance : MoodStance
         pawn.RemoveStance(this);
     }
 
+    public float GetTimeoutDelay()
+    {
+        if (_hasTimeLimit) return _timeLimit;
+        else return 0f;
+    }
+
 
 }

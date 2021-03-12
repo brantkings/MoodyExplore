@@ -102,15 +102,28 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
 
     private void CalculateMovementData(Vector3 skillDirection, out Vector3 distance, out float duration)
     {
-        distance = skillDirection;
-        distance = distance.Clamp(minDistance, maxDistance);
+        distance = skillDirection.Clamp(minDistance, maxDistance);
         duration = durationAdd;
         if (velocityAdd != 0f)
         {
             duration += distance.magnitude / velocityAdd;
         }
     }
-    
+
+    private float GetDurationSpecialEffect()
+    {
+        float dur = 0;
+        foreach(var stance in GetStancesThatWillBeAdded())
+        {
+            ActivateableMoodStance aStance = stance as ActivateableMoodStance;
+            if(aStance != null)
+            {
+                dur = Mathf.Max(aStance.GetTimeoutDelay(), dur);
+            }
+        }
+        return dur;
+    }
+
 
     public RangeArrow.Properties GetRangeProperty()
     {
@@ -118,12 +131,15 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         {
             directionFixer = new RangeShow<RangeArrow.Properties>.SkillDirectionSanitizer(minDistance, maxDistance),
             width = showArrowWidth,
-            warningOnHit = this.warningOnBumpWall
+            warningOnHit = this.warningOnBumpWall,
+            effectDuration = GetDurationSpecialEffect(),
+            velocityInfo = new RangeArrow.Properties.VelocityInfo(velocityAdd, durationAdd)
         };
     }
 
     public override IEnumerable<MoodStance> GetStancesThatWillBeAdded()
     {
+        foreach (var stance in base.GetStancesThatWillBeAdded()) yield return stance;
         foreach (var stance in toAdd) yield return stance;
     }
 }

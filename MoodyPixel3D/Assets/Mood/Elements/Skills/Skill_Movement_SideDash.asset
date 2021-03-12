@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skill_Movement_SideDash
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Side Hop
+  _name: Side Dash
   onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
@@ -45,8 +45,8 @@ MonoBehaviour:
   - angleFromForward: 180
     coneAngle: 0
     mirrored: 0
-  velocityAdd: 0
-  durationAdd: 0.2
+  velocityAdd: 8
+  durationAdd: 0
   showArrowWidth: 1
   ease: 12
   warningOnBumpWall: 0

@@ -667,7 +667,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 85, y: 7, z: 145}
+    m_Scale: {x: 85, y: 8, z: 145}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -983,12 +983,12 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 0
-          outSlope: 0
+          inSlope: 24.639242
+          outSlope: 24.639242
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0
+          outWeight: 0.057111856
         - serializedVersion: 3
           time: 0.10194759
           value: 0.9896067
@@ -999,13 +999,22 @@ ParticleSystem:
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
+          time: 0.9
+          value: 1
+          inSlope: Infinity
+          outSlope: 0
+          tangentMode: 7
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.7525466
+        - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: -2
-          outSlope: -2
+          inSlope: -18.220497
+          outSlope: -18.220497
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0
+          inWeight: 0.101892926
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2

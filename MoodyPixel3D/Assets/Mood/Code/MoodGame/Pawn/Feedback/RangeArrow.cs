@@ -9,10 +9,32 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     [System.Serializable]
     public class Properties
     {
+        public struct VelocityInfo
+        {
+            public float velocityAdd;
+            public float durationAdd;
+
+            public VelocityInfo(float vel, float dur)
+            {
+                velocityAdd = vel;
+                durationAdd = dur;
+            }
+
+            public float GetDistanceSpecialEffect(float duration, float totalDistance)
+            {
+                float velocity = velocityAdd;
+                if (durationAdd != 0) velocity += totalDistance * durationAdd;
+
+                return velocity * duration;
+            }
+
+        }
+
         public float width = 1f;
         public SkillDirectionSanitizer directionFixer;
         public bool warningOnHit;
-        public float effectDistance;
+        public float effectDuration;
+        public VelocityInfo velocityInfo;
     }
     
     [SerializeField]
@@ -23,6 +45,8 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
     [SerializeField]
     private Transform _resultPositionMark;
+    [SerializeField]
+    private Transform _resultPositionMarkEffect;
     private SpriteRenderer _resultRend;
     
     private SpriteRenderer RendererNormal
@@ -83,10 +107,12 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         colorNow = colorFine;
 
         RendererNormal.size = Vector2.zero;
+        if (RendererEffect != null) RendererEffect.size = Vector2.zero;
         //seq.Insert(0f, TweenDirection(direction, durationIn * durationRotateFactor));
         seq.Insert(0f, TweenSpriteWidth(arrowParameters.width, durationIn, easeIn));
         seq.Insert(0f, TweenColor(colorIn, durationIn));
         seq.Insert(0f, RendererNormal.DOFade(0.5f, durationIn).SetEase(easeIn));
+        if(RendererEffect != null) seq.Insert(0f, RendererEffect.DOFade(1f, durationIn).SetEase(easeIn));
         seq.SetUpdate(true);
 
         _tweenNow = seq;
@@ -101,9 +127,11 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         seq.Insert(0f, TweenSpriteWidth(GetSpriteWidth() * expandOutFactor, durationOut, easeOut));
         seq.Insert(0f, TweenColor(colorOut, durationOut));
         seq.Insert(0f, RendererNormal.DOFade(0f, durationOut).SetEase(easeOut));
+        if (RendererEffect != null) seq.Insert(0f, RendererEffect.DOFade(0f, durationOut).SetEase(easeOut));
         seq.SetUpdate(true);
 
-        _resultPositionMark.gameObject.SetActive(false);
+        _resultPositionMark?.gameObject.SetActive(false);
+        _resultPositionMarkEffect?.gameObject.SetActive(false);
 
         _tweenNow = seq;
         _parametersInEffect = null;
@@ -146,11 +174,23 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     public void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 skillDirection)
     {
         //Renderer.transform.position = pawn.GetSkillPreviewOriginPosition() + offsetPosition;
-        RendererNormal.transform.rotation = Quaternion.LookRotation(Vector3.up, skillDirection.normalized);
         float length = GetArrowLength(skillDirection, out bool hitted);
-        _resultPositionMark.gameObject.SetActive(length > 0f);
+        
+        RendererNormal.transform.rotation = Quaternion.LookRotation(Vector3.up, skillDirection.normalized);
         RendererNormal.size = new Vector2(_targetWidth, length);
+
+        _resultPositionMark.gameObject.SetActive(length > 0f);
         _resultPositionMark.localPosition = transform.InverseTransformDirection(skillDirection.normalized * length);
+        
+        if(RendererEffect != null)
+        {
+            float effectLength = Mathf.Min(length, _parametersInEffect != null ? _parametersInEffect.velocityInfo.GetDistanceSpecialEffect(_parametersInEffect.effectDuration, length) : 0f);
+            RendererEffect.transform.rotation = RendererNormal.transform.rotation;
+            RendererEffect.size = new Vector2(_targetWidth, effectLength);
+
+            _resultPositionMarkEffect.gameObject.SetActive(effectLength > 0f);
+            _resultPositionMarkEffect.localPosition = transform.InverseTransformDirection(skillDirection.normalized * effectLength);
+        }
         if(NeedsWarning())
         {
             colorNow = hitted ? colorWarning : colorFine;
