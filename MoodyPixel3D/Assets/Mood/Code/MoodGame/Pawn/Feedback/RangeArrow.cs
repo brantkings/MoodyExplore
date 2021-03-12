@@ -12,21 +12,33 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
         public float width = 1f;
         public SkillDirectionSanitizer directionFixer;
         public bool warningOnHit;
+        public float effectDistance;
     }
     
     [SerializeField]
     private SpriteRenderer _rend;
 
     [SerializeField]
+    private SpriteRenderer _rendEffect;
+
+    [SerializeField]
     private Transform _resultPositionMark;
     private SpriteRenderer _resultRend;
     
-    private SpriteRenderer Renderer
+    private SpriteRenderer RendererNormal
     {
         get
         {
             if(_rend == null) _rend = GetComponentInChildren<SpriteRenderer>();
             return _rend;
+        }
+    }
+
+    private SpriteRenderer RendererEffect
+    {
+        get
+        {
+            return _rendEffect;
         }
     }
 
@@ -41,8 +53,9 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
     public Gradient colorIn;
     public Gradient colorOut;
-    public Color colorFine;
-    public Color colorWarning;
+    public Color colorFine = Color.green;
+    public Color colorEffect = Color.blue;
+    public Color colorWarning = Color.red;
 
     private Gradient gradientNow;
     private Color colorNow;
@@ -69,11 +82,11 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
         colorNow = colorFine;
 
-        Renderer.size = Vector2.zero;
+        RendererNormal.size = Vector2.zero;
         //seq.Insert(0f, TweenDirection(direction, durationIn * durationRotateFactor));
         seq.Insert(0f, TweenSpriteWidth(arrowParameters.width, durationIn, easeIn));
         seq.Insert(0f, TweenColor(colorIn, durationIn));
-        seq.Insert(0f, Renderer.DOFade(0.5f, durationIn).SetEase(easeIn));
+        seq.Insert(0f, RendererNormal.DOFade(0.5f, durationIn).SetEase(easeIn));
         seq.SetUpdate(true);
 
         _tweenNow = seq;
@@ -87,7 +100,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
         seq.Insert(0f, TweenSpriteWidth(GetSpriteWidth() * expandOutFactor, durationOut, easeOut));
         seq.Insert(0f, TweenColor(colorOut, durationOut));
-        seq.Insert(0f, Renderer.DOFade(0f, durationOut).SetEase(easeOut));
+        seq.Insert(0f, RendererNormal.DOFade(0f, durationOut).SetEase(easeOut));
         seq.SetUpdate(true);
 
         _resultPositionMark.gameObject.SetActive(false);
@@ -133,10 +146,10 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     public void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 skillDirection)
     {
         //Renderer.transform.position = pawn.GetSkillPreviewOriginPosition() + offsetPosition;
-        Renderer.transform.rotation = Quaternion.LookRotation(Vector3.up, skillDirection.normalized);
+        RendererNormal.transform.rotation = Quaternion.LookRotation(Vector3.up, skillDirection.normalized);
         float length = GetArrowLength(skillDirection, out bool hitted);
         _resultPositionMark.gameObject.SetActive(length > 0f);
-        Renderer.size = new Vector2(_targetWidth, length);
+        RendererNormal.size = new Vector2(_targetWidth, length);
         _resultPositionMark.localPosition = transform.InverseTransformDirection(skillDirection.normalized * length);
         if(NeedsWarning())
         {
@@ -157,11 +170,11 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     private void SetColor(float x)
     {
         _colorLerpNum = x;
-        Color oldColor = Renderer.color;
+        Color oldColor = RendererNormal.color;
         Color gradientColor = gradientNow.Evaluate(x);
         Color resultColor = Color.Lerp(gradientColor, colorNow, x);
         resultColor.a = oldColor.a;
-        Renderer.color = resultColor;
+        RendererNormal.color = resultColor;
         resultColor.a = resultPositionAlphaValue;
         _resultRend.color = resultColor;
     }
@@ -173,7 +186,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
     
     private Tween TweenDirection(Vector3 to, float duration)
     {
-        return Renderer.transform.DOLookAt(to, duration, AxisConstraint.None, Vector3.up);
+        return RendererNormal.transform.DOLookAt(to, duration, AxisConstraint.None, Vector3.up);
     }
 
     private Tween TweenSpriteWidth(float width, float duration, Ease ease)

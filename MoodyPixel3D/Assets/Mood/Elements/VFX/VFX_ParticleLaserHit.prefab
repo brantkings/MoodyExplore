@@ -69,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: ShapeModule.type
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: ColorModule.enabled
@@ -77,6 +77,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: CollisionModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
+      propertyPath: ShapeModule.m_Rotation.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}

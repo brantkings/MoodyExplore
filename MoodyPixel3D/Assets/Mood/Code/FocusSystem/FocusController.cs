@@ -125,49 +125,20 @@ public class FocusController : MonoBehaviour
         SetPain(_currentPain + value);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SelectNextFocusable(int change)
     {
-        if (_focusableList.Length <= 0)
-            return;
+        _selectedFocusableIndex = Mathf.RoundToInt(Mathf.Repeat(_selectedFocusableIndex + change, _focusableList.Length));
+        OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
+    }
 
-        if (Input.mouseScrollDelta.y < 0)
+    public void ChangeLevelCurrentFocusable(int change = 1)
+    {
+
+        Focusable focusable = _focusableList[_selectedFocusableIndex];
+
+        if(AddFocus(focusable, change))
         {
-            _selectedFocusableIndex += 1;
-
-            while (_selectedFocusableIndex >= _focusableList.Length)
-            {
-                _selectedFocusableIndex = _selectedFocusableIndex - _focusableList.Length;
-            }
-
-            OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
-        }
-        else if (Input.mouseScrollDelta.y > 0)
-        {
-            _selectedFocusableIndex -= 1;
-
-            while (_selectedFocusableIndex < 0)
-            {
-                _selectedFocusableIndex = _focusableList.Length + _selectedFocusableIndex;
-            }
-
-            OnSelectedFocusableChanged?.Invoke(_selectedFocusableIndex);
-        }
-
-        if (Input.GetKeyDown(KeyCode.E) && _availableFocusPoints > 0)
-        {
-            Focusable focusable = _focusableList[_selectedFocusableIndex];
-
-            AddFocus(focusable, 1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Focusable focusable = _focusableList[_selectedFocusableIndex];
-
-            if(AddFocus(focusable, -1))
-            {
-                Debug.Assert(_availableFocusPoints <= _maxFocusPoints, "Somehow it was possible to get more points out of the Focusables than the total points should be", this.gameObject);
-            }
+            Debug.Assert(_availableFocusPoints <= _maxFocusPoints, "Somehow it was possible to get more points out of the Focusables than the total points should be", this.gameObject);
         }
     }
 
