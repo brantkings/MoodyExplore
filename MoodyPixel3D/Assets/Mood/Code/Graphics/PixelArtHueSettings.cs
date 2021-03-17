@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
-[PostProcess(typeof(PixelArtRender), PostProcessEvent.AfterStack, "Long Hat House/Pixel Art")]
-public class PixelArtSettings : PostProcessEffectSettings
+[PostProcess(typeof(PixelArtHueRender), PostProcessEvent.AfterStack, "Long Hat House/Pixel Art Better Comparison")]
+public class PixelArtHueSettings : PostProcessEffectSettings
 {
     public IntParameter height = new IntParameter();
     public ParameterOverride<FilterMode> mode = new ParameterOverride<FilterMode>(FilterMode.Point);
     public ParameterOverride<Material> material = new ParameterOverride<Material>();
-    public ParameterOverride<ColorPalette> palette = new ParameterOverride<ColorPalette>();
+    public ParameterOverride<ComparingHueColorPalette> comparingPalette = new ParameterOverride<ComparingHueColorPalette>();
     public BoolParameter changeBefore = new BoolParameter();
 
     public override bool IsEnabledAndSupported(PostProcessRenderContext context)
@@ -20,26 +20,27 @@ public class PixelArtSettings : PostProcessEffectSettings
     private bool HasValidFunctionality()
     {
         if (material != null && material.value == null) return true;
-        else return palette.value != null;
+        else return comparingPalette.value != null;
     }
 }
 
 
-public class PixelArtRender : PostProcessEffectRenderer<PixelArtSettings>
+public class PixelArtHueRender : PostProcessEffectRenderer<PixelArtHueSettings>
 {
     public override void Init()
     {
         base.Init();
+        InitMaterial(settings.material.value);
     }
 
-    protected virtual void InitMaterial(Material mat)
+    private void InitMaterial(Material mat)
     {
-        settings.palette.value.SetMaterial(mat, "_Colors", "_MaxColors");
+        settings.comparingPalette.value.SetMaterial(mat);
     }
 
     public override void Render(PostProcessRenderContext context)
     {
-        if (settings.palette.value != null && settings.material.value != null)
+        if (settings.comparingPalette.value != null && settings.material.value != null)
             InitMaterial(settings.material.value);
         int height = settings.height.value;
         int width = Mathf.FloorToInt(Camera.main.aspect * height);
@@ -60,7 +61,7 @@ public class PixelArtRender : PostProcessEffectRenderer<PixelArtSettings>
 
     private void BlitLimitingColors(PostProcessRenderContext context, UnityEngine.Rendering.RenderTargetIdentifier source, UnityEngine.Rendering.RenderTargetIdentifier destination)
     {
-        if (settings.material.value != null || settings.palette.value != null)
+        if (settings.material.value != null || settings.comparingPalette.value != null)
             context.command.Blit(source, destination, settings.material.value);
         else
             context.command.Blit(source, destination);

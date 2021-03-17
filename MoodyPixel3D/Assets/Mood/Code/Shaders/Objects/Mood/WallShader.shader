@@ -60,7 +60,7 @@ Shader "Long Hat House/WallShader"
         fixed2 pointDist = IN.worldPos.xz - _WorldSpaceCameraPos.xz;
         //Clip everything below player
         fixed playerHeightDistance = PlayerPosition.y - IN.worldPos.y;
-        float showEverythingBelow = playerHeightDistance + 2. - clipSaveValue;
+        float showEverythingBelow = playerHeightDistance + .5 - clipSaveValue;
         float distanceToShowWall = (length(pointDist) - length(playerDist));
         float isWall = length(IN.worldNormal.xz);
         if(showEverythingBelow < 0)

@@ -48,7 +48,7 @@ Shader "Long Hat House/Unlit/BorderDetection"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.normal = v.normal;
-                //o.depth = float2(-1,-1);
+                o.depth = float2(-1,-1);
                 UNITY_TRANSFER_DEPTH(o.depth);
                 UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;

@@ -47,6 +47,6 @@ public class PositionInPawnDirection : MonoBehaviour
         Vector3 dir = GetDirection(directionToGet);
         if (normalized) dir.Normalize();
         transform.position = pawn.Position + dir * multiplier + distanceY;
-        if (alsoDirectForwardToDirection) transform.forward = dir;
+        if (alsoDirectForwardToDirection && dir != Vector3.zero) transform.forward = dir;
     }
 }
