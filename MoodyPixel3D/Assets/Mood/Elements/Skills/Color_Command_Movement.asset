@@ -9,11 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 539aaf8437cc2ae4baf3922cafe1c044, type: 3}
-  m_Name: SND_Action_Dash
+  m_Script: {fileID: 11500000, guid: 4f749f744c6fb264f9d718843d6f95cb, type: 3}
+  m_Name: Color_Command_Movement
   m_EditorClassIdentifier: 
-  tagToTest: MainCamera
-  eventString: event:/Player/Action/Dash
-  doNotPlayAtCreation: 0
-  initialParametersOnStart: []
-  _debug: 1
+  _value: {r: 0, g: 0.89019614, b: 0.20784315, a: 1}

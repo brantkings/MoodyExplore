@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Relax Weapon
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 11400000, guid: 4ba4c0d4a9c6ba741ae5dbb3a6814e5d, type: 2}
+  onlyNeutralStance: 0
   needs:
   - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   consumeNeededStances: 1
@@ -21,10 +25,12 @@ MonoBehaviour:
   restrictions: []
   _possibleAngles: []
   startupPriority: 0
+  heightCheckers: []
   _freeFocusCost: 0
   _lockCamera: 0
   lockMovement: 0
   _shortcut: 118
+  _debug: 0
   _cost: 0
   stanceChangeTime: 0.25
   toAdd: []

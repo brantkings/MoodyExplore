@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3290b48737a1b914eb506291a7cac9d3, type: 3}
-  m_Name: INSTANTIATE_VFX_Death
+  m_Script: {fileID: 11500000, guid: 4f749f744c6fb264f9d718843d6f95cb, type: 3}
+  m_Name: Color_Command_Attack
   m_EditorClassIdentifier: 
-  tagToTest: MainCamera
-  instantiate:
-    prefab: {fileID: 4534425579592918402, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
+  _value: {r: 1, g: 0.8000001, b: 0.6666667, a: 1}

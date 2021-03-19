@@ -67,7 +67,11 @@ public static class ScriptableEventExtensions
     {
         if(collection != null)
         {
-            foreach(ScriptableEvent evt in collection) if(evt != null) evt.Invoke(where);
+            for (int i = 0, len = collection.Length; i < len; i++)
+            {
+                ScriptableEvent evt = collection[i];
+                if (evt != null) evt.Invoke(where);
+            }
         }
     }
 
@@ -75,15 +79,24 @@ public static class ScriptableEventExtensions
     {
         if(collection != null)
         {
-            foreach(ScriptableEvent evt in collection) if(evt != null) evt.Invoke(where);
+            for (int i = 0, len = collection.Count; i < len; i++)
+            {
+                ScriptableEvent evt = collection[i];
+                if (evt != null) evt.Invoke(where);
+            }
         }
     }
+
 
     public static void Invoke(this ScriptableEventPositional[] collection, Vector3 position, Quaternion rotation)
     {
         if (collection != null)
         {
-            foreach (ScriptableEventPositional evt in collection) if (evt != null) evt.Invoke(position, rotation);
+            for (int i = 0, len = collection.Length; i < len; i++)
+            {
+                ScriptableEventPositional evt = collection[i];
+                if (evt != null) evt.Invoke(position, rotation);
+            }
         }
     }
 
@@ -91,7 +104,49 @@ public static class ScriptableEventExtensions
     {
         if (collection != null)
         {
-            foreach (ScriptableEventPositional evt in collection) if (evt != null) evt.Invoke(position, rotation);
+            for (int i = 0, len = collection.Count; i < len; i++)
+            {
+                ScriptableEventPositional evt = collection[i];
+                if (evt != null) evt.Invoke(position, rotation);
+            }
+        }
+    }
+
+
+    public static void Invoke(this ScriptableEvent[] collection, Transform where, Vector3 positionOverride, Quaternion rotationOverride)
+    {
+        if (collection != null)
+        {
+            for (int i = 0, len = collection.Length; i < len; i++)
+            {
+                ScriptableEventPositional evtPos = collection[i] as ScriptableEventPositional;
+                if (evtPos != null)
+                {
+                    evtPos.Invoke(positionOverride, rotationOverride);
+                    continue;
+                }
+                ScriptableEvent evt = collection[i];
+                if (evt != null) evt.Invoke(where);
+            }
+
+        }
+    }
+
+    public static void Invoke(this List<ScriptableEvent> collection, Transform where, Vector3 positionOverride, Quaternion rotationOverride)
+    {
+        if (collection != null)
+        {
+            for (int i = 0, len = collection.Count; i < len; i++)
+            {
+                ScriptableEventPositional evtPos = collection[i] as ScriptableEventPositional;
+                if(evtPos != null)
+                {
+                    evtPos.Invoke(positionOverride, rotationOverride);
+                    continue;
+                }
+                ScriptableEvent evt = collection[i];
+                if (evt != null) evt.Invoke(where);
+            }
         }
     }
 }

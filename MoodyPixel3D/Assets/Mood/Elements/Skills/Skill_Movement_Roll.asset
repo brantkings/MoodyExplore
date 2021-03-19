@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Roll
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 11400000, guid: 9a075322f5390804d902ef43c4bd550e, type: 2}
   onlyNeutralStance: 0
   needs:
   - {fileID: 11400000, guid: 9817d25c84411424ab8478112e231846, type: 2}
@@ -46,7 +49,10 @@ MonoBehaviour:
   showArrowWidth: 1
   ease: 4
   warningOnBumpWall: 1
-  sfx: {fileID: 0}
+  eventsOnStart:
+  - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
+  - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
+  eventsOnEnd: []
   toAdd:
   - {fileID: 11400000, guid: c9db44afe41d8f648b2dd89ec3bc12da, type: 2}
   - {fileID: 11400000, guid: cdbc977c5bd68b44f9827ec269811c1a, type: 2}

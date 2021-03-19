@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 539aaf8437cc2ae4baf3922cafe1c044, type: 3}
-  m_Name: SND_Action_Dash
+  m_Script: {fileID: 11500000, guid: 3290b48737a1b914eb506291a7cac9d3, type: 3}
+  m_Name: E_Instantiate_VFX_DeathPlayer
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  eventString: event:/Player/Action/Dash
-  doNotPlayAtCreation: 0
-  initialParametersOnStart: []
-  _debug: 1
+  instantiate:
+    prefab: {fileID: 3515859749712276643, guid: 04e26b9b40677b24782f8b6f1c59471d, type: 3}

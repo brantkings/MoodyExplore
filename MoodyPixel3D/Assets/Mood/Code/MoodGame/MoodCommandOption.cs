@@ -37,7 +37,8 @@ public class MoodCommandOption : MonoBehaviour
         _skill = skill;
         StaminaCostMoodSkill stamina = skill as StaminaCostMoodSkill;
         //Debug.Log($"{costColor} = {costColor.ToHexStringRGB()}");
-        text.text = _skill.GetName() +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costNumberColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}</color><color=#{costColor.ToHexStringRGB()}>SP</color></size>" : string.Empty);
+        //text.text = $"<color=#{_skill.GetColor().ToHexStringRGB()}>{_skill.GetName()}</color>" +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costNumberColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}</color><color=#{costColor.ToHexStringRGB()}>SP</color></size>" : string.Empty);
+        text.text = $"{_skill.GetName()}" +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costNumberColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}</color><color=#{costColor.ToHexStringRGB()}>SP</color></size>" : string.Empty);
         text.enabled = true;
 
         SetFocusCost(skill.GetFocusCost());
@@ -109,9 +110,9 @@ public class MoodCommandOption : MonoBehaviour
         }
     }
 
-    public void SetPossible(bool possible)
+    public void SetPossible(bool possible, MoodSkill skill)
     {
-        text.color = possible ? possibleColor : impossibleColor;
+        text.color = possible ? skill.GetColor() : impossibleColor;
     }
 
     private float _colorGradientAnimPos;

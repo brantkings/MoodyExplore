@@ -68,6 +68,13 @@ Shader "Long Hat House/WallShader"
             clip(isWall * (distanceToShowWall - 1.) + clipSaveValue);
         }
     }
+
+    inline float GetDitherValue(float2 screenPos, sampler2D dTex, float4 dTex_TexelSize)
+    {
+       float2 ditherCoordinate = screenPos * _ScreenParams.xy * dTex_TexelSize.xy;
+       return (tex2D(dTex, ditherCoordinate) + .5) * _AmountForce;
+        //return (tex2D(dTex, screenPos.xy * screenPos.w) - .5) * _AmountForce;
+    }
     ENDCG
     SubShader
     {
@@ -97,9 +104,8 @@ Shader "Long Hat House/WallShader"
             fixed4 c = ground * abs(IN.worldNormal.y) + wallA * abs(IN.worldNormal.z) + wallB * abs(IN.worldNormal.x);
             o.Albedo = c.rgb;
 
-            float2 screenPos = IN.screenPos.xy / IN.screenPos.w;
-            float2 ditherCoordinate = screenPos * _ScreenParams.xy * _DitheringTex_TexelSize.xy;
-            float ditherValue = tex2D(_DitheringTex, ditherCoordinate * _AmountForce);
+            //float ditherValue = GetDitherValue(IN.screenPos.xy / IN.screenPos.w, _DitheringTex, _DitheringTex_TexelSize);
+            float ditherValue = GetDitherValue(IN.screenPos.xy / IN.screenPos.w, _DitheringTex, _DitheringTex_TexelSize);
             
             ClipParts(IN, ditherValue);
 
@@ -123,9 +129,8 @@ Shader "Long Hat House/WallShader"
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            float2 screenPos = IN.screenPos.xy / IN.screenPos.w;
-            float2 ditherCoordinate = screenPos * _ScreenParams.xy * _DitheringTex_TexelSize.xy;
-            float ditherValue = tex2D(_DitheringTex, ditherCoordinate * _AmountForce);
+            //float ditherValue = GetDitherValue(IN.screenPos.xy / IN.screenPos.w, _DitheringTex, _DitheringTex_TexelSize);
+            float ditherValue = GetDitherValue(IN.screenPos.xy / IN.screenPos.w, _DitheringTex, _DitheringTex_TexelSize);
 
             o.Albedo = fixed3(0.,0.,0.);
             ClipParts(IN, ditherValue);

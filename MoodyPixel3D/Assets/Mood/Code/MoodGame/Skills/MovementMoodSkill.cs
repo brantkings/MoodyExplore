@@ -23,7 +23,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
 
     [Header("Feedback Movement")]
     public bool warningOnBumpWall;
-    public SoundEffect sfx;
+    public ScriptableEvent[] eventsOnStart;
+    public ScriptableEvent[] eventsOnEnd;
     public ActivateableMoodStance[] toAdd;
     [SerializeField]
     private AnimatorID triggerAnim;
@@ -53,34 +54,38 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
             pawn.SetHorizontalDirection(setDirection);
         }
         pawn.Dash(distance, duration, ease);
-        if(HasFeedback())
+        if (HasFeedback())
         {
-            pawn.OnNextBeginMove += () => DoFeedback(pawn, true);
-            pawn.OnNextEndMove += () => DoFeedback(pawn, false);
+            pawn.OnNextBeginMove += () => DoFeedback(pawn, skillDirection, true);
+            pawn.OnNextEndMove += () => DoFeedback(pawn, skillDirection, false);
         }
         SetFlags(pawn);
         AddStances(pawn);
         duration += base.ExecuteEffect(pawn, skillDirection);
         if (hopHeight > 0) pawn.FakeHop(hopHeight, hopDurationInMultiplier * duration, hopDurationOutMultiplier * duration);
-        Debug.LogWarningFormat("{0} has duration {1}. Distance is {2} and velocity is {3}. Duration real is {4}", this, duration, distance.magnitude, velocityAdd, pawn.CurrentDashDuration());
+        //Debug.LogWarningFormat("{0} has duration {1}. Distance is {2} and velocity is {3}. Duration real is {4}", this, duration, distance.magnitude, velocityAdd, pawn.CurrentDashDuration());
         return duration;
     }
 
     private bool HasFeedback()
     {
-        return triggerAnim.IsValid() || boolWhileInSkill.IsValid();
+        return triggerAnim.IsValid() || boolWhileInSkill.IsValid() || eventsOnStart.Length > 0 || eventsOnEnd.Length > 0;
     }
 
 
-    private void DoFeedback(MoodPawn pawn, bool set)
+    private void DoFeedback(MoodPawn pawn, Vector3 direction, bool set)
     {
         if(pawn.animator != null)
         {
             if(set)
             {
-                sfx.ExecuteIfNotNull(pawn.ObjectTransform);
+                eventsOnStart.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(direction));
                 if (triggerAnim.IsValid())
                     pawn.animator.SetTrigger(triggerAnim);
+            }
+            else
+            {
+                eventsOnEnd.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(direction));
             }
 
             pawn.animator.SetBool(boolWhileInSkill, set);

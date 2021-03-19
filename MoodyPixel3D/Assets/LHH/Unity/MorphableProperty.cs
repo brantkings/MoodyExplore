@@ -72,6 +72,15 @@ namespace LHH.Unity
         {
             return prop.Get();
         }
+
+        public static implicit operator MorphableProperty<T>(T prop)
+        {
+            return new MorphableProperty<T>()
+            {
+                _directProperty = prop,
+                _getter = null
+            };
+        }
     }
 }
 

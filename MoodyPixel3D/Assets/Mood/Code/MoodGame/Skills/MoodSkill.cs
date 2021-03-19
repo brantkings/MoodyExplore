@@ -100,6 +100,9 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     [SerializeField]
     private string _name;
 
+    [SerializeField]
+    private LHH.Unity.MorphableProperty<Color> _skillCommandColor;
+
 
 
     [Space()]
@@ -154,6 +157,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
             return false;
 #endif
         }
+    }
+
+    public Color GetColor()
+    {
+        return _skillCommandColor.Get();
     }
 
     public Texture2D GetIcon()

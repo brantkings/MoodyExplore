@@ -107,7 +107,7 @@ public class MoodCommandController : MonoBehaviour
     private void PaintOption(OptionTuple opt, bool canBeShown, bool canExecute)
     {
         opt.command.gameObject.SetActive(canBeShown);
-        opt.command.SetPossible(canExecute);
+        opt.command.SetPossible(canExecute, opt.skill);
     }
 
     public void Activate()

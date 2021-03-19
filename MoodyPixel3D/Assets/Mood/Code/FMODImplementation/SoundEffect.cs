@@ -121,6 +121,9 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
 
     private Dictionary<string, ParameterInfo> cachedParameters = new Dictionary<string, ParameterInfo>(2);
 
+    [SerializeField]
+    private bool _debug;
+
     public override SoundEffectInstance InvokeReturn(Transform where)
     {
         //Play the sound here
@@ -145,11 +148,11 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
             hasEventDescription = true;
             inst.getDescription(out eventDescription);
         }
-        
-        if(where != null)
+
+        if (where != null)
         {
             FMODUnity.RuntimeManager.AttachInstanceToGameObject(inst, where, where.GetComponentInParent<Rigidbody>());
-        }       
+        }
 
         foreach(Parameter initialParam in initialParametersOnStart)
         {
@@ -162,6 +165,12 @@ public class SoundEffect : ScriptableEvent<SoundEffectInstance>
         }
 
         inst.release();
+
+        if(_debug)
+        {
+            Debug.LogFormat("Playing {0} in position {2} of {3} -> {1}", name, eventDescription, where.position, where.name);
+        }
+
 
         return new SoundEffectInstance(){instance = inst};
     }
