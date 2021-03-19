@@ -26,9 +26,9 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     private MoodSwing threat;
 
     
-    public SoundEffect onStartInstantiate;
-    public SoundEffect onExecuteInstantiate;
-    public SoundEffect onEndInstantiate;
+    public ScriptableEvent[] onStartInstantiate;
+    public ScriptableEvent[] onExecuteInstantiate;
+    public ScriptableEvent[] onEndInstantiate;
 
 
     private RangeTarget.Properties TargetProperties =>
@@ -71,7 +71,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         pawn.SetHorizontalDirection(skillDirection);
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PreAttack);
         pawn.SetPlugoutPriority(priorityPreInstantiate);
-        onStartInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
+        onStartInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
         if(threat != null) pawn.StartThreatening(skillDirection, threat);
         yield return new WaitForSeconds(preTime);
 
@@ -81,9 +81,9 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PostAttack);
         pawn.SetPlugoutPriority(priorityAfterInstantiate);
         if(threat != null) pawn.StopThreatening();
-        onExecuteInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
+        onExecuteInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
         yield return new WaitForSeconds(postTime);
-        onEndInstantiate.ExecuteIfNotNull(pawn.ObjectTransform);
+        onEndInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.None);
     }
 

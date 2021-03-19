@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Power Blast
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 0}
   onlyNeutralStance: 0
   needs: []
   consumeNeededStances: 0
@@ -36,6 +39,10 @@ MonoBehaviour:
   priorityPreInstantiate: 2
   priorityAfterInstantiate: 1
   threat: {fileID: 0}
-  onStartInstantiate: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
-  onExecuteInstantiate: {fileID: 11400000, guid: 4712b65d487728043a91675abf4ccf89, type: 2}
-  onEndInstantiate: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
+  onStartInstantiate:
+  - {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
+  onExecuteInstantiate:
+  - {fileID: 11400000, guid: 4712b65d487728043a91675abf4ccf89, type: 2}
+  - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+  onEndInstantiate:
+  - {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}

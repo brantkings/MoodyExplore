@@ -25,7 +25,27 @@ namespace Code.MoodGame.Skills
             public float distance;
             public DirectionFixer angle;
             public DG.Tweening.Ease ease;
+            public ScriptableEvent[] dashFeedback;
+            public enum Direction
+            {
+                PawnDirection,
+                DashDirection
+            }
+            public Direction dashFeedbackDirection;
 
+
+            public void Feedback(Transform t, MoodPawn pawn, Vector3 direction)
+            {
+                switch (dashFeedbackDirection)
+                {
+                    case Direction.PawnDirection:
+                        dashFeedback.Invoke(t, pawn.Position, Quaternion.LookRotation(pawn.Direction));
+                        break;
+                    default:
+                        dashFeedback.Invoke(t, pawn.Position, Quaternion.LookRotation(direction));
+                        break;
+                }
+            }
 
             public static DashStruct DefaultValue
             {
@@ -152,7 +172,8 @@ namespace Code.MoodGame.Skills
         {
             if(dashData.HasDash())
             {
-                pawn.Dash(dashData.GetDashDistance(pawn.Direction, skillDirection), duration, dashData.ease); ;
+                pawn.Dash(dashData.GetDashDistance(pawn.Direction, skillDirection), duration, dashData.ease);
+                dashData.Feedback(pawn.ObjectTransform, pawn, skillDirection);
             }
         }
 

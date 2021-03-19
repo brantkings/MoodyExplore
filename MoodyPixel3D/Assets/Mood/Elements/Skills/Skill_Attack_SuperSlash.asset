@@ -73,6 +73,10 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    dashFeedback:
+    - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
+    - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
+    dashFeedbackDirection: 1
   postAttackDash:
     distance: 0
     angle:
@@ -80,6 +84,9 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    dashFeedback:
+    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+    dashFeedbackDirection: 0
   whiffAttackDash:
     distance: 0
     angle:
@@ -87,6 +94,9 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    dashFeedback:
+    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+    dashFeedbackDirection: 0
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}

@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Bonk
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 0}
   onlyNeutralStance: 0
   needs: []
   consumeNeededStances: 0
@@ -64,6 +67,10 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    dashFeedback:
+    - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
+    - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
+    dashFeedbackDirection: 1
   postAttackDash:
     distance: -1
     angle:
@@ -71,6 +78,9 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    dashFeedback:
+    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+    dashFeedbackDirection: 0
   whiffAttackDash:
     distance: 1
     angle:
@@ -78,6 +88,9 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 22
+    dashFeedback:
+    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+    dashFeedbackDirection: 0
   onStartAttack: {fileID: 0}
   onExecuteAttack: {fileID: 0}
   onEndAttack: {fileID: 0}

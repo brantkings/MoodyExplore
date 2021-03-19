@@ -43,7 +43,10 @@ MonoBehaviour:
   showArrowWidth: 1
   ease: 3
   warningOnBumpWall: 1
-  sfx: {fileID: 0}
+  eventsOnStart:
+  - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
+  - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
+  eventsOnEnd: []
   toAdd:
   - {fileID: 11400000, guid: cdbc977c5bd68b44f9827ec269811c1a, type: 2}
   triggerAnim:
