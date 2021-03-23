@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class FadeRawImageOnEnable : TweenOnEnable<RawImage, float>
+public class TweenFadeRawImage : TweenBehaviour<RawImage, float>
 {
     public float maxFade = 1f;
     

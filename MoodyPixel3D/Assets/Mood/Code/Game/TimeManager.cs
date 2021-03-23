@@ -26,21 +26,39 @@ public class TimeManager : CreateableSingleton<TimeManager>
     public float deltaTimeReturnToNormalDuration;
     public Ease deltaTimeReturnEase = Ease.InSine;
 
-    private Dictionary<string, float> targetDeltaTime;
-    
-    
+    public interface ITimeDeltaGetter
+    {
+        float GetTimeDeltaNow();
+    }
+
+    private Dictionary<string, float> targetTimeScale;
+    private Dictionary<string, ITimeDeltaGetter> targetDynamicTimeScale;
+
+    private float _minStaticTimeScale;
+    private float _maxStaticTimeScale;
+    private float _staticTimeScale;
+
+
     private Tween _currentTween;
 
     public GlobalSoundParameter fmodTimescaleParameter;
 
     private void Start()
     {
-        Time.timeScale = 1f;
+        Time.timeScale = _staticTimeScale = 1f;
     }
 
     private void Update() 
     {
         if(fmodTimescaleParameter != null) fmodTimescaleParameter.SetParameter(Time.timeScale);
+
+        float dynamicTimeScale;
+        float minDynamicTimeScale;
+        float maxDynamicTimeScale;
+
+        dynamicTimeScale = GetCurrentDynamicTimeDeltaTarget(out minDynamicTimeScale, out maxDynamicTimeScale);
+
+        Time.timeScale = Mathf.Clamp(dynamicTimeScale * _staticTimeScale, Mathf.Min(_minStaticTimeScale, minDynamicTimeScale), Mathf.Max(_maxStaticTimeScale, maxDynamicTimeScale));
     }
 
     private void OnDisable() 
@@ -56,46 +74,78 @@ public class TimeManager : CreateableSingleton<TimeManager>
     private IEnumerator StopTimeRoutine(FrameFreezeData data)
     {
         _currentTween.CompleteIfActive();
-        Time.timeScale = data.minTimeScale;
+        _staticTimeScale = data.minTimeScale;
         if (data.freezeFrames > 0) for (int i = 0; i < data.freezeFrames; i++) yield return new WaitForEndOfFrame();
         if (data.freezeDuration > 0f) yield return new WaitForSecondsRealtime(data.freezeDuration);
         if (data.tweenDuration > 0f)
         {
-            _currentTween = TweenTime(GetCurrentTimeDeltaTarget(), data.tweenDuration).SetEase(data.ease);
+            _currentTween = TweenTime(GetCurrentStaticTimeDeltaTarget(out _minStaticTimeScale, out _maxStaticTimeScale), data.tweenDuration).SetEase(data.ease);
             yield return _currentTween;
         }
         else
         {
-            Time.timeScale = GetCurrentTimeDeltaTarget();
+            _staticTimeScale = GetCurrentStaticTimeDeltaTarget(out _minStaticTimeScale, out _maxStaticTimeScale);
         }
     }
 
-    private Tween TweenTime(float to, float duration)
-    {
-        return DOTween.To(() => Time.timeScale, (x) => Time.timeScale = x, to, duration).SetUpdate(true);
-    }
 
     private void AddTimeDeltaTarget(string id, float target)
     {
-        if (targetDeltaTime == null)
+        if (targetTimeScale == null)
         {
-            targetDeltaTime = new Dictionary<string, float>(8);
+            targetTimeScale = new Dictionary<string, float>(8);
         }
-        targetDeltaTime.Add(id, target);
+        targetTimeScale.Add(id, target);
+    }
+
+    public void AddDynamicDeltaTarget(string id, ITimeDeltaGetter func)
+    {
+        if (targetDynamicTimeScale == null)
+        {
+            targetDynamicTimeScale = new Dictionary<string, ITimeDeltaGetter>(8);
+        }
+        targetDynamicTimeScale.Add(id, func);
     }
 
     private void RemoveTimeDeltaTarget(string id)
     {
-        targetDeltaTime?.Remove(id);
+        targetTimeScale?.Remove(id);
     }
 
-    private float GetCurrentTimeDeltaTarget()
+    public void RemoveDynamicTimeDeltaTarget(string id)
     {
-        if (targetDeltaTime == null) return 1f;
-        float targetMin = 1f;
-        float targetMax = 1f;
+        targetDynamicTimeScale?.Remove(id);
+    }
+
+    private float GetCurrentDynamicTimeDeltaTarget(out float targetMin, out float targetMax)
+    {
+        targetMin = 1f;
+        targetMax = 1f;
+        if (targetTimeScale == null) return 1f;
         float targetProduct = 1f;
-        foreach (float value in targetDeltaTime.Values)
+
+        if(targetDynamicTimeScale != null)
+        {
+            foreach (ITimeDeltaGetter func in targetDynamicTimeScale.Values)
+            {
+                if (func.Equals(null)) continue;
+                targetMin = Mathf.Min(func.GetTimeDeltaNow(), targetMin);
+                targetMax = Mathf.Min(func.GetTimeDeltaNow(), targetMax);
+                targetProduct = targetProduct * func.GetTimeDeltaNow();
+            }
+        }
+
+        return Mathf.Clamp(targetProduct, targetMin, targetMax);
+    }
+
+    private float GetCurrentStaticTimeDeltaTarget(out float targetMin, out float targetMax)
+    {
+        targetMin = 1f;
+        targetMax = 1f;
+        if (targetTimeScale == null) return 1f;
+        float targetProduct = 1f;
+
+        foreach (float value in targetTimeScale.Values)
         {
             targetMin = Mathf.Min(value, targetMin);
             targetMax = Mathf.Min(value, targetMax);
@@ -108,18 +158,23 @@ public class TimeManager : CreateableSingleton<TimeManager>
     public void RemoveTimeDeltaChange(string id)
     {
         RemoveTimeDeltaTarget(id);
-        TweenTimeDelta(GetCurrentTimeDeltaTarget(), deltaTimeReturnToNormalDuration, deltaTimeReturnEase);
+        TweenTimeDelta(GetCurrentStaticTimeDeltaTarget(out _minStaticTimeScale, out _maxStaticTimeScale), deltaTimeReturnToNormalDuration, deltaTimeReturnEase);
     }
     
     public void ChangeTimeDelta(float targetTimeDelta, string id)
     {    
         AddTimeDeltaTarget(id, targetTimeDelta);
-        TweenTimeDelta(GetCurrentTimeDeltaTarget(), deltaTimeSlowDuration, deltaTimeChangeEase);
+        TweenTimeDelta(GetCurrentStaticTimeDeltaTarget(out _minStaticTimeScale, out _maxStaticTimeScale), deltaTimeSlowDuration, deltaTimeChangeEase);
     }
     
     
     public void TweenTimeDelta(float targetTimeDelta, float duration, Ease ease = Ease.OutSine)
     {
         TweenTime(targetTimeDelta, duration).SetEase(ease);
+    }
+
+    private Tween TweenTime(float to, float duration)
+    {
+        return DOTween.To(() => _staticTimeScale, (x) => _staticTimeScale = x, to, duration).SetUpdate(true);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Code.Feedback
 {
-    public class PunchScaleOnEnable : TweenOnEnable<Transform, Vector3>
+    public class TweenPunchScale : TweenBehaviour<Transform, Vector3>
     {
         public Vector3 punchForce;
         public Vector3 rotationForce;

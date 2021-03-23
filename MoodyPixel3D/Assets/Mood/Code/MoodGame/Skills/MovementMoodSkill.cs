@@ -20,6 +20,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public float durationAdd;
     public float showArrowWidth = 1f;
     public Ease ease;
+    public float priortyChangeTime;
+    public int newPriorityChange;
 
     [Header("Feedback Movement")]
     public bool warningOnBumpWall;

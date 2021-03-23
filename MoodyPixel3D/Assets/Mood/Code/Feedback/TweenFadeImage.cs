@@ -5,7 +5,7 @@ using DG.Tweening;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
-public class FadeImageOnEnable : TweenOnEnable<Image, float>
+public class TweenFadeImage : TweenBehaviour<Image, float>
 {
     public float maxFade = 1f;
     

@@ -91,5 +91,9 @@ PrefabInstance:
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
       value: 70
       objectReference: {fileID: 0}
+    - target: {fileID: 5469503641647213935, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c74fe76da57a07f428235362633339b9, type: 3}

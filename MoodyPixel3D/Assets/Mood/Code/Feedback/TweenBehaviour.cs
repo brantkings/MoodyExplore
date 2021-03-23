@@ -4,7 +4,7 @@ using BehaviorDesigner.Runtime.Tasks.Unity.UnityVector2;
 using DG.Tweening;
 using UnityEngine;
 
-public abstract class TweenOnEnable<T,P> : AddonBehaviour<T>
+public abstract class TweenBehaviour<T,P> : LHH.Unity.AddonParentBehaviour<T>
 {
     public float durationIn;
     public Ease easeIn;
@@ -21,11 +21,14 @@ public abstract class TweenOnEnable<T,P> : AddonBehaviour<T>
     }
 
     public Action afterFadeOut = Action.DeactivateObject;
+
+    public bool doOnEnable = true;
     
     void OnEnable()
     {
         SetValue(GetOutValue());
-        TweenIn();
+        if(doOnEnable)
+            TweenIn();
     }
 
     void OnDisable()
@@ -54,6 +57,18 @@ public abstract class TweenOnEnable<T,P> : AddonBehaviour<T>
     public virtual Tween TweenTo(P to, float duration, Ease ease)
     {
         return ExecuteTweenItself(to, duration).SetId(this).SetEase(ease).SetUpdate(unscaledTimeDelta);
+    }
+
+    public void DoIn()
+    {
+        SetValue(GetOutValue());
+        TweenIn();
+    }
+
+    public void DoOut()
+    {
+        SetValue(GetInValue());
+        TweenOut();
     }
 
     public virtual Tween TweenIn()

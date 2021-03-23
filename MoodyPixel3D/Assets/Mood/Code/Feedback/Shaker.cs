@@ -7,6 +7,11 @@ public class Shaker : MonoBehaviour
 {
     public ShakeTweenData normalData;
 
+    public void DoShake()
+    {
+        Shake();
+    }
+
     public Tween Shake()
     {
         return Shake(normalData);

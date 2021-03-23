@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 
 [RequireComponent(typeof(SpriteRenderer))]
-public class FadeSpriteOnEnable : TweenOnEnable<SpriteRenderer, float>
+public class TweenFadeSprite : TweenBehaviour<SpriteRenderer, float>
 {
     public float maxFade = 1f;
 

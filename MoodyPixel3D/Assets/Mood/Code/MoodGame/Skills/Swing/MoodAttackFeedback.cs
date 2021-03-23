@@ -14,7 +14,7 @@ public class MoodAttackFeedback : MonoBehaviour
     MoodPawn pawn;
     Mesh mesh;
     MeshFilter filter;
-    MeshRenderer renderer;
+    MeshRenderer meshRend;
     GameObject meshObj;
 
     List<Vector3> vertexData;
@@ -25,6 +25,8 @@ public class MoodAttackFeedback : MonoBehaviour
 
     private Vector3 topPositionBefore;
     private Vector3 botPositionBefore;
+
+    private float proportion = 0f;
 
 
     private void Awake()
@@ -49,8 +51,8 @@ public class MoodAttackFeedback : MonoBehaviour
         meshObj.transform.SetParent(pawn.transform);
         meshObj.SetActive(false);
         filter = meshObj.AddComponent<MeshFilter>();
-        renderer = meshObj.AddComponent<MeshRenderer>();
-        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        meshRend = meshObj.AddComponent<MeshRenderer>();
+        meshRend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         mesh = new Mesh();
         mesh.name = "Created_SwingMesh";
         filter.mesh = mesh;
@@ -142,8 +144,10 @@ public class MoodAttackFeedback : MonoBehaviour
         //_quadCache[0] = topPositionRelativeBefore;
         //_quadCache[1] = botPositionRelativeBefore;
 
+        MoodSwing.DelUpdateVectors updateFunc = default(MoodSwing.DelUpdateVectors);
+        updateFunc += ModifyHeight;
 
-        MoodSwing.MakeVertexTrailRightToLeft(attack, vertexData, triangleData, ModifyHeight);
+        MoodSwing.MakeVertexTrailRightToLeft(attack, vertexData, triangleData, updateFunc);
         
 
         /*_quadCache[2] = _quadCache[0];
@@ -158,9 +162,25 @@ public class MoodAttackFeedback : MonoBehaviour
         mesh.RecalculateBounds();
         meshObj.transform.position = pawn.Position;
         meshObj.transform.rotation = directionRotation;
-        renderer.material = slash.GetMaterial();
+        meshRend.material = slash.GetMaterial();
     }
 
-    
+    private void Update()
+    {
+        if(vertexData.Count > 0)
+        {
+            for (int i = 0, len = vertexData.Count; i < len; i++)
+            {
+                if (i % 2 == 1)
+                {
+                    vertexData[i] = Vector3.Lerp(vertexData[i], vertexData[i - 1], 0.25f);
+                }
+                else continue;
+            }
+            mesh.SetVertices(vertexData);
+        }
+    }
+
+
 
 }

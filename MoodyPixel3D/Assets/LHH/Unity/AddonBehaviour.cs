@@ -8,10 +8,10 @@ namespace LHH.Unity
     {
         public abstract class BehaviourGetter : MonoBehaviour
         {
-            protected abstract X Get<X>() where X : Component;
+            protected abstract X Get<X>();
         }
 
-        public abstract class AddonBehaviour_Base<T> : BehaviourGetter where T : Component
+        public abstract class AddonBehaviour_Base<T> : BehaviourGetter
         {
 
             protected T Addon
@@ -29,7 +29,7 @@ namespace LHH.Unity
             private T _addon;
         }
 
-        public abstract class AddonBehaviour_Base<T,U> : AddonBehaviour_Base<T> where T : Component where U:Component
+        public abstract class AddonBehaviour_Base<T,U> : AddonBehaviour_Base<T> 
         {
 
             protected T Addon2
@@ -48,7 +48,7 @@ namespace LHH.Unity
         }
     }
 
-    public abstract class AddonBehaviour<T> : Core.AddonBehaviour_Base<T> where T:Component
+    public abstract class AddonBehaviour<T> : Core.AddonBehaviour_Base<T> 
     {
         protected override X Get<X>()
         {
@@ -56,7 +56,7 @@ namespace LHH.Unity
         }
     }
 
-    public abstract class AddonBehaviour<T, U> : Core.AddonBehaviour_Base<T, U> where T : Component where U: Component
+    public abstract class AddonBehaviour<T, U> : Core.AddonBehaviour_Base<T, U>
     {
         protected override X Get<X>()
         {
@@ -64,7 +64,7 @@ namespace LHH.Unity
         }
     }
 
-    public abstract class AddonParentBehaviour<T> : Core.AddonBehaviour_Base<T> where T : Component
+    public abstract class AddonParentBehaviour<T> : Core.AddonBehaviour_Base<T> 
     {
         protected override X Get<X>()
         {
@@ -72,7 +72,7 @@ namespace LHH.Unity
         }
     }
 
-    public abstract class AddonParentBehaviour<T, U> : Core.AddonBehaviour_Base<T, U> where T : Component where U : Component
+    public abstract class AddonParentBehaviour<T, U> : Core.AddonBehaviour_Base<T, U>
     {
         protected override X Get<X>()
         {

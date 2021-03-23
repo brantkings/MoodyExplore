@@ -6,12 +6,25 @@ public abstract class RoutineGeneralEvent : GeneralEvent
 {
     Coroutine routine;
 
-    private void OnEnable()
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        AddRoutine();
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        RemoveRoutine();
+    }
+
+
+    private void AddRoutine()
     {
         routine = StartCoroutine(InvokeRoutine());
     }
 
-    private void OnDisable()
+    private void RemoveRoutine()
     {
         if (routine != null)
             StopCoroutine(routine);

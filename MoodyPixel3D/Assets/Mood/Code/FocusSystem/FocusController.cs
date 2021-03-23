@@ -144,7 +144,8 @@ public class FocusController : MonoBehaviour
 
     private bool AddFocus(Focusable focusable, int amount)
     {
-        if(focusable != null && focusable.TryAddFocus(amount) != 0)
+        //Debug.LogFormat("[FOCUS] Adding {0} to {1}. Has Available {2}", amount, focusable, _availableFocusPoints);
+        if(focusable != null && _availableFocusPoints >= amount && focusable.TryAddFocus(amount) != 0)
         {
             _availableFocusPoints = Mathf.Clamp(_availableFocusPoints - amount, 0, MaxPoints);
             OnAvailablePointsChanged?.Invoke(_availableFocusPoints);

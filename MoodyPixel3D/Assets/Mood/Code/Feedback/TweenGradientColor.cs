@@ -2,12 +2,16 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public abstract class GradientColorTween<T> : TweenOnEnable<T, float>
+public abstract class TweenGradientColor<T> : TweenBehaviour<T, float>
 {
-    public Gradient disabledToEnabled;
+    [Header("Color data")]
+    [FormerlySerializedAs("disabledToEnabled")]
+    public Gradient inColor;
     public bool useDifferentGradientForDisable;
-    public Gradient enabledToDisabled;
+    [FormerlySerializedAs("enabledToDisabled")]
+    public Gradient outColor;
 
     public abstract void SetValue(Color value);
 
@@ -26,7 +30,7 @@ public abstract class GradientColorTween<T> : TweenOnEnable<T, float>
     private void Set(float v)
     {
         _currentValue = v;
-        SetValue(disabledToEnabled.Evaluate(v));
+        SetValue(inColor.Evaluate(v));
     }
 
     private void SelectGradient()

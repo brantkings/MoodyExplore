@@ -94,7 +94,7 @@ MonoBehaviour:
       mirrored: 0
     ease: 21
     dashFeedback:
-    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+    - {fileID: 0}
     dashFeedbackDirection: 0
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
@@ -105,6 +105,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
   preTime: 1
   animationTime: 0.125
-  postTime: 2.5
+  postTime: 1.75
   showPreview: 0
   addedStancesWithAttack: []

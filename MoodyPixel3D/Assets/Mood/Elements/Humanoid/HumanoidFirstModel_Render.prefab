@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c9d4c9b6f1daba4f85eebaca212ac16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDuration: 0.08
+  attackDuration: 0.16
 --- !u!1001 &6812799576306673994
 PrefabInstance:
   m_ObjectHideFlags: 0

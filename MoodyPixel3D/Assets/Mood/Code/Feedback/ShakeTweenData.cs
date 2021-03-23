@@ -12,6 +12,7 @@ public class ShakeTweenData : ScriptableEvent<Tween>
     public int vibrato = 10;
     public float randomness = 90f;
     public bool snapping = false;
+    [Tooltip("Fadeout parameter from DOShakePosition")]
     public bool fadeOut = true;
     public Ease ease = Ease.Linear;
     public bool isIndependentUpdate = false;
