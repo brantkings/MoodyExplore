@@ -149,4 +149,9 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         foreach (var stance in base.GetStancesThatWillBeAdded()) yield return stance;
         foreach (var stance in toAdd) yield return stance;
     }
+
+    public override IEnumerable<float> GetTimeIntervals()
+    {
+        yield return durationAdd;
+    }
 }

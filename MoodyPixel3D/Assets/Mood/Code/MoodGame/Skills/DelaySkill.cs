@@ -70,4 +70,9 @@ public class DelaySkill : MoodSkill
         }
     }
 
+    public override IEnumerable<float> GetTimeIntervals()
+    {
+        yield return delay;
+    }
+
 }

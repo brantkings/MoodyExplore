@@ -16,7 +16,7 @@ MonoBehaviour:
   _name: Power Blast
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
-    _getter: {fileID: 0}
+    _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
   onlyNeutralStance: 0
   needs: []
   consumeNeededStances: 0

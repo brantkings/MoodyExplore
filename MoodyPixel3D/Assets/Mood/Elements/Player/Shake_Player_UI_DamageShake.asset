@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4aaaba51cb3a93449518932794eab26, type: 3}
-  m_Name: Shake_Player_CanvasDamageShake
+  m_Name: Shake_Player_UI_DamageShake
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  force: {x: 4, y: 4, z: 0}
-  vibrato: 500
-  randomness: 90
+  force: {x: 10, y: 10, z: 0}
+  vibrato: 700
+  randomness: 180
   snapping: 0
   fadeOut: 1
   ease: 15
   isIndependentUpdate: 1
-  duration: 2
+  duration: 1.5

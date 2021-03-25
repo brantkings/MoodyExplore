@@ -82,8 +82,6 @@ public abstract class RangeShow : MonoBehaviour, IRangeShowLive
             return string.Format("[SkillDirS:{0}-{1} with {2}]", minLength, maxLength, fixer);
         }
     }
-
-    public abstract Type GetRangeType();
     public abstract void ShowSkill(MoodPawn pawn, MoodSkill skill);
     public abstract void Hide(MoodPawn pawn);
     public abstract IEnumerator ShowSkillLive(MoodPawn pawn, MoodSkill skill, Vector3 directionUsed);
@@ -104,11 +102,6 @@ public abstract class RangeShow<T> : RangeShow
     {
         bool ShouldShowNow(MoodPawn pawn);
 
-    }
-
-    public override Type GetRangeType()
-    {
-        return typeof(T);
     }
 
     public abstract void Show(MoodPawn pawn, T property);

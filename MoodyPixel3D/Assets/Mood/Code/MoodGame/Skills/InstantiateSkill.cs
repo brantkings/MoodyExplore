@@ -115,6 +115,12 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         };
     }
 
+    public override IEnumerable<float> GetTimeIntervals()
+    {
+        yield return preTime;
+        yield return postTime;
+    }
+
     /*RangeTarget.Properties RangeShow<RangeTarget.Properties>.IRangeShowPropertyGiver.GetRangeProperty()
     {
         return TargetProperties;

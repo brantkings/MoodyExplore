@@ -156,7 +156,7 @@ namespace Code.MoodGame.Skills
                 Dash(pawn, skillDirection, postAttackDash, postTime + animationTime);
             else
                 Dash(pawn, skillDirection, whiffAttackDash, postTime + animationTime);
-            yield return new WaitForSeconds(animationTime + animationTime);
+            yield return new WaitForSeconds(animationTime);
             if (hit)
                 pawn.SetPlugoutPriority(priorityAfterAttack);
             else
@@ -285,6 +285,12 @@ namespace Code.MoodGame.Skills
         private RangeShow.SkillDirectionSanitizer GetSanitizerForFirstDash()
         {
             return new RangeShow.SkillDirectionSanitizer(preAttackDash.distance, preAttackDash.distance, preAttackDash.angle);
+        }
+
+        public override IEnumerable<float> GetTimeIntervals()
+        {
+            yield return preTime;
+            yield return animationTime + postTime;
         }
     }
 }

@@ -287,6 +287,35 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         pawn.UsedSkill(this, skillDirection);
     }
 
+    public virtual IEnumerable<float> GetTimeIntervals()
+    {
+         yield return 0f;
+    }
+
+    public virtual void GetProgress(float timeElapsedSince, out float currentProgressPercentage, out Color? currentProgressColor)
+    {
+        float now = 0f;
+        currentProgressPercentage = 1f;
+        currentProgressColor = null;
+        foreach (float elapsed in GetTimeIntervals())
+        {
+            float after = now + elapsed;
+            if (timeElapsedSince >= now && timeElapsedSince <= after)
+            {
+                currentProgressPercentage = Mathf.InverseLerp(now, after, timeElapsedSince);
+                currentProgressColor = null;
+                break;
+            }
+            now = after;
+        }
+    }
+
+    public virtual void GetProgress(MoodPawn pawn, float timeElapsedSince, out float currentProgressPercentage, out Color? currentProgressColor)
+    {
+        currentProgressPercentage = 0f;
+        currentProgressColor = null;
+    }
+
 
     /// <summary>
     /// Execute the real effect! Return the duration of the effect that should be waited after.

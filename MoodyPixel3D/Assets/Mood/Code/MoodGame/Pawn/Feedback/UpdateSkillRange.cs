@@ -22,6 +22,14 @@ public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
         HideAll();
     }
 
+    private void Start()
+    {
+        foreach (RangeShow show in shows)
+        {
+            show.Hide(null);
+        }
+    }
+
 
     private void OnUseSkill(MoodPawn pawn, MoodSkill skill, Vector3 skillDirection)
     {

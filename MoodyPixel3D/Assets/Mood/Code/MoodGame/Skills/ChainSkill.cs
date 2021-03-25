@@ -80,4 +80,17 @@ public class ChainSkill : StaminaCostMoodSkill
         foreach (MoodSkill skill in skills) if (skill.ImplementsRangeShow<T>()) return skill.GetRangeShowProperty<T>();
         return base.GetRangeShowProperty<T>();
     }
+
+    public override IEnumerable<float> GetTimeIntervals()
+    {
+        foreach (MoodSkill skill in skills)
+        {
+            float sum = 0f;
+            foreach(float time in skill.GetTimeIntervals())
+            {
+                sum += time;
+            }
+            yield return sum;
+        }
+    }
 }
