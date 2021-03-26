@@ -36,29 +36,24 @@ public class ChainSkill : StaminaCostMoodSkill
         };
         pawn.OnInterruptSkill += onInterruptSkill;
 
+        pawn.UnmarkUsingSkill(this);
         foreach (MoodSkill skill in skills)
         {
-            pawn.UnmarkUsingSkill(this);
             pawn.MarkUsingSkill(skill, skillDirection);
             Debug.LogFormat("Gonna use skill {0}, {1}", skill, Time.time);
             yield return skill.ExecuteRoutine(pawn, skillDirection);
             Debug.LogFormat("Finished skill {0}, {1}", skill, Time.time);
             pawn.UnmarkUsingSkill(skill);
 
-            pawn.MarkUsingSkill(this, skillDirection);
             if (interrupted == skill)
             {
                 pawn.InterruptSkill(this);
+                pawn.MarkUsingSkill(this, skillDirection);
                 break;
             }
         }
         pawn.OnInterruptSkill -= onInterruptSkill;
-    }
-
-
-    public override void Interrupt(MoodPawn pawn)
-    {
-        base.Interrupt(pawn);
+        pawn.MarkUsingSkill(this, skillDirection);
     }
 
     public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
@@ -81,16 +76,20 @@ public class ChainSkill : StaminaCostMoodSkill
         return base.GetRangeShowProperty<T>();
     }
 
-    public override IEnumerable<float> GetTimeIntervals()
+    public override bool ShowsBark()
+    {
+        return false;
+    }
+
+    public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
     {
         foreach (MoodSkill skill in skills)
         {
-            float sum = 0f;
-            foreach(float time in skill.GetTimeIntervals())
+            //float sum = 0f;
+            foreach(float time in skill.GetTimeIntervals(pawn, skillDirection))
             {
-                sum += time;
+                yield return time;
             }
-            yield return sum;
         }
     }
 }

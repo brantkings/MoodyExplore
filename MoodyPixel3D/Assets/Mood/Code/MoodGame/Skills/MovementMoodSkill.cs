@@ -150,8 +150,9 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         foreach (var stance in toAdd) yield return stance;
     }
 
-    public override IEnumerable<float> GetTimeIntervals()
+    public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
     {
-        yield return durationAdd;
+        CalculateMovementData(skillDirection, out Vector3 distance, out float duration);
+        yield return duration;
     }
 }

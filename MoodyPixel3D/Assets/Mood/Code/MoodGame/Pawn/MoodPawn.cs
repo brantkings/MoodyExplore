@@ -403,8 +403,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
             _currentSkillRoutine = null;
             skill.Interrupt(this);
-            OnInterruptSkill?.Invoke(this, skill);
             UnmarkUsingSkill(skill);
+            OnInterruptSkill?.Invoke(this, skill);
         }
 #if UNITY_EDITOR
         else

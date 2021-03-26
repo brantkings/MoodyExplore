@@ -70,7 +70,7 @@ public class DelaySkill : MoodSkill
         }
     }
 
-    public override IEnumerable<float> GetTimeIntervals()
+    public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
     {
         yield return delay;
     }

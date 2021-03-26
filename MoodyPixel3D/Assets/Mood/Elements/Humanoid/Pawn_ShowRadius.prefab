@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8845956064411202840}
   - component: {fileID: 1370693432479868234}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Pawn_ShowRadius
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 8930541562208757086}
   - component: {fileID: 9097836000106205218}
   - component: {fileID: 1070067872989204622}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Radius
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,6 +148,7 @@ MonoBehaviour:
   easeOut: 3
   unscaledTimeDelta: 1
   afterFadeOut: 1
+  doOnEnable: 1
   maxFade: 1
 --- !u!114 &1070067872989204622
 MonoBehaviour:

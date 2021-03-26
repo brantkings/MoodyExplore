@@ -115,7 +115,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         };
     }
 
-    public override IEnumerable<float> GetTimeIntervals()
+    public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
     {
         yield return preTime;
         yield return postTime;

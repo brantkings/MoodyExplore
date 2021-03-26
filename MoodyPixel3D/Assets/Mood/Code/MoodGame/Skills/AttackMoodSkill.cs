@@ -287,7 +287,7 @@ namespace Code.MoodGame.Skills
             return new RangeShow.SkillDirectionSanitizer(preAttackDash.distance, preAttackDash.distance, preAttackDash.angle);
         }
 
-        public override IEnumerable<float> GetTimeIntervals()
+        public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
         {
             yield return preTime;
             yield return animationTime + postTime;

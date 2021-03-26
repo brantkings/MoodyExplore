@@ -6,6 +6,8 @@ public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
 {
     public RangeShow[] shows;
 
+    private Coroutine _routine;
+
     private void OnEnable()
     {
         Addon.OnBeforeSkillUse += OnUseSkill;
@@ -30,6 +32,11 @@ public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
         }
     }
 
+    protected void InterruptRoutine()
+    {
+        StopCoroutine(_routine);
+    }
+
 
     private void OnUseSkill(MoodPawn pawn, MoodSkill skill, Vector3 skillDirection)
     {
@@ -37,7 +44,7 @@ public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
         {
             if (show.CanShowSkill(skill))
             {
-                StartCoroutine(show.ShowSkillLive(pawn, skill, skillDirection));
+                _routine = StartCoroutine(show.ShowSkillLive(pawn, skill, skillDirection));
             }
         }
     }

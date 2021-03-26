@@ -287,17 +287,17 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         pawn.UsedSkill(this, skillDirection);
     }
 
-    public virtual IEnumerable<float> GetTimeIntervals()
+    public virtual IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
     {
          yield return 0f;
     }
 
-    public virtual void GetProgress(float timeElapsedSince, out float currentProgressPercentage, out Color? currentProgressColor)
+    public virtual void GetProgress(MoodPawn pawn, Vector3 skillDirection, float timeElapsedSince, out float currentProgressPercentage, out Color? currentProgressColor)
     {
         float now = 0f;
         currentProgressPercentage = 1f;
         currentProgressColor = null;
-        foreach (float elapsed in GetTimeIntervals())
+        foreach (float elapsed in GetTimeIntervals(pawn, skillDirection))
         {
             float after = now + elapsed;
             if (timeElapsedSince >= now && timeElapsedSince <= after)
@@ -359,6 +359,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public virtual RangeShow<T>.IRangeShowPropertyGiver GetRangeShowProperty<T>()
     {
         return this as RangeShow<T>.IRangeShowPropertyGiver;
+    }
+
+    public virtual bool ShowsBark()
+    {
+        return true;
     }
 
 }
