@@ -10,7 +10,7 @@ namespace Code.MoodGame.Skills
     {
         [Header("Attack")]
         public int damage = 10;
-        public float stunTime = 0.5f;
+        public TimeBeatManager.BeatQuantity stunTime = 4;
         public MoodSwing swingData;
         public LayerMask targetLayer;
         public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
@@ -86,9 +86,9 @@ namespace Code.MoodGame.Skills
         public ScriptableEventPositional[] onGuardedDamage;
 
         [Space] 
-        public float preTime = 0.5f;
-        public float animationTime = 0.25f;
-        public float postTime = 1f;
+        public TimeBeatManager.BeatQuantity preTime = 4;
+        public TimeBeatManager.BeatQuantity animationTime = 1;
+        public TimeBeatManager.BeatQuantity postTime = 3;
         public bool showPreview;
         private RangeTarget.Properties _targetProp;
 

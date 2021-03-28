@@ -292,22 +292,34 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
          yield return 0f;
     }
 
-    public virtual void GetProgress(MoodPawn pawn, Vector3 skillDirection, float timeElapsedSince, out float currentProgressPercentage, out Color? currentProgressColor)
+    public virtual void GetProgress(MoodPawn pawn, Vector3 skillDirection, float timeElapsedSince, out float totalTime, out float currentProgressPercentage, out Color? currentProgressColor)
     {
         float now = 0f;
-        currentProgressPercentage = 1f;
+        currentProgressPercentage = 0f;
         currentProgressColor = null;
+        totalTime = 0f;
+        int index = 0;
         foreach (float elapsed in GetTimeIntervals(pawn, skillDirection))
         {
             float after = now + elapsed;
+            totalTime = elapsed;
+            index++;
             if (timeElapsedSince >= now && timeElapsedSince <= after)
             {
-                currentProgressPercentage = Mathf.InverseLerp(now, after, timeElapsedSince);
+                if(index % 2 == 0)
+                {
+                    currentProgressPercentage = Mathf.InverseLerp(after, now, timeElapsedSince);
+                }
+                else
+                {
+                    currentProgressPercentage = Mathf.InverseLerp(now, after, timeElapsedSince);
+                }
                 currentProgressColor = null;
                 break;
             }
             now = after;
         }
+        //Debug.LogFormat("Returning total time {0}, current {1}, color {2}", totalTime, currentProgressPercentage, currentProgressColor);
     }
 
     public virtual void GetProgress(MoodPawn pawn, float timeElapsedSince, out float currentProgressPercentage, out Color? currentProgressColor)

@@ -299,7 +299,8 @@ MonoBehaviour:
   source: 1
   direction: 0
   _amount: 10
-  _stunTime: 0.5
+  _stunTime:
+    beats: 4
   _ignorePhaseThrough: 0
   _onlyDamageOnce: 0
   knockback:

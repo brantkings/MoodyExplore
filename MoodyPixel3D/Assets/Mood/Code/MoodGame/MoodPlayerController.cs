@@ -514,7 +514,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 }
             }
             
-            
             _pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
             _pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * maxVelocity), Vector3.up));
             _pawn.RotateTowards(_rotatingTarget);

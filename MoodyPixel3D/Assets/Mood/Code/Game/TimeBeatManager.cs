@@ -8,10 +8,34 @@ public class TimeBeatManager : CreateableSingleton<TimeBeatManager>
     public struct BeatQuantity
     {
         [SerializeField]
-        private int beats;
+        private float beats;
         public float GetTime()
         {
             return TimeBeatManager.GetTime(beats);
+        }
+
+        public BeatQuantity SetTime(float time)
+        {
+            beats = TimeBeatManager.GetNumberOfBeats(time);
+            return this;
+        }
+
+        public static implicit operator BeatQuantity(int q)
+        {
+            return new BeatQuantity()
+            {
+                beats = Mathf.FloorToInt(q)
+            };
+        }
+
+        public static implicit operator BeatQuantity(float q)
+        {
+            return new BeatQuantity().SetTime(q);
+        }
+
+        public static implicit operator float(BeatQuantity q)
+        {
+            return q.GetTime();
         }
     }
 
@@ -26,4 +50,15 @@ public class TimeBeatManager : CreateableSingleton<TimeBeatManager>
     {
         return Instance.beatLength * beats;
     }
+
+    public static float GetNumberOfBeats(float length)
+    {
+        return length / Instance.beatLength;
+    }
+
+    public static float GetBeatLength()
+    {
+        return Instance.beatLength;
+    }
+
 }

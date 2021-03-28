@@ -110,7 +110,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public float timeToZeroVelocity = 0f;
     public float snapToTargetSpeedDelta = 0.1f;
     public float angleToBeAbleToAccelerate = 90f;
-    public float turningTime = 0.1f;
+    public TimeBeatManager.BeatQuantity turningTime = 1;
     public float height = 2f;
     public float pawnRadius = 0.5f;
 
@@ -122,8 +122,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private float _stamina;
     public bool infiniteStamina;
     public bool recoverStaminaWhileUsingSkill;
-    public float staminaRecoveryIdle;
-    public float staminaRecoveryMoving;
+    public TimeBeatManager.BeatQuantity staminaRecoveryIdlePerSecond = 8;
+    public TimeBeatManager.BeatQuantity staminaRecoveryMovingPerSecond = 8;
     private Vector3 _damageAnimation;
 
     public Transform handPosition;
@@ -1433,7 +1433,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private float GetCurrentStaminaRecoverValue()
     {
         bool isMoving = IsMoving();
-        float value = isMoving ? staminaRecoveryMoving : staminaRecoveryIdle;
+        float value = isMoving ? staminaRecoveryMovingPerSecond : staminaRecoveryIdlePerSecond;
         foreach(ActivateableMoodStance stance in AddedStances)
         {
             foreach (IMoodPawnModifierStamina mod in stance.GetAllModifiers<IMoodPawnModifierStamina>()) 

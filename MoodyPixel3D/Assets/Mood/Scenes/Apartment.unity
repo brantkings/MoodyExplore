@@ -48426,7 +48426,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-12406
+  m_Name: pb_Mesh-13262
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -51272,7 +51272,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-12318
+  m_Name: pb_Mesh-13174
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -56915,6 +56915,14 @@ PrefabInstance:
     - target: {fileID: 6831496725107957522, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7004230067239678946, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
+      propertyPath: staminaRecoveryIdle.beats
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7004230067239678946, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
+      propertyPath: staminaRecoveryMoving.beats
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7028379516915894397, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchorMax.y

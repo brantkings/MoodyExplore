@@ -37,7 +37,8 @@ MonoBehaviour:
   _debug: 0
   _cost: 2
   damage: 10
-  stunTime: 0.5
+  stunTime:
+    beats: 4
   swingData: {fileID: 11400000, guid: cbd2e5b57bdeb9d47beac6471f9eae80, type: 2}
   targetLayer:
     serializedVersion: 2
@@ -103,8 +104,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   onGuardedDamage:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
-  preTime: 1
-  animationTime: 0.125
-  postTime: 1.75
+  preTime:
+    beats: 6
+  animationTime:
+    beats: 1
+  postTime:
+    beats: 3
   showPreview: 0
   addedStancesWithAttack: []

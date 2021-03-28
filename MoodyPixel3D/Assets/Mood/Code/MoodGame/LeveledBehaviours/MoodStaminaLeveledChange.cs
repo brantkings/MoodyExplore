@@ -44,8 +44,8 @@ public class MoodStaminaLeveledChange : MoodPawnLeveledBehaviour
 
     protected override void Initiate(MoodPawn pawn)
     {
-        initial.idle = pawn.staminaRecoveryIdle;
-        initial.moving = pawn.staminaRecoveryMoving;
+        initial.idle = pawn.staminaRecoveryIdlePerSecond;
+        initial.moving = pawn.staminaRecoveryMovingPerSecond;
     }
 
     protected override void ApplyLevel(MoodPawn pawn, float level)
@@ -64,8 +64,8 @@ public class MoodStaminaLeveledChange : MoodPawnLeveledBehaviour
             }
         }
 
-        pawn.staminaRecoveryIdle = rate.idle;
-        pawn.staminaRecoveryMoving = rate.moving;
+        pawn.staminaRecoveryIdlePerSecond = rate.idle;
+        pawn.staminaRecoveryMovingPerSecond = rate.moving;
     }
 }
 
