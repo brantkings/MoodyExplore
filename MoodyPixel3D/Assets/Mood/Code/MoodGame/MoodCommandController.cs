@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
+using UnityEngine.UI;
 
 public class MoodCommandController : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class MoodCommandController : MonoBehaviour
     private RangeArea _areaOfEffectIndicator;
     [SerializeField]
     private Canvas _canvas;
+    [SerializeField]
+    private Text _descriptor;
     [SerializeField]
     private CanvasGroup _canvasGroup;
 
@@ -56,6 +59,11 @@ public class MoodCommandController : MonoBehaviour
 
         Deactivate();
         FadeCanvasGroup(false, 0f);
+    }
+
+    public Text GetDescriptorText()
+    {
+        return _descriptor;
     }
 
     private void Start()

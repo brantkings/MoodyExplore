@@ -130,6 +130,10 @@ PrefabInstance:
       propertyPath: toDestroy
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7644132106322022631, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
+      propertyPath: onDamage.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: f72bc4dfa1c57404aa59c6396c5d5795, type: 2}
     - target: {fileID: 8801125704076035546, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
       propertyPath: _maxLife
       value: 20

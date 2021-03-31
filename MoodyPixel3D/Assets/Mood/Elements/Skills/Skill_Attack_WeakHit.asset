@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Jab Bonk
+  _description: Quick attack for surprising foes.
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.3254717, b: 0.3254717, a: 1}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
@@ -108,6 +109,6 @@ MonoBehaviour:
   animationTime:
     beats: 1
   postTime:
-    beats: 2
+    beats: 3
   showPreview: 0
   addedStancesWithAttack: []

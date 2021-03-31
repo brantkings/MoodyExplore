@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Side Dash
+  _description: Dashes sideways. Grants immunity in the beginning.
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: 9a075322f5390804d902ef43c4bd550e, type: 2}
@@ -30,7 +31,7 @@ MonoBehaviour:
   - angleFromForward: -90
     coneAngle: 15
     mirrored: 0
-  startupPriority: 1
+  startupPriority: 2
   heightCheckers: []
   _freeFocusCost: 1
   _lockCamera: 1
@@ -52,6 +53,8 @@ MonoBehaviour:
   durationAdd: 0
   showArrowWidth: 1
   ease: 12
+  priortyChangeTimeProportional: 1
+  priorityAdd: 0
   warningOnBumpWall: 0
   eventsOnStart:
   - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}

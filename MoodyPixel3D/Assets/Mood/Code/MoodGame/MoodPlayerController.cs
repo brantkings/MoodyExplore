@@ -39,7 +39,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private MoodPawn _pawn;
     [SerializeField]
     private FocusController _focus;
-    public float maxVelocity = 5f;
+    public float maxVelocityPerBeat = 6f;
     [SerializeField]
     private RangeSphere sphere;
     private Camera _mainCamera;
@@ -62,6 +62,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private Vector3 _rotatingTarget;
 
     public float timeSlowOnThreat = 0.2f;
+    public float timeSlowOnCommand = 0.02f;
 
 
     // Start is called before the first frame update
@@ -450,7 +451,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
             skill.SanitizeDirection(_pawn.Direction, ref currentDirection);
 
-            int moveSelector = moveAxis.GetYAxisChanged() + _selectorMoveUpDownHelper.GetValue();
+            int moveSelector = /*moveAxis.GetYAxisChanged() + */_selectorMoveUpDownHelper.GetValue();
 
             if (moveSelector > 0)
             {
@@ -477,7 +478,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 _rotatingTarget = Vector3.zero;
             }
 
-            FocusCommand(moveAxis, focusAddAxis);
+            FocusCommand(moveAxis, moveAxis.vertical);
             command.UpdateCommandView(_pawn, skill, currentDirection);
             _pawn.SetVelocity(Vector3.zero);
             _pawn.RotateTowards(_rotatingTarget);
@@ -515,13 +516,18 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             }
             
             _pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
-            _pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * maxVelocity), Vector3.up));
+            _pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * GetMaxVelocity()), Vector3.up));
             _pawn.RotateTowards(_rotatingTarget);
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
 
         
         SolveCommandSlowDown(executeAction.Pressing, true);
+    }
+
+    private float GetMaxVelocity()
+    {
+        return maxVelocityPerBeat / TimeBeatManager.GetBeatLength();
     }
 
     private void FocusCommand(DirectionalState direction, AxisState addCommand)
@@ -604,7 +610,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private EventfulParameter<bool> _commandSlowedDown;
     private void SolveCommandSlowDown(bool pressingCommand, bool highlightingImpossibleCommand)
     {
-        SolveSlowdown(0.02f, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown(pressingCommand, highlightingImpossibleCommand));
+        SolveSlowdown(timeSlowOnCommand, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown(pressingCommand, highlightingImpossibleCommand));
     }
 
 

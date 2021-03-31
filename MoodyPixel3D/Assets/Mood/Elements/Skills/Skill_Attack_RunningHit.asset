@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Running Bonk
+  _description: Attack while running.
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.3254717, b: 0.3254717, a: 1}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
@@ -30,7 +31,7 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 45
     mirrored: 0
-  startupPriority: 3
+  startupPriority: 1
   heightCheckers:
   - number: 0
     comparer: 0

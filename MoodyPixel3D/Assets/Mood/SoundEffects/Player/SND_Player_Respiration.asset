@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SND_Player_Respiration
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  eventString: event:/Player/Movement/Breath
+  eventString: event:/Humanoid/Movement/Breath
   doNotPlayAtCreation: 0
   initialParametersOnStart: []
+  _debug: 0

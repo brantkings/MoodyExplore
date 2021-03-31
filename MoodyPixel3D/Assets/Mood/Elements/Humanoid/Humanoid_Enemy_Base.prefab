@@ -141,7 +141,8 @@ MonoBehaviour:
   timeToZeroVelocity: 0.1
   snapToTargetSpeedDelta: 0.25
   angleToBeAbleToAccelerate: 55
-  turningTime: 0.75
+  turningTime:
+    beats: 1
   height: 2
   pawnRadius: 0.5
   extraRangeBase: 0
@@ -149,8 +150,10 @@ MonoBehaviour:
   maxStamina: 1
   infiniteStamina: 0
   recoverStaminaWhileUsingSkill: 0
-  staminaRecoveryIdle: 0
-  staminaRecoveryMoving: 0
+  staminaRecoveryIdlePerSecond:
+    beats: 8
+  staminaRecoveryMovingPerSecond:
+    beats: 8
   handPosition: {fileID: 115938510025388480}
   damageTeam: 1
   _debug: 0
@@ -646,6 +649,10 @@ PrefabInstance:
     - target: {fileID: 1303712374048864873, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1365367684747060841, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1951626523286263737, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
       propertyPath: m_AnchorMax.y

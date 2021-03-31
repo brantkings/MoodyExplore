@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SND_Player_Footstep
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  eventString: event:/Player/Movement/Step
+  eventString: event:/Humanoid/Movement/Step
   doNotPlayAtCreation: 0
   initialParametersOnStart: []
+  _debug: 0

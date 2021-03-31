@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90ae4c23724f4444984bad838a8ad073, type: 3}
-  m_Name: Skill_Movement_EnemyStep
+  m_Name: Skill_EN_Movement_Step
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Large Step
@@ -45,7 +45,9 @@ MonoBehaviour:
   priortyChangeTime: 0
   newPriorityChange: 0
   warningOnBumpWall: 0
-  eventsOnStart: []
+  eventsOnStart:
+  - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
+  - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
   eventsOnEnd: []
   toAdd: []
   triggerAnim:

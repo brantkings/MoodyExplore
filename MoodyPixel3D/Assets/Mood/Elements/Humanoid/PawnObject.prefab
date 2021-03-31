@@ -59,7 +59,7 @@ MonoBehaviour:
   _velocity: {x: 0, y: 0, z: 0}
   _torque: {x: 0, y: 0, z: 0}
   _currentInputVelocity: {x: 0, y: 0, z: 0}
-  _currentOtherSourcesInputVelocity: {x: 0, y: 0, z: 0}
+  _debugCurrentOtherSourcesInputVelocity: {x: 0, y: 0, z: 0}
   _debugGrounded: 0
   _debugWalled: 0
   _debugHittingHead: 0
@@ -161,8 +161,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onDeath:
   - {fileID: 11400000, guid: 13d37aecf79268f44aad6fe61764a389, type: 2}
+  - {fileID: 11400000, guid: 47af0a76517ac7646a4ca57952087029, type: 2}
   onDamage:
-  - {fileID: 11400000, guid: f72bc4dfa1c57404aa59c6396c5d5795, type: 2}
+  - {fileID: 11400000, guid: dbfc7c52a7c2d06428cfe3c144dd3388, type: 2}
 --- !u!1 &5645552138947826779
 GameObject:
   m_ObjectHideFlags: 0

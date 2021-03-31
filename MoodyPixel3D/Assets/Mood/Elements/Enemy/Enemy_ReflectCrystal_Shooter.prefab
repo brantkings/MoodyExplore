@@ -225,6 +225,14 @@ PrefabInstance:
       propertyPath: staminaRecoveryMoving
       value: 0.35
       objectReference: {fileID: 0}
+    - target: {fileID: 6818658543977631787, guid: a0e86627bd1317945843e3cce6ee441e, type: 3}
+      propertyPath: staminaRecoveryIdlePerSecond.beats
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6818658543977631787, guid: a0e86627bd1317945843e3cce6ee441e, type: 3}
+      propertyPath: staminaRecoveryMovingPerSecond.beats
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0e86627bd1317945843e3cce6ee441e, type: 3}
 --- !u!114 &1993735011458958410 stripped

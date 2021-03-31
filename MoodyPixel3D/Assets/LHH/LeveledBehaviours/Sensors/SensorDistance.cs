@@ -49,13 +49,13 @@ namespace LHH.LeveledBehaviours.Sensors
             if(minRadiusFeedback != null)
             {
                 minRadiusFeedback.DOKill();
-                minRadiusFeedback.DOScale(_currentInterpolatedLevel.minDistance, 0.5f);
+                minRadiusFeedback.DOScale(_currentInterpolatedLevel.minDistance, 0.5f).SetUpdate(true);
             }
 
             if (maxRadiusFeedback != null)
             {
                 maxRadiusFeedback.DOKill();
-                maxRadiusFeedback.DOScale(_currentInterpolatedLevel.maxDistance, 0.5f);
+                maxRadiusFeedback.DOScale(_currentInterpolatedLevel.maxDistance, 0.5f).SetUpdate(true);
             }
         }
 

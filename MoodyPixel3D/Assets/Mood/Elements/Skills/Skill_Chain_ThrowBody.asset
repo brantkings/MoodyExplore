@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Throw Body
+  _description: Throw your body in desperation. Grants immunity in the beginning.
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: ca09c6643e4cfe44395f633baa9e794d, type: 2}

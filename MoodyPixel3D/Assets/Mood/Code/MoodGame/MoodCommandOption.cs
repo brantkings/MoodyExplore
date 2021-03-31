@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class MoodCommandOption : MonoBehaviour
 {
+    private Text _descriptorText;
+    private string _description;
     public Text text;
     public Outline outline;
     public Image stanceChange;
@@ -31,7 +33,12 @@ public class MoodCommandOption : MonoBehaviour
     {
         public string optionName;
     }
-    
+
+    private void Awake()
+    {
+        _descriptorText = GetComponentInParent<MoodCommandController>().GetDescriptorText();
+    }
+
     public void SetOption(MoodSkill skill)
     {
         _skill = skill;
@@ -40,6 +47,7 @@ public class MoodCommandOption : MonoBehaviour
         //text.text = $"<color=#{_skill.GetColor().ToHexStringRGB()}>{_skill.GetName()}</color>" +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costNumberColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}</color><color=#{costColor.ToHexStringRGB()}>SP</color></size>" : string.Empty);
         text.text = $"{_skill.GetName()}" +  (stamina != null && stamina.GetStaminaCost() != 0f? $"<size={costSize}><color=#{costNumberColor.ToHexStringRGB()}> {stamina.GetStaminaCost()}</color><color=#{costColor.ToHexStringRGB()}>SP</color></size>" : string.Empty);
         text.enabled = true;
+        _description = skill.GetDescription();
 
         SetFocusCost(skill.GetFocusCost());
 
@@ -100,6 +108,8 @@ public class MoodCommandOption : MonoBehaviour
             outline.effectColor = selectedOutlineColorAnimation.Evaluate(0f);
             SetColorGradient(0f);
             _selectedAnim = DOTween.To(GetColorGradient, SetColorGradient, 1f, selectedColorAnimationDuration).SetEase(Ease.Linear).SetUpdate(true).SetLoops(-1);
+            if (_descriptorText != null)
+                _descriptorText.text = _description;
         }
         else
         {

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Defend
+  _description: Begin defensive stance.
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: 4ba4c0d4a9c6ba741ae5dbb3a6814e5d, type: 2}

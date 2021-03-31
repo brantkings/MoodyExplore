@@ -7,13 +7,75 @@
 [LOG] OutputWASAPI::init                       : Output buffer size: 4096 samples, latency: 0.00ms, period: 10.00ms, DSP buffer: 1024 * 4
 [LOG] Thread::initThread                       : Init FMOD stream thread. Affinity: 0x8000000000000003, Priority: 0xFFFF7FFB, Stack Size: 98304, Semaphore: No, Sleep Time: 10, Looping: Yes.
 [LOG] Thread::initThread                       : Init FMOD mixer thread. Affinity: 0x8000000000000001, Priority: 0xFFFF7FFA, Stack Size: 81920, Semaphore: No, Sleep Time: 0, Looping: Yes.
-[LOG] AsyncManager::init                       : manager 0000020723F91E88 isAsync 0 updatePeriod 0.02
+[LOG] AsyncManager::init                       : manager 0000018675AB8588 isAsync 0 updatePeriod 0.02
 [LOG] AsyncManager::init                       : done
 [LOG] PlaybackSystem::init                     : 
 [LOG] Thread::initThread                       : Init FMOD Studio sample load thread. Affinity: 0x8000000000000003, Priority: 0xFFFF7FFD, Stack Size: 98304, Semaphore: No, Sleep Time: 1, Looping: No.
 [LOG] PlaybackSystem::init                     : done
 [LOG] Thread::initThread                       : Init FMOD Studio bank load thread. Affinity: 0x8000000000000003, Priority: 0xFFFF7FFD, Stack Size: 98304, Semaphore: No, Sleep Time: 1, Looping: No.
 [LOG] Manager::init                            : done.
+[LOG] Manager::readBank                        : fileversion = 135, compatVersion = 132 (oldest = 44, newest = 135)
+[LOG] SoundI::release                          :  (0000018623F830D8)
+[LOG] SoundI::release                          :     SFX_UI_Menu_Action Option_Move_01 (000001862836A738)
+[LOG] SoundI::release                          :  (0000018623F84D98)
+[LOG] SoundI::release                          :     SFX_UI_Menu_Action Option_Move_02 (00000186283693B8)
+[LOG] SoundI::release                          :  (0000018623F86498)
+[LOG] SoundI::release                          :     SFX_UI_Menu_Camera_In_01 (00000186283681D8)
+[LOG] SoundI::release                          :  (0000018623F861B8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath+_01 (000001862836AA78)
+[LOG] SoundI::release                          :  (0000018623F868E8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath+_02 (0000018628369A38)
+[LOG] SoundI::release                          :  (0000018623F87A28)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath+_03 (0000018628368858)
+[LOG] SoundI::release                          :  (0000018623F85078)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath+_04 (000001862836A0B8)
+[LOG] SoundI::release                          :  (0000018623F829A8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath+_05 (0000018628367CF8)
+[LOG] SoundI::release                          : AMB_Level1_Static_01 (00000186A133F0D8)
+[LOG] SoundI::release                          :     AMB_Level1_Static_01 (00000185C033A138)
+[LOG] SoundI::release                          :     AMB_Level1_Static_01 (00000186A133FCA8)
+[LOG] SoundI::release                          :  (0000018623F833B8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath+_06 (0000018628369BD8)
+[LOG] SoundI::release                          :  (0000018623F82F68)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath_01 (0000018628369F18)
+[LOG] SoundI::release                          :  (0000018623F87748)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath_02 (0000018628368518)
+[LOG] SoundI::release                          :  (0000018623F83DC8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath_03 (000001862836B5D8)
+[LOG] SoundI::release                          :  (0000018623F83978)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath_04 (0000018628369D78)
+[LOG] SoundI::release                          :  (0000018623F87B98)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_01 (00000186283696F8)
+[LOG] SoundI::release                          :  (0000018623F84AB8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_02 (0000018628367E98)
+[LOG] SoundI::release                          :  (0000018623F87FE8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_03 (000001862836ADB8)
+[LOG] SoundI::release                          :  (0000018623F86EA8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_04 (0000018628369898)
+[LOG] SoundI::release                          :  (0000018623F851E8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_05 (0000018628368B98)
+[LOG] SoundI::release                          :  (0000018623F86048)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_06 (000001862836A8D8)
+[LOG] SoundI::release                          :  (0000018623F85ED8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_07 (00000186283689F8)
+[LOG] SoundI::release                          :  (0000018623F87D08)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_08 (000001862836B438)
+[LOG] SoundI::release                          :  (0000018623F85BF8)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_09 (000001862836A3F8)
+[LOG] SoundI::release                          :  (0000018623F85358)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_10 (000001862836A258)
+[LOG] SoundI::release                          :  (0000018623F82838)
+[LOG] SoundI::release                          :     SFX_Player Human_Movement_Breath++_11 (000001862836AC18)
+[LOG] Thread::callback                         : FMOD Studio update thread finished.
+[LOG] Thread::callback                         : FMOD Studio bank load thread finished.
+[LOG] Profile::disconnectAll                   : Profiler disconnecting all clients
+[LOG] Thread::callback                         : FMOD Studio sample load thread finished.
+[LOG] LiveUpdate::release                      : 
+[LOG] LiveUpdate::reset                        : Reset connection (reason Disconnected)
+[LOG] Thread::callback                         : FMOD stream thread finished.
+[LOG] Thread::callback                         : FMOD mixer thread finished.
+[LOG] Profile::disconnectAll                   : Profiler disconnecting all clients
+[LOG] SystemI::close                           : Closed.
 [LOG] Manager::readBank                        : fileversion = 135, compatVersion = 132 (oldest = 44, newest = 135)
 [LOG] Manager::readBank                        : fileversion = 135, compatVersion = 132 (oldest = 44, newest = 135)
 [LOG] Manager::readBank                        : fileversion = 135, compatVersion = 132 (oldest = 44, newest = 135)
@@ -25,3 +87,5 @@
 [LOG] Thread::callback                         : FMOD stream thread finished.
 [LOG] Thread::callback                         : FMOD mixer thread finished.
 [LOG] SystemI::close                           : Closed.
+[LOG] Thread::callback                         : FMOD nonblocking thread (0) finished.
+[LOG] Thread::callback                         : FMOD file thread finished.

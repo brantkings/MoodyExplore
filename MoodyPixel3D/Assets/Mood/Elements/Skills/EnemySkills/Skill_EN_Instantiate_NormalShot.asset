@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c35f8d62a121c914493a1ea138b0e9e6, type: 3}
-  m_Name: Skill_Instantiate_NormalShot_Enemy
+  m_Name: Skill_EN_Instantiate_NormalShot
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Power Blast
@@ -34,8 +34,10 @@ MonoBehaviour:
   prefab: {fileID: 2242556836230007570, guid: db9eb4a7933d38446a9220a98312a84a, type: 3}
   range: 50
   resetDamageTeamAsPawnTeam: 1
-  preTime: 0.5
-  postTime: 2.25
+  preTime:
+    beats: 4
+  postTime:
+    beats: 8
   priorityPreInstantiate: 2
   priorityAfterInstantiate: 1
   threat: {fileID: 0}

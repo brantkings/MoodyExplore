@@ -20,8 +20,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public float durationAdd;
     public float showArrowWidth = 1f;
     public Ease ease;
-    public float priortyChangeTime;
-    public int newPriorityChange;
+    public float priortyChangeTimeProportional = 1f;
+    public int priorityAdd;
 
     [Header("Feedback Movement")]
     public bool warningOnBumpWall;
@@ -66,7 +66,15 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         duration += base.ExecuteEffect(pawn, skillDirection);
         if (hopHeight > 0) pawn.FakeHop(hopHeight, hopDurationInMultiplier * duration, hopDurationOutMultiplier * duration);
         //Debug.LogWarningFormat("{0} has duration {1}. Distance is {2} and velocity is {3}. Duration real is {4}", this, duration, distance.magnitude, velocityAdd, pawn.CurrentDashDuration());
+        pawn.StartCoroutine(PriorityChangeCoroutine(pawn, GetPluginPriority(pawn) + priorityAdd, duration * priortyChangeTimeProportional));
         return duration;
+    }
+
+    private IEnumerator PriorityChangeCoroutine(MoodPawn pawn, int changeTo, float duration)
+    {
+        if(duration > 0)
+            yield return new WaitForSeconds(duration);
+        pawn.SetPlugoutPriority(changeTo);
     }
 
     private bool HasFeedback()

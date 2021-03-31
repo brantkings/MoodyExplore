@@ -101,6 +101,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private string _name;
 
     [SerializeField]
+    [TextArea()]
+    private string _description;
+
+    [SerializeField]
     private LHH.Unity.MorphableProperty<Color> _skillCommandColor;
 
 
@@ -172,6 +176,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public string GetName()
     {
         return _name;
+    }
+
+    public string GetDescription()
+    {
+        return _description;
     }
 
     private bool IsValidStanceSetup(MoodPawn pawn)

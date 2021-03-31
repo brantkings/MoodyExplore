@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 2.2, y: 2.2}
+  m_EffectDistance: {x: 1.25, y: 1.25}
   m_UseGraphicAlpha: 1
 --- !u!1 &976824599708941259
 GameObject:
@@ -290,11 +290,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainObject: {fileID: 2364350612069943554}
   progressObject: {fileID: 1190878716535178451}
+  barksShownEachEveryNBeat: 1
   progressObjectRenderer: {fileID: 5874173936134608237}
+  continuous: 0
+  nonContinuousEase: 4
+  beatMultiplierDelayEase: 0.098
   timeDivider: {fileID: 6136255091996609383}
   anim: {fileID: 8416030845872889995}
-  defaultProgressColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  notPerceivedSkill: {fileID: 11400000, guid: 05f5918ee8d253445b20e70ea2ee064f, type: 2}
+  defaultProgressIncreasingColor: {r: 0.20127276, g: 1, b: 0.015686274, a: 0.8666667}
+  defaultProgressDecreasingColor: {r: 1, g: 0, b: 1, a: 1}
   text: {fileID: 3518908238723791174}
+  beginSkill:
+  - {fileID: 11400000, guid: 3ff51df361f815541aa90ee189f1d4fc, type: 2}
+  endSkill:
+  - {fileID: 11400000, guid: 4e5b3381d01bc8740907fb0de6492d18, type: 2}
+  interruptSkill:
+  - {fileID: 11400000, guid: 109cb2ce071f5d64fa1aad6e4e545783, type: 2}
+  cancelSkill:
+  - {fileID: 11400000, guid: 1d3f21d828472cd4da5dd321e869b176, type: 2}
 --- !u!95 &8416030845872889995
 Animator:
   serializedVersion: 3
@@ -427,6 +441,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5536322869777279427}
+  - component: {fileID: 3912412571073847040}
   m_Layer: 10
   m_Name: Size
   m_TagString: Untagged
@@ -454,6 +469,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!225 &3912412571073847040
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5182237527716189645}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5911357694425000991
 GameObject:
   m_ObjectHideFlags: 0
@@ -513,7 +540,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.46226418, g: 0, b: 0.45999977, a: 0.5019608}
+  m_Color: {r: 0.46226418, g: 0, b: 0.45999977, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -603,7 +630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 0.8509804}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

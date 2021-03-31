@@ -45,13 +45,13 @@ namespace LHH.LeveledBehaviours.Sensors
             if(leftLineFeedback != null)
             {
                 leftLineFeedback.DOKill();
-                leftLineFeedback.DOLocalRotate(new Vector3(0, -_currentInterpolatedLevel.maxAngle, 0), .2f, RotateMode.Fast);
+                leftLineFeedback.DOLocalRotate(new Vector3(0, -_currentInterpolatedLevel.maxAngle, 0), .2f, RotateMode.Fast).SetUpdate(true);
             }
 
             if(rightLineFeedback != null)
             {
                 rightLineFeedback.DOKill();
-                rightLineFeedback.DOLocalRotate(new Vector3(0, _currentInterpolatedLevel.maxAngle, 0), .2f, RotateMode.Fast);
+                rightLineFeedback.DOLocalRotate(new Vector3(0, _currentInterpolatedLevel.maxAngle, 0), .2f, RotateMode.Fast).SetUpdate(true);
             }
         }
 
