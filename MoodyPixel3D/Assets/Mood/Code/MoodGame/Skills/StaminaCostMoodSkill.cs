@@ -8,6 +8,11 @@ public abstract class StaminaCostMoodSkill : MoodSkill
     [SerializeField]
     private float _cost;
 
+    public override void WriteOptionText(MoodCommandOption option)
+    {
+        option.SetText(GetName(), GetDescription(), GetStaminaCost());
+    }
+
     public virtual float GetStaminaCost()
     {
         return _cost;

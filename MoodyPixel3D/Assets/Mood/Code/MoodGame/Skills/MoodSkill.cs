@@ -5,8 +5,13 @@ using UnityEngine;
 
 public interface IMoodSelectable
 {
-    Texture2D GetIcon();
-    string GetName();
+    Color? GetColor();
+
+    void DrawCommandOption(MoodCommandOption option);
+
+    bool CanBeShown(MoodPawn pawn);
+
+    bool CanBePressed(MoodPawn pawn, Vector3 where);
 }
 
 public interface IMoodSkill
@@ -105,6 +110,9 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private string _description;
 
     [SerializeField]
+    private MoodSkillCategory _category;
+
+    [SerializeField]
     private LHH.Unity.MorphableProperty<Color> _skillCommandColor;
 
 
@@ -163,8 +171,14 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         }
     }
 
-    public Color GetColor()
+    public bool CanBePressed(MoodPawn pawn, Vector3 direction)
     {
+        return CanExecute(pawn, direction);
+    }
+
+    public Color? GetColor()
+    {
+        if (_category != null) return _category.GetColor();
         return _skillCommandColor.Get();
     }
 
@@ -178,6 +192,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return _name;
     }
 
+    public MoodSkillCategory GetCategory()
+    {
+        return _category;
+    }
+
     public string GetDescription()
     {
         return _description;
@@ -186,6 +205,36 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private bool IsValidStanceSetup(MoodPawn pawn)
     {
         return pawn.HasAllStances(true, needs) && !pawn.HasAnyStances(false, restrictions);
+    }
+
+    public virtual void WriteOptionText(MoodCommandOption option)
+    {
+        option.SetText(GetName(), GetDescription(), 0f);
+    }
+
+    public virtual void DrawCommandOption(MoodCommandOption option)
+    {
+        WriteOptionText(option);
+
+        option.SetFocusCost(GetFocusCost());
+
+        bool didChangeStance = false;
+        foreach (MoodStance stance in GetStancesThatWillBeAdded())
+        {
+            option.SetStancePreview(stance.GetIcon(), false);
+            didChangeStance = true;
+            break;
+        }
+        if (!didChangeStance)
+        {
+            foreach (MoodStance stance in GetStancesThatWillBeRemoved())
+            {
+                option.SetStancePreview(stance.GetIcon(), true);
+                didChangeStance = true;
+                break;
+            }
+        }
+        if (!didChangeStance) option.SetStancePreview(null);
     }
 
     private bool IsFocusAvailable(MoodPawn pawn)

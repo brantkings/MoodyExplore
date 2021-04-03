@@ -9,6 +9,7 @@ public class RangeSkillBark : RangeShow
 {
     public RectTransform mainObject;
     public RectTransform progressObject;
+    public Color defaultColor = Color.white;
     public float barksShownEachEveryNBeat = 1f;
     public Image progressObjectRenderer;
     public bool continuous;
@@ -74,7 +75,7 @@ public class RangeSkillBark : RangeShow
     public override void ShowSkill(MoodPawn pawn, MoodSkill skill)
     {
         Debug.LogErrorFormat("Barking {0} {1}", pawn, skill);
-        text.color = skill.GetColor();
+        text.color = skill.GetColor().HasValue ? skill.GetColor().Value : defaultColor;
         text.text = skill.GetName();
         anim.SetBool("Show", true);
         mainObject.gameObject.SetActive(true);

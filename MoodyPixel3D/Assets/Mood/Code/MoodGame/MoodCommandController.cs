@@ -41,8 +41,8 @@ public class MoodCommandController : MonoBehaviour
     
     private struct OptionTuple
     {
-        public MoodSkill skill;
         public MoodCommandOption command;
+        public NodeItem node;
     }
 
 
@@ -66,27 +66,173 @@ public class MoodCommandController : MonoBehaviour
         return _descriptor;
     }
 
-    private void Start()
+    private abstract class NodeItem
     {
-        MakeOptions();
-        _currentOption = -1;
-        MoveSelected(1);
+        public abstract IMoodSelectable GetSelectable();
+
+        public abstract void Select(ref NodeItemParent currentParent);
+
+        public abstract void Deselect(ref NodeItemParent currentParent);
     }
 
-    private void MakeOptions()
+    private class NodeItemParent : NodeItem, IEnumerable<NodeItem>
+    {
+        public MoodSkillCategory category;
+        public List<NodeItem> items;
+
+        private NodeItemParent _parent;
+
+        public NodeItemParent(MoodSkillCategory cat)
+        {
+            category = cat;
+            items = new List<NodeItem>(8);
+        }
+
+        public void Clear()
+        {
+            items.Clear();
+        }
+
+        public IEnumerator<NodeItem> GetEnumerator()
+        {
+            for (int i = 0, l = items.Count; i < l; i++) yield return items[i];
+        }
+
+        public override IMoodSelectable GetSelectable()
+        {
+            return category;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for (int i = 0, l = items.Count; i < l; i++) yield return items[i];
+        }
+
+        public override void Select(ref NodeItemParent currentParent)
+        {
+            _parent = currentParent;
+            currentParent = this;
+        }
+
+        public override void Deselect(ref NodeItemParent currentParent)
+        {
+            Debug.LogFormat("Deselecting {0} to {1}", currentParent, _parent);
+            currentParent = _parent;
+        }
+
+        public override string ToString()
+        {
+            return $"Parent Node:{category?.name}";
+        }
+    }
+
+    private class NodeItemLeaf : NodeItem
+    {
+        public MoodSkill skill;
+
+        public NodeItemLeaf(MoodSkill s)
+        {
+            skill = s;
+        }
+
+        public override IMoodSelectable GetSelectable()
+        {
+            return skill;
+        }
+
+        public override void Select(ref NodeItemParent currentParent)
+        {
+            
+        }
+
+        public override void Deselect(ref NodeItemParent currentParent)
+        {
+            
+        }
+    }
+
+    private NodeItemParent mainParent;
+    private NodeItemParent _currentParent;
+
+
+    private void Start()
+    {
+        OrganizeOptions(_equippedSkills);
+        _currentParent = mainParent;
+        RemakeOptions(_currentParent, true);
+        
+    }
+
+    private void RemakeOptions(NodeItemParent parent, bool selectFirst)
+    {
+        MakeOptions(parent);
+        if(selectFirst)
+        {
+            _currentOption = -1;
+            MoveSelected(1);
+        }
+        else
+        {
+            MoveSelected(0);
+        }
+    }
+
+    private void OrganizeOptions(IEnumerable<MoodSkill> skills)
+    {
+        Dictionary<MoodSkillCategory, NodeItemParent> dic = new Dictionary<MoodSkillCategory, NodeItemParent>(8);
+        List<MoodSkill> categoryLessSkills = new List<MoodSkill>(8);
+
+        foreach(MoodSkill skill in skills)
+        {
+            MoodSkillCategory cat = skill.GetCategory();
+            if(cat != null)
+            {
+                if(!dic.ContainsKey(cat))
+                {
+                    dic.Add(cat, new NodeItemParent(cat));
+                }
+                dic[cat].items.Add(new NodeItemLeaf(skill));
+            }
+            else
+            {
+                categoryLessSkills.Add(skill);
+            }
+        }
+
+        if (mainParent == null) mainParent = new NodeItemParent(null);
+        else mainParent.Clear();
+
+        //TODO: Pass through every t in dic again here, now putting every category in its parent.
+
+        foreach (var t in dic)
+        {
+            mainParent.items.Add(t.Value);
+        }
+
+    }
+
+    private IEnumerable<NodeItem> GetAvailableOptions(NodeItemParent parentToDraw)
+    {
+        foreach (NodeItem node in parentToDraw)
+        {
+            yield return node;
+        }
+    }
+
+    private void MakeOptions(NodeItemParent parentToDraw)
     {
         foreach (Transform child in _optionParent.transform)
         {
             Destroy(child.gameObject);
         }
         _options = new List<OptionTuple>(12);
-        foreach (MoodSkill skill in _equippedSkills.skills)
+        foreach (NodeItem node in GetAvailableOptions(parentToDraw))
         {
             MoodCommandOption child = Instantiate(_optionPrefab, _optionParent.transform);
-            child.SetOption(skill);
+            node.GetSelectable().DrawCommandOption(child);
             _options.Add(new OptionTuple()
             {
-                skill = skill,
+                node = node,
                 command = child
             });
         }
@@ -98,14 +244,14 @@ public class MoodCommandController : MonoBehaviour
         {
             foreach (OptionTuple opt in _options)
             {
-                bool canBeShown = opt.skill.CanBeShown(pawn);
+                bool canBeShown = opt.node.GetSelectable().CanBeShown(pawn);
                 if(!canBeShown)
                 {
                     PaintOption(opt, canBeShown, false);
                 }
                 else
                 {
-                    bool canExecute = opt.skill.CanExecute(pawn, direction);
+                    bool canExecute = opt.node.GetSelectable().CanBePressed(pawn, direction);
                     PaintOption(opt, canBeShown, canExecute);
                 }
             }
@@ -115,7 +261,7 @@ public class MoodCommandController : MonoBehaviour
     private void PaintOption(OptionTuple opt, bool canBeShown, bool canExecute)
     {
         opt.command.gameObject.SetActive(canBeShown);
-        opt.command.SetPossible(canExecute, opt.skill);
+        opt.command.SetPossible(canExecute, opt.node.GetSelectable());
     }
 
     public void Activate()
@@ -137,9 +283,15 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
+    private OptionTuple? GetCurrentOption()
+    {
+        if (_options == null || _currentOption < 0 || _currentOption >= _options.Count) return null;
+        return _options[_currentOption];
+    }
+
     public MoodSkill GetCurrentSkill()
     {
-        return _equippedSkills.skills[_currentOption];
+        return GetCurrentOption()?.node.GetSelectable() as MoodSkill;
     }
 
     private void AssureSelectedOptionIsVisible()
@@ -200,7 +352,7 @@ public class MoodCommandController : MonoBehaviour
 
     private void SetActiveObjects(bool active, MoodSkill skillTo)
     {
-        if (active)
+        if (active && skillTo != null)
         {
             //TODO this sucks. The skill should be able to both execute and draw itself. Not every drawer should be asking the current skill if the drawer can draw it. This sucks.
             foreach(IRangeShow show in AllRangeShows()) 
@@ -229,20 +381,72 @@ public class MoodCommandController : MonoBehaviour
 
     public void UpdateCommandView(MoodPawn pawn, MoodSkill currentSkill, Vector3 sanitizedDirection)
     {
-        foreach (IRangeShowDirected directed in AllRangeShowDirected()) directed.SetDirection(pawn, currentSkill, sanitizedDirection);
         PaintOptions(pawn, sanitizedDirection);
         AssureSelectedOptionIsVisible();
-        currentSkill.SetShowDirection(pawn, sanitizedDirection);
+
+        if(currentSkill != null)
+        {
+            foreach (IRangeShowDirected directed in AllRangeShowDirected()) directed.SetDirection(pawn, currentSkill, sanitizedDirection);
+            currentSkill.SetShowDirection(pawn, sanitizedDirection);
+        }
     }
 
-    public IEnumerable<MoodSkill> GetMoodSkills()
+    public IEnumerable<MoodSkill> GetAllMoodSkills()
+    {
+        foreach (MoodSkill skill in GetAllMoodSkills(mainParent)) yield return skill;
+    }
+
+    private IEnumerable<MoodSkill> GetAllMoodSkills(NodeItemParent parent)
+    {
+        foreach(NodeItem node in parent)
+        {
+            if(node is NodeItemParent)
+            {
+                var nodeParent = node as NodeItemParent;
+                foreach (MoodSkill skill in GetAllMoodSkills(nodeParent)) yield return skill;
+            }
+            else if(node is NodeItemLeaf)
+            {
+                var leaf = node as NodeItemLeaf;
+                yield return leaf.skill;
+            }
+        }
+    }
+
+    public IEnumerable<MoodSkill> GetShowingMoodSkills()
     {
         if (_options != null)
         {
             foreach (OptionTuple opt in _options)
             {
-                yield return opt.skill;
+                MoodSkill skill = opt.node.GetSelectable() as MoodSkill;
+                if(skill != null)
+                    yield return skill;
             }
         }
+    }
+
+    public void SelectCurrentOption()
+    {
+        NodeItemParent oldParent = _currentParent;
+        GetCurrentOption()?.node.Select(ref _currentParent);
+        if(oldParent != _currentParent)
+        {
+            RemakeOptions(_currentParent, true);
+        }
+    }
+
+    public bool Deselect()
+    {
+        NodeItemParent oldParent = _currentParent;
+        _currentParent.Deselect(ref _currentParent);
+        if (_currentParent == null) _currentParent = mainParent;
+        if (oldParent != _currentParent)
+        {
+            RemakeOptions(_currentParent, false);
+            return true;
+        }
+        else return false;
+
     }
 }

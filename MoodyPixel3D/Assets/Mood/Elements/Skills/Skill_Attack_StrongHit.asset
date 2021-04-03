@@ -15,6 +15,7 @@ MonoBehaviour:
   _icon: {fileID: 0}
   _name: Fierce Bonk
   _description: Strong, slower attack that dashes forward.
+  _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.3254717, b: 0.3254717, a: 1}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
@@ -109,6 +110,6 @@ MonoBehaviour:
   animationTime:
     beats: 1
   postTime:
-    beats: 6
+    beats: 8
   showPreview: 0
   addedStancesWithAttack: []

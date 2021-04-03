@@ -449,7 +449,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.white, 0.02f);
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
-            skill.SanitizeDirection(_pawn.Direction, ref currentDirection);
+            skill?.SanitizeDirection(_pawn.Direction, ref currentDirection);
 
             int moveSelector = /*moveAxis.GetYAxisChanged() + */_selectorMoveUpDownHelper.GetValue();
 
@@ -461,12 +461,17 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             {
                 command.MoveSelected(1);
             }
-            else if (executeAction.Pressing)
+            else if (executeAction.JustDown)
             {
-                if (skill.CanExecute(_pawn, currentDirection))
+                command.SelectCurrentOption();
+                if (skill != null && skill.CanExecute(_pawn, currentDirection))
                 {
                     StartSkillRoutine(skill, currentDirection);
                 }
+            }
+            else if(secondaryAction.JustDown)
+            {
+                command.Deselect();
             }
 
             if(secondaryAction.Pressing)
@@ -495,7 +500,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             //Check command shortcuts
             _rotatingTarget = Vector3.zero;
             Vector3 shortcutDirection = _pawn.Direction;
-            foreach(MoodSkill skill in command.GetMoodSkills())
+            foreach(MoodSkill skill in command.GetAllMoodSkills())
             {
                 if(Input.GetKeyDown(skill.GetShortCut()) && skill.CanExecute(_pawn, shortcutDirection))
                 {
@@ -521,8 +526,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
 
-        
-        SolveCommandSlowDown(executeAction.Pressing, true);
+
+        //SolveCommandSlowDown(executeAction.Pressing, true);
+        SolveCommandSlowDown(false, true);
     }
 
     private float GetMaxVelocity()
@@ -538,7 +544,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public bool HasAvailableSkills()
     {
-        foreach(var skill in command.GetMoodSkills())
+        foreach(MoodSkill skill in command.GetAllMoodSkills())
         {
             if (skill.CanExecute(_pawn, Vector3.zero))
             {

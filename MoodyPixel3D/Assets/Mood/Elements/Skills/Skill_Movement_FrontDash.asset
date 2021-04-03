@@ -15,6 +15,7 @@ MonoBehaviour:
   _icon: {fileID: 0}
   _name: Front Dash
   _description: Dash forward.
+  _category: {fileID: 11400000, guid: e72374fe75c8d0e49965e3301f22023a, type: 2}
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: 9a075322f5390804d902ef43c4bd550e, type: 2}

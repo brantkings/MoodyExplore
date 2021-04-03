@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68dd5cfef14425346b87ca65c76809c3, type: 3}
+  m_Name: SkillCategory_Attack
+  m_EditorClassIdentifier: 
+  _name: Attack
+  _icon: {fileID: 0}
+  _description: Swing your weapon.
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
