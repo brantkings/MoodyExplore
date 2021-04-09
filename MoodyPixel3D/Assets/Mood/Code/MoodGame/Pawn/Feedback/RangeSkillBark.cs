@@ -118,7 +118,7 @@ public class RangeSkillBark : RangeShow
             beats--;
         }
 
-        Debug.LogErrorFormat("[BARK DIVIDE] Created {0} divides for {1} (/ {2} = {3}).", numberOfBeats, totalTime, TimeBeatManager.GetBeatLength(), totalTime / TimeBeatManager.GetBeatLength());
+        //Debug.LogErrorFormat("[BARK DIVIDE] Created {0} divides for {1} (/ {2} = {3}).", numberOfBeats, totalTime, TimeBeatManager.GetBeatLength(), totalTime / TimeBeatManager.GetBeatLength());
         foreach (Transform t in timeDivider.parent)
         {
             RectTransform r = t as RectTransform;

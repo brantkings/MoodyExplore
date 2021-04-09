@@ -39,7 +39,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnDamageEvent(MoodPawn pawn, DamageInfo info);
     public delegate void DelMoodPawnSkillEvent(MoodPawn pawn, MoodSkill skill, Vector3 direction);
-    public delegate void DelMoodPawnSwingEvent(MoodSwing swing, Vector3 direction);
+    public delegate void DelMoodPawnItemEvent(MoodPawn pawn, MoodItem item);
+    public delegate void DelMoodPawnSwingEvent(MoodSwing.MoodSwingBuildData swing, Vector3 direction);
     public delegate void DelMoodPawnUndirectedSkillEvent(MoodPawn pawn, MoodSkill skill);
 
     public event DelMoodPawnEvent OnChangeStamina;
@@ -47,6 +48,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public event DelMoodPawnSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillEvent OnUseSkill;
+    public event DelMoodPawnItemEvent OnUseItem;
     public event DelMoodPawnUndirectedSkillEvent OnEndSkill;
     public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
     
@@ -66,6 +68,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Transform _shakeFeedback;
     [SerializeField]
     private SensorTarget _ownSensorTarget;
+    [SerializeField]
+    private MoodInventory _inventory;
     [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
@@ -105,6 +109,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
+    public MoodInventory Inventory
+    {
+        get
+        {
+            return _inventory;
+        }
+    }
+
     [Space()]
     public float timeToMaxVelocity;
     public float timeToZeroVelocity = 0f;
@@ -126,7 +138,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public TimeBeatManager.BeatQuantity staminaRecoveryMovingPerSecond = 8;
     private Vector3 _damageAnimation;
 
-    public Transform handPosition;
+    [UnityEngine.Serialization.FormerlySerializedAs("_handPosition")]
+    public Transform _instantiateProjectilePosition;
 
     [SerializeField]
     private DamageTeam damageTeam = DamageTeam.Neutral;
@@ -288,15 +301,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     #region Feedback
 
-    public void PrepareForSwing(MoodSwing swing, Vector3 direction)
+    public void PrepareForSwing(MoodSwing.MoodSwingBuildData swing, Vector3 direction)
     {
         OnBeforeSwinging?.Invoke(swing, direction);
     }
 
-    public void ShowSwing(MoodSwing swing, Vector3 direction)
+    public void ShowSwing(MoodSwing.MoodSwingBuildData data, Vector3 direction)
     {
         if (_attackFeedback != null)
-            _attackFeedback.DoFeedback(swing, direction);
+            _attackFeedback.DoFeedback(data, direction);
     }
 
     public Transform GetShakeTransform()
@@ -344,6 +357,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         Debug.LogFormat("{0} perished.", this);
         if (toDestroyOnDeath != null) Destroy(toDestroyOnDeath);
+    }
+    #endregion
+
+    #region Items
+    public void UseItem(MoodItem item, MoodSkill skill)
+    {
+        item.OnUse(this);
+        Inventory.UseItem(item);
+        OnUseItem?.Invoke(this, item);
     }
     #endregion
 
@@ -1510,7 +1532,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public Vector3 GetInstantiatePlace()
     {
-        return handPosition != null ? handPosition.position : transform.position;
+        return _instantiateProjectilePosition != null ? _instantiateProjectilePosition.position : ObjectTransform.position;
     }
 
     public Quaternion GetInstantiateRotation()

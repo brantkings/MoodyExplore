@@ -30,11 +30,28 @@ public class AttacheableArmature : MonoBehaviour
         model.localPosition = offset;
     }
 
+    public IEnumerable<Transform> GetAttachedModels(Part part)
+    {
+        Transform p = GetPart(part);
+        if (p != null)
+        {
+            return GetAttachedModels(p);
+        }
+        else return null;
+    }
+
+    public IEnumerable<Transform> GetAttachedModels(Transform p)
+    {
+        foreach(Transform c in p)
+        {
+            yield return c;
+        }
+    }
+
     public Transform GetPart(Part part)
     {
         switch(part)
         {
-            
             case Part.Head:
                 return head;
             case Part.LeftHand:

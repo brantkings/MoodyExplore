@@ -15,6 +15,7 @@ MonoBehaviour:
   _name: Item
   _icon: {fileID: 0}
   _description: Use a consumable item.
+  _priority: 1
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: 4cc3d51f5ec9ef94691a932712383195, type: 2}

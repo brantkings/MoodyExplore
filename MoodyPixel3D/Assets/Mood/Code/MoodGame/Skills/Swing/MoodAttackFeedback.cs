@@ -31,18 +31,26 @@ public class MoodAttackFeedback : MonoBehaviour
 
     private void Awake()
     {
-        properties = GetComponentsInChildren<SlashTrailProperties>();
+        GetProperties();
         pawn = GetComponentInParent<MoodPawn>();
+    }
+
+    private void GetProperties()
+    {
+
+        properties = GetComponentsInChildren<SlashTrailProperties>();
     }
 
     private void OnEnable()
     {
         pawn.OnBeforeSwinging += OnBeforeSwinging;
+        if(pawn.Inventory != null) pawn.Inventory.OnInventoryChange += OnInventoryChange;
     }
 
     private void OnDisable()
     {
         pawn.OnBeforeSwinging -= OnBeforeSwinging;
+        if (pawn.Inventory != null) pawn.Inventory.OnInventoryChange -= OnInventoryChange;
     }
 
     private void Start()
@@ -70,11 +78,15 @@ public class MoodAttackFeedback : MonoBehaviour
         else return null;
     }
 
-    private void OnBeforeSwinging(MoodSwing swing, Vector3 direction)
+    private void OnBeforeSwinging(MoodSwing.MoodSwingBuildData swing, Vector3 direction)
     {
         SavePosition();
     }
 
+    private void OnInventoryChange(MoodInventory inventory)
+    {
+        GetProperties();
+    }
 
     public void SavePosition()
     {
@@ -98,12 +110,12 @@ public class MoodAttackFeedback : MonoBehaviour
     }
 
 
-    public void DoFeedback(MoodSwing attack, Vector3 direction)
+    public void DoFeedback(MoodSwing.MoodSwingBuildData attack, Vector3 direction)
     {
         StartCoroutine(ShowFeedbackRoutine(attack, direction));
     }
 
-    private IEnumerator ShowFeedbackRoutine(MoodSwing attack, Vector3 direction)
+    private IEnumerator ShowFeedbackRoutine(MoodSwing.MoodSwingBuildData attack, Vector3 direction)
     {
         meshObj.SetActive(false);
         //yield return new WaitForSeconds(0.05f);
@@ -120,7 +132,7 @@ public class MoodAttackFeedback : MonoBehaviour
         //currentYLerp += deltaLerp;
     }
 
-    private void CreateMesh(MoodSwing attack, Vector3 direction)
+    private void CreateMesh(MoodSwing.MoodSwingBuildData attack, Vector3 direction)
     {
         vertexData.Clear();
         triangleData.Clear();

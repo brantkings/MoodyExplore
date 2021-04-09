@@ -1,16 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class MoodInventory : MonoBehaviour
 {
-    public int EQUIPPED_ITEMS_NUMBER = 8;
-    public int CATEGORY_LESS_ITEMS = 8;
+    public const int EQUIPPED_ITEMS_NUMBER = 8;
+    public const int CATEGORY_LESS_ITEMS_NUMBER = 8;
+
+    private MoodPawn _pawn;
+    public MoodPawn Pawn
+    {
+        get
+        {
+            if (_pawn == null) _pawn = GetComponent<MoodPawn>();
+            return _pawn;
+        }
+    }
+
+
+    public delegate void DelInventoryChange(MoodInventory inventory);
+    public event DelInventoryChange OnInventoryChange;
 
     //public MoodItemCategory[] categoriesToEquipInto;
 
-    private Dictionary<ConsumableMoodItem, int> categoryLessItems;
-    private Dictionary<MoodItemCategory, EquippableMoodItem> equippedItems;
+    public MoodItem[] initialItems;
+
+    private Dictionary<ConsumableMoodItem, int> categoryLessItems = new Dictionary<ConsumableMoodItem, int>(EQUIPPED_ITEMS_NUMBER);
+    private Dictionary<MoodItemCategory, EquippableMoodItem> equippedItems = new Dictionary<MoodItemCategory, EquippableMoodItem>(CATEGORY_LESS_ITEMS_NUMBER);
 
     [Space()]
     public MoodItem testAdd;
@@ -21,8 +39,15 @@ public class MoodInventory : MonoBehaviour
         AddUntypedItem(testAdd);
     }
 
+    private void Start()
+    {
+        foreach (MoodItem item in initialItems) AddUntypedItem(item);
+    }
+
+
     public void AddUntypedItem(MoodItem item)
     {
+        Debug.LogFormat("[INVENTORY] Adding item {0}", item);
         if (item is EquippableMoodItem) Equip(item as EquippableMoodItem);
         else AddItem(item as ConsumableMoodItem);
     }
@@ -33,51 +58,79 @@ public class MoodInventory : MonoBehaviour
         else return true;
     }
 
-    private IEnumerable<EquippableMoodItem> GetEquippedItems()
+    public bool HasItem(ConsumableMoodItem item)
     {
-        foreach (EquippableMoodItem item in equippedItems.Values) yield return item;
+        return categoryLessItems.Any((x) =>
+        {
+            return x.Key == item && x.Value > 0;
+        });
     }
 
-    public IEnumerable<MoodSkill> GetEquippedSkills()
+    public IEnumerable<Tuple<MoodSkill, MoodItem>> GetAllUsableSkills()
     {
         foreach (EquippableMoodItem item in GetEquippedItems())
-            foreach (MoodSkill skill in item.skillsToGrant) yield return skill;
+            foreach (MoodSkill skill in item.skillsToGrant)
+                yield return new Tuple<MoodSkill, MoodItem>(skill, item);
+        foreach (ConsumableMoodItem item in GetConsumableItems())
+        {
+            Debug.LogFormat("[INVENTORY] Checking out {0} in {1}", item, this);
+            foreach (MoodSkill skill in item.consumableSkills)
+            {
+                Debug.LogFormat("[INVENTORY] Returning out {0} in {1} in {2}", skill, item, this);
+                yield return new Tuple<MoodSkill, MoodItem>(skill, item);
+            }
+        }
     }
 
-    public IEnumerable<ConsumableMoodItem> GetConsumableItems()
+    private IEnumerable<EquippableMoodItem> GetEquippedItems()
     {
-        if (equippedItems == null) yield break;
+        foreach (EquippableMoodItem item in equippedItems.Values)
+        {
+            yield return item;
+        }
+    }
+
+
+    private IEnumerable<ConsumableMoodItem> GetConsumableItems()
+    {
+        if (categoryLessItems == null) yield break;
         foreach (ConsumableMoodItem item in categoryLessItems.Keys)
         {
+            Debug.LogFormat("Checking out consumable item {0} for {1}", item, this);
             if (categoryLessItems[item] > 0) yield return item;
         }
+    }
+
+    public EquippableMoodItem GetEquippedItem(MoodItemCategory category)
+    {
+        if (equippedItems.ContainsKey(category))
+        {
+            return equippedItems[category];
+        }
+        else return null;
     }
 
 
     public bool Equip(EquippableMoodItem item)
     {
-        if (equippedItems == null) equippedItems = new Dictionary<MoodItemCategory, EquippableMoodItem>(EQUIPPED_ITEMS_NUMBER);
+        if (item.category == null)
+        {
+            Debug.LogError("[INVENTORY] {0} has no category!", item);
+            return false;
+        }
 
         if(equippedItems.ContainsKey(item.category))
         {
             equippedItems[item.category] = item;
-            return true;
         }
         else
         {
             equippedItems.Add(item.category, item);
-            return false;
         }
 
-    }
-
-    public bool Unequip(MoodItemCategory category)
-    {
-        if(equippedItems != null)
-        {
-            return equippedItems.Remove(category);
-        }
-        return false;
+        item.SetEquipped(Pawn, true);
+        DispatchInventoryChanged();
+        return true;
     }
 
     public bool Unequip(EquippableMoodItem item)
@@ -85,9 +138,25 @@ public class MoodInventory : MonoBehaviour
         return Unequip(item.category);
     }
 
-    public bool AddItem(ConsumableMoodItem item)
+    public bool Unequip(MoodItemCategory category)
     {
-        if (categoryLessItems == null) categoryLessItems = new Dictionary<ConsumableMoodItem, int>(CATEGORY_LESS_ITEMS);
+        if (equippedItems != null)
+        {
+            equippedItems[category]?.SetEquipped(Pawn, false);
+
+            if (equippedItems.Remove(category))
+            {
+                DispatchInventoryChanged();
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    private bool AddItem(ConsumableMoodItem item)
+    {
+        if (categoryLessItems == null) categoryLessItems = new Dictionary<ConsumableMoodItem, int>(CATEGORY_LESS_ITEMS_NUMBER);
 
         if(categoryLessItems.ContainsKey(item))
         {
@@ -97,6 +166,7 @@ public class MoodInventory : MonoBehaviour
         else
         {
             categoryLessItems.Add(item, 1);
+            DispatchInventoryChanged();
             return true;
         }
     }
@@ -109,6 +179,7 @@ public class MoodInventory : MonoBehaviour
             if(categoryLessItems[item] > 0)
             {
                 categoryLessItems[item] = categoryLessItems[item] - 1;
+                DispatchInventoryChanged();
                 return true;
             }
         }
@@ -121,13 +192,27 @@ public class MoodInventory : MonoBehaviour
         else return categoryLessItems[item];
     }
 
-    public IEnumerator<string> WriteInventory()
+    public IEnumerable<string> WriteInventory()
     {
         yield return $"Inventory of '{name}':";
         foreach(EquippableMoodItem item in equippedItems.Values)
             yield return $"Equipped {item.name} in {item.category.name}.";
         foreach (ConsumableMoodItem item in categoryLessItems.Keys)
             yield return $"Holding {categoryLessItems[item]} units of {item}.";
+    }
+
+    [ContextMenu("Test inventory")]
+    public void TestInventory()
+    {
+        foreach(var s in WriteInventory())
+        {
+            Debug.Log(s);
+        }
+    }
+
+    private void DispatchInventoryChanged()
+    {
+        OnInventoryChange?.Invoke(this);
     }
 
 

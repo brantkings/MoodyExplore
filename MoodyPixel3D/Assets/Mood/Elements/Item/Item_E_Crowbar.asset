@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca8aa405edc4db042a0035213c4dc23d, type: 3}
+  m_Name: Item_E_Crowbar
+  m_EditorClassIdentifier: 
+  category: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
+  skillsToGrant:
+  - {fileID: 11400000, guid: feaf277a4a5525240abe9958ff8bf92f, type: 2}
+  - {fileID: 11400000, guid: c1e8c24796a8efb4396f769094569527, type: 2}
+  - {fileID: 11400000, guid: 1eb1e7880582b29498047c9a57a8a5b0, type: 2}
+  - {fileID: 11400000, guid: 4e5fe8e374280f949a2d8293fd2d0438, type: 2}
+  - {fileID: 11400000, guid: d4607fed9f5eee8429892e4664fc5ba9, type: 2}
+  equippedItem: {fileID: -6520346370307874918, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
+  equippedItemOffset: {x: 0, y: 0, z: 0}

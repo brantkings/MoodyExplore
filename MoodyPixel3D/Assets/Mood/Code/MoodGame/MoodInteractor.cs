@@ -14,7 +14,7 @@ public class MoodInteractor : LHH.Structures.InterfaceTriggerCapture<MoodInterac
         MoodInteractable t = GetSelected();
         if (t != null)
         {
-            t.Execute();
+            t.Interact(this);
         }
     }
 }

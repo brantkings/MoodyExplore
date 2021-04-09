@@ -290,10 +290,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainObject: {fileID: 2364350612069943554}
   progressObject: {fileID: 1190878716535178451}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
   barksShownEachEveryNBeat: 1
   progressObjectRenderer: {fileID: 5874173936134608237}
   continuous: 0
-  nonContinuousEase: 4
+  nonContinuousEase: 10
   beatMultiplierDelayEase: 0.098
   timeDivider: {fileID: 6136255091996609383}
   anim: {fileID: 8416030845872889995}

@@ -176,6 +176,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return CanExecute(pawn, direction);
     }
 
+    public bool IsBufferable(MoodPawn pawn)
+    {
+        return IsFocusAvailable(pawn);
+    }
+
     public Color? GetColor()
     {
         if (_category != null) return _category.GetColor();

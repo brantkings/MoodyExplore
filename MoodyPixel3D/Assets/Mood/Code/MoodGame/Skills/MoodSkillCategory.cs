@@ -15,6 +15,9 @@ public class MoodSkillCategory : ScriptableObject, IMoodSelectable
     private string _description;
 
     [SerializeField]
+    private int _priority = 0;
+
+    [SerializeField]
     private LHH.Unity.MorphableProperty<Color> _skillCommandColor;
 
     public string GetName()
@@ -35,6 +38,11 @@ public class MoodSkillCategory : ScriptableObject, IMoodSelectable
     public Texture2D GetIcon()
     {
         return _icon;
+    }
+
+    public int GetPriority()
+    {
+        return _priority;
     }
 
     public void DrawCommandOption(MoodCommandOption option)

@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Getting Up
+  _description: 
+  _category: {fileID: 0}
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: ca09c6643e4cfe44395f633baa9e794d, type: 2}
@@ -31,7 +33,7 @@ MonoBehaviour:
   _shortcut: 0
   _debug: 0
   delay:
-    beats: 9
+    beats: 18
   stuns: 0000000002000000
   flags: []
   sfx: {fileID: 0}

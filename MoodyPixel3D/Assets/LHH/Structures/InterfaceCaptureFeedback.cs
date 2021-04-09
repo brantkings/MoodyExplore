@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace LHH.Structures
 {
-
     public class InterfaceCaptureFeedback<T> : MonoBehaviour where T:class
     {
         public InterfaceCapture<T> capture;

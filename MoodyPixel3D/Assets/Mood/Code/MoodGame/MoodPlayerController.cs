@@ -393,9 +393,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         return _pawn.Position;
     }
 
-    private void StartSkillRoutine(MoodSkill skill, Vector3 direction)
+    private void StartSkillRoutine(MoodSkill skill, MoodItem item = null, Vector3 direction = default)
     {
-        StartCoroutine(ExecuteSkill(skill, direction));
+        if(item != null)
+        {
+            Pawn.UseItem(item, skill);
+        }
+        if(skill != null)
+        {
+            StartCoroutine(ExecuteSkill(skill, direction));
+        }
     }
 
     private IEnumerator ExecuteSkill(MoodSkill skill, Vector3 direction)
@@ -446,6 +453,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             inputDirectionFeedback.forward = inputDirection;
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
             MoodSkill skill = command.GetCurrentSkill();
+            MoodItem item = command.GetCurrentItem();
+            MoodCommandOption option = command.GetCurrentCommandOption();
 
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.white, 0.02f);
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
@@ -464,14 +473,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             else if (executeAction.JustDown)
             {
                 command.SelectCurrentOption();
-                if (skill != null && skill.CanExecute(_pawn, currentDirection))
+                if(skill != null)
                 {
-                    StartSkillRoutine(skill, currentDirection);
+                    if (skill.CanExecute(_pawn, currentDirection))
+                    {
+                        option.FeedbackExecute();
+                        StartSkillRoutine(skill, item, currentDirection);
+                    }
+                    else if (skill.IsBufferable(Pawn))
+                    {
+                        StartBufferingSkill(option, skill, item, currentDirection);
+                    }
                 }
             }
             else if(secondaryAction.JustDown)
             {
-                command.Deselect();
+                if (IsBufferingSkill()) EndBufferingSkill();
+                else command.Deselect();
             }
 
             if(secondaryAction.Pressing)
@@ -500,11 +518,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             //Check command shortcuts
             _rotatingTarget = Vector3.zero;
             Vector3 shortcutDirection = _pawn.Direction;
-            foreach(MoodSkill skill in command.GetAllMoodSkills())
+            foreach(var tuple in command.GetAllMoodSkills())
             {
-                if(Input.GetKeyDown(skill.GetShortCut()) && skill.CanExecute(_pawn, shortcutDirection))
+                if(Input.GetKeyDown(tuple.Item1.GetShortCut()) && tuple.Item1.CanExecute(_pawn, shortcutDirection))
                 {
-                    StartSkillRoutine(skill, shortcutDirection);
+                    StartSkillRoutine(tuple.Item1, tuple.Item2, shortcutDirection);
                 }
             }
 
@@ -531,6 +549,13 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         SolveCommandSlowDown(false, true);
     }
 
+    private bool CanExecute(MoodSkill skill, MoodItem item, Vector3 skillDirection)
+    {
+        bool canSkill = skill != null && skill.CanExecute(Pawn, skillDirection);
+        bool canItem = item == null || item.CanUse(Pawn, Pawn.Inventory);
+        return canSkill;
+    }
+
     private float GetMaxVelocity()
     {
         return maxVelocityPerBeat / TimeBeatManager.GetBeatLength();
@@ -544,9 +569,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public bool HasAvailableSkills()
     {
-        foreach(MoodSkill skill in command.GetAllMoodSkills())
+        foreach(var skill in command.GetAllMoodSkills())
         {
-            if (skill.CanExecute(_pawn, Vector3.zero))
+            if (skill.Item1.CanExecute(_pawn, Vector3.zero))
             {
                 return true;
             }
@@ -598,9 +623,14 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             else TimeManager.Instance.RemoveTimeDeltaChange(slowdownID);
         });
     }
+    private bool CouldSlowdown()
+    {
+        return !IsManuallyRotating() && !IsBufferingSkill() && !IsStunned();
+    }
+
     private bool ShouldThreatSlowdown()
     {
-        return _pawn.Threatenable.IsThreatened() && !IsExecutingCommand() && !IsManuallyRotating();
+        return _pawn.Threatenable.IsThreatened() && !IsExecutingCommand() && CouldSlowdown();
     }
     private EventfulParameter<bool> _threatSlowedDown;
     private void SolveThreatSlowDown()
@@ -610,7 +640,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private bool ShouldCommandSlowdown(bool pressingCommand, bool highlightingImpossibleCommand)
     {
-        return IsCommandOpen() && HasAvailableSkills() && !IsManuallyRotating() && !IsStunned() && !(pressingCommand && highlightingImpossibleCommand);
+        return IsCommandOpen() && HasAvailableSkills() && !(pressingCommand && highlightingImpossibleCommand) && CouldSlowdown();
     }
 
     private EventfulParameter<bool> _commandSlowedDown;
@@ -625,6 +655,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     {
         if(_wasInCommand != set)
         {
+            if (!set) EndBufferingSkill();
             _wasInCommand = set;
             OnChangeCommandMode?.Invoke(set);
             SetMouseMode(set);
@@ -638,6 +669,47 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         UnityEngine.Cursor.visible = visible;
         UnityEngine.Cursor.lockState = visible? CursorLockMode.None : CursorLockMode.Locked;
     }
+
+    #region Skill Buffer
+
+    private Coroutine _skillBufferRoutine = null;
+    private MoodSkill _bufferingSkill;
+
+    private bool IsBufferingSkill()
+    {
+        return _skillBufferRoutine != null;
+    }
+
+    private void StartBufferingSkill(MoodCommandOption option, MoodSkill skill, MoodItem item, Vector3 direction)
+    {
+        if (IsBufferingSkill()) EndBufferingSkill();
+        _bufferingSkill = skill;
+        _skillBufferRoutine = StartCoroutine(SkillBuffer(option, skill, item, direction));
+    }
+
+    private void EndBufferingSkill()
+    {
+        _bufferingSkill = null;
+    }
+
+    private IEnumerator SkillBuffer(MoodCommandOption option, MoodSkill skill, MoodItem item, Vector3 direction)
+    {
+        option.FeedbackBuffer(true);
+        while (skill == _bufferingSkill && skill != null && !skill.CanExecute(_pawn, direction))
+        {
+            yield return null;
+            skill.SanitizeDirection(Pawn.Direction, ref direction);
+        }
+        Debug.LogFormat("Stopping buffer for skill {0}", skill);
+        option.FeedbackBuffer(false);
+        _skillBufferRoutine = null;
+        if (_bufferingSkill == skill)
+        {
+            option.FeedbackExecute();
+            StartSkillRoutine(skill, item, direction);
+        }
+    }
+    #endregion
 
 
     private bool? _wasInCamera = null;

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoodItem : ScriptableObject
+public abstract class MoodItem : ScriptableObject
 {
     private string _itemName;
     private string _itemDescription;
@@ -17,4 +17,10 @@ public class MoodItem : ScriptableObject
     {
         return _itemDescription;
     }
+
+    public abstract bool CanUse(MoodPawn pawn, MoodInventory inventory);
+
+    public abstract void OnAdquire(MoodPawn pawn);
+
+    public abstract void OnUse(MoodPawn pawn);
 }

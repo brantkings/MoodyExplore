@@ -12,6 +12,7 @@ namespace Code.MoodGame.Skills
         public int damage = 10;
         public TimeBeatManager.BeatQuantity stunTime = 4;
         public MoodSwing swingData;
+        public Vector3 swingDataPositionOffset;
         public LayerMask targetLayer;
         public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
         public bool setDirection;
@@ -109,13 +110,13 @@ namespace Code.MoodGame.Skills
 
         public float GetRange()
         {
-            if (swingData != null) return swingData.GetRange();
+            if (swingData != null) return swingData.GetRange(swingDataPositionOffset);
             else return 0f;
         }
 
-        private Transform GetTarget(Vector3 origin, Vector3 direction)
+        private Transform GetTarget(MoodPawn pawn, Vector3 origin, Vector3 direction)
         {
-            return swingData.TryHitGetBest(origin, Quaternion.LookRotation(direction, Vector3.up), targetLayer, direction)?.collider.GetComponentInParent<MoodPawn>()?.transform;
+            return swingData.TryHitGetBest(pawn.ObjectTransform.TransformVector(swingDataPositionOffset) + origin, Quaternion.LookRotation(direction, Vector3.up), targetLayer, direction)?.collider.GetComponentInParent<MoodPawn>()?.transform;
         }
 
         public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
@@ -130,6 +131,7 @@ namespace Code.MoodGame.Skills
                 Debug.LogErrorFormat("{0} has no swing data!", this);
                 yield break;
             }
+            MoodSwing.MoodSwingBuildData buildData = swingData.GetBuildData(pawn.ObjectTransform.rotation, swingDataPositionOffset);
             pawn.SetPlugoutPriority(priorityPreAttack);
             if(setDirection) pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection, swingData);
@@ -141,9 +143,9 @@ namespace Code.MoodGame.Skills
             Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
             yield return new WaitForSeconds(preAttackDuration);
 
-            pawn.PrepareForSwing(swingData, skillDirection);
+            pawn.PrepareForSwing(buildData, skillDirection);
             pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.PostAttack);
-            pawn.ShowSwing(swingData, skillDirection);
+            pawn.ShowSwing(buildData, skillDirection);
 
             DispatchExecuteEvent(pawn, skillDirection);
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
@@ -263,6 +265,7 @@ namespace Code.MoodGame.Skills
             return new RangeArea.Properties()
             {
                 swingData = this.swingData,
+                offset = swingDataPositionOffset,
                 skillDirectionBeginning = GetSanitizerForFirstDash(),
             };
         }

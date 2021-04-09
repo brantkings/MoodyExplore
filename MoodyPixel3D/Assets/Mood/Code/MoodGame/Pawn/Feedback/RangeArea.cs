@@ -9,6 +9,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
     public struct Properties
     {
         public MoodSwing swingData;
+        public Vector3 offset;
         public SkillDirectionSanitizer skillDirectionBeginning;
     }
 
@@ -37,7 +38,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
 
         vertexData.Clear();
         triangleData.Clear();
-        MoodSwing.MakeVertexTrailRightToLeft(property.swingData, vertexData, triangleData, GetYRight);
+        MoodSwing.MakeVertexTrailRightToLeft(property.swingData.GetBuildData(pawn.ObjectTransform.rotation, property.offset), vertexData, triangleData, GetYRight);
         mesh.Clear();
         mesh.SetVertices(vertexData);
         mesh.SetTriangles(triangleData, 0);

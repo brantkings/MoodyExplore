@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoodInteractable : MonoBehaviour
+public abstract class MoodInteractable : MonoBehaviour
 {
-    public MoodEvent[] whatHappen;
-    
-    public void Execute()
+    public delegate void DelInteractableEvent();
+
+    public event DelInteractableEvent OnInteractableDestroy;
+
+    private void OnDestroy()
     {
-        foreach (var evt in whatHappen)
-        {
-            evt.Execute();
-        }
+        OnInteractableDestroy?.Invoke();
     }
-    
+
+    public abstract void Interact(MoodInteractor interactor);
 }

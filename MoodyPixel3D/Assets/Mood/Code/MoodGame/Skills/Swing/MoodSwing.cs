@@ -4,12 +4,29 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Mood.Swing.Maker;
-using System;
+
 
 [CreateAssetMenu(menuName ="Mood/Swing Data", fileName = "Swing_")]
 public class MoodSwing : ScriptableObject
 {
     public static int CACHE_SIZE = 8;
+
+    public struct MoodSwingBuildData
+    {
+        public MoodSwing moodSwingItself;
+        public Vector3 offset;
+
+        public MoodSwingBuildData(MoodSwing m)
+        {
+            moodSwingItself = m;
+            offset = Vector3.zero;
+        }
+
+        public MoodSwingBuildData AddOffset(Vector3 offset)
+        {
+            return this;
+        }
+    }
 
     [System.Serializable]
     public struct MoodSwingNode
@@ -84,6 +101,11 @@ public class MoodSwing : ScriptableObject
     public int GetTrailLength()
     {
         return maker.TrailLength;
+    }
+
+    public MoodSwingBuildData GetBuildData(Quaternion objectData, Vector3 offset = default)
+    {
+        return new MoodSwingBuildData(this).AddOffset(offset);
     }
 
     public MoodSwingResult? TryHitGetBest(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, Vector3 desiredDirection)
@@ -172,27 +194,27 @@ public class MoodSwing : ScriptableObject
 
     }
 
-    public float GetRange()
+    public float GetRange(Vector3 nonRotatedOffset)
     {
         float range = 0f;
         foreach(var d in maker.Nodes)
         {
             range = Mathf.Max(range, Vector3.ProjectOnPlane(d.localPosition, Vector3.up).magnitude + d.radius);
         }
-        return range;
+        return range + nonRotatedOffset.magnitude;
     }
 
     public delegate void DelUpdateVectors(ref Vector3 top, ref Vector3 bot, int index, int length);
 
-    public static void MakeVertexTrailRightToLeft(MoodSwing data, List<Vector3> vertexData, List<int> triangleData, DelUpdateVectors changeFunc)
+    public static void MakeVertexTrailRightToLeft(MoodSwingBuildData data, List<Vector3> vertexData, List<int> triangleData, DelUpdateVectors changeFunc)
     {
-        int length = data.GetTrailLength();
-        IEnumerator<MoodSwing.MoodSwingTrailNode> nodes = data.GetTrail().GetEnumerator();
+        int length = data.moodSwingItself.GetTrailLength();
+        IEnumerator<MoodSwing.MoodSwingTrailNode> nodes = data.moodSwingItself.GetTrail().GetEnumerator();
         int index = 0;
         //float currentYLerp = deltaLerp;
         while (nodes.MoveNext())
         {
-            Vector3 top = nodes.Current.localPosTop, bot = nodes.Current.localPosBot;
+            Vector3 top = nodes.Current.localPosTop + data.offset, bot = nodes.Current.localPosBot + data.offset;
             changeFunc?.Invoke(ref top, ref bot, index, length);
             MakeQuadFromLastPairToThisOne(ref index, top, bot, vertexData, triangleData);
         }

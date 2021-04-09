@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MoodCommandController : MonoBehaviour
 {
@@ -14,8 +15,6 @@ public class MoodCommandController : MonoBehaviour
     [SerializeField]
     private GameObject _optionParent;
 
-    [SerializeField]
-    private MoodSkillSet _equippedSkills;
 
     private List<OptionTuple> _options;
 
@@ -33,6 +32,13 @@ public class MoodCommandController : MonoBehaviour
     [SerializeField]
     private CanvasGroup _canvasGroup;
 
+    [Space()]
+    [SerializeField]
+    private MoodSkillSet _innateEquippedSkills;
+
+    [Space()]
+    public bool unselectOnDeactivated = true;
+
     public float canvasGroupFadeDuration = 0.45f;
 
     private bool? _activated;
@@ -48,18 +54,6 @@ public class MoodCommandController : MonoBehaviour
 
     public SoundEffect[] onChangeOption;
 
-    private void Awake()
-    {
-        _sphereIndicator = GetComponentInChildren<RangeSphere>();
-        _arrowIndicator = GetComponentInChildren<RangeArrow>();
-        _targetIndicator = GetComponentInChildren<RangeTarget>();
-        _areaOfEffectIndicator = GetComponentInChildren<RangeArea>();
-
-        _pawn = GetComponentInParent<MoodPawn>();
-
-        Deactivate();
-        FadeCanvasGroup(false, 0f);
-    }
 
     public Text GetDescriptorText()
     {
@@ -129,10 +123,12 @@ public class MoodCommandController : MonoBehaviour
     private class NodeItemLeaf : NodeItem
     {
         public MoodSkill skill;
+        public MoodItem item;
 
-        public NodeItemLeaf(MoodSkill s)
+        public NodeItemLeaf(MoodSkill s, MoodItem i)
         {
             skill = s;
+            item = i;
         }
 
         public override IMoodSelectable GetSelectable()
@@ -155,47 +151,81 @@ public class MoodCommandController : MonoBehaviour
     private NodeItemParent _currentParent;
 
 
-    private void Start()
+    private void Awake()
     {
-        OrganizeOptions(_equippedSkills);
-        _currentParent = mainParent;
-        RemakeOptions(_currentParent, true);
-        
+        _sphereIndicator = GetComponentInChildren<RangeSphere>();
+        _arrowIndicator = GetComponentInChildren<RangeArrow>();
+        _targetIndicator = GetComponentInChildren<RangeTarget>();
+        _areaOfEffectIndicator = GetComponentInChildren<RangeArea>();
+
+        _pawn = GetComponentInParent<MoodPawn>();
+
+        Deactivate();
+        FadeCanvasGroup(false, 0f);
     }
 
-    private void RemakeOptions(NodeItemParent parent, bool selectFirst)
+    private void OnEnable()
+    {
+        _pawn.Inventory.OnInventoryChange += OnInventoryChange;
+    }
+
+
+    private void OnDisable()
+    {
+
+        _pawn.Inventory.OnInventoryChange -= OnInventoryChange;
+    }
+
+    private void Start()
+    {
+        OrganizeOptions(ListAllSkills());
+        _currentParent = mainParent;
+        RemakeOptions(_currentParent, true, false);
+    }
+
+    private IEnumerable<Tuple<MoodSkill, MoodItem>> ListAllSkills()
+    {
+        if (_innateEquippedSkills != null)
+            foreach (MoodSkill skill in _innateEquippedSkills) yield return new Tuple<MoodSkill, MoodItem>(skill, null);
+        if (_pawn.Inventory != null)
+            foreach (Tuple<MoodSkill, MoodItem> tuple in _pawn.Inventory.GetAllUsableSkills()) yield return tuple;
+
+    }
+
+    private void RemakeOptions(NodeItemParent parent, bool selectFirst, bool feedbacks)
     {
         MakeOptions(parent);
         if(selectFirst)
         {
             _currentOption = -1;
-            MoveSelected(1);
+            MoveSelected(1, feedbacks);
         }
         else
         {
-            MoveSelected(0);
+            MoveSelected(0, feedbacks);
         }
     }
 
-    private void OrganizeOptions(IEnumerable<MoodSkill> skills)
+    private void OrganizeOptions(IEnumerable<Tuple<MoodSkill, MoodItem>> skills)
     {
         Dictionary<MoodSkillCategory, NodeItemParent> dic = new Dictionary<MoodSkillCategory, NodeItemParent>(8);
-        List<MoodSkill> categoryLessSkills = new List<MoodSkill>(8);
+        List<NodeItemLeaf> categoryLessSkills = new List<NodeItemLeaf>(8);
 
-        foreach(MoodSkill skill in skills)
+        foreach(Tuple<MoodSkill, MoodItem> skill in skills)
         {
-            MoodSkillCategory cat = skill.GetCategory();
+            MoodSkillCategory cat = skill.Item1.GetCategory();
+            Debug.LogFormat("Adding skill {0} of {1}, category {2}", skill.Item1, skill.Item2, skill.Item1.GetCategory());
             if(cat != null)
             {
                 if(!dic.ContainsKey(cat))
                 {
                     dic.Add(cat, new NodeItemParent(cat));
                 }
-                dic[cat].items.Add(new NodeItemLeaf(skill));
+                dic[cat].items.Add(new NodeItemLeaf(skill.Item1, skill.Item2));
             }
             else
             {
-                categoryLessSkills.Add(skill);
+                categoryLessSkills.Add(new NodeItemLeaf(skill.Item1, skill.Item2));
             }
         }
 
@@ -204,9 +234,13 @@ public class MoodCommandController : MonoBehaviour
 
         //TODO: Pass through every t in dic again here, now putting every category in its parent.
 
-        foreach (var t in dic)
+        foreach (var t in dic.Keys.OrderByDescending((x)=>x.GetPriority()))
         {
-            mainParent.items.Add(t.Value);
+            mainParent.items.Add(dic[t]);
+        }
+        foreach(var s in categoryLessSkills)
+        {
+            mainParent.items.Add(s);
         }
 
     }
@@ -278,6 +312,7 @@ public class MoodCommandController : MonoBehaviour
     {
         if(set != _activated)
         {
+            if (set && unselectOnDeactivated && _currentParent != null) DeselectToRoot(false);
             SetActiveObjects(set, GetCurrentSkill());
             _activated = set;
         }
@@ -289,9 +324,19 @@ public class MoodCommandController : MonoBehaviour
         return _options[_currentOption];
     }
 
+    public MoodCommandOption GetCurrentCommandOption()
+    {
+        return GetCurrentOption()?.command;
+    }
+
     public MoodSkill GetCurrentSkill()
     {
         return GetCurrentOption()?.node.GetSelectable() as MoodSkill;
+    }
+
+    public MoodItem GetCurrentItem()
+    {
+        return (GetCurrentOption()?.node as NodeItemLeaf)?.item;
     }
 
     private void AssureSelectedOptionIsVisible()
@@ -309,9 +354,10 @@ public class MoodCommandController : MonoBehaviour
         current = Mathf.RoundToInt(Mathf.Repeat(current + add, _options.Count));
     }
 
-    public void MoveSelected(int add)
+    public void MoveSelected(int add, bool feedbacks = true)
     {
         int oldOption = _currentOption;
+        while (_options.Count <= 0) Deselect(false, false);
         if(_currentOption != -1) SetSelected(_currentOption, false);
         MoveIndex(ref _currentOption, add);
         while(!IsVisible(_currentOption) && _currentOption != oldOption)
@@ -321,16 +367,18 @@ public class MoodCommandController : MonoBehaviour
         }
         SetSelected(_currentOption, true );
         SetActiveObjects(IsActivated(), GetCurrentSkill());
-        onChangeOption.Invoke(transform);
+        if(feedbacks) onChangeOption.Invoke(transform);
     }
 
     private bool IsVisible(int index) 
     {
+        if (index < 0 || index >= _options.Count) return false;
         return _options[index].command.gameObject.activeSelf;
     }
 
     private void SetSelected(int index, bool selected)
     {
+        if (index < 0 || index >= _options.Count) return;
         _options[index].command.SetSelected(selected);
     }
 
@@ -391,24 +439,24 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
-    public IEnumerable<MoodSkill> GetAllMoodSkills()
+    public IEnumerable<Tuple<MoodSkill, MoodItem>> GetAllMoodSkills()
     {
-        foreach (MoodSkill skill in GetAllMoodSkills(mainParent)) yield return skill;
+        foreach (Tuple<MoodSkill, MoodItem> tuple in GetAllMoodSkills(mainParent)) yield return tuple;
     }
 
-    private IEnumerable<MoodSkill> GetAllMoodSkills(NodeItemParent parent)
+    private IEnumerable<Tuple<MoodSkill, MoodItem>> GetAllMoodSkills(NodeItemParent parent)
     {
         foreach(NodeItem node in parent)
         {
             if(node is NodeItemParent)
             {
                 var nodeParent = node as NodeItemParent;
-                foreach (MoodSkill skill in GetAllMoodSkills(nodeParent)) yield return skill;
+                foreach (var tuple in GetAllMoodSkills(nodeParent)) yield return tuple;
             }
             else if(node is NodeItemLeaf)
             {
                 var leaf = node as NodeItemLeaf;
-                yield return leaf.skill;
+                yield return new Tuple<MoodSkill, MoodItem>(leaf.skill, leaf.item);
             }
         }
     }
@@ -429,24 +477,37 @@ public class MoodCommandController : MonoBehaviour
     public void SelectCurrentOption()
     {
         NodeItemParent oldParent = _currentParent;
+        GetCurrentOption()?.command.FeedbackConfirmSelection();
         GetCurrentOption()?.node.Select(ref _currentParent);
         if(oldParent != _currentParent)
         {
-            RemakeOptions(_currentParent, true);
+            RemakeOptions(_currentParent, true, true);
         }
     }
 
-    public bool Deselect()
+    public bool Deselect(bool toRoot = false, bool feedbacks = true)
     {
         NodeItemParent oldParent = _currentParent;
-        _currentParent.Deselect(ref _currentParent);
-        if (_currentParent == null) _currentParent = mainParent;
+        if (_currentParent != null) _currentParent.Deselect(ref _currentParent);
+        if (_currentParent == null || toRoot) _currentParent = mainParent;
         if (oldParent != _currentParent)
         {
-            RemakeOptions(_currentParent, false);
+            RemakeOptions(_currentParent, false, feedbacks);
             return true;
         }
         else return false;
+    }
 
+    public bool DeselectToRoot(bool feedbacks)
+    {
+        return Deselect(true, feedbacks);
+    }
+
+    private void OnInventoryChange(MoodInventory inventory)
+    {
+        Debug.LogFormat("[COMMAND] Inventory changed.");
+        OrganizeOptions(ListAllSkills());
+        _currentParent = mainParent;
+        RemakeOptions(_currentParent, false, false);
     }
 }

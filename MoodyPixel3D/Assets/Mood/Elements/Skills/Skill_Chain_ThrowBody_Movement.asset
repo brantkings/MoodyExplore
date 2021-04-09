@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Throw Body
+  _description: 
+  _category: {fileID: 0}
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: ca09c6643e4cfe44395f633baa9e794d, type: 2}
@@ -34,14 +36,16 @@ MonoBehaviour:
   minDistance: 6
   maxDistance: 7
   hopHeight: 1
-  hopDurationInMultiplier: 0.25
-  hopDurationOutMultiplier: 0.75
+  hopDurationInMultiplier: 0
+  hopDurationOutMultiplier: 1
   setHorizontalDirection: 1
   setDirectionInRelationToMovement: []
   velocityAdd: 16
   durationAdd: 0
   showArrowWidth: 1
   ease: 3
+  priortyChangeTimeProportional: 1
+  priorityAdd: 0
   warningOnBumpWall: 1
   eventsOnStart:
   - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}

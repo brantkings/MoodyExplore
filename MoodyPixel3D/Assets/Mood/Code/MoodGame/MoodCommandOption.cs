@@ -15,6 +15,13 @@ public class MoodCommandOption : MonoBehaviour
     public Image stanceCancel;
     public Transform focusCostGroup;
 
+    [Space]
+    public Animator anim;
+    public AnimatorID executeTrigger = "Execute";
+    public AnimatorID confirmTrigger = "Select";
+    public AnimatorID bufferBool = "Buffer";
+
+    [Space()]
     public Color unselectedOutlineColor;
     public Color possibleColor = Color.white;
     public Color impossibleColor = Color.gray;
@@ -121,5 +128,19 @@ public class MoodCommandOption : MonoBehaviour
     {
         return _colorGradientAnimPos;
     }
-    
+
+    public void FeedbackBuffer(bool set)
+    {
+        anim.SetBool(bufferBool, set);
+    }
+
+    public void FeedbackExecute()
+    {
+        anim.SetTrigger(executeTrigger);
+    }
+    public void FeedbackConfirmSelection()
+    {
+        anim.SetTrigger(confirmTrigger);
+    }
+
 }

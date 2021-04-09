@@ -132,6 +132,7 @@ MonoBehaviour:
   _attackFeedback: {fileID: 4198177485041802825}
   _shakeFeedback: {fileID: 3496441509559162423}
   _ownSensorTarget: {fileID: 0}
+  _inventory: {fileID: 0}
   toDestroyOnDeath: {fileID: 0}
   pawnConfiguration: {fileID: 11400000, guid: 1876601f2e2b4eb408ce86ea4d088846, type: 2}
   inherentReactions: []
@@ -154,7 +155,7 @@ MonoBehaviour:
     beats: 8
   staminaRecoveryMovingPerSecond:
     beats: 8
-  handPosition: {fileID: 115938510025388480}
+  _instantiateProjectilePosition: {fileID: 115938510025388480}
   damageTeam: 1
   _debug: 0
 --- !u!114 &1165887686459921071
