@@ -922,7 +922,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void HandleBumpInfo(ReactionInfo bumpInfo)
     {
-        Debug.LogFormat("[BUMP] {0} bumped on {1}. ({2})", name, bumpInfo.origin?.name, bumpInfo);
+        Debug.LogFormat(bumpInfo.origin, "[BUMP] {0} bumped on {1}. ({2})", name, bumpInfo.origin?.name, bumpInfo);
         foreach (IMoodReaction<ReactionInfo> react in GetActiveReactions<ReactionInfo>())
         {
             if (react.CanReact(bumpInfo, this))
@@ -1337,9 +1337,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     #region Threat
     private Vector3 _threatDirection;
-    private MoodSwing _swingThreat;
+    private MoodSwing.MoodSwingBuildData? _swingThreat;
 
-    public void StartThreatening(Vector3 direction, MoodSwing data)
+    public void StartThreatening(Vector3 direction, MoodSwing.MoodSwingBuildData data)
     {
         _threatDirection = direction;
         _swingThreat = data;
@@ -1359,9 +1359,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             ChangeThreatTarget(null);
             return;
         }
-        if(_swingThreat)
+        if(_swingThreat.HasValue)
         {
-            ChangeThreatTargets(from result in _swingThreat.TryHitMerged(Position, GetRotation(), MoodGameManager.Instance.GetPawnBodyLayer()) select result.collider.GetComponentInParent<MoodThreatenable>());
+            ChangeThreatTargets(from result in _swingThreat.Value.TryHitMerged(Position, GetRotation(), MoodGameManager.Instance.GetPawnBodyLayer()) select result.collider.GetComponentInParent<MoodThreatenable>());
         }
         else
         {
@@ -1583,7 +1583,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     #endregion
 
     #region Targetting
-    public Transform FindTarget(Vector3 offset, Vector3 direction, MoodSwing swing, LayerMask target)
+    public Transform FindTarget(Vector3 offset, Vector3 direction, MoodSwing.MoodSwingBuildData swing, LayerMask target)
     {
         return swing.TryHitGetBest(Position + offset, GetRotation(), target, direction)?.collider.transform;
     }

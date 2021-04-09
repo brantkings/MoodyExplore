@@ -41,7 +41,7 @@ MonoBehaviour:
   stunTime:
     beats: 4
   swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
-  swingDataPositionOffset: {x: 0, y: 0, z: 4}
+  swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024

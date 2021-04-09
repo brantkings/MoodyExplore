@@ -6,6 +6,9 @@ public abstract class MoodItem : ScriptableObject
 {
     private string _itemName;
     private string _itemDescription;
+
+    [SerializeField]
+    private ItemInteractable pickupPrefab;
     public MoodItemCategory category;
 
     public string GetName()
@@ -16,6 +19,11 @@ public abstract class MoodItem : ScriptableObject
     public string GetDescription()
     {
         return _itemDescription;
+    }
+
+    public ItemInteractable GetPickupPrefab()
+    {
+        return pickupPrefab;
     }
 
     public abstract bool CanUse(MoodPawn pawn, MoodInventory inventory);

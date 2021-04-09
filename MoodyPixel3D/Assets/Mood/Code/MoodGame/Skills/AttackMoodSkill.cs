@@ -110,18 +110,18 @@ namespace Code.MoodGame.Skills
 
         public float GetRange()
         {
-            if (swingData != null) return swingData.GetRange(swingDataPositionOffset);
+            if (swingData != null) return swingData.GetBuildData(Quaternion.identity, swingDataPositionOffset).GetRange();
             else return 0f;
         }
 
         private Transform GetTarget(MoodPawn pawn, Vector3 origin, Vector3 direction)
         {
-            return swingData.TryHitGetBest(pawn.ObjectTransform.TransformVector(swingDataPositionOffset) + origin, Quaternion.LookRotation(direction, Vector3.up), targetLayer, direction)?.collider.GetComponentInParent<MoodPawn>()?.transform;
+            return swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(direction)).TryHitGetBest(pawn.ObjectTransform.TransformVector(swingDataPositionOffset) + origin, Quaternion.LookRotation(direction, Vector3.up), targetLayer, direction)?.collider.GetComponentInParent<MoodPawn>()?.transform;
         }
 
         public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
         {
-            Target = pawn.FindTarget(GetSanitizerForFirstDash().Sanitize(direction, pawn.Direction), direction, swingData, targetLayer);
+            Target = pawn.FindTarget(GetSanitizerForFirstDash().Sanitize(direction, pawn.Direction), direction, swingData.GetBuildData(pawn, swingDataPositionOffset), targetLayer);
         }
 
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
@@ -131,10 +131,10 @@ namespace Code.MoodGame.Skills
                 Debug.LogErrorFormat("{0} has no swing data!", this);
                 yield break;
             }
-            MoodSwing.MoodSwingBuildData buildData = swingData.GetBuildData(pawn.ObjectTransform.rotation, swingDataPositionOffset);
+            MoodSwing.MoodSwingBuildData buildData = swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(skillDirection));
             pawn.SetPlugoutPriority(priorityPreAttack);
             if(setDirection) pawn.SetHorizontalDirection(skillDirection);
-            pawn.StartThreatening(skillDirection, swingData);
+            pawn.StartThreatening(skillDirection, buildData);
             ConsumeStances(pawn);
             yield return null;
             pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.PreAttack);
@@ -197,7 +197,7 @@ namespace Code.MoodGame.Skills
         private bool DealDamage(MoodPawn pawn, Vector3 skillDirection)
         {
             bool hit = false;
-            foreach (MoodSwing.MoodSwingResult result in swingData.TryHitMerged(pawn.Position, Quaternion.LookRotation(skillDirection, pawn.Up), targetLayer))
+            foreach (MoodSwing.MoodSwingResult result in swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(skillDirection)).TryHitMerged(pawn.Position, Quaternion.LookRotation(skillDirection, pawn.Up), targetLayer))
             {
                 //Debug.LogFormat("Result is {0}", result.collider);
                 if (result.collider != null)
@@ -268,6 +268,11 @@ namespace Code.MoodGame.Skills
                 offset = swingDataPositionOffset,
                 skillDirectionBeginning = GetSanitizerForFirstDash(),
             };
+        }
+
+        private Vector3 GetSwingOffset(Vector3 skillDirection)
+        {
+            return swingDataPositionOffset;
         }
 
         public bool ShouldShowNow(MoodPawn pawn)

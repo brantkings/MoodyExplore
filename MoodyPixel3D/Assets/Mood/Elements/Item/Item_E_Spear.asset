@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca8aa405edc4db042a0035213c4dc23d, type: 3}
+  m_Name: Item_E_Spear
+  m_EditorClassIdentifier: 
+  pickupPrefab: {fileID: 4693325823449663037, guid: 2c15b69c46883a64cacbeceb3e1e29eb, type: 3}
+  category: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
+  skillsToGrant:
+  - {fileID: 11400000, guid: 35e6728f673894a49972966c334cacde, type: 2}
+  - {fileID: 11400000, guid: 6cdb6501c53a0ee49b821aaff16d9bdb, type: 2}
+  equippedItem: {fileID: -6520346370307874918, guid: 464a4d4efccd557459d95c2027c3d0a4, type: 3}
+  equippedItemOffset: {x: 0, y: 0, z: 0}

@@ -121,6 +121,7 @@ public class MoodInventory : MonoBehaviour
 
         if(equippedItems.ContainsKey(item.category))
         {
+            Unequip(item.category);
             equippedItems[item.category] = item;
         }
         else

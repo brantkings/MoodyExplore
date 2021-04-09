@@ -41,8 +41,9 @@ MonoBehaviour:
   postTime:
     beats: 8
   priorityPreInstantiate: 2
-  priorityAfterInstantiate: 1
+  priorityAfterInstantiate: 2
   threat: {fileID: 0}
+  threatOffset: {x: 0, y: 0, z: 0}
   onStartInstantiate:
   - {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteInstantiate:

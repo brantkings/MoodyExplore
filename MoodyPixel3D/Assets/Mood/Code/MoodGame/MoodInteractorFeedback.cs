@@ -18,24 +18,14 @@ public class MoodInteractorFeedback : LHH.Structures.InterfaceCaptureFeedback<Mo
 
     private MoodInteractable _before;
    
-   protected override void OnChange(MoodInteractable newfirst)
+   protected override void OnChange(MoodInteractable interactable)
    {
-       base.OnChange(newfirst);
-       
-       bool isNull = (newfirst == null);
-       if (_hasCache)
-       {
-           if(isNull != _cacheNull) DispatchNull(!isNull);
-       }
-       else
-       {
-           DispatchNull(!isNull);
-       }
-       _hasCache = true;
-       _cacheNull = isNull;
+       base.OnChange(interactable);
+
+        Capture(interactable, out bool isNull);
 
         //Events
-        if(_before != newfirst)
+        if(_before != interactable)
         {
             if(_before != null)
             {
@@ -43,17 +33,32 @@ public class MoodInteractorFeedback : LHH.Structures.InterfaceCaptureFeedback<Mo
             }
             if (!isNull)
             {
-                newfirst.OnInteractableDestroy += OnInteractableDestroy;
+                interactable.OnInteractableDestroy += OnInteractableDestroy;
             }
         }
 
 
-        _before = newfirst;
+        _before = interactable;
+    }
+
+    private void Capture(MoodInteractable newFirst, out bool isNull)
+    {
+        isNull = (newFirst == null);
+        if (_hasCache)
+        {
+            if (isNull != _cacheNull) DispatchNull(!isNull);
+        }
+        else
+        {
+            DispatchNull(!isNull);
+        }
+        _hasCache = true;
+        _cacheNull = isNull;
     }
 
     private void OnInteractableDestroy()
     {
-        DispatchNull(false);
+        Capture(null, out bool isNull);
     }
 
     private void DispatchNull(bool isNull)

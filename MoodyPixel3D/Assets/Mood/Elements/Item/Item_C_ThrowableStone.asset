@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be73c3967361a6843829a1216deb4b2d, type: 3}
   m_Name: Item_C_ThrowableStone
   m_EditorClassIdentifier: 
+  pickupPrefab: {fileID: 4061234158785931220, guid: 96cabec6d8f72384fad74f2a1d6be4d5, type: 3}
   category: {fileID: 0}
   consumableSkills:
   - {fileID: 11400000, guid: 368c9d3d1b991bc4da593ef454c4c4a2, type: 2}

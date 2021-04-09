@@ -28,12 +28,13 @@ public class EquippableMoodItem : MoodItem
         }
         else
         {
+            Instantiate(GetPickupPrefab(), pawn.ObjectTransform.position + Vector3.up * 5f, pawn.ObjectTransform.rotation, null);
             foreach (AttachItself a in pawn.animator.GetComponentsInChildren<AttachItself>())
             {
                 if (_instances.Contains(a))
                 {
                     _instances.Remove(a);
-                    Destroy(a);
+                    Destroy(a.gameObject);
                 }
             }
         }

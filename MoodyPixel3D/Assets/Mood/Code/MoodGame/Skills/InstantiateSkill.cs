@@ -24,6 +24,8 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     
     [SerializeField]
     private MoodSwing threat;
+    [SerializeField]
+    private Vector3 threatOffset;
 
     
     public ScriptableEvent[] onStartInstantiate;
@@ -72,7 +74,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PreAttack);
         pawn.SetPlugoutPriority(priorityPreInstantiate);
         onStartInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
-        if(threat != null) pawn.StartThreatening(skillDirection, threat);
+        if(threat != null) pawn.StartThreatening(skillDirection, threat.GetBuildData(pawn, threatOffset));
         yield return new WaitForSeconds(preTime);
 
         ExecuteEffect(pawn, skillDirection);

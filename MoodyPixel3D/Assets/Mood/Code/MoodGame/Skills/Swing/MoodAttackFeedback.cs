@@ -91,8 +91,11 @@ public class MoodAttackFeedback : MonoBehaviour
     public void SavePosition()
     {
         SlashTrailProperties slash = GetBestProperties();
-        topPositionBefore = slash.top.position;
-        botPositionBefore = slash.bottom.position;
+        if(slash != null)
+        {
+            topPositionBefore = slash.top.position;
+            botPositionBefore = slash.bottom.position;
+        }
     }
 
     private void OnDrawGizmos()

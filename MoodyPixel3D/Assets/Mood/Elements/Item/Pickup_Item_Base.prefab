@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 658354030621986677}
   - component: {fileID: 3307341881577390834}
   m_Layer: 0
-  m_Name: Item_Get_Base
+  m_Name: Pickup_Item_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,7 +79,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &3307341881577390834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,8 +93,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  consumable: 1
   consumableQuantity: 1
+  consumableStyle: 1
   objectToConsume: {fileID: 0}
 --- !u!1001 &1407734120230706974
 PrefabInstance:

@@ -13,18 +13,102 @@ public class MoodSwing : ScriptableObject
 
     public struct MoodSwingBuildData
     {
+        private static Collider[] _colliderCache = new Collider[CACHE_SIZE];
+        private static Dictionary<Collider, MoodSwingResult> _resultsCache = new Dictionary<Collider, MoodSwingResult>(CACHE_SIZE);
+
         public MoodSwing moodSwingItself;
-        public Vector3 offset;
+        public Vector3 localOffset;
 
         public MoodSwingBuildData(MoodSwing m)
         {
             moodSwingItself = m;
-            offset = Vector3.zero;
+            localOffset = Vector3.zero;
         }
 
         public MoodSwingBuildData AddOffset(Vector3 offset)
         {
+            localOffset = offset;
             return this;
+        }
+
+        public MoodSwingResult? TryHitGetBest(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, Vector3 desiredDirection)
+        {
+            float minAngle = float.MaxValue;
+            MoodSwingResult? result = null;
+            foreach (MoodSwingResult r in TryHitMerged(posOrigin, rotOrigin, layer))
+            {
+                Vector3 direction = r.collider.ClosestPoint(posOrigin) - posOrigin;
+                float angle = Vector3.Angle(direction, desiredDirection);
+                if (angle < minAngle)
+                {
+                    result = r;
+                    minAngle = angle;
+                }
+            }
+            return result;
+        }
+
+        public MoodSwingResult? TryHitGetFirst(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
+        {
+
+            float currentDelay = 0f;
+            foreach (MoodSwingNode node in moodSwingItself.maker.Nodes)
+            {
+                LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
+                int result = Physics.OverlapSphereNonAlloc(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
+                if (result > 0)
+                {
+                    for (int j = 0, lenA = Mathf.Min(result, CACHE_SIZE); j < lenA; j++)
+                    {
+                        return GetResultFrom(posOrigin, rotOrigin, localOffset, node, _colliderCache[j]);
+                    }
+                }
+                currentDelay += node.delay;
+            }
+            return null;
+        }
+
+        public IEnumerable<MoodSwingResult> TryHitMerged(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
+        {
+            float currentDelay = 0f;
+            _resultsCache.Clear();
+            int b = 0;
+            foreach (MoodSwingNode node in moodSwingItself.maker.Nodes)
+            {
+                LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
+                int result = Physics.OverlapSphereNonAlloc(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
+                if (result > 0)
+                {
+                    for (int j = 0, lenA = Mathf.Min(result, CACHE_SIZE); j < lenA; j++)
+                    {
+                        Collider collider = _colliderCache[j];
+                        MoodSwingResult newResult = GetResultFrom(posOrigin, rotOrigin, localOffset, node, collider);
+                        //UnityEngine.Debug.LogFormat("MoodSwing {0}: {1} (from {2}) collider is found. Has collider? {3} ({4} iteration)", this.name, collider.name, 
+                        //collider.GetComponentInParent<MoodPawn>()?.name, _resultsCache.ContainsKey(collider), ++b);
+                        if (_resultsCache.ContainsKey(collider))
+                        {
+                            _resultsCache[collider] = MoodSwingResult.Merge(_resultsCache[collider], newResult);
+                        }
+                        else
+                        {
+                            _resultsCache.Add(collider, newResult);
+                        }
+                    }
+                }
+                currentDelay += node.delay;
+            }
+            foreach (MoodSwingResult r in _resultsCache.Values) yield return r;
+            _resultsCache.Clear();
+        }
+
+        public float GetRange()
+        {
+            float range = 0f;
+            foreach (var d in moodSwingItself.maker.Nodes)
+            {
+                range = Mathf.Max(range, Vector3.ProjectOnPlane(d.localPosition, Vector3.up).magnitude + d.radius);
+            }
+            return range + localOffset.magnitude;
         }
     }
 
@@ -79,19 +163,6 @@ public class MoodSwing : ScriptableObject
     //public MoodSwingNode[] data;
     public MoodSwingMaker maker;
 
-    private static Collider[] _colliderCache = new Collider[CACHE_SIZE];
-    private static Dictionary<Collider, MoodSwingResult> _resultsCache = new Dictionary<Collider, MoodSwingResult>(CACHE_SIZE);
-
-    /*public void SetData(IEnumerable<MoodSwingNode> nodes, int length)
-    {
-        data = new MoodSwingNode[length];
-        int i = 0;
-        foreach(MoodSwingNode node in nodes)
-        {
-            data[i++] = node;
-        }
-    }*/
-
 
     public IEnumerable<MoodSwingTrailNode> GetTrail()
     {
@@ -103,106 +174,38 @@ public class MoodSwing : ScriptableObject
         return maker.TrailLength;
     }
 
+    public MoodSwingBuildData GetBuildData(Vector3 direction, Vector3 offset = default)
+    {
+        return GetBuildData(Quaternion.LookRotation(direction, Vector3.up), offset);
+    }
+    public MoodSwingBuildData GetBuildData(MoodPawn originalPawn, Vector3 offset = default)
+    {
+        return GetBuildData(originalPawn.ObjectTransform.rotation, offset);
+    }
+
     public MoodSwingBuildData GetBuildData(Quaternion objectData, Vector3 offset = default)
     {
         return new MoodSwingBuildData(this).AddOffset(offset);
+        //return new MoodSwingBuildData(this).AddOffset(objectData * offset);
     }
 
-    public MoodSwingResult? TryHitGetBest(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, Vector3 desiredDirection)
+    private static Vector3 GetCorrectPosition(Vector3 posOrigin, Quaternion rotOrigin, Vector3 posOffset, MoodSwingNode node)
     {
-        float minAngle = float.MaxValue;
-        MoodSwingResult? result = null;
-        foreach(MoodSwingResult r in TryHitMerged(posOrigin, rotOrigin, layer))
-        {
-            Vector3 direction = r.collider.ClosestPoint(posOrigin) - posOrigin;
-            float angle = Vector3.Angle(direction, desiredDirection);
-            if(angle < minAngle)
-            {
-                result = r;
-                minAngle = angle;
-            }            
-        }
-        return result;
-    }
-
-    public MoodSwingResult? TryHitGetFirst(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
-    {
-        float currentDelay = 0f;
-        foreach(MoodSwingNode node in maker.Nodes)
-        { 
-            LHH.Utils.DebugUtils.DrawCircle(posOrigin + node.localPosition, node.radius, rotOrigin * Vector3.up, Color.black, 1f);
-            int result = Physics.OverlapSphereNonAlloc(posOrigin + node.localPosition, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
-            if (result > 0)
-            {
-                for(int j = 0,lenA = Mathf.Min(result, CACHE_SIZE);j<lenA;j++)
-                {
-                    return GetResultFrom(posOrigin, rotOrigin, node, _colliderCache[j]);
-                }
-            }
-            currentDelay += node.delay;
-        }
-        return null;
-    }
-
-    public IEnumerable<MoodSwingResult> TryHitMerged(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
-    {
-        float currentDelay = 0f;
-        _resultsCache.Clear();
-        int b=0;
-        foreach(MoodSwingNode node in maker.Nodes)
-        { 
-            LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
-            int result = Physics.OverlapSphereNonAlloc(posOrigin + rotOrigin * node.localPosition, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
-            if (result > 0)
-            {
-                for (int j = 0, lenA = Mathf.Min(result, CACHE_SIZE); j < lenA; j++)
-                {
-                    Collider collider = _colliderCache[j];
-                    MoodSwingResult newResult = GetResultFrom(posOrigin, rotOrigin, node, collider);
-                    //UnityEngine.Debug.LogFormat("MoodSwing {0}: {1} (from {2}) collider is found. Has collider? {3} ({4} iteration)", this.name, collider.name, 
-                        //collider.GetComponentInParent<MoodPawn>()?.name, _resultsCache.ContainsKey(collider), ++b);
-                    if (_resultsCache.ContainsKey(collider))
-                    {
-                        _resultsCache[collider] = MoodSwingResult.Merge(_resultsCache[collider], newResult);
-                    }
-                    else
-                    {
-                        _resultsCache.Add(collider, newResult);
-                    }
-                }
-            }
-            currentDelay += node.delay;
-        }
-        foreach (MoodSwingResult r in _resultsCache.Values) yield return r;
-        _resultsCache.Clear();
-    }
-
-    private static Vector3 GetCorrectPosition(Vector3 posOrigin, Quaternion rotOrigin, MoodSwingNode node)
-    {
-        return posOrigin + rotOrigin * node.localPosition;
+        return posOrigin + rotOrigin * (node.localPosition + posOffset);
     }
 
 
-    private static MoodSwingResult GetResultFrom(Vector3 posOrigin, Quaternion rotOrigin, MoodSwingNode node, Collider col)
+    private static MoodSwingResult GetResultFrom(Vector3 posOrigin, Quaternion rotOrigin, Vector3 posOffset, MoodSwingNode node, Collider col)
     {
         return new MoodSwingResult()
         {
             hitDirection = rotOrigin * node.direction,
-            hitPosition = Vector3.Lerp(GetCorrectPosition(posOrigin, rotOrigin, node), col.transform.position, 0.5f),
+            hitPosition = Vector3.Lerp(GetCorrectPosition(posOrigin, rotOrigin, posOffset, node), col.transform.position, 0.5f),
             collider = col
         };
 
     }
 
-    public float GetRange(Vector3 nonRotatedOffset)
-    {
-        float range = 0f;
-        foreach(var d in maker.Nodes)
-        {
-            range = Mathf.Max(range, Vector3.ProjectOnPlane(d.localPosition, Vector3.up).magnitude + d.radius);
-        }
-        return range + nonRotatedOffset.magnitude;
-    }
 
     public delegate void DelUpdateVectors(ref Vector3 top, ref Vector3 bot, int index, int length);
 
@@ -212,9 +215,10 @@ public class MoodSwing : ScriptableObject
         IEnumerator<MoodSwing.MoodSwingTrailNode> nodes = data.moodSwingItself.GetTrail().GetEnumerator();
         int index = 0;
         //float currentYLerp = deltaLerp;
+        UnityEngine.Debug.LogFormat("[MOODSWING] Building {0} with {1}.", data.moodSwingItself, data.localOffset);
         while (nodes.MoveNext())
         {
-            Vector3 top = nodes.Current.localPosTop + data.offset, bot = nodes.Current.localPosBot + data.offset;
+            Vector3 top = nodes.Current.localPosTop + data.localOffset, bot = nodes.Current.localPosBot + data.localOffset;
             changeFunc?.Invoke(ref top, ref bot, index, length);
             MakeQuadFromLastPairToThisOne(ref index, top, bot, vertexData, triangleData);
         }

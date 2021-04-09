@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca8aa405edc4db042a0035213c4dc23d, type: 3}
   m_Name: Item_E_Crowbar
   m_EditorClassIdentifier: 
+  pickupPrefab: {fileID: 4693325823449663037, guid: e5ae8ab5d796d364bb8ef33d871059c1, type: 3}
   category: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
   skillsToGrant:
   - {fileID: 11400000, guid: feaf277a4a5525240abe9958ff8bf92f, type: 2}
