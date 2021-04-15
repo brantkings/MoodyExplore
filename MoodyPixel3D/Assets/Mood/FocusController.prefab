@@ -1933,6 +1933,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectToChange:
   - {fileID: 713337149911558655}
+  modesToAppear: 02000000
 --- !u!1 &1110455945113124777
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,17 +24,28 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             _param = newValue;
             onChange(newValue);
         }
-        
+
     }
+
+
+    public enum Mode
+    {
+        Movement,
+        Command_Skill,
+        Command_Focus,
+        None
+    }
+
 
     public delegate void DelPlayerEvent();
 
     public delegate void DelPlayerBoolEvent(bool set);
+    public delegate void DelPlayerModeEvent(Mode newMode);
 
-    public event DelPlayerBoolEvent OnChangeCommandMode;
+    public event DelPlayerModeEvent OnChangeCommandMode;
     public event DelPlayerEvent OnStartCommand;
     public event DelPlayerEvent OnStopCommand;
-    
+
     [SerializeField]
     private MoodPawn _pawn;
     [SerializeField]
@@ -63,6 +74,18 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public float timeSlowOnThreat = 0.2f;
     public float timeSlowOnCommand = 0.02f;
+
+    private bool _focusMode;
+
+    private bool FocusMode
+    {
+        set
+        {
+            _focusMode = value;
+            OnChangeCommandMode?.Invoke(GetCurrentMode());
+        }
+        get => _focusMode;
+    }
 
 
     // Start is called before the first frame update
@@ -122,7 +145,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             justDown = isPressed && Input.GetKeyDown(code);
             justUp = !isPressed && Input.GetKeyUp(code);
         }
-        
+
         public KeyButtonState(int mouseButton)
         {
             bool isPressed = Input.GetMouseButton(mouseButton);
@@ -168,7 +191,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
         public int GetValue()
         {
-             return Pressing ? 1 : 0;
+            return Pressing ? 1 : 0;
         }
 
         public static implicit operator bool(KeyButtonState e)
@@ -288,7 +311,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         public KeyButtonState Down => vertical.negative;
         public KeyButtonState Right => horizontal.positive;
         public KeyButtonState Left => horizontal.negative;
-        
+
         public Vector3 GetMoveAxis()
         {
             Vector3 moveAxis = Vector3.zero;
@@ -318,6 +341,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             if (vertical.Changed) return vertical.GetValue();
             else return 0;
         }
+
     }
 
     private class RecheckableAxis
@@ -351,7 +375,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     }
 
 
-    void GetInputUpdate(out DirectionalState move, ref RecheckableAxis selectorMoveHelper, out AxisState focusAddAxis, out bool readyingWeapon, out KeyButtonState showCommand, out KeyButtonState executeAction, out KeyButtonState secondaryExecute)
+    void GetInputUpdate(out DirectionalState move, ref RecheckableAxis selectorMoveHelper, out AxisState focusAddAxis, out bool readyingWeapon, out KeyButtonState showCommand, out KeyButtonState executeAction, out KeyButtonState secondaryExecute, out KeyButtonState changeMode)
     {
         move = new DirectionalState();
         move.vertical = new AxisState(new KeyButtonState(Join.Or, KeyCode.DownArrow, KeyCode.S), new KeyButtonState(Join.Or, KeyCode.UpArrow, KeyCode.W));
@@ -374,8 +398,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         showCommand = new KeyButtonState(KeyCode.Space);
         executeAction = new KeyButtonState(0);
         secondaryExecute = new KeyButtonState(1);
-        #if UNITY_EDITOR
-        #endif
+        changeMode = new KeyButtonState(KeyCode.Tab);
+#if UNITY_EDITOR
+#endif
     }
 
     void GetMouseInputUpdate(Camera mainCamera, Vector3 playerPlanePosition, ref Vector3 position)
@@ -395,11 +420,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void StartSkillRoutine(MoodSkill skill, MoodItem item = null, Vector3 direction = default)
     {
-        if(item != null)
+        if (item != null)
         {
             Pawn.UseItem(item, skill);
         }
-        if(skill != null)
+        if (skill != null)
         {
             StartCoroutine(ExecuteSkill(skill, direction));
         }
@@ -432,17 +457,19 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     }
 
     RecheckableAxis _selectorMoveUpDownHelper;
+    Mode _oldMode;
 
     private void Update()
     {
-        GetInputUpdate(out DirectionalState moveAxis, ref _selectorMoveUpDownHelper, out AxisState focusAddAxis, out bool readyingWeapon, out KeyButtonState showCommandAction, out KeyButtonState executeAction, out KeyButtonState secondaryAction);
+        GetInputUpdate(out DirectionalState moveAxis, ref _selectorMoveUpDownHelper, out AxisState focusAddAxis, out bool readyingWeapon,
+            out KeyButtonState showCommandAction, out KeyButtonState executeAction, out KeyButtonState secondaryAction, out KeyButtonState changeModeButton);
         GetMouseInputUpdate(_mainCamera, GetPlayerPlaneOrigin(), ref _mouseWorldPosition);
 
         command.SetActive(showCommandAction.Pressing);
 
         bool isInCommandMode = IsInCommandMode();
         bool isCameraUpwards = command.IsActivated() || IsSkillNeedingStrategicCamera();
-
+        Mode currentMode = GetCurrentMode();
 
         SetCommandMode(isInCommandMode);
         SetCameraMode(isCameraUpwards);
@@ -452,75 +479,105 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             Vector3 currentDirection = inputDirection;
             inputDirectionFeedback.forward = inputDirection;
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
+
+            if (changeModeButton.JustDown)
+            {
+                FocusMode = !FocusMode;
+                if(FocusMode)
+                {
+                    command.DeselectToNull(true, true);
+                }
+                OnChangeCommandMode?.Invoke(GetCurrentMode());
+                return;
+            }
+
+
             MoodSkill skill = command.GetCurrentSkill();
             MoodItem item = command.GetCurrentItem();
             MoodCommandOption option = command.GetCurrentCommandOption();
 
-            //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.white, 0.02f);
-            //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
-            skill?.SanitizeDirection(_pawn.Direction, ref currentDirection);
 
-            int moveSelector = /*moveAxis.GetYAxisChanged() + */_selectorMoveUpDownHelper.GetValue();
 
-            if (moveSelector > 0)
+            if (FocusMode) //On Focus mode
             {
-                command.MoveSelected(-1);
+                FocusCommand(moveAxis, moveAxis.vertical);
+                command.UpdateCommandView(_pawn, skill, currentDirection, false);
             }
-            else if (moveSelector < 0)
+            else //Not focus mode
             {
-                command.MoveSelected(1);
-            }
-            else if (executeAction.JustDown)
-            {
-                command.SelectCurrentOption();
-                if(skill != null)
+
+                command.UpdateCommandView(_pawn, skill, currentDirection, true);
+                //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.white, 0.02f);
+                //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
+                skill?.SanitizeDirection(_pawn.Direction, ref currentDirection);
+
+                int moveCommand = moveAxis.GetYAxisChanged() + _selectorMoveUpDownHelper.GetValue();
+                int selectCommand = moveAxis.GetXAxisChanged();
+
+                if (moveCommand > 0)
                 {
-                    if (skill.CanExecute(_pawn, currentDirection))
+                    command.MoveSelected(-1);
+                }
+                else if (moveCommand < 0)
+                {
+                    command.MoveSelected(1);
+                }
+                else if(selectCommand > 0)
+                {
+                    command.SelectCurrentOption();
+                }
+                else if(selectCommand < 0)
+                {
+                    if (IsBufferingSkill()) EndBufferingSkill();
+                    command.Deselect();
+                }
+                else if (executeAction.JustDown)
+                {
+                    command.SelectCurrentOption();
+                    if (skill != null)
                     {
-                        option.FeedbackExecute();
-                        StartSkillRoutine(skill, item, currentDirection);
-                    }
-                    else if (skill.IsBufferable(Pawn))
-                    {
-                        StartBufferingSkill(option, skill, item, currentDirection);
+                        if (skill.CanExecute(_pawn, currentDirection))
+                        {
+                            option.FeedbackExecute();
+                            StartSkillRoutine(skill, item, currentDirection);
+                        }
+                        else if (skill.IsBufferable(Pawn))
+                        {
+                            StartBufferingSkill(option, skill, item, currentDirection);
+                        }
                     }
                 }
-            }
-            else if(secondaryAction.JustDown)
-            {
-                if (IsBufferingSkill()) EndBufferingSkill();
-                else command.Deselect();
+
+                if (secondaryAction.Pressing)
+                {
+                    _rotatingTarget = inputDirection.normalized;
+                }
+                else
+                {
+                    _rotatingTarget = Vector3.zero;
+                }
+
+                _pawn.SetVelocity(Vector3.zero);
+                _pawn.RotateTowards(_rotatingTarget);
+
+                if (!IsExecutingCommand())
+                {
+                    _pawn.SetLookAt(currentDirection);
+                    _lookAtVector = currentDirection;
+                    //pawn.SetHorizontalDirection(currentDirection);
+                }
             }
 
-            if(secondaryAction.Pressing)
-            {
-                _rotatingTarget = inputDirection.normalized;
-            }
-            else
-            {
-                _rotatingTarget = Vector3.zero;
-            }
-
-            FocusCommand(moveAxis, moveAxis.vertical);
-            command.UpdateCommandView(_pawn, skill, currentDirection);
-            _pawn.SetVelocity(Vector3.zero);
-            _pawn.RotateTowards(_rotatingTarget);
-
-            if (!IsExecutingCommand())
-            {
-                _pawn.SetLookAt(currentDirection);
-                _lookAtVector = currentDirection;
-                //pawn.SetHorizontalDirection(currentDirection);
-            }
+            
         }
         else //The command is not open
         {
             //Check command shortcuts
             _rotatingTarget = Vector3.zero;
             Vector3 shortcutDirection = _pawn.Direction;
-            foreach(var tuple in command.GetAllMoodSkills())
+            foreach (var tuple in command.GetAllMoodSkills())
             {
-                if(Input.GetKeyDown(tuple.Item1.GetShortCut()) && tuple.Item1.CanExecute(_pawn, shortcutDirection))
+                if (Input.GetKeyDown(tuple.Item1.GetShortCut()) && tuple.Item1.CanExecute(_pawn, shortcutDirection))
                 {
                     StartSkillRoutine(tuple.Item1, tuple.Item2, shortcutDirection);
                 }
@@ -537,7 +594,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                     interactor.Interact();
                 }
             }
-            
+
             _pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
             _pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * GetMaxVelocity()), Vector3.up));
             _pawn.RotateTowards(_rotatingTarget);
@@ -547,6 +604,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
         //SolveCommandSlowDown(executeAction.Pressing, true);
         SolveCommandSlowDown(false, true);
+        currentMode = GetCurrentMode();
+        _oldMode = currentMode;
     }
 
     private bool CanExecute(MoodSkill skill, MoodItem item, Vector3 skillDirection)
@@ -569,7 +628,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public bool HasAvailableSkills()
     {
-        foreach(var skill in command.GetAllMoodSkills())
+        foreach (var skill in command.GetAllMoodSkills())
         {
             if (skill.Item1.CanExecute(_pawn, Vector3.zero))
             {
@@ -578,6 +637,17 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
         return false;
     }
+
+    public Mode GetCurrentMode()
+    {
+        if (IsInCommandMode())
+        {
+            if (FocusMode) return Mode.Command_Focus;
+            else return Mode.Command_Skill;
+        }
+        else return Mode.Movement;
+    }
+
 
     public bool IsCommandOpen()
     {
@@ -656,9 +726,14 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         if(_wasInCommand != set)
         {
             if (!set) EndBufferingSkill();
+            else
+            {
+                FocusMode = false;
+            }
             _wasInCommand = set;
-            OnChangeCommandMode?.Invoke(set);
             SetMouseMode(set);
+
+            OnChangeCommandMode?.Invoke(GetCurrentMode());
         }
 
     }

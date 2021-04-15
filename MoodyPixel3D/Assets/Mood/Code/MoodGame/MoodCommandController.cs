@@ -427,10 +427,10 @@ public class MoodCommandController : MonoBehaviour
         return _activated.HasValue && _activated.Value;
     }
 
-    public void UpdateCommandView(MoodPawn pawn, MoodSkill currentSkill, Vector3 sanitizedDirection)
+    public void UpdateCommandView(MoodPawn pawn, MoodSkill currentSkill, Vector3 sanitizedDirection, bool assureSelected)
     {
         PaintOptions(pawn, sanitizedDirection);
-        AssureSelectedOptionIsVisible();
+        if(assureSelected) AssureSelectedOptionIsVisible();
 
         if(currentSkill != null)
         {
@@ -485,6 +485,12 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
+    private void SetNullAsSelected(bool setNotSelectingAnyone)
+    {
+        GetCurrentOption()?.command.SetSelected(false);
+        if(setNotSelectingAnyone) _currentOption = -1;
+    }
+
     public bool Deselect(bool toRoot = false, bool feedbacks = true)
     {
         NodeItemParent oldParent = _currentParent;
@@ -501,6 +507,12 @@ public class MoodCommandController : MonoBehaviour
     public bool DeselectToRoot(bool feedbacks)
     {
         return Deselect(true, feedbacks);
+    }
+    
+    public void DeselectToNull(bool feedbacks, bool setNotSelectingAnyone)
+    {
+        DeselectToRoot(feedbacks);
+        SetNullAsSelected(setNotSelectingAnyone);
     }
 
     private void OnInventoryChange(MoodInventory inventory)
