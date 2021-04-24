@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad4b25fdedceb3d448e4c69fde2c8868, type: 3}
+  m_Name: COLOR_Table_Direct_Smol
+  m_EditorClassIdentifier: 
+  size: 8
+  format: 4
+  wrapMode: 1
+  filterMode: 0
+  mipMaps: 0
+  paletteToUse: {fileID: 11400000, guid: 23ac971d5652c4b48bf357388bb4e449, type: 2}
+  paletteComparer: {fileID: 0}
+  textureToCreate: {fileID: 11700000, guid: 4b76f770105dc864bad163ede5adcb86, type: 2}

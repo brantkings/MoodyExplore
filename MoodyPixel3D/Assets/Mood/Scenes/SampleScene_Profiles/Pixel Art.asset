@@ -84,6 +84,34 @@ MonoBehaviour:
   material:
     overrideState: 1
     value: {fileID: 2100000, guid: d1a212d31915e7344954109756945878, type: 2}
+--- !u!114 &-4571326725863933231
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f17d029b00e51643bad82c1768d9709, type: 3}
+  m_Name: PixelArtLookUpSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  height:
+    overrideState: 1
+    value: 256
+  mode:
+    overrideState: 1
+    value: 0
+  material:
+    overrideState: 1
+    value: {fileID: 2100000, guid: a49ed5b1ac08bcb44a5d2e253fa9828b, type: 2}
+  changeBefore:
+    overrideState: 0
+    value: 0
 --- !u!114 &-4331611281405269405
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -147,7 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
   - {fileID: -4331611281405269405}
-  - {fileID: 9086705800002370028}
+  - {fileID: -4571326725863933231}
 --- !u!114 &1689735512399561390
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -210,34 +238,3 @@ MonoBehaviour:
   changeBefore:
     overrideState: 1
     value: 1
---- !u!114 &9086705800002370028
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e948ca2903dac2d40b5ef239e0812a7e, type: 3}
-  m_Name: PixelArtSettings
-  m_EditorClassIdentifier: 
-  active: 1
-  enabled:
-    overrideState: 1
-    value: 1
-  height:
-    overrideState: 1
-    value: 256
-  mode:
-    overrideState: 1
-    value: 0
-  material:
-    overrideState: 1
-    value: {fileID: 2100000, guid: 8f58268dbc0adaf4c8dc4b696aa6a978, type: 2}
-  palette:
-    overrideState: 1
-    value: {fileID: 11400000, guid: 081cbccd86440554889ffc979a951d43, type: 2}
-  changeBefore:
-    overrideState: 1
-    value: 0

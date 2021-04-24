@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfcdecfc15cb2e34f9e762cc135ae1f1, type: 3}
+  m_Name: PALETTE_Luminance_Concept
+  m_EditorClassIdentifier: 
+  colors:
+  - luminanceValue: 0
+    resultOrderOfLuminance:
+    - {r: 0, g: 0, b: 0, a: 0}
+  - luminanceValue: 20
+    resultOrderOfLuminance:
+    - {r: 0.16221127, g: 0.349, b: 0.16712674, a: 1}
+    - {r: 0.31089133, g: 0.45400003, b: 0.3553044, a: 1}
+    - {r: 0.32899997, g: 0.511, b: 0.44099998, a: 1}
+    - {r: 0.15363635, g: 0.39, b: 0.37818182, a: 1}
+  - luminanceValue: 90
+    resultOrderOfLuminance:
+    - {r: 0.759, g: 0, b: 0, a: 1}
+    - {r: 1, g: 0, b: 0, a: 1}
+    - {r: 1, g: 0.40286574, b: 0.2216981, a: 1}
+    - {r: 0.85800004, g: 0.6457579, b: 0.23933683, a: 1}
+  - luminanceValue: 100
+    resultOrderOfLuminance:
+    - {r: 1, g: 1, b: 1, a: 0}
+    - {r: 1, g: 0.98250306, b: 0.8160377, a: 1}
+    - {r: 0.8679245, g: 0.7328231, b: 0.74349403, a: 1}
+  - luminanceValue: 50
+    resultOrderOfLuminance:
+    - {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}
+    - {r: 0.754717, g: 0.74714255, b: 0.66571736, a: 1}
+    - {r: 0.8679245, g: 0.7328231, b: 0.74349403, a: 1}

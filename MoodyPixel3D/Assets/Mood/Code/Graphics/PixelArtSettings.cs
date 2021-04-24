@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
-[PostProcess(typeof(PixelArtRender), PostProcessEvent.AfterStack, "Long Hat House/Pixel Art")]
+[PostProcess(typeof(PixelArtRender), PostProcessEvent.AfterStack, "Long Hat House/Pixel Art Palette")]
 public class PixelArtSettings : PostProcessEffectSettings
 {
     public IntParameter height = new IntParameter();

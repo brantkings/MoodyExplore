@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f79d81b04743f4a80a4e0f44912623, type: 3}
+  m_Name: COLOR_Table_ByLuminance_Cielab
+  m_EditorClassIdentifier: 
+  size: 16
+  format: 4
+  wrapMode: 1
+  filterMode: 1
+  mipMaps: 0
+  paletteToUse: {fileID: 11400000, guid: 2f9590b21a1cd604a9a977e89be630c9, type: 2}
+  paletteComparer: {fileID: 11400000, guid: c96fedf910108ac488a7f0a84a833ae8, type: 2}
+  textureToCreate: {fileID: 11700000, guid: 1b76af03ece273a46aa7814f315e4ff5, type: 2}
+  possibilities:
+  - 0

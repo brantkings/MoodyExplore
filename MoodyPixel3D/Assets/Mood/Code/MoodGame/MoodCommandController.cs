@@ -324,6 +324,16 @@ public class MoodCommandController : MonoBehaviour
         return _options[_currentOption];
     }
 
+    private int GetIndexOf(NodeItemParent context, NodeItem indexer)
+    {
+        return context.items.IndexOf(indexer);
+    }
+
+    private int GetIndexOfInCurrentContext(NodeItem indexer)
+    {
+        return GetIndexOf(_currentParent, indexer);
+    }
+
     public MoodCommandOption GetCurrentCommandOption()
     {
         return GetCurrentOption()?.command;
@@ -498,7 +508,10 @@ public class MoodCommandController : MonoBehaviour
         if (_currentParent == null || toRoot) _currentParent = mainParent;
         if (oldParent != _currentParent)
         {
-            RemakeOptions(_currentParent, false, feedbacks);
+            RemakeOptions(_currentParent, false, false);
+            //_currentOption = 0;
+            int wantIndex = GetIndexOfInCurrentContext(oldParent);
+            MoveSelected(wantIndex - _currentOption, feedbacks);
             return true;
         }
         else return false;

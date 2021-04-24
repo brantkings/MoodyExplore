@@ -494,7 +494,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
             MoodSkill skill = command.GetCurrentSkill();
             MoodItem item = command.GetCurrentItem();
-            MoodCommandOption option = command.GetCurrentCommandOption();
+            MoodCommandOption option = command.GetCurrentCommandOption(); 
+            skill?.SanitizeDirection(_pawn.Direction, ref currentDirection);
 
 
 
@@ -509,7 +510,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 command.UpdateCommandView(_pawn, skill, currentDirection, true);
                 //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.white, 0.02f);
                 //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
-                skill?.SanitizeDirection(_pawn.Direction, ref currentDirection);
+                
 
                 int moveCommand = moveAxis.GetYAxisChanged() + _selectorMoveUpDownHelper.GetValue();
                 int selectCommand = moveAxis.GetXAxisChanged();

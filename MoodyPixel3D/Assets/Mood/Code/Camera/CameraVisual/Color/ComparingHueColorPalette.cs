@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-[CreateAssetMenu(fileName ="PALETTE_COMPARING", menuName = "Long Hat House/Color Palette that Compares")]
-public class ComparingLuminanceColorPalette : ScriptableObject
+[CreateAssetMenu(fileName ="PALETTE_COMPARING", menuName = "Long Hat House/Colors/Color Palette that Compares")]
+public class ComparingHueColorPalette : ScriptableObject
 {
     int MAX_AMOUNT_COLORS = 256;
 
