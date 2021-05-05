@@ -10,6 +10,7 @@ public class PixelArtLookUpSettings : PostProcessEffectSettings
     public ParameterOverride<FilterMode> mode = new ParameterOverride<FilterMode>(FilterMode.Point);
     public ParameterOverride<Material> material = new ParameterOverride<Material>();
     public BoolParameter changeBefore = new BoolParameter();
+    public ParameterOverride<Shader> lightShader = new ParameterOverride<Shader>();
 
     public override bool IsEnabledAndSupported(PostProcessRenderContext context)
     {
@@ -25,6 +26,7 @@ public class PixelArtLookUpSettings : PostProcessEffectSettings
 
 public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSettings>
 {
+
     public override void Init()
     {
         base.Init();
@@ -35,12 +37,41 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
 
     }
 
+    private void SetupCamera(Camera c, PostProcessRenderContext context)
+    {
+        if (c == null) c = GameObject.Instantiate(context.camera);
+        c.renderingPath = RenderingPath.Forward;
+        c.clearFlags = CameraClearFlags.Color;
+        c.backgroundColor = Color.black;
+    }
+
     public override void Render(PostProcessRenderContext context)
     {
         InitMaterial(settings.material.value);
         int height = settings.height.value;
         int width = Mathf.FloorToInt(Camera.main.aspect * height);
+
+        if (settings.lightShader.value != null)
+        {
+            RenderTexture lightTexture = RenderTexture.GetTemporary(context.screenWidth, context.screenHeight, 16);
+            SetupCamera(context.camera, context);
+            //context.camera.targetTexture = lightTexture;
+            //context.command.SetShadowSamplingMode(lightTexture, UnityEngine.Rendering.ShadowSamplingMode.CompareDepths);
+            context.command.SetRenderTarget(lightTexture);
+            UnityEngine.Rendering.CommandBuffer cameraBuffer = new UnityEngine.Rendering.CommandBuffer();
+            cameraBuffer.SetRenderTarget(lightTexture);
+            context.camera.AddCommandBuffer(UnityEngine.Rendering.CameraEvent.BeforeDepthTexture, cameraBuffer);
+            context.camera.RenderWithShader(settings.lightShader, null);
+
+            //context.command.ClearRenderTarget(true, true, Color.black);
+            //context.command.Blit(lightTexture, context.destination);
+            //context.camera.targetTexture = null;
+            RenderTexture.ReleaseTemporary(lightTexture);
+            return;
+        }
+
         RenderTexture temp = RenderTexture.GetTemporary(width, height);
+        RenderTexture.ReleaseTemporary(temp);
         temp.filterMode = settings.mode;
         if(settings.changeBefore.value)
         {
@@ -52,7 +83,6 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
             BlitLimitingColors(context, context.source, temp);
         }
         context.command.Blit(temp, context.destination);
-        RenderTexture.ReleaseTemporary(temp);
     }
 
     private void BlitLimitingColors(PostProcessRenderContext context, UnityEngine.Rendering.RenderTargetIdentifier source, UnityEngine.Rendering.RenderTargetIdentifier destination)

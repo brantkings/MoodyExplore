@@ -112,6 +112,9 @@ MonoBehaviour:
   changeBefore:
     overrideState: 0
     value: 0
+  lightShader:
+    overrideState: 0
+    value: {fileID: 4800000, guid: 14790d12ddd06f948b61c90996c2355e, type: 3}
 --- !u!114 &-4331611281405269405
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -160,7 +163,7 @@ MonoBehaviour:
     value: 0.93
   quality:
     overrideState: 1
-    value: 2
+    value: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

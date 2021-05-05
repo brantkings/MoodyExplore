@@ -42,7 +42,8 @@ public class PixelArtRender : PostProcessEffectRenderer<PixelArtSettings>
         if (settings.palette.value != null && settings.material.value != null)
             InitMaterial(settings.material.value);
         int height = settings.height.value;
-        int width = Mathf.FloorToInt(Camera.main.aspect * height);
+        int width = Mathf.FloorToInt(context.camera.aspect * height);
+            
         RenderTexture temp = RenderTexture.GetTemporary(width, height);
         temp.filterMode = settings.mode;
         if(settings.changeBefore.value)

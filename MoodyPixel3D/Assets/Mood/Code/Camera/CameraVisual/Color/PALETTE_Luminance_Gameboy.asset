@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfcdecfc15cb2e34f9e762cc135ae1f1, type: 3}
+  m_Name: PALETTE_Luminance_Gameboy
+  m_EditorClassIdentifier: 
+  colors:
+  - luminanceValue: 0
+    resultOrderOfLuminance:
+    - {r: 0.007843138, g: 0.06666667, b: 0.10196079, a: 1}
+  - luminanceValue: 50
+    resultOrderOfLuminance:
+    - {r: 0.5372549, g: 0.7568628, b: 0.43921572, a: 1}
+    - {r: 0.17254902, g: 0.40784317, b: 0.30980393, a: 1}
+  - luminanceValue: 100
+    resultOrderOfLuminance:
+    - {r: 0.882353, g: 0.9725491, b: 0.8196079, a: 1}
