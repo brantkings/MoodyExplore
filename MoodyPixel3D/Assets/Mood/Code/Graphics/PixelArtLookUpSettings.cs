@@ -71,7 +71,6 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
         }
 
         RenderTexture temp = RenderTexture.GetTemporary(width, height);
-        RenderTexture.ReleaseTemporary(temp);
         temp.filterMode = settings.mode;
         if(settings.changeBefore.value)
         {
@@ -83,6 +82,7 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
             BlitLimitingColors(context, context.source, temp);
         }
         context.command.Blit(temp, context.destination);
+        RenderTexture.ReleaseTemporary(temp);
     }
 
     private void BlitLimitingColors(PostProcessRenderContext context, UnityEngine.Rendering.RenderTargetIdentifier source, UnityEngine.Rendering.RenderTargetIdentifier destination)

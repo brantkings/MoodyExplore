@@ -20,3 +20,7 @@ MonoBehaviour:
   paletteToUse: {fileID: 11400000, guid: 23ac971d5652c4b48bf357388bb4e449, type: 2}
   paletteComparer: {fileID: 11400000, guid: ef9004ab6848908488dcf3beaa4f4c32, type: 2}
   textureToCreate: {fileID: 11700000, guid: dc16888a99540e74a9c4dd2d88eb4340, type: 2}
+  possibilities:
+  - -0.5
+  - 0
+  - 0.5

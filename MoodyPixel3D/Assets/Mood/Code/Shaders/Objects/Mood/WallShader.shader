@@ -79,7 +79,11 @@ Shader "Long Hat House/WallShader"
     ENDCG
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue" = "Geometry-2" }
+        Tags {
+            "RenderType"="Opaque" 
+            "Queue" = "Geometry-2"
+            "RenderPipeline" = "HDRenderPipeline"
+        }
         //Tags {"Queue" = "Transparent" "RenderType"="Transparent" }
         
 
@@ -99,10 +103,10 @@ Shader "Long Hat House/WallShader"
         {
             // Albedo comes from a texture tinted by color
             fixed4 ground = tex2D (_GroundTex, IN.worldPos.xz) * _Color;
-            fixed4 wallA = tex2D (_WallTex, IN.worldPos.xy) * _Color;
-            fixed4 wallB = tex2D (_WallTex, IN.worldPos.zy) * _Color;
+            fixed4 wallXY = tex2D (_WallTex, IN.worldPos.xy) * _Color;
+            fixed4 wallZY = tex2D (_WallTex, IN.worldPos.zy) * _Color;
 
-            fixed4 c = ground * abs(IN.worldNormal.y) + wallA * abs(IN.worldNormal.z) + wallB * abs(IN.worldNormal.x);
+            fixed4 c = ground * abs(IN.worldNormal.y) + wallXY * abs(IN.worldNormal.z) + wallZY * abs(IN.worldNormal.x);
             o.Albedo = c.rgb;
 
             float ditherValue = GetDitherValue(IN.screenPos.xy / IN.screenPos.w, _DitheringTex, _DitheringTex_TexelSize);
