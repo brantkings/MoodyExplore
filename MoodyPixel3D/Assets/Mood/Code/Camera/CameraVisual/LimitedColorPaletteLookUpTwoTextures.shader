@@ -76,7 +76,7 @@
             {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
-				SHADOW_COORDS(5)
+				//SHADOW_COORDS(5)
             };
 
             v2f vert (appdata v)
@@ -104,16 +104,17 @@
                 //fixed2 mult = fixed2(_MainTex_TexelSize.z / _DitheringTex_TexelSize.z ,_MainTex_TexelSize.w / _DitheringTex_TexelSize.w);
                 float4 noise = tex2D(_DitheringTex, ComputeScreenPos(i.vertex));
                 
-				float3 shadowCoord = i._ShadowCoord.xyz / i._ShadowCoord.w;
-				float4 shadowmap = tex2D(_LightSample, shadowCoord.xy);
+				//float3 shadowCoord = i._ShadowCoord.xyz / i._ShadowCoord.w;
+				//float4 shadowmap = tex2D(_LightSample, shadowCoord.xy);
 
-                float4 iChoice = tex2D(_IlluminatedTex, i.uv);
+                float4 iChoice = tex2D(_LightSample, i.uv);
 
                 float4 colorI = tex3D(_LookUpTableI, col + (noise + _DitheringNeutral) * _DitheringForce);
                 float4 colorN = tex3D(_LookUpTableN, col + (noise + _DitheringNeutral) * _DitheringForce);
                 //return iChoice;
+                //return smoothstep(0, 1, iChoice);
                 //return shadowmap;
-                return lerp(colorN, colorI, 1);
+                return lerp(colorN, colorI, smoothstep(0, 1, iChoice).r);
                 //return tex3D(_LookUpTable, col);
             }
 

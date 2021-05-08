@@ -12,7 +12,7 @@ Shader "Custom/LightChoiceShader"
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf WrapLambert fullforwardshadows
+        #pragma surface surf WrapLambert fullforwardshadows noambient
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
@@ -42,10 +42,10 @@ Shader "Custom/LightChoiceShader"
             //half diff = NdotL;
             half4 c;
             //c.rgb = s.Albedo * (diff * atten);
-            //c.rgb = _LightColor0.rgb * (diff * atten * atten);
+            c.rgb = _LightColor0.rgb * (diff * atten * atten);
             //c.rgb = s.Albedo * _LightColor0.rgb * (diff * atten * atten);
             //c.rgb = s.Albedo;
-            c.rgb = (diff * atten * atten);
+            //c.rgb = (diff * atten * atten);
             //c.rgb = atten;
             //c.rgb = pow(atten * diff,4);
             c.a = s.Alpha;

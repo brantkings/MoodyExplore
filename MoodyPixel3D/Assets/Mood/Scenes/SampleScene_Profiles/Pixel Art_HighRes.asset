@@ -102,65 +102,34 @@ MonoBehaviour:
     value: 1
   height:
     overrideState: 1
-    value: 1024
+    value: 512
   mode:
     overrideState: 1
-    value: 2
-  material:
+    value: 1
+  shader:
     overrideState: 1
-    value: {fileID: 2100000, guid: 5b155d343c7d9a343a120aa9a5af28a6, type: 2}
+    value: {fileID: 0}
+  textureIlluminated:
+    overrideState: 1
+    value: {fileID: 11700000, guid: 7f5e67cc7deed0943b61777e88045d57, type: 2}
+  textureNotIlluminated:
+    overrideState: 1
+    value: {fileID: 11700000, guid: 3e26633d4dd393c48b8776013416e27d, type: 2}
   changeBefore:
     overrideState: 0
     value: 0
---- !u!114 &-4331611281405269405
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
-  m_Name: AmbientOcclusion
-  m_EditorClassIdentifier: 
-  active: 1
-  enabled:
-    overrideState: 1
-    value: 1
-  mode:
-    overrideState: 1
+  customBufferName:
+    overrideState: 0
+    value: 
+  textureParameterID:
+    overrideState: 0
+    value: 
+  quickTestShader:
+    overrideState: 0
+    value: {fileID: 0}
+  onlyRenderIlluminationTexture:
+    overrideState: 0
     value: 0
-  intensity:
-    overrideState: 1
-    value: 2.12
-  color:
-    overrideState: 1
-    value: {r: 0, g: 0, b: 0, a: 1}
-  ambientOnly:
-    overrideState: 1
-    value: 1
-  noiseFilterTolerance:
-    overrideState: 1
-    value: 0
-  blurTolerance:
-    overrideState: 1
-    value: -4.6
-  upsampleTolerance:
-    overrideState: 1
-    value: -12
-  thicknessModifier:
-    overrideState: 1
-    value: 3.07
-  directLightingStrength:
-    overrideState: 1
-    value: 0
-  radius:
-    overrideState: 1
-    value: 0.93
-  quality:
-    overrideState: 1
-    value: 2
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,7 +143,6 @@ MonoBehaviour:
   m_Name: Pixel Art_HighRes
   m_EditorClassIdentifier: 
   settings:
-  - {fileID: -4331611281405269405}
   - {fileID: -4571326725863933231}
 --- !u!114 &1689735512399561390
 MonoBehaviour:

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfcdecfc15cb2e34f9e762cc135ae1f1, type: 3}
+  m_Name: PALETTE_Luminance_BlackAndWhite_Light
+  m_EditorClassIdentifier: 
+  colors:
+  - luminanceValue: 0
+    resultOrderOfLuminance:
+    - {r: 0.18729973, g: 0.21466069, b: 0.21698111, a: 1}
+  - luminanceValue: 30
+    resultOrderOfLuminance:
+    - {r: 0.3290762, g: 0.37823766, b: 0.4811321, a: 1}
+  - luminanceValue: 60
+    resultOrderOfLuminance:
+    - {r: 0.3972499, g: 0.5043369, b: 0.745283, a: 1}
+    - {r: 0.65581167, g: 0.6497419, b: 0.8773585, a: 1}
+    - {r: 0.46524566, g: 0.6475568, b: 0.8018868, a: 1}
+  - luminanceValue: 100
+    resultOrderOfLuminance:
+    - {r: 0.77877945, g: 0.7491545, b: 0.8584906, a: 1}

@@ -106,15 +106,30 @@ MonoBehaviour:
   mode:
     overrideState: 1
     value: 0
-  material:
+  shader:
     overrideState: 1
-    value: {fileID: 2100000, guid: a49ed5b1ac08bcb44a5d2e253fa9828b, type: 2}
+    value: {fileID: 4800000, guid: 4cff50fc794c72943beb995891c12ab7, type: 3}
+  textureIlluminated:
+    overrideState: 1
+    value: {fileID: 11700000, guid: 7f5e67cc7deed0943b61777e88045d57, type: 2}
+  textureNotIlluminated:
+    overrideState: 1
+    value: {fileID: 11700000, guid: 87c3c8bb7a977d04d9e66145b524a84a, type: 2}
   changeBefore:
     overrideState: 0
     value: 0
-  lightShader:
+  customBufferName:
+    overrideState: 1
+    value: LightTexture
+  textureParameterID:
+    overrideState: 1
+    value: _LightSample
+  quickTestShader:
     overrideState: 0
     value: {fileID: 4800000, guid: 14790d12ddd06f948b61c90996c2355e, type: 3}
+  onlyRenderIlluminationTexture:
+    overrideState: 0
+    value: 0
 --- !u!114 &-4331611281405269405
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -179,6 +194,7 @@ MonoBehaviour:
   settings:
   - {fileID: -4331611281405269405}
   - {fileID: -4571326725863933231}
+  - {fileID: 2760406590886186201}
 --- !u!114 &1689735512399561390
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -210,6 +226,28 @@ MonoBehaviour:
   changeBefore:
     overrideState: 0
     value: 0
+--- !u!114 &2760406590886186201
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b94fcd11afffcb142908bfcb1e261fba, type: 3}
+  m_Name: MotionBlur
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  shutterAngle:
+    overrideState: 1
+    value: 270
+  sampleCount:
+    overrideState: 1
+    value: 10
 --- !u!114 &5050785311146469628
 MonoBehaviour:
   m_ObjectHideFlags: 3
