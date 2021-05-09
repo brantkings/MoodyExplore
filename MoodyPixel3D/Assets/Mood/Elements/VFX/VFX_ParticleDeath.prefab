@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4534425579592918412}
   - component: {fileID: 4534425579592918415}
   - component: {fileID: 4534425579592918414}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: VFX_ParticleDeath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4911,6 +4911,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  scriptableEventToCall: []
+  toListenTo: {fileID: 0}
   _time: 2
 --- !u!114 &4534425579592918414
 MonoBehaviour:
@@ -4933,7 +4935,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4534425579839656698}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: CollisionPlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}

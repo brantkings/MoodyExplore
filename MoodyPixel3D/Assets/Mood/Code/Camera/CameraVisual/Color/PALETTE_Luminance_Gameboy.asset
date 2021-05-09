@@ -16,10 +16,10 @@ MonoBehaviour:
   - luminanceValue: 0
     resultOrderOfLuminance:
     - {r: 0.007843138, g: 0.06666667, b: 0.10196079, a: 1}
-  - luminanceValue: 50
+  - luminanceValue: 20
     resultOrderOfLuminance:
     - {r: 0.5372549, g: 0.7568628, b: 0.43921572, a: 1}
     - {r: 0.17254902, g: 0.40784317, b: 0.30980393, a: 1}
-  - luminanceValue: 100
+  - luminanceValue: 50
     resultOrderOfLuminance:
     - {r: 0.882353, g: 0.9725491, b: 0.8196079, a: 1}

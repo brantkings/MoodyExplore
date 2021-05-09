@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 536837461512436486}
   - component: {fileID: 1319164495733193696}
   - component: {fileID: 8760658633298348353}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: VFX_DashSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,6 +61,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   scriptableEventToCall: []
+  toListenTo: {fileID: 0}
   _time: 2
 --- !u!114 &8760658633298348353
 MonoBehaviour:
@@ -87,7 +88,7 @@ GameObject:
   - component: {fileID: 4014715398705601774}
   - component: {fileID: 6162208586655279737}
   - component: {fileID: 133328737505203518}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: VFX_DashSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4966,6 +4967,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   scriptableEventToCall: []
+  toListenTo: {fileID: 0}
   _time: 2
 --- !u!114 &133328737505203518
 MonoBehaviour:

@@ -12,6 +12,10 @@ PrefabInstance:
       value: VFX_ParticleDeath_Player
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.758965
       objectReference: {fileID: 0}
@@ -24,6 +28,10 @@ PrefabInstance:
       value: -8.883787
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -33,14 +41,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}
-      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918403, guid: c8d2692922e3ba94eaef5869a4f2f671, type: 3}

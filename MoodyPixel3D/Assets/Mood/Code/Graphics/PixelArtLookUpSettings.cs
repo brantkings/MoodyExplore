@@ -12,6 +12,9 @@ public class PixelArtLookUpSettings : PostProcessEffectSettings
     public ParameterOverride<Texture3D> textureIlluminated = new ParameterOverride<Texture3D>();
     public ParameterOverride<Texture3D> textureNotIlluminated = new ParameterOverride<Texture3D>();
     public BoolParameter changeBefore = new BoolParameter();
+    public FloatParameter ditheringForce = new FloatParameter();
+    public FloatParameter ditheringNeutral = new FloatParameter();
+    public ParameterOverride<Texture2D> ditheringTexture = new ParameterOverride<Texture2D>();
     public ParameterOverride<string> customBufferName = new ParameterOverride<string>("LightTexture");
     public ParameterOverride<string> textureParameterID = new ParameterOverride<string>("_LightSample");
     public ParameterOverride<Shader> quickTestShader = new ParameterOverride<Shader>();
@@ -42,7 +45,13 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
         base.Init();
         Debug.LogFormat("Init: {3} {0} {1} {2}", settings, settings?.shader, settings?.shader?.value, this);
         if(settings.shader?.value != null)
+        {
             mat = new Material(settings.shader.value);
+            if (settings.ditheringTexture?.value != null)
+            {
+                mat.SetTexture("_DitheringTex", settings.ditheringTexture.value);
+            }
+        }
 
         Debug.LogFormat("End Init: mat is {0}! OK!", mat);
         index = indexGroup++;
@@ -57,6 +66,8 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
     {
         mat.SetTexture("_LookUpTableI", settings.textureIlluminated.value);
         mat.SetTexture("_LookUpTableN", settings.textureNotIlluminated.value);
+        mat.SetFloat("_DitheringForce", settings.ditheringForce.value);
+        mat.SetFloat("_DitheringNeutral", settings.ditheringNeutral.value);
 
         //Debug.LogFormat("Buffer name {0} and texture parameter ID {1} and camera {2}", settings?.customBufferName?.value, settings?.textureParameterID?.value, context.camera);
         if (!string.IsNullOrEmpty(settings.customBufferName.value) && !string.IsNullOrEmpty(settings.textureParameterID.value))
