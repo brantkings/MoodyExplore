@@ -2289,7 +2289,7 @@ GameObject:
   - component: {fileID: 5938188665502689248}
   - component: {fileID: 5938188665502689249}
   m_Layer: 0
-  m_Name: Light
+  m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2355,7 +2355,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5940,7 +5940,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 0.18867922, g: 0.18066925, b: 0.18066925, a: 1}
   m_Intensity: 2
-  m_Range: 50
+  m_Range: 40
   m_SpotAngle: 90
   m_InnerSpotAngle: 1
   m_CookieSize: 10
@@ -7504,7 +7504,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 112.72937
+      value: 113.15031
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -8725,7 +8725,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 112.72937
+      value: 113.15031
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -9319,19 +9319,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.28027457
+      value: -0.27606356
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.098430865
+      value: -0.08459547
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9140105
+      value: 0.91539466
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.2763013
+      value: -0.28050876
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -9585,7 +9585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 112.72937
+      value: 113.15031
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -10223,7 +10223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 112.72937
+      value: 113.15031
       objectReference: {fileID: 0}
     - target: {fileID: 6427076195214737167, guid: 497e0aa83d96ab740934b2900de092ef, type: 3}
       propertyPath: m_AnchoredPosition.y

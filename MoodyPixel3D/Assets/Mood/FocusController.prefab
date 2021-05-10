@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1367136485344368210}
   - component: {fileID: 1294192133860712147}
   - component: {fileID: 356858073140937263}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Selected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1110455943414163393}
   - component: {fileID: 1110455943414163392}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: FocusableObjects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 1110455943444465083}
   - component: {fileID: 1110455943444465084}
   - component: {fileID: 1110455943444465085}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 1110455943544012645}
   - component: {fileID: 1110455943544012643}
   - component: {fileID: 6916268725035300984}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: SensorConeOfView
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 1110455943600934798}
   - component: {fileID: 1110455943600934799}
   - component: {fileID: 1110455943600934833}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: UsedPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -428,7 +428,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110455943608005712}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: LeftLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -461,7 +461,7 @@ GameObject:
   - component: {fileID: 1110455943649715635}
   - component: {fileID: 1110455943649715636}
   - component: {fileID: 1110455943649715637}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -542,7 +542,7 @@ GameObject:
   - component: {fileID: 1110455943688252956}
   - component: {fileID: 1110455943688252959}
   - component: {fileID: 1110455943688252957}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: SensorDistanceClose
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -619,7 +619,7 @@ GameObject:
   - component: {fileID: 1110455943699609214}
   - component: {fileID: 1110455943699609215}
   - component: {fileID: 1110455943699609212}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: FocusIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -714,7 +714,7 @@ GameObject:
   - component: {fileID: 1110455943731829520}
   - component: {fileID: 1110455943731829522}
   - component: {fileID: 1110455943731829523}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: SensorDistanceFar
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -790,7 +790,7 @@ GameObject:
   - component: {fileID: 1110455944067628792}
   - component: {fileID: 1110455944067628797}
   - component: {fileID: 1110455944067628794}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -871,7 +871,7 @@ GameObject:
   - component: {fileID: 1110455944230404505}
   - component: {fileID: 1110455944230404506}
   - component: {fileID: 1110455944230404507}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -952,7 +952,7 @@ GameObject:
   - component: {fileID: 1110455944277905553}
   - component: {fileID: 1110455944277905554}
   - component: {fileID: 1110455944277905555}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1031,7 +1031,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110455944486209874}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Max
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1064,7 +1064,7 @@ GameObject:
   - component: {fileID: 1110455944527952782}
   - component: {fileID: 1110455944527952817}
   - component: {fileID: 1699490886777328943}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: FocusController
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -1133,7 +1133,7 @@ GameObject:
   - component: {fileID: 1110455944582683976}
   - component: {fileID: 1110455944582683977}
   - component: {fileID: 1110455944582683979}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Obj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1221,7 +1221,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110455944601410843}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Min
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1253,7 +1253,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1110455944741010794}
   - component: {fileID: 1110455944741010797}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: FocusPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1320,7 +1320,7 @@ GameObject:
   - component: {fileID: 1110455944767611772}
   - component: {fileID: 1110455944767611774}
   - component: {fileID: 1110455944767611775}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1395,7 +1395,7 @@ GameObject:
   - component: {fileID: 1110455944809589382}
   - component: {fileID: 1110455944809589385}
   - component: {fileID: 1110455944809589384}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: AvailablePoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1472,7 +1472,7 @@ GameObject:
   - component: {fileID: 1110455944847793538}
   - component: {fileID: 1110455944847793541}
   - component: {fileID: 1110455944847793540}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: FocusControllerUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1555,7 +1555,7 @@ GameObject:
   - component: {fileID: 1110455944871635003}
   - component: {fileID: 1110455944871635005}
   - component: {fileID: 1110455944871635002}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1630,7 +1630,7 @@ GameObject:
   - component: {fileID: 1110455944904413151}
   - component: {fileID: 1110455944904413150}
   - component: {fileID: 1110455944904413121}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: PainPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1707,7 +1707,7 @@ GameObject:
   - component: {fileID: 1110455944914167816}
   - component: {fileID: 1110455944914167821}
   - component: {fileID: 1110455944914167818}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1788,7 +1788,7 @@ GameObject:
   - component: {fileID: 1110455944941055630}
   - component: {fileID: 1110455944941055664}
   - component: {fileID: 1110455944941055665}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Point (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1864,7 +1864,7 @@ GameObject:
   - component: {fileID: 1110455945044160161}
   - component: {fileID: 1110455945044160191}
   - component: {fileID: 8648639561445507740}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: SelectionImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1943,7 +1943,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110455945113124776}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Max
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1974,7 +1974,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110455945147404597}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Min
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2005,7 +2005,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1110455945148640595}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: RightLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2038,7 +2038,7 @@ GameObject:
   - component: {fileID: 1110455945154059321}
   - component: {fileID: 1110455945154059320}
   - component: {fileID: 1110455945154059323}
-  m_Layer: 5
+  m_Layer: 1
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2120,7 +2120,7 @@ GameObject:
   - component: {fileID: 8852268287530592460}
   - component: {fileID: 2444784958590060603}
   - component: {fileID: 3894930282400804209}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Focus Canvas Shaker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2200,7 +2200,7 @@ GameObject:
   - component: {fileID: 7549955993946970663}
   - component: {fileID: 7643053977326333789}
   - component: {fileID: 6562679298472013866}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2279,7 +2279,7 @@ GameObject:
   - component: {fileID: 2917170208011876245}
   - component: {fileID: 5888399755019226501}
   - component: {fileID: 8903783483413110239}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: SensorBreath
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}

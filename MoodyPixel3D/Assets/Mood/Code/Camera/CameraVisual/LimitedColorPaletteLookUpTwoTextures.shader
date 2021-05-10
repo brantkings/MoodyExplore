@@ -114,12 +114,10 @@
                 //return iChoice;
                 //return smoothstep(0, 1, iChoice);
                 //return shadowmap;
-                for(int i = 0;i<4;i++)
-                {
-                    iChoice = smoothstep(0, 1, iChoice);
-                }
-                //return iChoice;
-                return lerp(colorN, colorI, iChoice);
+                
+                //iChoice = smoothstep(0, 0.01, iChoice);
+                //return smoothstep(0.45, 0.5, iChoice);
+                return lerp(colorN, colorI, smoothstep(0,1,iChoice));
                 //return tex3D(_LookUpTable, col);
             }
 

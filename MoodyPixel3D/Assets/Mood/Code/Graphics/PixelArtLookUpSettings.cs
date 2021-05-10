@@ -55,6 +55,9 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
 
         Debug.LogFormat("End Init: mat is {0}! OK!", mat);
         index = indexGroup++;
+
+
+        //buffer = new ComputeBuffer(1, 16, ComputeBufferType.Default);
     }
 
     public override void Release()
@@ -62,12 +65,18 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
         base.Release();
     }
 
+
     protected virtual bool InitMaterial(Material mat, PostProcessRenderContext context)
     {
+        Graphics.ClearRandomWriteTargets();
         mat.SetTexture("_LookUpTableI", settings.textureIlluminated.value);
         mat.SetTexture("_LookUpTableN", settings.textureNotIlluminated.value);
         mat.SetFloat("_DitheringForce", settings.ditheringForce.value);
         mat.SetFloat("_DitheringNeutral", settings.ditheringNeutral.value);
+        /* mat.SetBuffer("debug", buffer);
+        Graphics.SetRandomWriteTarget(1, buffer, false);
+        buffer.GetData(element);
+        Debug.LogFormat("Getting from element {0}, {1}", element[0], context.camera);*/
 
         //Debug.LogFormat("Buffer name {0} and texture parameter ID {1} and camera {2}", settings?.customBufferName?.value, settings?.textureParameterID?.value, context.camera);
         if (!string.IsNullOrEmpty(settings.customBufferName.value) && !string.IsNullOrEmpty(settings.textureParameterID.value))
