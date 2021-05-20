@@ -2,24 +2,33 @@ Shader "Long Hat House/WallShader"
 {
     Properties
     {
-        _Color ("Color", Color) = (1,1,1,1)
+        _ColorGround ("ColorGround", Color) = (1,1,1,1)
+        _ColorWall ("ColorWall", Color) = (1,1,1,1)
         _GroundTex ("Ground Pattern", 2D) = "white" {}
         _WallTex ("Wall Pattern", 2D) = "white" {}
         _DitheringTex ("Dithering Texture", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
         _AmountForce ("DitheringForce", Float) = 0.
+        _FadeValue ("FadeValue", Range(0,1)) = 1
+        _FadeSucceptiveness("Fade Succeptiveness", Float) = 0
     }
+
     CGINCLUDE
     sampler2D _WallTex;
+    fixed4 _WallTex_ST;
     sampler2D _GroundTex;
+    fixed4 _GroundTex_ST;
     sampler2D _DitheringTex;
     float4 _DitheringTex_TexelSize;
     half _Glossiness;
     half _Metallic;
-    fixed4 _Color;
+    fixed4 _ColorGround;
+    fixed4 _ColorWall;
     fixed4 PlayerPosition;
     float _AmountForce;
+    fixed _FadeValue;
+    fixed _FadeSucceptiveness;
 
     struct Input
     {
@@ -63,6 +72,7 @@ Shader "Long Hat House/WallShader"
         float showEverythingBelow = playerHeightDistance + .5 - clipSaveValue;
         float distanceToShowWall = (length(pointDist) - length(playerDist));
         float isWall = length(IN.worldNormal.xz);
+        clip((_FadeValue - 1) + (clipSaveValue * _FadeSucceptiveness));
         if(showEverythingBelow < 0)
         {
             clip(isWall * (distanceToShowWall - 1.) + clipSaveValue);
@@ -98,9 +108,12 @@ Shader "Long Hat House/WallShader"
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-            fixed4 ground = tex2D (_GroundTex, IN.worldPos.xz) * _Color;
-            fixed4 wallA = tex2D (_WallTex, IN.worldPos.xy) * _Color;
-            fixed4 wallB = tex2D (_WallTex, IN.worldPos.zy) * _Color;
+            fixed2 uvGround = TRANSFORM_TEX(IN.worldPos.xz, _GroundTex);
+            fixed2 uvWallA = TRANSFORM_TEX(IN.worldPos.xy, _WallTex);
+            fixed2 uvWallB = TRANSFORM_TEX(IN.worldPos.zy, _WallTex);
+            fixed4 ground = tex2D (_GroundTex, uvGround) * _ColorGround;
+            fixed4 wallA = tex2D (_WallTex, uvWallA) * _ColorWall;
+            fixed4 wallB = tex2D (_WallTex, uvWallB) * _ColorWall;
 
             fixed4 c = ground * abs(IN.worldNormal.y) + wallA * abs(IN.worldNormal.z) + wallB * abs(IN.worldNormal.x);
             o.Albedo = c.rgb;

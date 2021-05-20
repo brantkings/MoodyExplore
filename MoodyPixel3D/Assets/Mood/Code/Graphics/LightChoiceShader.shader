@@ -1,4 +1,4 @@
-Shader "Custom/LightChoiceShader"
+Shader "Long Hat House/Pixel Art/LightChoiceShader"
 {
     Properties
     {
@@ -12,7 +12,7 @@ Shader "Custom/LightChoiceShader"
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf WrapLambert fullforwardshadows noambient nofog
+        #pragma surface surf ChooseLight fullforwardshadows noambient nofog
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 4.5
@@ -37,7 +37,7 @@ Shader "Custom/LightChoiceShader"
 
         
 
-        half4 LightingWrapLambert (inout SurfaceOutput s, half3 lightDir, half atten) {
+        half4 LightingChooseLight (inout SurfaceOutput s, half3 lightDir, half atten) {
             //return LightingStandard(s, lightDir, atten);
             half NdotL = dot (s.Normal, lightDir);
 
@@ -84,6 +84,62 @@ Shader "Custom/LightChoiceShader"
             // Metallic and smoothness come from slider variables
             //o.Metallic = _Metallic;
             //o.Smoothness = _Glossiness;
+            o.Alpha = c.a;
+        }
+        ENDCG
+    }
+    SubShader
+    {
+        Tags { "TrueColor"="Emissive" }
+        LOD 200
+
+        CGPROGRAM
+        // Physically based Standard lighting model, and enable shadows on all light types
+        #pragma surface surf Emissive fullforwardshadows vertex:bleedFunc
+
+        // Use shader model 3.0 target, to get nicer looking lighting
+        #pragma target 4.5
+
+        sampler2D _MainTex;
+
+        struct Input
+        {
+            float2 uv_MainTex;
+            fixed bleedValue;
+        };
+
+        half _Glossiness;
+        half _Metallic;
+        half _EmissiveTrue;
+        half _EmissiveTrueExtraRadius;
+
+        // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
+        // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
+        // #pragma instancing_options assumeuniformscaling
+        UNITY_INSTANCING_BUFFER_START(Props)
+        fixed4 _Color;
+            // put more per-instance properties here
+        UNITY_INSTANCING_BUFFER_END(Props)
+
+        void bleedFunc (inout appdata_full v, out Input data)
+        {
+            UNITY_INITIALIZE_OUTPUT(Input,data);
+            v.vertex.xyz += v.normal * _EmissiveTrueExtraRadius;
+            data.bleedValue = _EmissiveTrueExtraRadius;
+        }
+
+        half4 LightingEmissive (inout SurfaceOutput s, half3 lightDir, half atten) {
+            return _EmissiveTrue;
+        }
+
+
+        void surf (Input IN, inout SurfaceOutput o)
+        {
+            // Albedo comes from a texture tinted by color
+            fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
+            fixed med = (_Color.r + _Color.g + _Color.b) /3;
+            //o.Albedo = fixed4(_Emissive,_Emissive,_Emissive,1);
+            //o.Emission = _Emissive;
             o.Alpha = c.a;
         }
         ENDCG

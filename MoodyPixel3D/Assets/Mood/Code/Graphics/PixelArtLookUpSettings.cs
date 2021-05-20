@@ -12,7 +12,8 @@ public class PixelArtLookUpSettings : PostProcessEffectSettings
     public ParameterOverride<Texture3D> textureIlluminated = new ParameterOverride<Texture3D>();
     public ParameterOverride<Texture3D> textureNotIlluminated = new ParameterOverride<Texture3D>();
     public BoolParameter changeBefore = new BoolParameter();
-    public FloatParameter ditheringForce = new FloatParameter();
+    public FloatParameter ditheringForceIlluminated = new FloatParameter();
+    public FloatParameter ditheringForceNotIlluminated = new FloatParameter();
     public FloatParameter ditheringNeutral = new FloatParameter();
     public ParameterOverride<Texture2D> ditheringTexture = new ParameterOverride<Texture2D>();
     public ParameterOverride<string> customBufferName = new ParameterOverride<string>("LightTexture");
@@ -71,7 +72,8 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
         Graphics.ClearRandomWriteTargets();
         mat.SetTexture("_LookUpTableI", settings.textureIlluminated.value);
         mat.SetTexture("_LookUpTableN", settings.textureNotIlluminated.value);
-        mat.SetFloat("_DitheringForce", settings.ditheringForce.value);
+        mat.SetFloat("_DitheringForceI", settings.ditheringForceIlluminated.value);
+        mat.SetFloat("_DitheringForceN", settings.ditheringForceNotIlluminated.value);
         mat.SetFloat("_DitheringNeutral", settings.ditheringNeutral.value);
         /* mat.SetBuffer("debug", buffer);
         Graphics.SetRandomWriteTarget(1, buffer, false);

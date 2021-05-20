@@ -31,6 +31,55 @@ MonoBehaviour:
   changeBefore:
     overrideState: 1
     value: 1
+--- !u!114 &-6738646547432403470
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
+  m_Name: AmbientOcclusion
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  mode:
+    overrideState: 1
+    value: 1
+  intensity:
+    overrideState: 1
+    value: 0.94
+  color:
+    overrideState: 1
+    value: {r: 0.21698111, g: 0.18934673, b: 0.1709238, a: 1}
+  ambientOnly:
+    overrideState: 1
+    value: 0
+  noiseFilterTolerance:
+    overrideState: 1
+    value: 0
+  blurTolerance:
+    overrideState: 1
+    value: -4.6
+  upsampleTolerance:
+    overrideState: 1
+    value: -12
+  thicknessModifier:
+    overrideState: 1
+    value: 4.03
+  directLightingStrength:
+    overrideState: 1
+    value: 0
+  radius:
+    overrideState: 1
+    value: 2.84
+  quality:
+    overrideState: 1
+    value: 4
 --- !u!114 &-5521021945785389126
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -84,7 +133,82 @@ MonoBehaviour:
   material:
     overrideState: 1
     value: {fileID: 2100000, guid: d1a212d31915e7344954109756945878, type: 2}
---- !u!114 &-4571326725863933231
+--- !u!114 &-4678347830117662976
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 556797029e73b2347956b6579e77e05b, type: 3}
+  m_Name: DepthOfField
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  focusDistance:
+    overrideState: 1
+    value: 41
+  aperture:
+    overrideState: 1
+    value: 3.09
+  focalLength:
+    overrideState: 1
+    value: 247.3
+  kernelSize:
+    overrideState: 1
+    value: 2
+--- !u!114 &-3863275972345557855
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a79b01ea5641d4aa6daa2e23605641, type: 3}
+  m_Name: Bloom
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  intensity:
+    overrideState: 0
+    value: 0
+  threshold:
+    overrideState: 0
+    value: 1
+  softKnee:
+    overrideState: 0
+    value: 0.5
+  clamp:
+    overrideState: 0
+    value: 65472
+  diffusion:
+    overrideState: 0
+    value: 7
+  anamorphicRatio:
+    overrideState: 0
+    value: 0
+  color:
+    overrideState: 0
+    value: {r: 1, g: 1, b: 1, a: 1}
+  fastMode:
+    overrideState: 0
+    value: 0
+  dirtTexture:
+    overrideState: 0
+    value: {fileID: 0}
+    defaultState: 1
+  dirtIntensity:
+    overrideState: 0
+    value: 0
+--- !u!114 &-2762539395041823434
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,16 +238,19 @@ MonoBehaviour:
     value: {fileID: 11700000, guid: b462bdeab3452e24ca7c264fcec464fd, type: 2}
   textureNotIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: e7d0282720d8b3143ab6ca25f30336ce, type: 2}
+    value: {fileID: 11700000, guid: 09bd78378bd175b47a2d0c65a5f413da, type: 2}
   changeBefore:
     overrideState: 0
     value: 0
-  ditheringForce:
+  ditheringForceIlluminated:
     overrideState: 1
-    value: 0.12
+    value: 0.18
+  ditheringForceNotIlluminated:
+    overrideState: 1
+    value: -0.18
   ditheringNeutral:
     overrideState: 1
-    value: -0.7
+    value: -0.5
   ditheringTexture:
     overrideState: 1
     value: {fileID: 2800000, guid: 243b6f815fc71ed46bba4e559e0287f5, type: 3}
@@ -137,57 +264,8 @@ MonoBehaviour:
     overrideState: 0
     value: {fileID: 4800000, guid: 14790d12ddd06f948b61c90996c2355e, type: 3}
   onlyRenderIlluminationTexture:
-    overrideState: 0
-    value: 0
---- !u!114 &-4331611281405269405
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
-  m_Name: AmbientOcclusion
-  m_EditorClassIdentifier: 
-  active: 1
-  enabled:
-    overrideState: 1
-    value: 1
-  mode:
-    overrideState: 1
-    value: 1
-  intensity:
-    overrideState: 1
-    value: 0.13
-  color:
-    overrideState: 1
-    value: {r: 0, g: 0, b: 0, a: 1}
-  ambientOnly:
-    overrideState: 1
-    value: 1
-  noiseFilterTolerance:
     overrideState: 1
     value: 0
-  blurTolerance:
-    overrideState: 1
-    value: -4.6
-  upsampleTolerance:
-    overrideState: 1
-    value: -12
-  thicknessModifier:
-    overrideState: 1
-    value: 2.41
-  directLightingStrength:
-    overrideState: 1
-    value: 0
-  radius:
-    overrideState: 1
-    value: 0.93
-  quality:
-    overrideState: 1
-    value: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,9 +279,10 @@ MonoBehaviour:
   m_Name: Pixel Art
   m_EditorClassIdentifier: 
   settings:
-  - {fileID: -4331611281405269405}
-  - {fileID: -4571326725863933231}
   - {fileID: 2760406590886186201}
+  - {fileID: -4678347830117662976}
+  - {fileID: -6738646547432403470}
+  - {fileID: -2762539395041823434}
 --- !u!114 &1689735512399561390
 MonoBehaviour:
   m_ObjectHideFlags: 3

@@ -95,7 +95,8 @@
             fixed4 _MainTex_TexelSize;
             sampler2D _DitheringTex;
             fixed4 _DitheringTex_TexelSize;
-            fixed _DitheringForce;
+            fixed _DitheringForceI;
+            fixed _DitheringForceN;
             fixed _DitheringNeutral;
 
             float4 frag (v2f i) : SV_Target
@@ -109,8 +110,8 @@
 
                 float4 iChoice = tex2D(_LightSample, i.uv);
 
-                float4 colorI = tex3D(_LookUpTableI, col + (noise + _DitheringNeutral) * _DitheringForce);
-                float4 colorN = tex3D(_LookUpTableN, col + (noise + _DitheringNeutral) * _DitheringForce);
+                float4 colorI = tex3D(_LookUpTableI, col + (noise + _DitheringNeutral) * _DitheringForceI);
+                float4 colorN = tex3D(_LookUpTableN, col + (noise + _DitheringNeutral) * _DitheringForceN);
                 //return iChoice;
                 //return smoothstep(0, 1, iChoice);
                 //return shadowmap;

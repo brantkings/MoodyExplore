@@ -107,17 +107,29 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   shader:
-    overrideState: 1
-    value: {fileID: 0}
+    overrideState: 0
+    value: {fileID: 4800000, guid: 4cff50fc794c72943beb995891c12ab7, type: 3}
   textureIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: 7f5e67cc7deed0943b61777e88045d57, type: 2}
+    value: {fileID: 11700000, guid: 81b3412eb6da5974f84c793081445898, type: 2}
   textureNotIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: 3e26633d4dd393c48b8776013416e27d, type: 2}
+    value: {fileID: 11700000, guid: 81b3412eb6da5974f84c793081445898, type: 2}
   changeBefore:
     overrideState: 0
     value: 0
+  ditheringForceIlluminated:
+    overrideState: 1
+    value: 0
+  ditheringForceNotIlluminated:
+    overrideState: 1
+    value: 0
+  ditheringNeutral:
+    overrideState: 1
+    value: 0
+  ditheringTexture:
+    overrideState: 0
+    value: {fileID: 0}
   customBufferName:
     overrideState: 0
     value: 

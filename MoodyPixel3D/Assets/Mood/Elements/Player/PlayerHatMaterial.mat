@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PlayerHatMaterial
-  m_Shader: {fileID: 4800000, guid: 29a6d554266a40e4488cb93ea3adea9d, type: 3}
+  m_Shader: {fileID: 4800000, guid: b1a999663e435c046b7202fd7dc6854b, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -60,8 +60,11 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Emissive: 0
+    - _EmissiveTrue: 1
+    - _EmissiveTrueExtraRadius: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0.083
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0

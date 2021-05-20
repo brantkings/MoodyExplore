@@ -16,6 +16,7 @@ public class GlobalCameraBuffer : MonoBehaviour
         public RenderTextureDescriptor renderTextureDescriptor;
         public Shader lightChooseShader;
         public float sizeFactor = 1f;
+        public string[] passes;
     }
 
     public class BufferItselfBehaviour : MonoBehaviour
@@ -69,21 +70,23 @@ public class GlobalCameraBuffer : MonoBehaviour
             Destroy(customBuffer);
         }
 
-        public void SetCameraBufferData(CameraBufferData newData)
+        internal void SetCameraBufferData(CameraBufferData newData)
         {
             data = newData;
         }
 
         private void OnPreRender()
         {
-            /*if(original.pixelWidth != customBuffer.width || original.pixelHeight != customBuffer.height)
+            drawer.backgroundColor = Color.black;
+            drawer.clearFlags = CameraClearFlags.SolidColor;
+            foreach(string pass in data.passes)
             {
-                customBuffer.width = original.pixelWidth;
-                customBuffer.height = original.pixelHeight;
-            }*/
-
-            //drawer.targetTexture = customBuffer;
-            drawer.RenderWithShader(data.lightChooseShader, null);
+                string realPass;
+                if (string.IsNullOrWhiteSpace(pass)) realPass = null;
+                else realPass = pass;
+                drawer.RenderWithShader(data.lightChooseShader, realPass);
+                drawer.clearFlags = CameraClearFlags.Nothing;
+            }
         }
     }
 
