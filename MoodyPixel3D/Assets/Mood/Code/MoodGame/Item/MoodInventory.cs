@@ -41,15 +41,16 @@ public class MoodInventory : MonoBehaviour
 
     private void Start()
     {
-        foreach (MoodItem item in initialItems) AddUntypedItem(item);
+        foreach (MoodItem item in initialItems) AddUntypedItem(item, false);
+        DispatchInventoryChanged();
     }
 
 
-    public void AddUntypedItem(MoodItem item)
+    public void AddUntypedItem(MoodItem item, bool feedbacks = true)
     {
         Debug.LogFormat("[INVENTORY] Adding item {0}", item);
-        if (item is EquippableMoodItem) Equip(item as EquippableMoodItem);
-        else AddItem(item as ConsumableMoodItem);
+        if (item is EquippableMoodItem) Equip(item as EquippableMoodItem, feedbacks);
+        else AddItem(item as ConsumableMoodItem, feedbacks);
     }
 
     public bool UseItem(MoodItem item)
@@ -111,7 +112,7 @@ public class MoodInventory : MonoBehaviour
     }
 
 
-    public bool Equip(EquippableMoodItem item)
+    public bool Equip(EquippableMoodItem item, bool feedbacks = true)
     {
         if (item.category == null)
         {
@@ -130,16 +131,16 @@ public class MoodInventory : MonoBehaviour
         }
 
         item.SetEquipped(Pawn, true);
-        DispatchInventoryChanged();
+        if(feedbacks) DispatchInventoryChanged();
         return true;
     }
 
-    public bool Unequip(EquippableMoodItem item)
+    public bool Unequip(EquippableMoodItem item, bool feedbacks = true)
     {
         return Unequip(item.category);
     }
 
-    public bool Unequip(MoodItemCategory category)
+    public bool Unequip(MoodItemCategory category, bool feedbacks = true)
     {
         if (equippedItems != null)
         {
@@ -147,7 +148,7 @@ public class MoodInventory : MonoBehaviour
 
             if (equippedItems.Remove(category))
             {
-                DispatchInventoryChanged();
+                if(feedbacks) DispatchInventoryChanged();
                 return true;
             }
 
@@ -155,7 +156,7 @@ public class MoodInventory : MonoBehaviour
         return false;
     }
 
-    private bool AddItem(ConsumableMoodItem item)
+    private bool AddItem(ConsumableMoodItem item, bool feedbacks = true)
     {
         if (categoryLessItems == null) categoryLessItems = new Dictionary<ConsumableMoodItem, int>(CATEGORY_LESS_ITEMS_NUMBER);
 
@@ -167,12 +168,12 @@ public class MoodInventory : MonoBehaviour
         else
         {
             categoryLessItems.Add(item, 1);
-            DispatchInventoryChanged();
+            if(feedbacks) DispatchInventoryChanged();
             return true;
         }
     }
 
-    public bool ConsumeItem(ConsumableMoodItem item)
+    public bool ConsumeItem(ConsumableMoodItem item, bool feedbacks = true)
     {
         if (categoryLessItems == null) return false;
         if(categoryLessItems.ContainsKey(item))
@@ -180,7 +181,7 @@ public class MoodInventory : MonoBehaviour
             if(categoryLessItems[item] > 0)
             {
                 categoryLessItems[item] = categoryLessItems[item] - 1;
-                DispatchInventoryChanged();
+                if(feedbacks) DispatchInventoryChanged();
                 return true;
             }
         }

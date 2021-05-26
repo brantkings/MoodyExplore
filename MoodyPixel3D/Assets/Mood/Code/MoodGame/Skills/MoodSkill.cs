@@ -5,6 +5,8 @@ using UnityEngine;
 
 public interface IMoodSelectable
 {
+    string name { get; }
+
     Color? GetColor();
 
     void DrawCommandOption(MoodCommandOption option);

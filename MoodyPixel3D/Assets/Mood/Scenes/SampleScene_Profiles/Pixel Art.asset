@@ -239,12 +239,15 @@ MonoBehaviour:
   textureNotIlluminated:
     overrideState: 1
     value: {fileID: 11700000, guid: 09bd78378bd175b47a2d0c65a5f413da, type: 2}
+  textureSize:
+    overrideState: 1
+    value: 16
   changeBefore:
     overrideState: 0
     value: 0
   ditheringForceIlluminated:
     overrideState: 1
-    value: 0.18
+    value: 0.1
   ditheringForceNotIlluminated:
     overrideState: 1
     value: -0.18

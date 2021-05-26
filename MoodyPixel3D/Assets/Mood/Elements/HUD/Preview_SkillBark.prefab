@@ -294,7 +294,7 @@ MonoBehaviour:
   barksShownEachEveryNBeat: 1
   progressObjectRenderer: {fileID: 5874173936134608237}
   continuous: 0
-  nonContinuousEase: 10
+  nonContinuousEase: 8
   beatMultiplierDelayEase: 0.098
   timeDivider: {fileID: 6136255091996609383}
   anim: {fileID: 8416030845872889995}

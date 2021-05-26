@@ -11,12 +11,7 @@ using System.Linq;
 public class MoodCommandController : MonoBehaviour
 {
     [SerializeField]
-    private MoodCommandOption _optionPrefab;
-    [SerializeField]
-    private GameObject _optionParent;
-
-
-    private List<OptionTuple> _options;
+    private MoodCommandMenu _menu;
 
     private MoodPawn _pawn;
 
@@ -25,8 +20,6 @@ public class MoodCommandController : MonoBehaviour
     private RangeArrow _arrowIndicator;
     private RangeTarget _targetIndicator;
     private RangeArea _areaOfEffectIndicator;
-    [SerializeField]
-    private Canvas _canvas;
     [SerializeField]
     private Text _descriptor;
     [SerializeField]
@@ -147,9 +140,6 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
-    private NodeItemParent mainParent;
-    private NodeItemParent _currentParent;
-
 
     private void Awake()
     {
@@ -178,9 +168,7 @@ public class MoodCommandController : MonoBehaviour
 
     private void Start()
     {
-        OrganizeOptions(ListAllSkills());
-        _currentParent = mainParent;
-        RemakeOptions(_currentParent, true, false);
+        _menu.CreateAndBuildOptions(ListAllSkills());
     }
 
     private IEnumerable<Tuple<MoodSkill, MoodItem>> ListAllSkills()
@@ -189,114 +177,9 @@ public class MoodCommandController : MonoBehaviour
             foreach (MoodSkill skill in _innateEquippedSkills) yield return new Tuple<MoodSkill, MoodItem>(skill, null);
         if (_pawn.Inventory != null)
             foreach (Tuple<MoodSkill, MoodItem> tuple in _pawn.Inventory.GetAllUsableSkills()) yield return tuple;
-
     }
 
-    private void RemakeOptions(NodeItemParent parent, bool selectFirst, bool feedbacks)
-    {
-        MakeOptions(parent);
-        if(selectFirst)
-        {
-            _currentOption = -1;
-            MoveSelected(1, feedbacks);
-        }
-        else
-        {
-            MoveSelected(0, feedbacks);
-        }
-    }
-
-    private void OrganizeOptions(IEnumerable<Tuple<MoodSkill, MoodItem>> skills)
-    {
-        Dictionary<MoodSkillCategory, NodeItemParent> dic = new Dictionary<MoodSkillCategory, NodeItemParent>(8);
-        List<NodeItemLeaf> categoryLessSkills = new List<NodeItemLeaf>(8);
-
-        foreach(Tuple<MoodSkill, MoodItem> skill in skills)
-        {
-            MoodSkillCategory cat = skill.Item1.GetCategory();
-            Debug.LogFormat("Adding skill {0} of {1}, category {2}", skill.Item1, skill.Item2, skill.Item1.GetCategory());
-            if(cat != null)
-            {
-                if(!dic.ContainsKey(cat))
-                {
-                    dic.Add(cat, new NodeItemParent(cat));
-                }
-                dic[cat].items.Add(new NodeItemLeaf(skill.Item1, skill.Item2));
-            }
-            else
-            {
-                categoryLessSkills.Add(new NodeItemLeaf(skill.Item1, skill.Item2));
-            }
-        }
-
-        if (mainParent == null) mainParent = new NodeItemParent(null);
-        else mainParent.Clear();
-
-        //TODO: Pass through every t in dic again here, now putting every category in its parent.
-
-        foreach (var t in dic.Keys.OrderByDescending((x)=>x.GetPriority()))
-        {
-            mainParent.items.Add(dic[t]);
-        }
-        foreach(var s in categoryLessSkills)
-        {
-            mainParent.items.Add(s);
-        }
-
-    }
-
-    private IEnumerable<NodeItem> GetAvailableOptions(NodeItemParent parentToDraw)
-    {
-        foreach (NodeItem node in parentToDraw)
-        {
-            yield return node;
-        }
-    }
-
-    private void MakeOptions(NodeItemParent parentToDraw)
-    {
-        foreach (Transform child in _optionParent.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        _options = new List<OptionTuple>(12);
-        foreach (NodeItem node in GetAvailableOptions(parentToDraw))
-        {
-            MoodCommandOption child = Instantiate(_optionPrefab, _optionParent.transform);
-            node.GetSelectable().DrawCommandOption(child);
-            _options.Add(new OptionTuple()
-            {
-                node = node,
-                command = child
-            });
-        }
-    }
     
-    private void PaintOptions(MoodPawn pawn, Vector3 direction)
-    {
-        if (_options != null)
-        {
-            foreach (OptionTuple opt in _options)
-            {
-                bool canBeShown = opt.node.GetSelectable().CanBeShown(pawn);
-                if(!canBeShown)
-                {
-                    PaintOption(opt, canBeShown, false);
-                }
-                else
-                {
-                    bool canExecute = opt.node.GetSelectable().CanBePressed(pawn, direction);
-                    PaintOption(opt, canBeShown, canExecute);
-                }
-            }
-        }
-    }
-
-    private void PaintOption(OptionTuple opt, bool canBeShown, bool canExecute)
-    {
-        opt.command.gameObject.SetActive(canBeShown);
-        opt.command.SetPossible(canExecute, opt.node.GetSelectable());
-    }
 
     public void Activate()
     {
@@ -312,85 +195,40 @@ public class MoodCommandController : MonoBehaviour
     {
         if(set != _activated)
         {
-            if (set && unselectOnDeactivated && _currentParent != null) DeselectToRoot(false);
-            SetActiveObjects(set, GetCurrentSkill());
+            _menu.gameObject.SetActive(set);
+            SetActiveObjects(set, set? GetCurrentSkill() : null);
             _activated = set;
         }
     }
 
-    private OptionTuple? GetCurrentOption()
-    {
-        if (_options == null || _currentOption < 0 || _currentOption >= _options.Count) return null;
-        return _options[_currentOption];
-    }
 
     private int GetIndexOf(NodeItemParent context, NodeItem indexer)
     {
         return context.items.IndexOf(indexer);
     }
 
-    private int GetIndexOfInCurrentContext(NodeItem indexer)
-    {
-        return GetIndexOf(_currentParent, indexer);
-    }
-
     public MoodCommandOption GetCurrentCommandOption()
     {
-        return GetCurrentOption()?.command;
+        return _menu.GetCurrentOption()?.instance;
     }
 
     public MoodSkill GetCurrentSkill()
     {
-        return GetCurrentOption()?.node.GetSelectable() as MoodSkill;
+        return _menu.GetCurrentOption()?.GetSelectable() as MoodSkill;
     }
 
     public MoodItem GetCurrentItem()
     {
-        return (GetCurrentOption()?.node as NodeItemLeaf)?.item;
+        return _menu.GetCurrentOption()?.item;
     }
 
-    private void AssureSelectedOptionIsVisible()
-    {
-        if(!IsVisible(_currentOption)) 
-        {
-            Debug.LogFormat("Current selected {0} is not visible", _currentOption);
-            MoveSelected(1);
-            Debug.LogFormat("Current selected {0} is visible?", _currentOption);
-        }
-    }
-
-    private void MoveIndex(ref int current, int add)
-    {
-        current = Mathf.RoundToInt(Mathf.Repeat(current + add, _options.Count));
-    }
 
     public void MoveSelected(int add, bool feedbacks = true)
     {
-        int oldOption = _currentOption;
-        while (_options.Count <= 0) Deselect(false, false);
-        if(_currentOption != -1) SetSelected(_currentOption, false);
-        MoveIndex(ref _currentOption, add);
-        while(!IsVisible(_currentOption) && _currentOption != oldOption)
-        {
-            MoveIndex(ref _currentOption, Mathf.RoundToInt(Mathf.Sign(add)));
-            //Debug.LogFormat("Hey trying {0}", _currentOption);
-        }
-        SetSelected(_currentOption, true );
-        SetActiveObjects(IsActivated(), GetCurrentSkill());
-        if(feedbacks) onChangeOption.Invoke(transform);
+        _menu.ChangeSelection(add, feedbacks);
+        SetCurrentActiveObjects();
     }
 
-    private bool IsVisible(int index) 
-    {
-        if (index < 0 || index >= _options.Count) return false;
-        return _options[index].command.gameObject.activeSelf;
-    }
-
-    private void SetSelected(int index, bool selected)
-    {
-        if (index < 0 || index >= _options.Count) return;
-        _options[index].command.SetSelected(selected);
-    }
 
     private IEnumerable<IRangeShow> AllRangeShows()
     {
@@ -405,6 +243,11 @@ public class MoodCommandController : MonoBehaviour
     {
         if (directed == null) directed = GetComponentsInChildren<IRangeShowDirected>();
         return directed;
+    }
+
+    private void SetCurrentActiveObjects()
+    {
+        SetActiveObjects(_activated.HasValue ? _activated.Value : false, GetCurrentSkill());
     }
 
 
@@ -439,8 +282,8 @@ public class MoodCommandController : MonoBehaviour
 
     public void UpdateCommandView(MoodPawn pawn, MoodSkill currentSkill, Vector3 sanitizedDirection, bool assureSelected)
     {
-        PaintOptions(pawn, sanitizedDirection);
-        if(assureSelected) AssureSelectedOptionIsVisible();
+        _menu.PaintOptions(pawn, sanitizedDirection);
+        if(assureSelected) //AssureSelectedOptionIsVisible();
 
         if(currentSkill != null)
         {
@@ -451,88 +294,48 @@ public class MoodCommandController : MonoBehaviour
 
     public IEnumerable<Tuple<MoodSkill, MoodItem>> GetAllMoodSkills()
     {
-        foreach (Tuple<MoodSkill, MoodItem> tuple in GetAllMoodSkills(mainParent)) yield return tuple;
-    }
-
-    private IEnumerable<Tuple<MoodSkill, MoodItem>> GetAllMoodSkills(NodeItemParent parent)
-    {
-        foreach(NodeItem node in parent)
+        foreach (MoodCommandMenu.Option opt in _menu.GetAllOptions())
         {
-            if(node is NodeItemParent)
+            IMoodSelectable select = opt.GetSelectable();
+            if(select is MoodSkill)
             {
-                var nodeParent = node as NodeItemParent;
-                foreach (var tuple in GetAllMoodSkills(nodeParent)) yield return tuple;
-            }
-            else if(node is NodeItemLeaf)
-            {
-                var leaf = node as NodeItemLeaf;
-                yield return new Tuple<MoodSkill, MoodItem>(leaf.skill, leaf.item);
+                yield return new Tuple<MoodSkill, MoodItem>(select as MoodSkill, opt.item);
             }
         }
     }
 
-    public IEnumerable<MoodSkill> GetShowingMoodSkills()
-    {
-        if (_options != null)
-        {
-            foreach (OptionTuple opt in _options)
-            {
-                MoodSkill skill = opt.node.GetSelectable() as MoodSkill;
-                if(skill != null)
-                    yield return skill;
-            }
-        }
-    }
 
-    public void SelectCurrentOption()
-    {
-        NodeItemParent oldParent = _currentParent;
-        GetCurrentOption()?.command.FeedbackConfirmSelection();
-        GetCurrentOption()?.node.Select(ref _currentParent);
-        if(oldParent != _currentParent)
-        {
-            RemakeOptions(_currentParent, true, true);
-        }
-    }
 
     private void SetNullAsSelected(bool setNotSelectingAnyone)
     {
-        GetCurrentOption()?.command.SetSelected(false);
+        GetCurrentCommandOption().SetSelected(false);
         if(setNotSelectingAnyone) _currentOption = -1;
     }
 
-    public bool Deselect(bool toRoot = false, bool feedbacks = true)
+    public void SelectCurrentOption(bool feedbacks = true)
     {
-        NodeItemParent oldParent = _currentParent;
-        if (_currentParent != null) _currentParent.Deselect(ref _currentParent);
-        if (_currentParent == null || toRoot) _currentParent = mainParent;
-        if (oldParent != _currentParent)
-        {
-            RemakeOptions(_currentParent, false, false);
-            //_currentOption = 0;
-            int wantIndex = GetIndexOfInCurrentContext(oldParent);
-            MoveSelected(wantIndex - _currentOption, feedbacks);
-            return true;
-        }
-        else return false;
+        _menu.Select(feedbacks);
+        SetCurrentActiveObjects();
     }
 
-    public bool DeselectToRoot(bool feedbacks)
+    public void Deselect(bool toRoot = false, bool feedbacks = true)
     {
-        return Deselect(true, feedbacks);
+        if (toRoot)
+            _menu.DeselectAll(feedbacks);
+        else
+            _menu.Deselect(feedbacks);
+        SetCurrentActiveObjects();
     }
+
     
     public void DeselectToNull(bool feedbacks, bool setNotSelectingAnyone)
     {
-        DeselectToRoot(feedbacks);
+        Deselect(true, feedbacks);
         SetNullAsSelected(setNotSelectingAnyone);
     }
 
     private void OnInventoryChange(MoodInventory inventory)
     {
-        Debug.LogFormat("[COMMAND] Inventory changed.");
-        OrganizeOptions(ListAllSkills());
-        _currentParent = mainParent;
-        RemakeOptions(_currentParent, false, false);
+        _menu.CreateAndBuildOptions(GetAllMoodSkills());
     }
 }

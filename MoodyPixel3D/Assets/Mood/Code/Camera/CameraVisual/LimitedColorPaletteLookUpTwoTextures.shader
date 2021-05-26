@@ -9,6 +9,7 @@
         _DitheringTex ("Dithering Texture", 2D) = "gray" {}
         _DitheringForce ("Dithering Force", Float) = 0
         _DitheringNeutral ("Dithering Neutral", Float) = -.5
+        _TextureSize ("Round", Float) = 16
     }
     SubShader
     {
@@ -90,7 +91,10 @@
             sampler2D _MainTex;
             sampler2D _LightSample;
             sampler3D _LookUpTableI;
+            fixed _TextureSize;
+            float4 _LookUpTableI_TexelSize;
             sampler3D _LookUpTableN;
+            float4 _LookUpTableN_TexelSize;
             sampler2D _IlluminatedTex;
             fixed4 _MainTex_TexelSize;
             sampler2D _DitheringTex;
@@ -101,6 +105,7 @@
 
             float4 frag (v2f i) : SV_Target
             {
+
                 float4 col = tex2D(_MainTex, i.uv);
                 //fixed2 mult = fixed2(_MainTex_TexelSize.z / _DitheringTex_TexelSize.z ,_MainTex_TexelSize.w / _DitheringTex_TexelSize.w);
                 float4 noise = tex2D(_DitheringTex, ComputeScreenPos(i.vertex));
@@ -110,8 +115,14 @@
 
                 float4 iChoice = tex2D(_LightSample, i.uv);
 
-                float4 colorI = tex3D(_LookUpTableI, col + (noise + _DitheringNeutral) * _DitheringForceI);
-                float4 colorN = tex3D(_LookUpTableN, col + (noise + _DitheringNeutral) * _DitheringForceN);
+                float4 colI = col + (noise + _DitheringNeutral) * _DitheringForceI;
+                if(_TextureSize>0)
+                    colI = round(colI  * _TextureSize) / _TextureSize;
+                float4 colN = col + (noise + _DitheringNeutral) * _DitheringForceN;
+                if(_TextureSize>0)
+                    colN = round(colN  * _TextureSize) / _TextureSize;
+                float4 colorI = tex3D(_LookUpTableI, colI);
+                float4 colorN = tex3D(_LookUpTableN, colN);
                 //return iChoice;
                 //return smoothstep(0, 1, iChoice);
                 //return shadowmap;
