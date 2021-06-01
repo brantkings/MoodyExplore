@@ -89,7 +89,7 @@ Shader "Long Hat House/WallShader"
     ENDCG
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue" = "Geometry-2" }
+        Tags { "RenderType"="Opaque" "Queue" = "Geometry-2" "Fader" = "True"}
         //Tags {"Queue" = "Transparent" "RenderType"="Transparent" }
         
 

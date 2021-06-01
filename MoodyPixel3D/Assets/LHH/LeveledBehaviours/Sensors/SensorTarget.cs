@@ -66,7 +66,10 @@ namespace LHH.LeveledBehaviours.Sensors
             _isBeingDisabled = true;
 
             if (_allTargetsNode != null)
+            {
                 allTargets.Remove(_allTargetsNode);
+                _allTargetsNode = null;
+            }
 
             foreach (var sensor in _sensors)
             {

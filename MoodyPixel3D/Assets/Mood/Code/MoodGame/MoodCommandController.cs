@@ -336,6 +336,6 @@ public class MoodCommandController : MonoBehaviour
 
     private void OnInventoryChange(MoodInventory inventory)
     {
-        _menu.CreateAndBuildOptions(GetAllMoodSkills());
+        _menu.CreateAndBuildOptions(ListAllSkills());
     }
 }

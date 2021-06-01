@@ -20,7 +20,8 @@ public class MoodCommandMenu : MonoBehaviour
     public float changeElasticPeriod = 1f;
     public float trembleDuration = 0.15f;
 
-
+    #region Option types
+    
 
     public class Option : IEnumerable<Option>
     {
@@ -59,6 +60,13 @@ public class MoodCommandMenu : MonoBehaviour
             return selectable;
         }
 
+        public void Clear()
+        {
+            children?.Clear();
+            Destroy(instance.gameObject);
+            instance = null;
+        }
+
     }
 
     internal class OptionColumn : IEnumerable<Option>
@@ -94,7 +102,22 @@ public class MoodCommandMenu : MonoBehaviour
         {
             return options.IndexOf(child);
         }
+
+        public void Clear()
+        {
+            foreach(Option opt in options)
+            {
+                opt.Clear();
+            }
+            options.Clear();
+            if(instance != null) Destroy(instance.gameObject);
+            instance = null;
+        }
     }
+
+    #endregion
+
+    #region Selection struct
 
     private struct Selection
     {
@@ -234,6 +257,8 @@ public class MoodCommandMenu : MonoBehaviour
         }
     }
 
+    #endregion
+
     private OptionColumn main;
     private Selection current;
 
@@ -365,7 +390,8 @@ public class MoodCommandMenu : MonoBehaviour
         }
 
         if (main == null) main = new OptionColumn(null);
-        else main.options.Clear();
+        else main.Clear();
+
 
         foreach (var category in dic.Keys.OrderByDescending((x) => x.GetPriority()))
         {
@@ -389,8 +415,9 @@ public class MoodCommandMenu : MonoBehaviour
         if (column.options.Count <= 0) 
             return;
 
+        Debug.LogFormat("Making instance of {0}", column.category);
 
-        column.instance = Instantiate(columnPrefab, columnParent);
+        if(column.instance == null) column.instance = Instantiate(columnPrefab, columnParent);
         column.instance.localPosition = Vector3.zero;
         column.instance.localRotation = Quaternion.identity;
 #if UNITY_EDITOR
@@ -398,7 +425,7 @@ public class MoodCommandMenu : MonoBehaviour
 #endif
         foreach (Option opt in column)
         {
-            opt.instance = Instantiate(optionPrefab, column.instance);
+            if(opt.instance == null) opt.instance = Instantiate(optionPrefab, column.instance);
             opt.instance.transform.localPosition = Vector3.zero;
             opt.instance.transform.localRotation = Quaternion.identity;
 #if UNITY_EDITOR
@@ -462,7 +489,7 @@ public class MoodCommandMenu : MonoBehaviour
 
     #endregion
 
-    #region Paint
+    #region Paint Options
 
     public void PaintOptions(MoodPawn pawn, Vector3 direction)
     {
