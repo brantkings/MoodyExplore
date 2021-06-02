@@ -155,11 +155,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public Vector3 Direction
     {
-        get => mover.transform.forward;
+        get => mover.Direction;
         set
         {
             if(value != Vector3.zero)
-                mover.transform.forward = value.normalized;
+                mover.Direction = value.normalized;
         }
         
     }
@@ -1005,17 +1005,45 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         CancelCurrentRotationDash();
         _currentRotationDash = TweenMoverDirection(angle, duration)?.SetEase(ease);
     }
-    
+
+    public Tween TweenMoverDirection(float angleAdd, float duration)
+    {
+        Vector3 directionAdd = Quaternion.Euler(0f, angleAdd, 0f) * Direction;
+        return TweenMoverDirection(directionAdd, duration);
+    }
+
+    public Tween TweenMoverDirection(Vector3 directionTo, float duration)
+    {
+        Debug.LogFormat("{0} is rotating to direction {1}, {2} [{3}]", this, directionTo, duration, Time.time);
+        if (duration <= 0f)
+        {
+            SetPawnLerpDirection(directionTo);
+            return null;
+        }
+        else return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this).OnKill(() => Debug.LogFormat("Killed me {0} {1} [{2}]!", this, directionTo, Time.time));//.OnKill(CallEndMove).OnStart(CallBeginMove);
+    }
+
+    private Vector3 GetPawnLerpDirection()
+    {
+        return _currentDirection;
+    }
+
+    private void SetPawnLerpDirection(Vector3 set)
+    {
+        _currentDirection = set;
+        Direction = _currentDirection;
+    }
+
     public void Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
         CancelCurrentDash();
-        _currentDash = TweenMoverPosition(direction, duration)?.SetEase(curve);
+        _currentDash = mover.TweenMoverPosition(direction, duration)?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
     
     public void Dash(Vector3 direction, float duration, Ease ease)
     {
         CancelCurrentDash();
-        _currentDash = TweenMoverPosition(direction, duration)?.SetEase(ease);
+        _currentDash = mover.TweenMoverPosition(direction, duration)?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
 
     public void CancelCurrentDash()
@@ -1035,46 +1063,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _currentFakeHeightHop = DOTween.To(GetPawnFakeHeight, SetPawnFakeHeight, height, duration).SetEase(ease);
         return _currentFakeHeightHop;
     }
-
-    private Tween TweenMoverPositionIgnoreGravity(Vector3 movement, float duration, bool callBeginMove = true)
-    {
-        _lerpPosition = mover.Position;
-        Tween t = DOTween.To(GetPawnLerpPosition, SetPawnLerpPositionIgnoreGravity, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove).OnComplete(CallCompleteMove);
-        if (callBeginMove) t.OnStart(CallBeginMove);
-        return t;
-    }
-
-    private Tween TweenMoverPosition(Vector3 movement, float duration)
-    {
-        _lerpPosition = mover.Position;
-        if (duration == 0f)
-        {
-            SetPawnLerpPosition(mover.Position + movement);
-            return null;
-        }
-        else
-        {
-            return DOTween.To(GetPawnLerpPosition, SetPawnLerpPosition, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
-        }
-        
-    }
-
-    private Tween TweenMoverDirection(float angleAdd, float duration)
-    {
-        Vector3 directionAdd = Quaternion.Euler(0f, angleAdd, 0f) * Direction;
-        return TweenMoverDirection(directionAdd, duration);
-    }
-
-    private Tween TweenMoverDirection(Vector3 directionTo, float duration)
-    {
-        if (duration <= 0f)
-        {
-            SetPawnLerpDirection(directionTo);
-            return null;
-        }
-        else return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this);//.OnKill(CallEndMove).OnStart(CallBeginMove);
-    }
-
 
     private void CallBeginMove()
     {
@@ -1102,36 +1090,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         OnNextCompleteMove = null;
     }
 
-    private Vector3 _lerpPosition;
-
-    private Vector3 GetPawnLerpPosition()
-    {
-        return _lerpPosition;
-    }
-
-    private void SetPawnLerpPositionIgnoreGravity(Vector3 set)
-    {
-        Vector3 diff = set - _lerpPosition;
-        mover.AddExactNextFrameMove(diff - KinematicPlatformer.GetGravityForce() * Time.fixedDeltaTime);
-        _lerpPosition = set;
-    }
-
-    private void SetPawnLerpPosition(Vector3 set)
-    {
-        if (set.IsNaN()) return;
-        Vector3 diff = set - _lerpPosition;
-#if UNITY_EDITOR
-        if(diff.IsNaN())
-            Debug.LogErrorFormat("{0} setting lerp position NaN! {1} - {2} = {3}", name, set, _lerpPosition, diff);
-#endif
-        mover.AddExactNextFrameMove(diff);
-        _lerpPosition = set;
-    }
-
-    private Vector3 GetPawnLerpDirection()
-    {
-        return _currentDirection;
-    }
+    
 
     private float GetPawnFakeHeight()
     {
@@ -1143,11 +1102,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         Vector3 animPos = animator.transform.position;
         animPos.y = h;
         animator.transform.position = animPos;
-    }
-
-    private void SetPawnLerpDirection(Vector3 set)
-    {
-        SetHorizontalDirection(set);
     }
 
     private void UpdateAnimation()

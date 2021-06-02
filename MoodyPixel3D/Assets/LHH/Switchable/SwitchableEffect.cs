@@ -2,25 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Switchable))]
-public abstract class SwitchableEffect : MonoBehaviour {
+namespace LHH.Switchable
+{
 
-    protected Switchable _switch;
+    [RequireComponent(typeof(Switchable))]
+    public abstract class SwitchableEffect : MonoBehaviour {
 
-    private void Awake()
-    {
-        _switch = GetComponent<Switchable>();
+        protected Switchable _switch;
+
+        protected virtual void Awake()
+        {
+            _switch = GetComponent<Switchable>();
+        }
+
+        private void OnEnable()
+        {
+            _switch.OnAfterSwitch += Effect;
+        }
+
+        private void OnDisable()
+        {
+            _switch.OnAfterSwitch -= Effect;
+        }
+
+        abstract protected void Effect(bool on);
     }
 
-    private void OnEnable()
-    {
-        _switch.OnAfterSwitch += Effect;
-    }
-
-    private void OnDisable()
-    {
-        _switch.OnAfterSwitch -= Effect;
-    }
-
-    abstract protected void Effect(bool on);
 }

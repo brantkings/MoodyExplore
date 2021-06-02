@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using DG.Tweening;
 
 public class MoodDoor : MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class MoodDoor : MonoBehaviour
     public float initialSlideDuration = 0.1f;
     public float walkAnimationDuration = 1f;
     public float doorAnimationDuration = 0.25f;
+    public LHH.Switchable.Switchable openedSwitchable;
+    public TransformGetter eventTransform;
+    public ScriptableEvent[] onTouchDoor;
+    public ScriptableEvent[] onDoorEnd;
 
     private MoodLevel _level;
     private MoodLevel Level
@@ -53,19 +58,21 @@ public class MoodDoor : MonoBehaviour
 
         OnStartOpen?.Invoke(opener);
         Lock(opener);
+        onTouchDoor.Invoke(eventTransform.Get(transform));
 
         Level.GetRoom(positionEntry)?.Deactivate();
-        yield return MoveTo(opener, positionEntry, -transform.forward, initialSlideDuration);
+        yield return MoveTo(opener, positionEntry, positionExit - positionEntry, initialSlideDuration, 0.5f);
         Level.GetRoom(positionExit)?.Activate();
 
         OnStartAnimationOpen?.Invoke(opener);
         yield return AnimateOpenDoor();
         OnEndAnimationOpen?.Invoke(opener);
-        yield return MoveTo(opener, positionExit, (positionExit - positionEntry).normalized, walkAnimationDuration);
+        yield return MoveTo(opener, positionExit, (positionExit - positionEntry).normalized, walkAnimationDuration, 0.5f);
         OnStartAnimationClose?.Invoke(opener);
         yield return AnimateCloseDoor();
         Unlock(opener);
         OnEndOpen?.Invoke(opener);
+        onDoorEnd.Invoke(eventTransform.Get(transform));
     }
 
     private void Lock(MoodPawn pawn)
@@ -101,22 +108,22 @@ public class MoodDoor : MonoBehaviour
     }
 
 
-    private IEnumerator MoveTo(MoodPawn pawn, Vector3 position, Vector3 direction, float duration)
+    private IEnumerator MoveTo(MoodPawn pawn, Vector3 position, Vector3 direction, float duration, float durationAfter)
     {
-        pawn.ObjectTransform.position = position;
-        pawn.ObjectTransform.forward = direction;
-        yield return new WaitForSeconds(duration);
+        pawn.RotateDash(Vector3.SignedAngle(pawn.Direction, direction, Vector3.up), duration);
+        yield return pawn.mover.TweenMoverPosition(position - pawn.mover.Position, duration).SetEase(Ease.Linear);
+        yield return new WaitForSeconds(durationAfter);
     }
 
     private IEnumerator AnimateOpenDoor()
     {
-        GetComponentInChildren<Renderer>().enabled = false;
+        openedSwitchable.Set(true);
         yield return new WaitForSeconds(0.25f);
     }
 
     private IEnumerator AnimateCloseDoor()
     {
-        GetComponentInChildren<Renderer>().enabled = true;
+        openedSwitchable.Set(false);
         yield return new WaitForSeconds(0.25f);
     }
 

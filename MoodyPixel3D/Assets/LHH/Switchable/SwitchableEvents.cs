@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class SwitchableEvents : SwitchableEffect
+namespace LHH.Switchable
 {
-    public UnityEvent on;
-    public UnityEvent off;
-
-    protected override void Effect(bool isOn)
+    public class SwitchableEvents : SwitchableEffect
     {
-        if (isOn) this.on.Invoke();
-        else this.off.Invoke();
+        public UnityEvent on;
+        public UnityEvent off;
+
+        protected override void Effect(bool isOn)
+        {
+            if (isOn) this.on.Invoke();
+            else this.off.Invoke();
+        }
     }
+
 }

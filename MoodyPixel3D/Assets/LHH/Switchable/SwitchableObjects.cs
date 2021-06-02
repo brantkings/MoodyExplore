@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwitchableObjects : SwitchableEffect
+namespace LHH.Switchable
 {
-    public GameObject[] toOn;
-    public GameObject[] toOff;
-
-    protected override void Effect(bool on)
+    public class SwitchableObjects : SwitchableEffect
     {
-        foreach (var bOn in toOn) bOn.SetActive(on);
-        foreach (var bOff in toOff) bOff.SetActive(!on);
+        public GameObject[] toOn;
+        public GameObject[] toOff;
+
+        protected override void Effect(bool on)
+        {
+            foreach (var bOn in toOn) bOn.SetActive(on);
+            foreach (var bOff in toOff) bOff.SetActive(!on);
+        }
     }
 }

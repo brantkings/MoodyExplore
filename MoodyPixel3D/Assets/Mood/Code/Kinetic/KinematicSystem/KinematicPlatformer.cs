@@ -12,7 +12,7 @@ public interface IKinematicPlatformerFrameVelocityGetter
     Vector3 GetFrameVelocity(float deltaTime);
 }
 
-public class KinematicPlatformer : MonoBehaviour
+public partial class KinematicPlatformer : MonoBehaviour
 {
     public enum CasterClass
     {
@@ -38,7 +38,7 @@ public class KinematicPlatformer : MonoBehaviour
     public float mass = 1f;
     public float airResistanceCoefficient = 0f;
     public float minVelocityMagnitude = 0.1f;
-    
+
 #if UNITY_EDITOR
     [SerializeField]
     [ReadOnly]
@@ -97,7 +97,7 @@ public class KinematicPlatformer : MonoBehaviour
     private Vector3 _lastValidVelDebug;
 
 #endif
-    
+
     [SerializeField]
     private bool _debug;
 
@@ -138,7 +138,7 @@ public class KinematicPlatformer : MonoBehaviour
 
     public void AddForce(Vector3 force)
     {
-        if(mass != 0f)
+        if (mass != 0f)
         {
             _velocity += force / mass;
         }
@@ -149,7 +149,7 @@ public class KinematicPlatformer : MonoBehaviour
         _velocity = Vector3.zero;
     }
 
-    
+
     public Vector3 Position
     {
         protected set
@@ -162,7 +162,7 @@ public class KinematicPlatformer : MonoBehaviour
             {
                 transform.position = value;
             }
-        } 
+        }
         get
         {
             if (!_setPositionDirectlyToTransform && _body != null)
@@ -175,6 +175,22 @@ public class KinematicPlatformer : MonoBehaviour
             }
         }
     }
+
+    public Vector3 Direction
+    {
+        get => transform.forward;
+        set
+        {
+            if(value.sqrMagnitude != 0f)
+            {
+                transform.forward = value;
+            }
+        }
+    }
+    
+
+
+
     public void SetVelocity(Vector3 vel)
     {
         //if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel.ToString("F3"));

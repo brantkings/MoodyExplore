@@ -20,13 +20,13 @@ public class TimeTweenEvent : ScriptableEvent
         public float timeDelta;
         public float GetTimeDeltaNow()
         {
-            Debug.LogFormat("getting time delta {0}", timeDelta);
+            //Debug.LogFormat("getting time delta {0}", timeDelta);
             return timeDelta;
         }
 
         public void SetTimeDeltaNow(float x)
         {
-            Debug.LogFormat("setting time delta {0}", timeDelta);
+            //Debug.LogFormat("setting time delta {0}", timeDelta);
             timeDelta = x;
         }
     }
