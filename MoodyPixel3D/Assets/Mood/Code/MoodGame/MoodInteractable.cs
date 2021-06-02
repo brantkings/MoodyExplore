@@ -8,9 +8,16 @@ public abstract class MoodInteractable : MonoBehaviour
 
     public event DelInteractableEvent OnInteractableDestroy;
 
+    public Transform interactablePosition;
+
     private void OnDestroy()
     {
         OnInteractableDestroy?.Invoke();
+    }
+
+    public virtual Transform GetInteractablePosition()
+    {
+        return interactablePosition != null ? interactablePosition : transform;
     }
 
     public abstract void Interact(MoodInteractor interactor);

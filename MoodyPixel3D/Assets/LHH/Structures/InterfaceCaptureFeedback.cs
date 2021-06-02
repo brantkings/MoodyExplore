@@ -21,6 +21,7 @@ namespace LHH.Structures
         private void Awake()
         {
             capture = GetComponent<InterfaceCapture<T>>();
+            if (capture == null) Debug.LogErrorFormat("No capture on {0}.", this);
         }
 
         private void OnEnable()

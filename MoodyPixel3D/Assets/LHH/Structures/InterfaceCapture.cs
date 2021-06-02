@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace LHH.Structures
 {
@@ -10,7 +11,7 @@ namespace LHH.Structures
         void FeedbackNoticed(bool noticed);
     }
     
-    public class InterfaceCapture<T> : MonoBehaviour where T:class
+    public abstract class InterfaceCapture<T> : MonoBehaviour where T:class
     {
         public delegate void DelChanged(T newFirst);
 
@@ -27,7 +28,9 @@ namespace LHH.Structures
         public enum HowToSelect
         {
             SelectFirst,
-            SelectLast
+            SelectLast,
+            SelectLeastCustomValue,
+            SelectMostCustomValue,
         }
 
         public HowToAdd howToAdd = HowToAdd.AddFirst;
@@ -42,6 +45,8 @@ namespace LHH.Structures
         public T LastStack => Captured.Last != null? Captured.Last.Value : null;
         public int Count => Captured.Count;
 
+        abstract protected float? GetPriorityValue(T obj);
+
         public T GetSelected()
         {
             switch (howToSelect)
@@ -50,6 +55,10 @@ namespace LHH.Structures
                     return FirstStack;
                 case HowToSelect.SelectLast:
                     return LastStack;
+                case HowToSelect.SelectLeastCustomValue:
+                    return Captured.OrderBy((x) => GetPriorityValue(x).HasValue? GetPriorityValue(x).Value : float.PositiveInfinity).FirstOrDefault();
+                case HowToSelect.SelectMostCustomValue:
+                    return Captured.OrderByDescending((x) => GetPriorityValue(x).HasValue ? GetPriorityValue(x).Value : float.NegativeInfinity).FirstOrDefault();
                 default:
                     return FirstStack;
             }
@@ -91,20 +100,24 @@ namespace LHH.Structures
 
         private void NoticeChange(T oldObj, T newObj)
         {
+            Debug.LogFormat("Noticing change between {0} {1}",oldObj, newObj);
             if(oldObj == null && newObj != null)
             {
+                Debug.LogFormat("OnChange1 Selected invoking {0} gonna call someone:{1} ", newObj, OnChangeSelected != null);
                 OnChangeSelected?.Invoke(newObj);
                 DoFeedback(newObj, true);
                 return;
             }
             else if(oldObj != null && newObj == null)
             {
+                Debug.LogFormat("OnChange2 Selected invoking {0} gonna call someone:{1} ", newObj, OnChangeSelected != null);
                 OnChangeSelected?.Invoke(null);
                 DoFeedback(oldObj, false);
                 return;
             }
             else if (!oldObj.Equals(newObj))
             {
+                Debug.LogFormat("OnChange3 Selected invoking {0} gonna call someone:{1} ", newObj, OnChangeSelected != null);
                 OnChangeSelected?.Invoke(newObj);
                 DoFeedback(oldObj, false);
                 DoFeedback(newObj, true);
