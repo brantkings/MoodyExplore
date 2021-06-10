@@ -487,6 +487,10 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 {
                     command.DeselectToNull(true, true);
                 }
+                else
+                {
+                    command.ShowCurrentSelected(true);
+                }
                 OnChangeCommandMode?.Invoke(GetCurrentMode());
                 return;
             }

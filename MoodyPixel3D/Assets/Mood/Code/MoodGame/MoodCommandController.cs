@@ -37,16 +37,6 @@ public class MoodCommandController : MonoBehaviour
     private bool? _activated;
 
     private int _currentOption;
-    
-    private struct OptionTuple
-    {
-        public MoodCommandOption command;
-        public NodeItem node;
-    }
-
-
-    public SoundEffect[] onChangeOption;
-
 
     public Text GetDescriptorText()
     {
@@ -315,6 +305,12 @@ public class MoodCommandController : MonoBehaviour
     public void SelectCurrentOption(bool feedbacks = true)
     {
         _menu.Select(feedbacks);
+        SetCurrentActiveObjects();
+    }
+
+    public void ShowCurrentSelected(bool feedbacks = true)
+    {
+        _menu.ChangeSelection(0, feedbacks);
         SetCurrentActiveObjects();
     }
 

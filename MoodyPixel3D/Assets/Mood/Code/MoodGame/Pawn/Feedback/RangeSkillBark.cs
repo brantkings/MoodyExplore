@@ -69,12 +69,13 @@ public class RangeSkillBark : RangeShow
 
     public override void Hide(MoodPawn pawn)
     {
+        //Debug.LogErrorFormat("Hide {0}", pawn);
         anim.SetBool("Show", false);
     }
 
     public override void ShowSkill(MoodPawn pawn, MoodSkill skill)
     {
-        Debug.LogErrorFormat("Barking {0} {1}", pawn, skill);
+        //Debug.LogErrorFormat("Barking {0} {1}", pawn, skill);
         text.color = skill.GetColor().HasValue ? skill.GetColor().Value : defaultColor;
         text.text = skill.GetName();
         anim.SetBool("Show", true);
@@ -202,7 +203,7 @@ public class RangeSkillBark : RangeShow
                     .SetId(this)
                     .SetDelay(TimeBeatManager.GetBeatLength() * beatMultiplierDelayEase).OnKill(() =>
                     {
-                        Debug.LogFormat("now{0} before{1} {2}", progressPercentage, progressPercentageBefore, skill);
+                        //Debug.LogFormat("now{0} before{1} {2}", progressPercentage, progressPercentageBefore, skill);
                         if (progressPercentage == 1f) JustExecutedBark();
                     });
                 progressObjectRenderer.color = progressColor.HasValue ? progressColor.Value : ((progressPercentage >= progressPercentageBefore) ? defaultProgressIncreasingColor : defaultProgressDecreasingColor);

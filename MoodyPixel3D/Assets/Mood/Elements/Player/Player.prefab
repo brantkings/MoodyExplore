@@ -769,7 +769,7 @@ GameObject:
   - component: {fileID: 8712649111202483588}
   - component: {fileID: 5558795296073846300}
   - component: {fileID: 1746356209975716369}
-  m_Layer: 9
+  m_Layer: 5
   m_Name: ThreatImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1580,6 +1580,33 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnDifferentInteractor:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5918993317520856548}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5918993317520856548}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   keepInPlace: {fileID: 6537041649322483620}
 --- !u!1 &4774539750851641314
 GameObject:
@@ -1954,7 +1981,7 @@ GameObject:
   - component: {fileID: 4011290351380139357}
   - component: {fileID: 7039256576022799491}
   - component: {fileID: 3216357666611996181}
-  m_Layer: 9
+  m_Layer: 5
   m_Name: Canvas Threat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1991,7 +2018,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 2
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1832708712658149494}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -2025,7 +2052,7 @@ GameObject:
   - component: {fileID: 1502204438549993426}
   - component: {fileID: 2518731144941185006}
   - component: {fileID: 8778196818627007632}
-  m_Layer: 9
+  m_Layer: 5
   m_Name: Canvas Interacting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2062,7 +2089,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 2
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1832708712658149494}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -2276,7 +2303,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5938188665409695490}
-  m_LocalRotation: {x: -0.08459551, y: 0.91539466, z: -0.2805088, w: -0.27606362}
+  m_LocalRotation: {x: -0.08459547, y: 0.91539466, z: -0.28050876, w: -0.27606356}
   m_LocalPosition: {x: 17.69196, y: 27.5, z: 26.664478}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6343,7 +6370,7 @@ GameObject:
   - component: {fileID: 6040810325898923843}
   - component: {fileID: 4287752466201430526}
   - component: {fileID: 8157864666209045059}
-  m_Layer: 9
+  m_Layer: 5
   m_Name: InteractingImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10993,19 +11020,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.27606362
+      value: -0.28027463
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.08459551
+      value: -0.09843098
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.91539466
+      value: 0.91401047
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.2805088
+      value: -0.27630126
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

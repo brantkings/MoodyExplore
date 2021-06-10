@@ -1006,6 +1006,12 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _currentRotationDash = TweenMoverDirection(angle, duration)?.SetEase(ease);
     }
 
+    public void RotateDash(Vector3 dir, float duration, Ease ease = Ease.OutQuad)
+    {
+        CancelCurrentRotationDash();
+        _currentRotationDash = TweenMoverDirection(dir, duration)?.SetEase(ease);
+    }
+
     public Tween TweenMoverDirection(float angleAdd, float duration)
     {
         Vector3 directionAdd = Quaternion.Euler(0f, angleAdd, 0f) * Direction;

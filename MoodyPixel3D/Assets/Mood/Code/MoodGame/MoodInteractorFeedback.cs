@@ -12,9 +12,10 @@ public class MoodInteractorFeedback : LHH.Structures.InterfaceCaptureFeedback<Mo
     }
 
     public UnityEventBool OnHasInteractor;
+    public UnityEvent OnDifferentInteractor;
 
     private bool? _cacheNull = null;
-    private Transform currentTarget;
+    private Transform _currentTarget;
 
     public Transform keepInPlace;
 
@@ -54,6 +55,12 @@ public class MoodInteractorFeedback : LHH.Structures.InterfaceCaptureFeedback<Mo
         {
             DispatchNull(newFirst, isNull);
         }
+
+        if(_currentTarget != newFirst)
+        {
+            DispatchDifferent(newFirst);
+        }
+
         if (newFirst != null)
             StartCoroutine(KeepInPlace(newFirst.GetInteractablePosition()));
         _cacheNull = isNull;
@@ -63,8 +70,8 @@ public class MoodInteractorFeedback : LHH.Structures.InterfaceCaptureFeedback<Mo
     {
         if (where == null) yield break;
 
-        currentTarget = where;
-        while(currentTarget == where && keepInPlace != null)
+        _currentTarget = where;
+        while(_currentTarget == where && keepInPlace != null)
         {
             if (where != null)
                 keepInPlace.transform.position = where.position;
@@ -80,7 +87,14 @@ public class MoodInteractorFeedback : LHH.Structures.InterfaceCaptureFeedback<Mo
 
     private void DispatchNull(MoodInteractable interactable, bool isNull)
     {
-        Debug.LogWarningFormat("{0} is dispatching null {1} to {2}", this, isNull, interactable);
         OnHasInteractor.Invoke(!isNull);
+    }
+
+    private void DispatchDifferent(MoodInteractable interactable)
+    {
+        if(interactable != null)
+        {
+            OnDifferentInteractor.Invoke();
+        }
     }
 }

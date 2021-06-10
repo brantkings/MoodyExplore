@@ -67,12 +67,14 @@ public partial class KinematicPlatformer
 
     }
 
+    /*
     public Tween TweenMoverDirection(float angleAdd, float duration)
     {
         Vector3 directionAdd = Quaternion.Euler(0f, angleAdd, 0f) * Direction;
         return TweenMoverDirection(directionAdd, duration);
     }
 
+    //This should be called directly on MoodPawn, or else it won't work because MoodPawn needs to control the direction
     public Tween TweenMoverDirection(Vector3 directionTo, float duration)
     {
         Debug.LogFormat("{0} is rotating to direction {1}, {2} [{3}]", this, directionTo, duration, Time.time);
@@ -83,4 +85,5 @@ public partial class KinematicPlatformer
         }
         else return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this).OnKill(()=> Debug.LogFormat("Killed me {0} {1} [{2}]!", this, directionTo, Time.time));//.OnKill(CallEndMove).OnStart(CallBeginMove);
     }
+    */
 }

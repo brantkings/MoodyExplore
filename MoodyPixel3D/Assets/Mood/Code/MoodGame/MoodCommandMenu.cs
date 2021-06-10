@@ -67,6 +67,11 @@ public class MoodCommandMenu : MonoBehaviour
             instance = null;
         }
 
+        public bool IsValid()
+        {
+            return instance != null && instance.gameObject.activeSelf;
+        }
+
     }
 
     internal class OptionColumn : IEnumerable<Option>
@@ -113,6 +118,11 @@ public class MoodCommandMenu : MonoBehaviour
             if(instance != null) Destroy(instance.gameObject);
             instance = null;
         }
+
+        public bool IsValid()
+        {
+            return instance != null;
+        }
     }
 
     #endregion
@@ -135,14 +145,14 @@ public class MoodCommandMenu : MonoBehaviour
             return current != null && index == Mathf.Clamp(index, 0, current.options.Count);
         }
 
-        public bool IsValidOption()
+        public bool IsCurrentValid()
         {
             return IsValid(GetCurrent());
         }
 
         private bool IsValid(Option opt)
         {
-            return opt.instance.isActiveAndEnabled;
+            return opt != null && opt.IsValid();
         }
 
         public bool ThereIsValidOption()
@@ -181,12 +191,12 @@ public class MoodCommandMenu : MonoBehaviour
         {
             DeselectCurrent();
             MoveIndex(how);
-            if(IsExistingOption() && !IsValidOption())
+            if(IsExistingOption() && !IsCurrentValid())
             {
                 if(ThereIsValidOption())
                 {
                     int miniMove = (int)Mathf.Sign(how);
-                    do MoveIndex(miniMove); while (!IsValidOption());
+                    do MoveIndex(miniMove); while (!IsCurrentValid());
                 }
                 else
                 {
@@ -236,18 +246,43 @@ public class MoodCommandMenu : MonoBehaviour
             if(current?.parentOption != null)
             {
                 DeselectCurrent();
-                Option parentOption = current.parentOption;
-                current = parentOption.parent;
-                index = Mathf.Clamp(current.IndexOf(parentOption), 0, current.options.Count);
+                ExitCurrentOption();
                 SelectCurrent();
                 return true;
             }
             return false;
         }
 
+        private void ExitCurrentOption()
+        {
+            Option parentOption = current.parentOption;
+            current = parentOption.parent;
+            index = Mathf.Clamp(current.IndexOf(parentOption), 0, current.options.Count);
+        }
+
         public void DeselectCurrent()
         {
-            GetCurrent()?.instance.SetSelected(false);
+            GetCurrent()?.instance?.SetSelected(false);
+        }
+
+
+        public bool Validate()
+        {
+            bool changed = false;
+            while (!current.IsValid() || !ThereIsValidOption())
+            {
+                DeselectCurrent();
+                ExitCurrentOption();
+                changed = true;
+            }
+            while (IsExistingOption() && !IsCurrentValid())
+            {
+                DeselectCurrent();
+                MoveIndex(-1);
+                changed = true;
+            }
+            return changed;
+            
         }
 
         public void SelectCurrent()
@@ -265,6 +300,12 @@ public class MoodCommandMenu : MonoBehaviour
     private void Awake()
     {
         current.Invalidate();
+    }
+
+    private void OnEnable()
+    {
+        SetTreeActivated(current);
+        StartCoroutine(SelectFeedbackRoutine(0f));
     }
 
     #region Interface to outside
@@ -288,7 +329,7 @@ public class MoodCommandMenu : MonoBehaviour
         bool moved = current.Enter();
         if (moved)
         {
-            StartCoroutine(SelectFeedbackRoutine());
+            StartCoroutine(SelectFeedbackRoutine(changeDuration));
         }
         else
         {
@@ -297,10 +338,10 @@ public class MoodCommandMenu : MonoBehaviour
         FeedbackChangeSound(feedbacks);
     }
 
-    private IEnumerator SelectFeedbackRoutine()
+    private IEnumerator SelectFeedbackRoutine(float duration)
     {
         yield return null;
-        GotoColumn(current.GetCurrentColumn(), changeDuration);
+        GotoColumn(current.GetCurrentColumn(), duration);
     }
 
     public void Deselect(bool feedbacks)
@@ -308,7 +349,7 @@ public class MoodCommandMenu : MonoBehaviour
         bool moved = current.Exit();
         if (moved)
         {
-            StartCoroutine(DeselectFeedbackRoutine());
+            StartCoroutine(DeselectFeedbackRoutine(changeDuration));
         }
         else
         {
@@ -317,9 +358,9 @@ public class MoodCommandMenu : MonoBehaviour
         FeedbackChangeSound(feedbacks);
     }
 
-    private IEnumerator DeselectFeedbackRoutine()
+    private IEnumerator DeselectFeedbackRoutine(float duration)
     {
-        yield return GotoColumn(current.GetCurrentColumn(), changeDuration);
+        yield return GotoColumn(current.GetCurrentColumn(), duration);
         SetTreeActivated(current);
     }
 
@@ -328,7 +369,7 @@ public class MoodCommandMenu : MonoBehaviour
         bool did = false;
         while (current.Exit()) did = true;
 
-        if (did) GotoColumn(current.GetCurrentColumn(), changeDuration);
+        if (did) StartCoroutine(DeselectFeedbackRoutine(changeDuration));
     }
 
 
@@ -407,6 +448,11 @@ public class MoodCommandMenu : MonoBehaviour
         MakeInstances(main);
 
         if (!current.IsExistingOption()) current.Set(main, 0);
+        if(current.Validate())
+        {
+            StartCoroutine(DeselectFeedbackRoutine(changeDuration));
+        }
+        
         current.SelectCurrent();
     }
 
@@ -493,6 +539,10 @@ public class MoodCommandMenu : MonoBehaviour
 
     public void PaintOptions(MoodPawn pawn, Vector3 direction)
     {
+        if(current.Validate())
+        {
+            current.SelectCurrent();
+        }
         foreach(Option opt in GetAllOptions())
         {
             bool canBeShown = opt.GetSelectable().CanBeShown(pawn);

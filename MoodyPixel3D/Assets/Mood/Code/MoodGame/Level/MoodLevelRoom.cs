@@ -13,6 +13,8 @@ public class MoodLevelRoom : MonoBehaviour
     public Ease fadeOutEase = Ease.OutSine;
     public Ease fadeInEase = Ease.OutSine;
 
+    public GameObject[] toActivateWithRoom;
+
     public enum Status
     {
         Deactivated,
@@ -112,8 +114,14 @@ public class MoodLevelRoom : MonoBehaviour
         if (foundOne && !immediate) yield return new WaitForSeconds(fadeTime);
     }
 
+
     protected virtual void SetImmediatelyActivated(bool active)
     {
+        foreach(GameObject obj in toActivateWithRoom)
+        {
+            if(obj != null) obj.SetActive(active);
+        }
+
         foreach (Renderer rend in AllFadeableWalls())
         {
             rend.enabled = active;
