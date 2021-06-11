@@ -238,7 +238,7 @@ MonoBehaviour:
     value: {fileID: 11700000, guid: b462bdeab3452e24ca7c264fcec464fd, type: 2}
   textureNotIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: 09bd78378bd175b47a2d0c65a5f413da, type: 2}
+    value: {fileID: 11700000, guid: e7d0282720d8b3143ab6ca25f30336ce, type: 2}
   textureSize:
     overrideState: 1
     value: 16

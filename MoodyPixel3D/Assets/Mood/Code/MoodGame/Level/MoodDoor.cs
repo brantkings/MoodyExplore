@@ -22,6 +22,9 @@ public class MoodDoor : MonoBehaviour
     public LHH.Switchable.Switchable openedSwitchable;
     public TransformGetter eventTransform;
     public ScriptableEvent[] onTouchDoor;
+    public ScriptableEvent[] onAnimDoorOpen;
+    public ScriptableEvent[] onAnimDoorMiddle;
+    public ScriptableEvent[] onAnimDoorClose;
     public ScriptableEvent[] onDoorEnd;
 
     private MoodLevel _level;
@@ -65,10 +68,13 @@ public class MoodDoor : MonoBehaviour
         Level.GetRoom(positionExit)?.Activate();
 
         OnStartAnimationOpen?.Invoke(opener);
+        onAnimDoorOpen.Invoke(eventTransform.Get(transform));
         yield return AnimateOpenDoor();
+        onAnimDoorMiddle.Invoke(eventTransform.Get(transform));
         OnEndAnimationOpen?.Invoke(opener);
         yield return MoveTo(opener, positionExit, (positionExit - positionEntry).normalized, walkAnimationDuration, 0.5f);
         OnStartAnimationClose?.Invoke(opener);
+        onAnimDoorClose.Invoke(eventTransform.Get(transform));
         yield return AnimateCloseDoor();
         Unlock(opener);
         OnEndOpen?.Invoke(opener);
