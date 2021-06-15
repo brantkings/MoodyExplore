@@ -140,6 +140,11 @@ public class MoodCommandMenu : MonoBehaviour
             current = null;
         }
 
+        public bool IsValidSelection()
+        {
+            return current != null && index >= 0 && index < current.options.Count;
+        }
+
         public bool IsExistingOption()
         {
             return current != null && index == Mathf.Clamp(index, 0, current.options.Count);
@@ -157,6 +162,7 @@ public class MoodCommandMenu : MonoBehaviour
 
         public bool ThereIsValidOption()
         {
+            if (current == null) return false;
             foreach(Option opt in current.options)
             {
                 if (IsValid(opt)) return true;
@@ -268,8 +274,10 @@ public class MoodCommandMenu : MonoBehaviour
 
         public bool Validate()
         {
+            if (current == null) return false;
+
             bool changed = false;
-            while (!current.IsValid() || !ThereIsValidOption())
+            while (current != null && !current.IsValid() || !ThereIsValidOption())
             {
                 DeselectCurrent();
                 ExitCurrentOption();
@@ -300,10 +308,19 @@ public class MoodCommandMenu : MonoBehaviour
     private void Awake()
     {
         current.Invalidate();
+        current.Set(main, 0);
     }
 
     private void OnEnable()
     {
+        if(!current.IsValidSelection())
+        {
+            if (current.ThereIsValidOption()) current.Validate();
+            else current.Set(main, 0);
+        }
+        else
+        {
+        }
         SetTreeActivated(current);
         StartCoroutine(SelectFeedbackRoutine(0f));
     }

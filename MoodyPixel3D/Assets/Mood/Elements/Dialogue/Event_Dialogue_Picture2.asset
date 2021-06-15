@@ -16,5 +16,5 @@ MonoBehaviour:
   - 'There is a message below this strange picture:'
   - '"If you''re a bind you can always use the TECH: THROW your BODY.'
   - Don't go throwing yourself on walls or enemies if you don't want to get hurt.
-  - However, in the blue part of the movement, you cannot be damaged. Use that to
-    get out of harm's way."
+  - However, in the blue part of the movement, you cannot be damaged by attacks.
+    Use that to get out of harm's way."
