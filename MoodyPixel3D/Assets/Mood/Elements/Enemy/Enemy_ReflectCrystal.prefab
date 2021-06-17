@@ -355,7 +355,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1275266088328374303
 Transform:
   m_ObjectHideFlags: 0
@@ -415,7 +415,9 @@ MonoBehaviour:
   source: 1
   direction: 0
   _amount: 10
-  _stunTime: 0.5
+  _stunTime:
+    beats: 4
+  _ignorePhaseThrough: 0
   _onlyDamageOnce: 0
   knockback:
     _directProperty:
@@ -436,6 +438,7 @@ MonoBehaviour:
       angleRotation: 0
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: e6960cefefa5c0c4a8778d2afc754f6f, type: 2}
+  _invokeEventsOnlyWithValidHealth: 0
   _debug: 0
 --- !u!114 &2021150597109996990
 MonoBehaviour:

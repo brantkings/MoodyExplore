@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Event_Dialogue_Picture1
   m_EditorClassIdentifier: 
   dialogue:
-  - 'There is a message below the Starred Sky:'
+  - 'There is a message below the Starry Night:'
   - '"Hold SPACE to activate command mode.'
   - Blindly swinging will only take you so far. Outsmart your enemies without spending
     all your stamina."

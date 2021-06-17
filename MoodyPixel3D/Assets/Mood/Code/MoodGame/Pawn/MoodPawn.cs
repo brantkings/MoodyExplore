@@ -1100,14 +1100,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private float GetPawnFakeHeight()
     {
-        return animator.transform.position.y;
+        return animator.transform.localPosition.y;
     }
 
     private void SetPawnFakeHeight(float h)
     {
-        Vector3 animPos = animator.transform.position;
+        Vector3 animPos = animator.transform.localPosition;
         animPos.y = h;
-        animator.transform.position = animPos;
+        animator.transform.localPosition = animPos;
     }
 
     private void UpdateAnimation()
