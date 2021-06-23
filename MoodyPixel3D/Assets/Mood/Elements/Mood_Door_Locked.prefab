@@ -17,6 +17,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5f34161602e8eb24e81f03cc30c8c23f, type: 2}
   feedback:
   - {fileID: 11400000, guid: 48d4b9f43a7739c4abe8122ac844a364, type: 2}
+  - {fileID: 11400000, guid: 578252daf6888f04489dd59d41a46b32, type: 2}
   _feedbackLocationOverride: {fileID: 1773457806288152433}
   directToInteractable: 0
   directToInteractableDuration: 0.25

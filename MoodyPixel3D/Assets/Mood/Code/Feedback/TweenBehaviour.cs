@@ -53,10 +53,13 @@ public abstract class TweenBehaviour<T,P> : LHH.Unity.AddonParentBehaviour<T>
     protected abstract P GetInValue();
     protected abstract P GetOutValue();
     public abstract void SetValue(P value);
+
+    private Tween _currentTween;
     
     public virtual Tween TweenTo(P to, float duration, Ease ease)
     {
-        return ExecuteTweenItself(to, duration).SetId(this).SetEase(ease).SetUpdate(unscaledTimeDelta);
+        DOTween.Complete(this);
+        return _currentTween = ExecuteTweenItself(to, duration).SetId(this).SetEase(ease).SetUpdate(unscaledTimeDelta);
     }
 
     public void DoIn()

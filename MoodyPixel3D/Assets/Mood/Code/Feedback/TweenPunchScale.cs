@@ -11,6 +11,8 @@ namespace Code.Feedback
         public float elasticityPunch = 1f;
         public int vibratoRotation = 10;
         public float elasticityRotation = 1f;
+
+        Tween t;
         
         protected override Tween ExecuteTweenItself(Vector3 to, float duration)
         {

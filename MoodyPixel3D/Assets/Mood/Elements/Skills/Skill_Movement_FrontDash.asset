@@ -27,17 +27,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
   _possibleAngles:
   - angleFromForward: 0
-    coneAngle: 0
+    coneAngle: 30
     mirrored: 0
   startupPriority: 2
   heightCheckers: []
-  _freeFocusCost: 0
+  _freeFocusCost: 1
   _lockCamera: 1
   lockMovement: 1
   _shortcut: 0
   _debug: 0
   _cost: 1
-  minDistance: 0
+  minDistance: 4
   maxDistance: 5
   hopHeight: 0
   hopDurationInMultiplier: 0

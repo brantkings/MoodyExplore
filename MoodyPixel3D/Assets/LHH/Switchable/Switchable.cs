@@ -10,12 +10,21 @@ namespace LHH.Switchable
         public event DelSwitchEvent OnBeforeSwitch;
         public event DelSwitchEvent OnAfterSwitch;
 
-        public SwitchState OnStart = SwitchState.Off;
+        public SwitchCommand OnStart = SwitchCommand.Off;
 
-        public enum SwitchState
+        public enum SwitchCommand
         {
             None,
             On,
+            Off
+        }
+
+        public enum SwitchState
+        {
+            Undefined,
+            Oning,
+            On,
+            Offing,
             Off
         }
 
@@ -35,16 +44,16 @@ namespace LHH.Switchable
             if (different && OnAfterSwitch != null) OnAfterSwitch(on);
         }
 
-        public void Set(SwitchState state, bool forceEvents = false)
+        public void Set(SwitchCommand state, bool forceEvents = false)
         {
             switch (state)
             {
-                case SwitchState.None:
+                case SwitchCommand.None:
                     break;
-                case SwitchState.On:
+                case SwitchCommand.On:
                     Set(true, forceEvents);
                     break;
-                case SwitchState.Off:
+                case SwitchCommand.Off:
                     Set(false, forceEvents);
                     break;
                 default:
