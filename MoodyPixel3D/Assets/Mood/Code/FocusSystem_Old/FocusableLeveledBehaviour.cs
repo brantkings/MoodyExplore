@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LeveledBehaviour))]
-public class FocusableLeveledBehaviour : Focusable
+public class FocusableLeveledBehaviour : FocusableObject
 {
     LeveledBehaviour _sensor;
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Focusable : MonoBehaviour 
+public abstract class FocusableObject : MonoBehaviour 
 {
     public delegate void FocusChangeDelegate(int newFocus);
     public event FocusChangeDelegate OnFocusChanged;

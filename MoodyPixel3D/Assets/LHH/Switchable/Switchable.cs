@@ -40,7 +40,7 @@ namespace LHH.Switchable
             bool different = on != _on || forceEvents;
             if (different && OnBeforeSwitch != null) OnBeforeSwitch(on);
             _on = on;
-            Debug.LogFormat("{0} is now {1}", this, _on);
+            //Debug.LogFormat("{0} is now {1}", this, _on);
             if (different && OnAfterSwitch != null) OnAfterSwitch(on);
         }
 

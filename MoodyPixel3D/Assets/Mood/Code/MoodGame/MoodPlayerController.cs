@@ -83,8 +83,10 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     {
         set
         {
-            _focusMode = value;
-            OnChangeCommandMode?.Invoke(GetCurrentMode());
+            if(_focusMode != value)
+            {
+                _focusMode = value;
+            }
         }
         get => _focusMode;
     }
@@ -472,7 +474,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     }
 
     RecheckableAxis _selectorMoveUpDownHelper;
-    Mode _oldMode;
 
     private void Update()
     {
@@ -480,19 +481,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             out KeyButtonState showCommandAction, out KeyButtonState executeAction, out KeyButtonState secondaryAction, out KeyButtonState changeModeButton);
         GetMouseInputUpdate(_mainCamera, GetPlayerPlaneOrigin(), ref _mouseWorldPosition);
 
-        command.SetActive(showCommandAction.Pressing);
-
-        bool isInCommandMode = IsInCommandMode();
+        bool isInCommandMode = IsInCommandMode(showCommandAction.Pressing);
         bool isCameraUpwards = command.IsActivated() || IsSkillNeedingStrategicCamera();
-        Mode currentMode = GetCurrentMode();
+        Mode currentMode = CheckCurrentMode(showCommandAction.Pressing);
 
         SetCommandMode(isInCommandMode);
         SetCameraMode(isCameraUpwards);
-        if (isInCommandMode) //The command is open
+        if (isInCommandMode) //The command is open (holding space)
         {
             Vector3 inputDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
             Vector3 currentDirection = inputDirection;
-            inputDirectionFeedback.forward = inputDirection;
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
 
             if (changeModeButton.JustDown)
@@ -506,8 +504,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 {
                     command.ShowCurrentSelected(true);
                 }
-                currentMode = GetCurrentMode();
-                OnChangeCommandMode?.Invoke(currentMode);
+                currentMode = CheckCurrentMode(showCommandAction.Pressing);
                 return;
             }
 
@@ -517,18 +514,22 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             MoodCommandOption option = command.GetCurrentCommandOption(); 
             skill?.SanitizeDirection(_pawn.Direction, ref currentDirection);
 
-            _thought.SetActivated(currentMode == Mode.Command_Focus);
-
-
-            if (FocusMode) //On Focus mode
+            if (currentMode == Mode.Command_Focus) //On Focus mode
             {
                 //FocusCommand(moveAxis, moveAxis.vertical);
                 command.UpdateCommandView(_pawn, skill, currentDirection, false);
                 _thought.MovePointer(moveAxis.Get2DMoveAxis().normalized + (Vector2)mouseAxis, Time.unscaledDeltaTime);
-            }
-            else //Not focus mode
-            {
 
+                if(executeAction.JustDown)
+                {
+                    _thought.SelectWithPointer(Pawn);
+                }
+            }
+            else if(currentMode == Mode.Command_Skill) //Not focus mode
+            {
+                //Make little orange arrow go to mouse
+                inputDirectionFeedback.forward = inputDirection;
+                
                 command.UpdateCommandView(_pawn, skill, currentDirection, true);
                 //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.white, 0.02f);
                 //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + pawn.Direction.normalized * currentDirection.magnitude, Color.red, 0.02f);
@@ -627,12 +628,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
         //SolveCommandSlowDown(executeAction.Pressing, true);
         SolveCommandSlowDown(false, true);
-        currentMode = GetCurrentMode();
-        if(_oldMode != currentMode)
-        {
-            SetMouseMode(currentMode);
-            _oldMode = currentMode;
-        }
     }
 
     private bool CanExecute(MoodSkill skill, MoodItem item, Vector3 skillDirection)
@@ -649,8 +644,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void FocusCommand(DirectionalState direction, AxisState addCommand)
     {
-        _focus.SelectNextFocusable(direction.GetXAxisChanged());
-        _focus.ChangeLevelCurrentFocusable(addCommand.GetValueChanged());
+        if(_focus != null)
+        {
+            _focus.SelectNextFocusable(direction.GetXAxisChanged());
+            _focus.ChangeLevelCurrentFocusable(addCommand.GetValueChanged());
+        }
     }
 
     public bool HasAvailableSkills()
@@ -667,7 +665,12 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public Mode GetCurrentMode()
     {
-        if (IsInCommandMode())
+        return _oldMode;
+    }
+
+    public Mode GetCurrentMode(bool pressingCommandButton)
+    {
+        if (IsInCommandMode(pressingCommandButton))
         {
             if (FocusMode) return Mode.Command_Focus;
             else return Mode.Command_Skill;
@@ -675,27 +678,41 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         else return Mode.Movement;
     }
 
-    private void CheckCurrentMode()
+    Mode _oldMode;
+    private Mode CheckCurrentMode(bool pressingCommandButton)
     {
-        Mode currentMode = GetCurrentMode();
-
+        Mode currentMode = GetCurrentMode(pressingCommandButton);
+        if(currentMode != _oldMode)
+        {
+            ChangedMode(currentMode);
+            OnChangeCommandMode?.Invoke(currentMode);
+            _oldMode = currentMode;
+        }
+        return currentMode;
     }
 
-    private void OnChangeMode(Mode newCurrentMode)
+    private void ChangedMode(Mode newCurrentMode)
     {
         switch (newCurrentMode)
         {
             case Mode.Movement:
+                command.SetActive(false);
+                _thought.SetActivated(false);
                 break;
             case Mode.Command_Skill:
+                command.SetActive(true);
+                _thought.SetActivated(false);
                 break;
             case Mode.Command_Focus:
+                command.SetActive(false);
+                _thought.SetActivated(true);
                 break;
             case Mode.None:
                 break;
             default:
                 break;
         }
+        SetMouseMode(newCurrentMode);
     }
 
 
@@ -704,9 +721,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         return command.IsActivated();
     }
 
-    public bool IsInCommandMode()
+    public bool IsInCommandMode(bool pressingButton)
     {
-        return IsCommandOpen() || IsExecutingCommand();
+        return pressingButton || IsExecutingCommand();
     }
 
     public bool IsStunned()
@@ -781,7 +798,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             }
             else
             {
-                FocusMode = false;
             }
             _wasInCommand = set;
 
@@ -814,6 +830,17 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 break;
         }
         //Debug.LogFormat("Setting mouse mode as visible? {0}", visible);
+    }
+
+    private void SetFocusMode(bool set)
+    {
+        FocusMode = set;
+        _thought.SetActivated(set);
+    }
+
+    private void SetCommandMode(bool set)
+    {
+        command.SetActive(set);
     }
 
     #region Skill Buffer

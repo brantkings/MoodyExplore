@@ -503,7 +503,7 @@ public class MoodCommandMenu : MonoBehaviour
     private void SetTreeActivated(Selection select)
     {
         int i = 0;
-        foreach (Option opt in select.current.options)
+        foreach (Option opt in select.current?.options)
         {
             bool active = i++ == select.index;
             if(opt.children != null)

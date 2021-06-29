@@ -11,6 +11,11 @@ namespace LHH.LeveledBehaviours.Sensors
 
         public Sensor[] _group;
 
+        public void FindSensors()
+        {
+            _group = GetComponentsInChildren<Sensor>();
+        }
+
         public bool IsSensingTarget(SensorTarget target)
         {
             if(target != null)

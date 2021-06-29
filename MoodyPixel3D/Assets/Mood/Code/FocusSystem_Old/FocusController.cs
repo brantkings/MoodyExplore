@@ -13,10 +13,10 @@ public class FocusController : MonoBehaviour
 
     public event IntParameterFocusControllerDelegate OnSelectedFocusableChanged;
 
-    private Focusable[] _focusableList;
+    private FocusableObject[] _focusableList;
 
     [SerializeField]
-    private Focusable[] _initialSetup;
+    private FocusableObject[] _initialSetup;
 
     [SerializeField]
     int _maxFocusPoints;
@@ -65,15 +65,15 @@ public class FocusController : MonoBehaviour
 
     private void InitFocusables()
     {
-        _focusableList = gameObject.GetComponentsInChildren<Focusable>();
+        _focusableList = gameObject.GetComponentsInChildren<FocusableObject>();
     }
 
-    public IEnumerable<Focusable> Focusables
+    public IEnumerable<FocusableObject> Focusables
     {
         get
         {
             if (_focusableList == null) InitFocusables();
-            foreach (Focusable f in _focusableList) yield return f;
+            foreach (FocusableObject f in _focusableList) yield return f;
         }
     }
 
@@ -134,7 +134,7 @@ public class FocusController : MonoBehaviour
     public void ChangeLevelCurrentFocusable(int change = 1)
     {
 
-        Focusable focusable = _focusableList[_selectedFocusableIndex];
+        FocusableObject focusable = _focusableList[_selectedFocusableIndex];
 
         if(AddFocus(focusable, change))
         {
@@ -142,7 +142,7 @@ public class FocusController : MonoBehaviour
         }
     }
 
-    private bool AddFocus(Focusable focusable, int amount)
+    private bool AddFocus(FocusableObject focusable, int amount)
     {
         //Debug.LogFormat("[FOCUS] Adding {0} to {1}. Has Available {2}", amount, focusable, _availableFocusPoints);
         if(focusable != null && _availableFocusPoints >= amount && focusable.TryAddFocus(amount) != 0)

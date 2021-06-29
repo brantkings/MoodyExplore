@@ -11,20 +11,36 @@ public interface IMindPawn
     int GetAvailableFocusPoints();
 }
 
+public interface IFocusPointController
+{
+    int MaxPoints { get; }
+    int AvailablePoints { get; }
+
+    void SetPain(int pain);
+}
+
 public class MoodPawnMindful : MoodPawn, IMindPawn
-{ 
+{
     [Header("Focusable")]
-    public FocusController focus;
+    private IFocusPointController _pointController;
+    public IFocusPointController PointController
+    {
+        get
+        {
+            if (_pointController == null) _pointController = GetComponentInChildren<IFocusPointController>();
+            return _pointController;
+        }
+    }
     public SensorGroup sensorGroup;
 
     public int GetMaxFocusPoints()
     {
-        return focus.MaxPoints;
+        return PointController.MaxPoints;
     }
 
     public int GetAvailableFocusPoints()
     {
-        return focus.AvailablePoints;
+        return PointController.AvailablePoints;
     }
 
     public override bool IsSensing(SensorTarget target)
@@ -35,10 +51,6 @@ public class MoodPawnMindful : MoodPawn, IMindPawn
     protected override void OnDamage(DamageInfo info, Health health)
     {
         base.OnDamage(info, health);
-        if (focus != null)
-        {
-            Debug.LogFormat("Setting pain as {0} - {1} = {2}", health.MaxLife, health.Life, health.MaxLife - health.Life);
-            focus.SetPain((health.MaxLife - health.Life) / 10);
-        }
+        PointController.SetPain((health.MaxLife - health.Life) / 10);
     }
 }

@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class FocusableUI : MonoBehaviour
 {
-    Focusable _focusable;
+    FocusableObject _focusable;
 
     public Image iconImage;
     public PointsAsObjectsUI focusPointsUI;
 
-    public void SetFocusable(Focusable focusable)
+    public void SetFocusable(FocusableObject focusable)
     {
         if (_focusable == focusable)
             return;
