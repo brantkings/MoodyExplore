@@ -22,7 +22,7 @@ namespace LHH.LeveledBehaviours.Sensors
             {
                 foreach (var sensor in _group)
                 {
-                    if (sensor.IsSensingTarget(target))
+                    if (sensor != null && sensor.IsSensingTarget(target))
                         return true;
                 }
             }

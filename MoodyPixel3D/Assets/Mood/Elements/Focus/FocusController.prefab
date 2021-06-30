@@ -58,10 +58,14 @@ MonoBehaviour:
   ease: 22
   focusDuration: 0.2
   easeFocus: 22
-  pointerAnchoredVelocity: 0.5
-  startTestThoughts: []
-  focusPoints: 3
-  _maxFocusPoints: 0
+  pointerAnchoredVelocity: 0.35
+  startTestThoughts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: bdb0fa10ae6bedb4d8d6abb82a9c8057, type: 2}
+  - {fileID: 11400000, guid: 03639f7e65a434d45a3cae5047077f38, type: 2}
+  - {fileID: 11400000, guid: 03639f7e65a434d45a3cae5047077f38, type: 2}
+  _maxFocusPoints: 3
 --- !u!114 &1699490886777328943
 MonoBehaviour:
   m_ObjectHideFlags: 0

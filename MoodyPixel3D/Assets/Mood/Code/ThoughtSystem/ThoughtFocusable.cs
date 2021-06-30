@@ -8,7 +8,6 @@ public class ThoughtFocusable : MonoBehaviour
 {
     public int focusablePriority;
 
-    public LHH.Switchable.Switchable maximizedSwitchable;
     public LHH.Switchable.Switchable selectedSwitchable;
     public LHH.Switchable.Switchable focusedSwitchable;
 
@@ -34,11 +33,6 @@ public class ThoughtFocusable : MonoBehaviour
             i.color = t.thoughtIconColor;
         }
         return this;
-    }
-
-    public void SetMaximize(bool set)
-    {
-        maximizedSwitchable?.Set(set);
     }
 
     public void SetHovered(bool set)

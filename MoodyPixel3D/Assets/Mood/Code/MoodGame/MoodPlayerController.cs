@@ -485,10 +485,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         bool isCameraUpwards = command.IsActivated() || IsSkillNeedingStrategicCamera();
         Mode currentMode = CheckCurrentMode(showCommandAction.Pressing);
 
-        SetCommandMode(isInCommandMode);
+        SetCommandMode(currentMode == Mode.Command_Skill);
         SetCameraMode(isCameraUpwards);
         if (isInCommandMode) //The command is open (holding space)
         {
+
             Vector3 inputDirection = _mouseWorldPosition - GetPlayerPlaneOrigin();
             Vector3 currentDirection = inputDirection;
             //Debug.DrawLine(GetPlayerPlaneOrigin(), GetPlayerPlaneOrigin() + currentDirection, Color.black, 0.02f);
@@ -596,33 +597,40 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         }
         else //The command is not open
         {
-            //Check command shortcuts
-            _rotatingTarget = Vector3.zero;
-            Vector3 shortcutDirection = _pawn.Direction;
-            foreach (var tuple in command.GetAllMoodSkills())
+            FocusMode = false;
+
+            if(!IsExecutingCommand())
             {
-                if (Input.GetKeyDown(tuple.Item1.GetShortCut()) && tuple.Item1.CanExecute(_pawn, shortcutDirection))
+                //Check command shortcuts
+                _rotatingTarget = Vector3.zero;
+                Vector3 shortcutDirection = _pawn.Direction;
+                foreach (var tuple in command.GetAllMoodSkills())
                 {
-                    StartSkillRoutine(tuple.Item1, tuple.Item2, shortcutDirection);
+                    if (Input.GetKeyDown(tuple.Item1.GetShortCut()) && tuple.Item1.CanExecute(_pawn, shortcutDirection))
+                    {
+                        StartSkillRoutine(tuple.Item1, tuple.Item2, shortcutDirection);
+                    }
                 }
+
+                if (executeAction.JustDown)
+                {
+                    if (checkHud.IsShowing())
+                    {
+                        checkHud.PressNext();
+                    }
+                    else if (interactor.HasInteractable())
+                    {
+                        interactor.Interact();
+                    }
+                }
+
+                _pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
+                _pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * GetMaxVelocity()), Vector3.up));
+                _pawn.RotateTowards(_rotatingTarget);
+                //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
+
             }
 
-            if (executeAction.JustDown)
-            {
-                if (checkHud.IsShowing())
-                {
-                    checkHud.PressNext();
-                }
-                else if (interactor.HasInteractable())
-                {
-                    interactor.Interact();
-                }
-            }
-
-            _pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
-            _pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * GetMaxVelocity()), Vector3.up));
-            _pawn.RotateTowards(_rotatingTarget);
-            //pawn.SetVelocity(moveAxis.GetMoveAxis() * 5f);
         }
 
 
@@ -723,7 +731,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public bool IsInCommandMode(bool pressingButton)
     {
-        return pressingButton || IsExecutingCommand();
+        return pressingButton;// || IsExecutingCommand();
     }
 
     public bool IsStunned()

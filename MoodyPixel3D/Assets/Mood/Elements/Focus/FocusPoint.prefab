@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5529775047075408560}
   - component: {fileID: 1650476874078815442}
   - component: {fileID: 4019915292401652551}
+  - component: {fileID: 3192890890045495211}
   m_Layer: 5
   m_Name: FocusPoint img
   m_TagString: Untagged
@@ -75,6 +76,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &3192890890045495211
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3651501511835180393}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5313476253196679382
 GameObject:
   m_ObjectHideFlags: 0
@@ -85,6 +98,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2382411606993924110}
   - component: {fileID: -8071013917716144319}
+  - component: {fileID: 1038134877877379481}
+  - component: {fileID: 2527564220209464665}
+  - component: {fileID: 838829011910146446}
   m_Layer: 5
   m_Name: FocusPoint
   m_TagString: Untagged
@@ -126,3 +142,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switchableUsed: {fileID: 0}
   objectToMove: {fileID: 5529775047075408560}
+--- !u!114 &1038134877877379481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5313476253196679382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f91f3e89160eba43a4840c63450c745, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maximizedSwitchable: {fileID: 2527564220209464665}
+--- !u!114 &2527564220209464665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5313476253196679382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c6a2bab0ccd8f0458504a37e5846a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnStart: 2
+--- !u!114 &838829011910146446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5313476253196679382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d86d8e337b3a146b726784ec704745, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sideOn:
+  - {fileID: 3192890890045495211}
+  sideOff: []
+  minAlpha: 0
+  maxAlpha: 1
+  unscaled: 1
+  deactivateAfter: 1
+  defaultDuration: 0.05

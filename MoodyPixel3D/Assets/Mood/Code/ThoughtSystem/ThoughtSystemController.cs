@@ -8,7 +8,7 @@ using DG.Tweening;
 
 public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 {
-    ThoughtFocusable[] _children;
+    IThoughtBoardObject[] _children;
     private ThoughtFocusable _currentFocusable;
 
     [SerializeField]
@@ -28,6 +28,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     public Transform thoughtObjectsParent;
 
     [Header("Canvas")]
+    Camera canvasCamera;
     public RectTransform board;
     public RectTransform focusablesParent;
     public RectTransform focusPointsParent;
@@ -50,8 +51,6 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     [Space()]
     public Thought[] startTestThoughts;
 
-    public int focusPoints =3 ;
-
     [System.Serializable]
     private struct BoardData
     {
@@ -62,6 +61,8 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     private void Awake()
     {
         raycaster = GetComponentInChildren<GraphicRaycaster>();
+        canvasCamera = board.GetComponentInParent<Canvas>()?.worldCamera;
+        if (canvasCamera == null) canvasCamera = Camera.main;
     }
 
     private void Start()
@@ -72,12 +73,9 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
             CreateThought(t, i++, len);
         }
 
-        for(int j = 0; j < focusPoints; j++)
-        {
-            CreateFocusPoint();
-        }
+        StartFocusPoints();
 
-        _children = GetComponentsInChildren<ThoughtFocusable>(true);
+        _children = GetComponentsInChildren<IThoughtBoardObject>(true);
     }
 
     #region Thought Creation
@@ -86,7 +84,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     {
         ThoughtFocusable focusable = Instantiate(t.GetThoughtFocusablePrefab(), focusablesParent).Create(t);
         RectTransform rect = focusable.GetComponent<RectTransform>();
-        rect.anchorMax = rect.anchorMin = GetCircularPosition(index, length, -90f) * 0.25f + Vector3.one * 0.5f;
+        rect.anchorMax = rect.anchorMin = GetCircularPosition(index, length, -90f) * 0.35f + Vector3.one * 0.5f;
         return focusable;
     }
 
@@ -101,12 +99,12 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         return point;
     }
 
-    protected Vector3 GetCircularPosition(int index, int length, float offsetangle, float minAngle = 65f, float maxAngle = 180f)
+    protected Vector3 GetCircularPosition(int index, int length, float offsetangle, float minAngle = 35f, float maxAngle = 180f)
     {
-        float proportion = (float)index / length;
-        float angle = Mathf.Min(maxAngle * proportion, minAngle);
+        float angle = Mathf.Max(maxAngle / length, minAngle);
         float angleTotal = angle * length;
         float angleMe = offsetangle + index * angle - angleTotal * 0.5f;
+        Debug.LogFormat("[THOUGHT] {0}/{1}: Angle is {2}, total is {3}, my angle is {4}", index, length, angle, angleTotal, angleMe);
         Vector3 pos = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angleMe), -Mathf.Sin(Mathf.Deg2Rad * angleMe));
         return pos;
     }
@@ -126,11 +124,25 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     public int MaxPoints => _maxFocusPoints;
 
-    public int AvailablePoints => _availableFocusPoints;
+    public int AvailablePoints
+    {
+        get
+        {
+            return GetAmountOfFreeFocusPoints();
+        }
+    }
 
     public int CurrentPain { get => _currentPain; }
 
     public int MaxMinusPainPoints { get => _maxFocusPoints - _currentPain; }
+
+    private void StartFocusPoints()
+    {
+        for (int j = 0; j < _maxFocusPoints; j++)
+        {
+            CreateFocusPoint();
+        }
+    }
 
     public bool IsActivated()
     {
@@ -221,7 +233,8 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         if (next != null)
         {
             next.focusable = f;
-            next.point.GetObjectToMove().DOMove(f.transform.position, focusDuration).SetEase(easeFocus).SetUpdate(true);
+            RectTransform toMove = next.point.GetObjectToMove();
+            toMove.DOLocalMove(f.transform.localPosition - toMove.parent.localPosition, focusDuration).SetEase(easeFocus).SetUpdate(true);
             return true;
         }
         else return false;
@@ -237,6 +250,11 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
             return true;
         }
         else return false;
+    }
+
+    private int GetAmountOfFreeFocusPoints()
+    {
+        return _focusState.Count((x)=> x.focusable == null);
     }
 
     private FocusPointState GetNextFreeFocusPoint()
@@ -328,12 +346,12 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         CheckSelected();
     }
 
-    private PointerEventData GetEventDataForNow()
+    private PointerEventData GetEventDataForNow(Vector3 pointerPosition)
     {
         PointerEventData data = new PointerEventData(EventSystem.current);
-        data.position = Camera.main.WorldToScreenPoint(pointer.position);
-        LHH.Utils.DebugUtils.DrawNormalStar(data.position, 5f, Quaternion.identity, Color.yellow, 0.05f);
-        //Debug.LogFormat("Trying to get stuff at position {0}", data);
+        data.position = canvasCamera.WorldToScreenPoint(pointerPosition);
+        //Debug.LogFormat("Mouse: {0} while Pointer position is {1} -> {2}", Input.mousePosition, pointerPosition, data.position);
+        LHH.Utils.DebugUtils.DrawNormalStar(pointer.position, 0.1f, Quaternion.identity, Color.yellow, 0.2f);
         return data;  
     }
 
@@ -344,7 +362,18 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     private void CheckSelected()
     {
-        ThoughtFocusable newFocus = GetFocusablesUnderPointer().DefaultIfEmpty().Aggregate((x, y) => x.focusablePriority > y.focusablePriority ? x : y);
+        Vector3 pointerPosition = pointer.position;
+        ThoughtFocusable newFocus = GetFocusablesUnderPointer(pointerPosition).DefaultIfEmpty().Aggregate((x, y) =>
+        {
+            if (x.focusablePriority > y.focusablePriority) return x;
+            else if (x.focusablePriority < y.focusablePriority) return y;
+            else
+            {
+                float distX = (pointerPosition - x.transform.position).sqrMagnitude, distY = (pointerPosition - y.transform.position).sqrMagnitude;
+                if (distX <= distY) return x;
+                else return y;
+            }
+        });
         //Debug.LogFormat("New focus is {0}, old is {1}", newFocus, _currentFocusable);
         if(newFocus != _currentFocusable)
         {
@@ -354,24 +383,25 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         }
     }
 
-    private IEnumerable<ThoughtFocusable> GetFocusablesUnderPointer()
+    private IEnumerable<ThoughtFocusable> GetFocusablesUnderPointer(Vector3 pointerPosition)
     {
         _resultsCache.Clear();
-        raycaster.Raycast(GetEventDataForNow(), _resultsCache);
-        int i = 0;
+        raycaster.Raycast(GetEventDataForNow(pointerPosition), _resultsCache);
+        //int i = 0;
 
         foreach (var result in _resultsCache)
         {
-            //Debug.LogFormat("{0} raycasted {1} which has {2} [{3}]", this, result.gameObject.name, result.gameObject.GetComponentInParent<ThoughtFocusable>(), i++);
+            //Debug.LogFormat("[THOUGHT] {0} raycasted {1} which has {2} [{3}]", this, result.gameObject.name, result.gameObject.GetComponentInParent<ThoughtFocusable>(), i++);
             ThoughtFocusable focusable = result.gameObject.GetComponentInParent<ThoughtFocusable>();
             if (focusable != null) yield return focusable;
         }
+        //if(i==0) Debug.LogFormat("[THOUGHT] {0} raycasted nothing", this);
     }
 
     private void TweenToRectTransform(RectTransform target, float duration, Ease ease)
     {
         board.DOPivot(target.pivot, duration).SetUpdate(true).SetEase(ease);
-        board.DORotateQuaternion(target.rotation, duration).SetUpdate(true).SetEase(ease);
+        board.DOLocalRotateQuaternion(target.localRotation, duration).SetUpdate(true).SetEase(ease);
         board.DOScale(target.localScale, duration).SetUpdate(true).SetEase(ease);
         board.DOAnchorPos3D(target.anchoredPosition3D, duration).SetUpdate(true).SetEase(ease).OnComplete(()=> {
         });
