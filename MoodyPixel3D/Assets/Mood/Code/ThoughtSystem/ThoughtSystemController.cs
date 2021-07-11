@@ -17,7 +17,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     private List<RaycastResult> _resultsCache = new List<RaycastResult>(8);
 
 
-    private class FocusPointState
+    protected class FocusPointState
     {
         public ThoughtFocusPoint point;
         public ThoughtFocusable focusable;
@@ -25,7 +25,10 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     private List<FocusPointState> _focusState = new List<FocusPointState>(9);
 
     [Header("Objects")]
+    private MoodExperiencer experiencer;
+    public OutlineMaterialFeedback outlineFeedback;
     public Transform thoughtObjectsParent;
+    public UnityEngine.UI.Text descriptor;
 
     [Header("Canvas")]
     Camera canvasCamera;
@@ -50,7 +53,14 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     [Space()]
     public Thought[] startTestThoughts;
+    private List<ThoughtFocusable> upThoughts;
+    private List<ThoughtFocusable> downThoughts;
 
+    public enum ThoughtPlacement
+    {
+        Up,
+        Down
+    }
     [System.Serializable]
     private struct BoardData
     {
@@ -60,9 +70,26 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     private void Awake()
     {
+        experiencer = GetComponentInParent<MoodPawn>()?.GetComponentInChildren<MoodExperiencer>();
         raycaster = GetComponentInChildren<GraphicRaycaster>();
         canvasCamera = board.GetComponentInParent<Canvas>()?.worldCamera;
         if (canvasCamera == null) canvasCamera = Camera.main;
+    }
+
+    private void OnEnable()
+    {
+        if (experiencer != null)
+        {
+            experiencer.OnExperienceChange += OnExperienceChange;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (experiencer != null)
+        {
+            experiencer.OnExperienceChange -= OnExperienceChange;
+        }
     }
 
     private void Start()
@@ -70,39 +97,129 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         int i = 0, len = startTestThoughts.Length;
         foreach(var t in startTestThoughts)
         {
-            CreateThought(t, i++, len);
+            GetList(ThoughtPlacement.Down).Add(CreateThought(t));
         }
+
+        PositionThoughtList(GetList(ThoughtPlacement.Down), GetThoughtListAngle(ThoughtPlacement.Down));
 
         StartFocusPoints();
 
+        RecaptureBoardObjects();
+    }
+
+    private void RecaptureBoardObjects()
+    {
         _children = GetComponentsInChildren<IThoughtBoardObject>(true);
     }
 
     #region Thought Creation
 
-    protected ThoughtFocusable CreateThought(Thought t, int index, int length)
+    public void AddThought(Thought t, MoodPawn p, OutlineMaterialFeedback.Data? outlineFeedbackData = null, ThoughtPlacement where = ThoughtPlacement.Up)
+    {
+        GetList(where).Add(CreateThought(t));
+        PositionThoughtList(GetList(where), GetThoughtListAngle(where));
+        t.AddThoughtInMind(p, this);
+        if(outlineFeedbackData.HasValue) outlineFeedback?.DoFeedback(outlineFeedbackData.Value);
+        RecaptureBoardObjects();
+    }
+
+    public void RemoveThought(Thought t, MoodPawn p, OutlineMaterialFeedback.Data? outlineFeedbackData = null, ThoughtPlacement where = ThoughtPlacement.Up)
+    {
+        List<ThoughtFocusable> list = GetList(where);
+        ThoughtFocusable toDestroy = list.Find((x) => x.GetThought() == t);
+        if (outlineFeedbackData.HasValue) outlineFeedback?.DoFeedback(outlineFeedbackData.Value);
+        RemoveThought(t, p, toDestroy, list, where);
+    }
+
+    private void FindRemoveThought(Thought t, MoodPawn p, ThoughtPlacement toStart)
+    {
+        ThoughtPlacement where = toStart;
+        int enumLength = System.Enum.GetValues(typeof(ThoughtPlacement)).Length;
+        int amountToGo = enumLength;
+        while (amountToGo-- > 0)
+        {
+            List<ThoughtFocusable> list = GetList(where);
+            if(list != null)
+            {
+                ThoughtFocusable toDestroy = list.Find((x) => x.GetThought() == t);
+                if(toDestroy != null)
+                {
+                    RemoveThought(t, p, toDestroy, list, where);
+                    return;
+                }
+            }
+            where = (ThoughtPlacement)(((int)where + 1) % enumLength);
+        }
+    }
+
+    private void RemoveThought(Thought t, MoodPawn p, ThoughtFocusable toDestroy, List<ThoughtFocusable> list, ThoughtPlacement where)
+    {
+        list.Remove(toDestroy);
+        DeassignFocusPoint(toDestroy, p);
+        Destroy(toDestroy.gameObject);
+        PositionThoughtList(list, GetThoughtListAngle(where));
+        t.RemoveThoughtFromMind(p, this);
+        RecaptureBoardObjects();
+    }
+
+    protected void PositionThought(in RectTransform thoughtPosition, int index, int length, float angleOffset, float radiusOffset = 0.7f, float desiredAngle = 60f, float minAngle = 15f, float totalAngle = 180f)
+    {
+        thoughtPosition.anchorMax = thoughtPosition.anchorMin = GetCircularPosition(index, length, angleOffset, desiredAngle, minAngle, totalAngle) * radiusOffset * 0.5f + Vector3.one * 0.5f;
+    }
+
+    protected void PositionThoughtList(in List<ThoughtFocusable> list, float angleOffset, float radiusOffset = 0.7f, float desiredAngle = 60f, float minAngle = 15f, float totalAngle = 180f)
+    {
+        for(int i = 0, len = list.Count;i<len;i++)
+        {
+            PositionThought(list[i].GetComponent<RectTransform>(), i, len, angleOffset, radiusOffset, desiredAngle, minAngle, totalAngle);
+        }
+    }
+
+    protected List<ThoughtFocusable> CheckList(ref List<ThoughtFocusable> list)
+    {
+        if (list == null) list = new List<ThoughtFocusable>(8);
+        return list;
+    }
+
+    protected List<ThoughtFocusable> GetList(ThoughtPlacement placement)
+    {
+        switch (placement)
+        {
+            case ThoughtPlacement.Up:
+                return CheckList(ref upThoughts);
+            case ThoughtPlacement.Down:
+                return CheckList(ref downThoughts);
+            default:
+                return CheckList(ref upThoughts);
+        }
+    }
+
+    protected float GetThoughtListAngle(ThoughtPlacement placement)
+    {
+        switch (placement)
+        {
+            case ThoughtPlacement.Up:
+                return -90f;
+            case ThoughtPlacement.Down:
+                return 90f;
+            default:
+                return -90f;
+        }
+    }
+
+    protected ThoughtFocusable CreateThought(Thought t)
     {
         ThoughtFocusable focusable = Instantiate(t.GetThoughtFocusablePrefab(), focusablesParent).Create(t);
         RectTransform rect = focusable.GetComponent<RectTransform>();
-        rect.anchorMax = rect.anchorMin = GetCircularPosition(index, length, -90f) * 0.35f + Vector3.one * 0.5f;
+        
         return focusable;
     }
 
-    protected ThoughtFocusPoint CreateFocusPoint()
+    protected Vector3 GetCircularPosition(int index, int length, float offsetangle, float desiredAngle, float minAngle, float desiredTotalAngle)
     {
-        ThoughtFocusPoint point = Instantiate(focusPointPrefab, focusPointsParent);
-        _focusState.Add(new FocusPointState()
-        {
-            point = point,
-            focusable = null
-        });
-        return point;
-    }
-
-    protected Vector3 GetCircularPosition(int index, int length, float offsetangle, float minAngle = 35f, float maxAngle = 180f)
-    {
-        float angle = Mathf.Max(maxAngle / length, minAngle);
-        float angleTotal = angle * length;
+        int numSpaces = length - 1;
+        float angle = numSpaces == 0 ? 0f : Mathf.Clamp(desiredAngle, minAngle, desiredTotalAngle / numSpaces);
+        float angleTotal = angle * numSpaces;
         float angleMe = offsetangle + index * angle - angleTotal * 0.5f;
         Debug.LogFormat("[THOUGHT] {0}/{1}: Angle is {2}, total is {3}, my angle is {4}", index, length, angle, angleTotal, angleMe);
         Vector3 pos = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angleMe), -Mathf.Sin(Mathf.Deg2Rad * angleMe));
@@ -122,7 +239,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     int _currentPain;
 
-    public int MaxPoints => _maxFocusPoints;
+    public int MaxPoints => GetAmountOfFocusPoints();
 
     public int AvailablePoints
     {
@@ -135,14 +252,6 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     public int CurrentPain { get => _currentPain; }
 
     public int MaxMinusPainPoints { get => _maxFocusPoints - _currentPain; }
-
-    private void StartFocusPoints()
-    {
-        for (int j = 0; j < _maxFocusPoints; j++)
-        {
-            CreateFocusPoint();
-        }
-    }
 
     public bool IsActivated()
     {
@@ -158,7 +267,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
         if(set)
         {
-            CheckSelected();
+            CheckSelected(true);
         }
 
         _activated = set;
@@ -185,14 +294,12 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
                 if(focusable.IsFocused()) //if is focused then remove
                 {
                     focusable.SetFocused(false, pawn);
-                    DeassignFocusPoint(focusable, pawn);
-                    RemoveThought(pawn, focusable.GetThought());
+                    StopThought(pawn, focusable.GetThought(), DeassignFocusPoint(focusable, pawn));
                 }
-                else if (HasFreeFocusPoint())
+                else if (HasFreeFocusPoint()) //If not then assign
                 {
                     focusable.SetFocused(true, pawn);
-                    AssignFocusPoint(focusable, pawn);
-                    StartThought(pawn, focusable.GetThought());
+                    StartThought(pawn, focusable.GetThought(), AssignFocusPoint(focusable, pawn));
                 }
             }
         }
@@ -212,6 +319,39 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     #region Focus Point
 
+    public ThoughtFocusPoint CreateFocusPoint()
+    {
+        ThoughtFocusPoint point = Instantiate(focusPointPrefab, focusPointsParent);
+        point.UnsetExperienceText();
+        _focusState.Add(new FocusPointState()
+        {
+            point = point,
+            focusable = null
+        });
+        return point;
+    }
+
+    public bool RemoveFocusPoint()
+    {
+        if(_focusState.Count > 0)
+        {
+            FocusPointState state = _focusState.Last();
+            Destroy(state.point);
+            _focusState.Remove(state);
+            return true;
+        }
+        else return false;
+    }
+
+
+    private void StartFocusPoints()
+    {
+        for (int j = 0; j < _maxFocusPoints; j++)
+        {
+            CreateFocusPoint();
+        }
+    }
+
     private Vector3 GetAnchorRelativePosition(RectTransform childToMove, RectTransform placeToMoveTo, RectTransform parent)
     {
         float width = parent.rect.width;
@@ -227,7 +367,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         return GetNextFreeFocusPoint() != null;
     }
 
-    private bool AssignFocusPoint(ThoughtFocusable f, MoodPawn p)
+    private FocusPointState AssignFocusPoint(ThoughtFocusable f, MoodPawn p)
     {
         FocusPointState next = GetNextFreeFocusPoint();
         if (next != null)
@@ -235,26 +375,34 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
             next.focusable = f;
             RectTransform toMove = next.point.GetObjectToMove();
             toMove.DOLocalMove(f.transform.localPosition - toMove.parent.localPosition, focusDuration).SetEase(easeFocus).SetUpdate(true);
-            return true;
+            return next;
         }
-        else return false;
+        else return null;
     }
 
-    private bool DeassignFocusPoint(ThoughtFocusable f, MoodPawn p)
+    private FocusPointState DeassignFocusPoint(ThoughtFocusable f, MoodPawn p)
     {
         FocusPointState next = GetFocusPointFrom(f);
         if (next != null)
         {
             next.focusable = null;
-            next.point.GetObjectToMove().DOLocalMove(Vector3.zero, focusDuration).SetEase(easeFocus).SetUpdate(true);
-            return true;
+            RectTransform rt = next.point.GetObjectToMove();
+            if (rt.gameObject.activeInHierarchy)
+                rt.DOLocalMove(Vector3.zero, focusDuration).SetEase(easeFocus).SetUpdate(true);
+            else rt.localPosition = Vector3.zero;
+            return next;
         }
-        else return false;
+        else return null;
     }
 
     private int GetAmountOfFreeFocusPoints()
     {
         return _focusState.Count((x)=> x.focusable == null);
+    }
+
+    private int GetAmountOfFocusPoints()
+    {
+        return _focusState.Count;
     }
 
     private FocusPointState GetNextFreeFocusPoint()
@@ -268,59 +416,118 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     }
     #endregion
 
-    #region Thoughts and effects
-
-    HashSet<Thought> _activeThoughts = new HashSet<Thought>();
-    
-    protected virtual void StartThought(MoodPawn p, Thought t)
+    #region Experience
+    internal class FocusedThoughtState
     {
-        _activeThoughts.Add(t);
-        StartCoroutine(EffectRoutine(p, t));
+        internal Thought thought;
+        internal int experienceCount;
+
+        internal void AddCount(int amount)
+        {
+            experienceCount += amount;
+        }
+
+        internal void ClearCount()
+        {
+            experienceCount = 0;
+        }
     }
 
-    protected virtual void RemoveThought(MoodPawn p, Thought t)
+    internal int _experienceChange = 0;
+    private void OnExperienceChange(int amount)
     {
-        _activeThoughts.Remove(t);
+        _experienceChange += amount;
+        foreach(FocusedThoughtState state in _activeThoughts)
+        {
+            state.AddCount(amount);
+        }
+    }
+    #endregion
+
+    #region Thoughts and effects
+    List<FocusedThoughtState> _activeThoughts = new List<FocusedThoughtState>(8);
+    
+    protected virtual void StartThought(MoodPawn p, Thought t, FocusPointState f)
+    {
+        _activeThoughts.Add(new FocusedThoughtState() { thought = t, experienceCount = 0});
+        StartCoroutine(EffectRoutine(p, t, f));
+    }
+
+    protected virtual void StopThought(MoodPawn p, Thought t, FocusPointState focusPoint)
+    {
+        focusPoint.point.UnsetExperienceText();
+        _activeThoughts.Remove(GetActiveThought(t));
         StartCoroutine(RemoveEffectRoutine(p, t));
+    }
+
+    protected virtual bool HasActiveThought(Thought t)
+    {
+        return _activeThoughts.Any((x) => x.thought == t);
+    }
+
+    internal virtual FocusedThoughtState GetActiveThought(Thought t)
+    {
+        return _activeThoughts.FirstOrDefault((x) => x.thought == t);
+    }
+
+    protected int GetUnusedExperience(Thought t, bool clear)
+    {
+        FocusedThoughtState state = GetActiveThought(t);
+        int experience = 0;
+        if (state != null)
+        {
+            experience = state.experienceCount;
+        }
+        if(clear)
+        {
+            state.ClearCount();
+        }
+        return experience;
     }
 
     private class WaitForExperienceChange : CustomYieldInstruction
     {
+        ThoughtSystemController system;
         public WaitForExperienceChange(ThoughtSystemController s)
         {
-
+            system = s;
         }
 
         public override bool keepWaiting
         {
             get
             {
-                return false;
+                return system._experienceChange == 0;
             }
         }
     }
 
-    private IEnumerator EffectRoutine(MoodPawn p, Thought t)
+    private IEnumerator EffectRoutine(MoodPawn p, Thought t, FocusPointState focusPoint)
     {
         int experience = 0;
+        focusPoint.point.SetExperienceText(experience, t.experienceNeeded);
         yield return StartCoroutine(t.FocusEffect(p, this));
-        while (!t.CheckExperienceCondition(p, this, experience) && _activeThoughts.Contains(t))
+        while (!t.CheckExperienceCondition(p, this, experience) && HasActiveThought(t))
         {
             yield return null;
+            experience += GetUnusedExperience(t, clear:true);
+            focusPoint.point.SetExperienceText(experience, t.experienceNeeded);
         }
-        yield return StartCoroutine(t.ExperienceCompleteEffect(p, this));
+        focusPoint.point.UnsetExperienceText();
+        if(HasActiveThought(t))
+        {
+            yield return StartCoroutine(t.ExperienceCompleteEffect(p, this));
+            if(t.consumedWhenExperienced)
+            {
+                FindRemoveThought(t, p, ThoughtPlacement.Up);
+            }
+        }
     }
 
     private IEnumerator RemoveEffectRoutine(MoodPawn p, Thought t)
     {
         yield return StartCoroutine(t.RemoveFocusEffect(p, this));
     }
-
-    public void AddEXP(int amount)
-    {
-
-    }
-    
     #endregion
 
 
@@ -360,7 +567,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         return _currentFocusable;
     }
 
-    private void CheckSelected()
+    private void CheckSelected(bool forceFeedback = false)
     {
         Vector3 pointerPosition = pointer.position;
         ThoughtFocusable newFocus = GetFocusablesUnderPointer(pointerPosition).DefaultIfEmpty().Aggregate((x, y) =>
@@ -380,6 +587,22 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
             newFocus?.SetHovered(true);
             _currentFocusable?.SetHovered(false);
             _currentFocusable = newFocus;
+            OnNewSelectedFocusable(newFocus);
+        } else if (forceFeedback)
+        {
+            OnNewSelectedFocusable(newFocus);
+        }
+    }
+
+    private void OnNewSelectedFocusable(ThoughtFocusable newFocus)
+    {
+        if(newFocus != null)
+        {
+            descriptor.text = newFocus.GetThought().GetDescription();
+        }
+        else
+        {
+            descriptor.text = "Select a thought to focus on.";
         }
     }
 

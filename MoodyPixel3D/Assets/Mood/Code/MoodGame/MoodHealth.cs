@@ -6,6 +6,42 @@ using System.Linq;
 public class MoodHealth : Health, IMoodPawnBelonger
 {
     MoodPawn pawn;
+    private MoodParameter<int> _maxHealthParameter;
+
+
+    public override int MaxLife
+    {
+        get
+        {
+            if (_maxHealthParameter == null)
+            {
+                _maxHealthParameter = base.MaxLife;
+                _maxHealthParameter.OnChange += MaxHealthParameterChange;
+            }
+            return _maxHealthParameter;
+        }
+    }
+
+    private DamageInfo MakeSelfLifeChange(int amount)
+    {
+        return new DamageInfo()
+        {
+            damage = amount,
+            stunTime = 0f,
+            team = DamageTeam.Neutral,
+            unreactable = true,
+        };
+    }
+
+    private void MaxHealthParameterChange(int before, int after)
+    {
+        CallMaxHealthChange();
+    }
+
+    public MoodParameter<int> GetMaxHealthParameter()
+    {
+        return _maxHealthParameter;
+    }
 
     private void Awake() {
         pawn = GetComponentInParent<MoodPawn>();
@@ -29,7 +65,7 @@ public class MoodHealth : Health, IMoodPawnBelonger
             }
         }
 
-        if (damage.amount == 0) damage.shouldStaggerAnimation = false;
+        if (damage.damage == 0) damage.shouldStaggerAnimation = false;
 
         return base.Damage(damage);
     }

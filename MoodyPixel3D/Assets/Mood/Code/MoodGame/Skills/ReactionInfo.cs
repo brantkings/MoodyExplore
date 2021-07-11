@@ -15,7 +15,7 @@ public struct ReactionInfo
         return new ReactionInfo()
         {
             origin = info.origin,
-            intensity = info.amount,
+            intensity = info.damage,
             direction = info.distanceKnockback,
             duration = info.durationKnockback,
             counterNormal = info.attackDirection

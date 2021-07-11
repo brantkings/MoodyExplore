@@ -4,15 +4,16 @@ using UnityEngine;
 
 public abstract class MoodEvent : ScriptableObject
 {
-    public delegate void DelMoodEvent();
+    public delegate void DelMoodEvent(Transform where);
 
     public event DelMoodEvent OnExecute;
     
-    public virtual void Execute()
+    public virtual void Execute(Transform where)
     {
-        Effect();
-        OnExecute?.Invoke();
+        Effect(where);
+        OnExecute?.Invoke(where);
     }
 
-    protected abstract void Effect();
+
+    protected abstract void Effect(Transform where);
 }

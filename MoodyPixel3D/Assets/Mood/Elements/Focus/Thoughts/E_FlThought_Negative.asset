@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7da626fb9521e91448080a00f37ba404, type: 3}
+  m_Name: E_FlThought_Negative
+  m_EditorClassIdentifier: 
+  tagToTest: MainCamera
+  warningOnDefaultParameter: 1
+  prefab: {fileID: 6324531093343776182, guid: c0efe01886ba79e4a974ecfd6ed78b32, type: 3}
+  initialVelocity: 20
+  feedbackData:
+    caughtDistance: 0.45
+    forceAttractionBegin: 0
+    forceAttractionEnd: 200
+    forceAttractionYMultiplier: 0.1
+    durationForce: 6
+    minimalTime: 5
+    offsetDestination: {x: 0, y: 3, z: 0}
+  outlineFeedbackData:
+    outlineColor:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 0, b: 0, a: 1}
+      key2: {r: 0.5377358, g: 0, b: 0, a: 0}
+      key3: {r: 0.5377358, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 4626
+      ctime1: 20432
+      ctime2: 65535
+      ctime3: 65535
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 37201
+      atime2: 65535
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 3
+      m_NumAlphaKeys: 3
+    inAnim:
+      duration: 2
+      beginValue: 0
+      endValue: 1
+      ease: 1
+    outAnim:
+      duration: 0
+      beginValue: 0
+      endValue: 0
+      ease: 0

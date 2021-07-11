@@ -46,6 +46,21 @@ public abstract class ScriptableEvent<T> : ScriptableEvent
     public abstract T InvokeReturn(Transform where);
 }
 
+public abstract class ScriptableEvent<T, X> : ScriptableEvent<T>
+{
+    public bool warningOnDefaultParameter = true;
+
+    public abstract X GetDefaultExtraParameter();
+
+    public override T InvokeReturn(Transform where)
+    {
+        if (warningOnDefaultParameter) Debug.LogWarningFormat(where, "Using default parameter for '{0}' at '{1}'.", this, where);
+        return InvokeReturnExtraParameter(where, GetDefaultExtraParameter());
+    }
+
+    public abstract T InvokeReturnExtraParameter(Transform where, X extraParameter);
+}
+
 public abstract class ScriptableEventPositional<T> : ScriptableEventPositional
 {
     public override void Invoke(Vector3 position, Quaternion rotation)
@@ -146,6 +161,29 @@ public static class ScriptableEventExtensions
                 }
                 ScriptableEvent evt = collection[i];
                 if (evt != null) evt.Invoke(where);
+            }
+        }
+    }
+
+    public static void Invoke<T, X>(this List<ScriptableEvent<T, X>> collection, Transform where, X parameter)
+    {
+        if(collection != null)
+        {
+            for (int i = 0, len = collection.Count; i < len; i++)
+            {
+                ScriptableEvent<T, X> evt = collection[i];
+                evt.InvokeReturnExtraParameter(where, parameter);
+            }
+        }
+    }
+    public static void Invoke<T, X>(this ScriptableEvent<T, X>[] collection, Transform where, X parameter)
+    {
+        if (collection != null)
+        {
+            for (int i = 0, len = collection.Length; i < len; i++)
+            {
+                ScriptableEvent<T, X> evt = collection[i];
+                evt.InvokeReturnExtraParameter(where, parameter);
             }
         }
     }

@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 5637358447622213140}
   - component: {fileID: 5637358447622213141}
   - component: {fileID: 1165887686459921071}
+  - component: {fileID: 5096776000608011732}
   m_Layer: 10
   m_Name: NotHumanoid_Enemy_Base
   m_TagString: Untagged
@@ -85,6 +86,7 @@ MonoBehaviour:
   _attackFeedback: {fileID: 0}
   _shakeFeedback: {fileID: 3496441509559162423}
   _ownSensorTarget: {fileID: 0}
+  _inventory: {fileID: 0}
   toDestroyOnDeath: {fileID: 5637358447622213147}
   pawnConfiguration: {fileID: 11400000, guid: 1876601f2e2b4eb408ce86ea4d088846, type: 2}
   inherentReactions: []
@@ -94,17 +96,21 @@ MonoBehaviour:
   timeToZeroVelocity: 0.1
   snapToTargetSpeedDelta: 0.25
   angleToBeAbleToAccelerate: 55
-  turningTime: 0.75
+  turningTime:
+    beats: 1
   height: 2
   pawnRadius: 0.5
   extraRangeBase: 0
   cantMoveWhileThreatened: 1
-  maxStamina: 1
+  _maxStamina:
+    baseValue: 1
   infiniteStamina: 0
   recoverStaminaWhileUsingSkill: 0
-  staminaRecoveryIdle: 0
-  staminaRecoveryMoving: 0
-  handPosition: {fileID: 115938510025388480}
+  staminaRecoveryIdlePerSecond:
+    beats: 8
+  staminaRecoveryMovingPerSecond:
+    beats: 8
+  _instantiateProjectilePosition: {fileID: 0}
   damageTeam: 1
   _debug: 0
 --- !u!114 &1165887686459921071
@@ -126,6 +132,19 @@ MonoBehaviour:
   respirationFeedbackIntensityParameter: IntensityBreath
   minValue: 0
   maxValue: 100
+--- !u!114 &5096776000608011732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5637358447622213147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c12f9bb9d463414995b65a047f05b05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountXP: 1
 --- !u!114 &3569909607973292266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -824,8 +843,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dfb27117d352bc4aa71babe534726a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &115938510025388480 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5737602238937647798, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
-  m_PrefabInstance: {fileID: 5637358447042542454}
-  m_PrefabAsset: {fileID: 0}

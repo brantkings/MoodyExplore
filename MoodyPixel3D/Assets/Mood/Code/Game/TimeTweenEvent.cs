@@ -45,16 +45,16 @@ public class TimeTweenEvent : ScriptableEvent
 
         TweenCallback<float> updateFunc = (x) =>
         {
-            Debug.LogFormat("Setting {0} as {1} [{2}]", state.timeDelta, x, Time.frameCount);
+            //Debug.LogFormat("Setting {0} as {1} [{2}]", state.timeDelta, x, Time.frameCount);
             state.SetTimeDeltaNow(x);
         };
 
         string id = this.name + where.name;
 
-        Debug.LogErrorFormat("Removing as {0} to {1} BEFORE", id, where);
+        //Debug.LogErrorFormat("Removing as {0} to {1} BEFORE", id, where);
         TimeManager.Instance.RemoveDynamicTimeDeltaTarget(id);
 
-        Debug.LogErrorFormat("Adding as {0} to {1}", id, where);
+        //Debug.LogErrorFormat("Adding as {0} to {1}", id, where);
         TimeManager.Instance.AddDynamicDeltaTarget(id, state);
 
         foreach (var t in tweens)
@@ -64,7 +64,7 @@ public class TimeTweenEvent : ScriptableEvent
         }
 
         TimeManager.Instance.RemoveDynamicTimeDeltaTarget(id);
-        Debug.LogErrorFormat("Removing as {0} to {1} AFTER", id, where);
+        //Debug.LogErrorFormat("Removing as {0} to {1} AFTER", id, where);
 
 
     }

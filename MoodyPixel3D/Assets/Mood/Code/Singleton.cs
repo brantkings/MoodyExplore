@@ -12,6 +12,12 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             if(_instance == null)
             {
                 _instance = FindObjectOfType<T>();
+#if UNITY_EDITOR
+                if(_instance == null)
+                {
+                    Debug.LogErrorFormat("Couldnt find singleton of type {0}!", typeof(T));
+                }
+#endif
             }
             return _instance;
         }

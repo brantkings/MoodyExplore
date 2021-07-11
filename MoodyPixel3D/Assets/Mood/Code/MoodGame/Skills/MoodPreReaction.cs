@@ -80,18 +80,18 @@ public class MoodPreReaction : MoodReaction, IMoodReaction<ReactionInfo>, IMoodR
         switch (whenModifyDamage)
         {
             case DamageStaminaCondition.Always:
-                damageModifier.Modify(ref dmg.amount, Mathf.FloorToInt);
+                damageModifier.Modify(ref dmg.damage, Mathf.FloorToInt);
                 break;
             case DamageStaminaCondition.WhenCanPayFullStamina:
-                if (HasStamina(pawn, dmg.amount))
+                if (HasStamina(pawn, dmg.damage))
                 {
-                    damageModifier.Modify(ref dmg.amount, Mathf.FloorToInt);
+                    damageModifier.Modify(ref dmg.damage, Mathf.FloorToInt);
                 }
                 break;
             default:
                 break;
         }
-        DoKnockback(pawn, ref dmg.distanceKnockback, ref dmg.durationKnockback, dmg.amount);
+        DoKnockback(pawn, ref dmg.distanceKnockback, ref dmg.durationKnockback, dmg.damage);
         ReactAlways(ref info, pawn);
     }
 

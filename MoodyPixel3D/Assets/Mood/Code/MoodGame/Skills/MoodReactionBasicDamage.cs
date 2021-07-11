@@ -23,7 +23,7 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
 
     public virtual bool CanReact(DamageInfo info, MoodPawn pawn)
     {
-        return IsAmountOK(info.amount);
+        return IsAmountOK(info.damage);
     }
 
     private bool IsAmountOK(int amount)

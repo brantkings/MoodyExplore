@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37bb403b838b28b41bcbead53b7d7b42, type: 3}
-  m_Name: Event_Dialogue_Example
+  m_Script: {fileID: 11500000, guid: a688f6e7bf17f224095970dff8006193, type: 3}
+  m_Name: Effect_MaxHealth_Sum2
   m_EditorClassIdentifier: 
-  dialogue:
-  - I can see the park over at the window.
-  - Everything smells like cheap hand sanitizer.
-  - I hate it.
+  howToAdd: 1
+  howToRemove: 1
+  amountChange: 20
+  whenMaxLifeChanges: 3
+  neverKills: 1

@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: Thought_Sensor_Distance Close
   m_EditorClassIdentifier: 
   thoughtPhrase: Distance Close
+  description: Sense enemies around you.
   thoughtIcon: {fileID: 21300000, guid: 08b3a7e097779bb42a668daf86736c6a, type: 3}
   thoughtIconColor: {r: 1, g: 1, b: 1, a: 1}
   thoughtPhraseColor: {r: 1, g: 1, b: 1, a: 1}
   focusablePrefab: {fileID: 6292184119007510368, guid: 62b7836b55a94534c83445776360ace9, type: 3}
+  consumedWhenExperienced: 0
   experienceNeeded: 0
+  onUnfocused: []
   onActivated:
   - {fileID: 11400000, guid: 738d6d2901efc48428f83ba14f2891da, type: 2}
   onExperienceComplete: []

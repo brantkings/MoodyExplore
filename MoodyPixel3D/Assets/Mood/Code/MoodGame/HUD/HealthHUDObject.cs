@@ -31,12 +31,14 @@ public class HealthHUDObject : MonoBehaviour
 
     private void SetDamageFeedbackBegin(bool damaged)
     {
-        fill.gameObject.SetActive(true);
+        if(fill != null)
+            fill.gameObject.SetActive(true);
     }
 
     private void SetDamageFeedbackComplete(bool damaged)
     {
-        fill.gameObject.SetActive(!damaged);
+        if(fill != null)
+            fill.gameObject.SetActive(!damaged);
     }
 
     private void TakeDamageFeedback()

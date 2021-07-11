@@ -31,7 +31,7 @@ public class MoodEventInteractable : MoodInteractable
 
         foreach (var evt in whatHappen)
         {
-            evt.Execute();
+            evt.Execute(FeedbackTransform);
         }
 
         feedback.Invoke(FeedbackTransform);

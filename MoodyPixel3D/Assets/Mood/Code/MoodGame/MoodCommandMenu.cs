@@ -84,8 +84,8 @@ public class MoodCommandMenu : MonoBehaviour
 
         public OptionColumn(MoodSkillCategory cat, int capacity = 8)
         {
-            category = cat;
             options = new List<Option>(capacity);
+            category = cat;
         }
 
         public IEnumerator<Option> GetEnumerator()

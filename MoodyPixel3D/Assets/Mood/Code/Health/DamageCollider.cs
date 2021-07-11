@@ -34,7 +34,7 @@ public class DamageCollider : Damage
             DamageInfo info = GetDamage(other.transform);
             Debug.LogFormat(
                 "{0} entered {1} and it is going to damage {2} by {3} damage. It already damaged how many? {4}",
-                this, other, enemy, info.amount, GetAlreadyDamagedLength());
+                this, other, enemy, info.damage, GetAlreadyDamagedLength());
         }
 #endif
     }

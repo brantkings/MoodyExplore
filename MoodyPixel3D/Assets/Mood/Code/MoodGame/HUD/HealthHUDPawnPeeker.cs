@@ -40,6 +40,7 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         {
             _health.OnDamage += OnDamage;
             _health.OnDeath += OnDeath;
+            _health.OnMaxHealthChange += OnMaxHealthChange;
 
             if(enabled && started)
             {
@@ -77,6 +78,11 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         CheckCurrentHealth(0, true);
     }
 
+    private void OnMaxHealthChange(Health health)
+    {
+        CheckMaxHealth(health.MaxLife);
+    }
+
     private void ChangeProportional(ref int num)
     {
         if (unitAmount != 0) num /= unitAmount;
@@ -91,6 +97,7 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     private void CheckMaxHealth(int max)
     {
         ChangeProportional(ref max);
+        Debug.LogFormat("[HUD Health] Checking max health for {0} is {1}. Before was {2}.", this, max, _maxHealth);
         if (max != _maxHealth)
         {
             if (_children == null) _children = new List<HealthHUDObject>(max);
@@ -102,7 +109,8 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
             }
             while(max < _maxHealth)
             {
-                Destroy(_children.Last());
+                Destroy(_children.Last().gameObject);
+                _children.Remove(_children.Last());
                 _maxHealth--;
             }
         }
@@ -110,14 +118,14 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     private void CheckCurrentHealth(int current,  bool feedback)
     {
-        //Debug.LogFormat("Checking health {0} with feedback? {1}. By {2} ({3})", current, feedback, this, transform.GetComponentInParent<MoodPawn>());
         ChangeProportional(ref current);
+        Debug.LogFormat("[HUD Health] Checking health {0} (before {4}) with feedback? {1}. By {2} ({3})", current, feedback, this, transform.GetComponentInParent<MoodPawn>(), _currentHealth);
         if (_currentHealth != current)
         {
             for (int i = 0, len = _children.Count; i < len; i++) 
             {
                 _children[i].SetDamaged((i+1) > current, feedback);
-                //Debug.LogFormat("Setting {0} damaged? {1}", i, (i + 1) > current);
+                Debug.LogFormat("[HUD Health] Setting {0} damaged? {1}", i, (i + 1) > current);
             }
 
             _currentHealth = current;

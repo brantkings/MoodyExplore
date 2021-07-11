@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b0c6c59037fb64ba664b01b30c4358, type: 3}
   m_Name: Thought_Sensor_Cone of View
   m_EditorClassIdentifier: 
-  thoughtPhrase: Distance Close
+  thoughtPhrase: View
+  description: Sense enemies that you can see in front of your body.
   thoughtIcon: {fileID: 21300000, guid: 61c4347949fec7f49b0ca89ad75d821a, type: 3}
   thoughtIconColor: {r: 1, g: 1, b: 1, a: 1}
   thoughtPhraseColor: {r: 1, g: 1, b: 1, a: 1}
   focusablePrefab: {fileID: 6292184119007510368, guid: 62b7836b55a94534c83445776360ace9, type: 3}
+  consumedWhenExperienced: 0
   experienceNeeded: 0
+  onUnfocused: []
   onActivated:
   - {fileID: 11400000, guid: 7d50e5c2e262e8149a65c5c6108fdb40, type: 2}
   onExperienceComplete: []

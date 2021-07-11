@@ -9,7 +9,7 @@ namespace Code.MoodGame.Events
         public VideoClip clip;
 
 
-        protected override void Effect()
+        protected override void Effect(Transform where)
         {
             MoodCheckHUD.Instance.ShowVideo(this);
         }

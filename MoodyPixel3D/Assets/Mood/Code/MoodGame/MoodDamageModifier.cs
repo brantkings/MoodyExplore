@@ -18,7 +18,7 @@ public class MoodDamageModifier : ScriptableObject
 
     public void ModifyDamage(ref DamageInfo info)
     {
-        info.amount = GoBackToInt(info.amount * damageMultiplier + damageAdd);
+        info.damage = GoBackToInt(info.damage * damageMultiplier + damageAdd);
     }
 
     private int GoBackToInt(float n)

@@ -43,12 +43,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public delegate void DelMoodPawnSwingEvent(MoodSwing.MoodSwingBuildData swing, Vector3 direction);
     public delegate void DelMoodPawnUndirectedSkillEvent(MoodPawn pawn, MoodSkill skill);
 
+    public static event DelMoodPawnDamageEvent OnAnyMoodPawnDie;
+
     public event DelMoodPawnEvent OnChangeStamina;
 
     public event DelMoodPawnSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillEvent OnUseSkill;
     public event DelMoodPawnItemEvent OnUseItem;
+    public event DelMoodPawnDamageEvent OnPawnDeath;
     public event DelMoodPawnUndirectedSkillEvent OnEndSkill;
     public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
     
@@ -130,7 +133,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public bool cantMoveWhileThreatened = true;
     
     [Space()]
-    public float maxStamina;
+    [UnityEngine.Serialization.FormerlySerializedAs("_maxStamina")]
+    public MoodParameter<float> _maxStamina = 1;
     private float _stamina;
     public bool infiniteStamina;
     public bool recoverStaminaWhileUsingSkill;
@@ -230,8 +234,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             _lookAtControl = animator.GetComponent<LookAtIK>();
         }
+        _maxStamina.OnChange += OnChangeMaxStamina;
         
     }
+
 
     private void OnEnable()
     {
@@ -269,7 +275,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void Start()
     {
-        _stamina = maxStamina;
+        _stamina = _maxStamina;
         _currentDirection = Direction;
         OnChangeStamina?.Invoke(this);
     }
@@ -328,8 +334,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     protected virtual void OnDamage(DamageInfo info, Health health)
     {
-        Debug.LogFormat("{0} takes damage with info {1}.", name , info);
-        if (info.amount > 0 && pawnConfiguration != null) 
+        Debug.LogFormat("[PAWN] {0} takes damage with info {1}.", name , info);
+        if (info.damage > 0 && pawnConfiguration != null) 
             AddFlag(pawnConfiguration.onDamage);
         HandleDamageInfo(info, health);
     }
@@ -356,6 +362,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private void OnDeath(DamageInfo info, Health health)
     {
         Debug.LogFormat("{0} perished.", this);
+        OnAnyMoodPawnDie?.Invoke(this, info);
+        OnPawnDeath?.Invoke(this, info);
         if (toDestroyOnDeath != null) Destroy(toDestroyOnDeath);
     }
     #endregion
@@ -1453,7 +1461,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private void ChangeStamina(float change, StaminaChangeOrigin origin)
     {
         float oldStamina = _stamina;
-        _stamina = Mathf.Clamp(_stamina + change, 0f, maxStamina);
+        _stamina = Mathf.Clamp(_stamina + change, 0f, _maxStamina);
         if (oldStamina != _stamina)
         {
             OnChangeStamina?.Invoke(this);
@@ -1484,8 +1492,16 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public float GetMaxStamina()
     {
-        return maxStamina;
+        return _maxStamina;
     }
+
+    private void OnChangeMaxStamina(float before, float after)
+    {
+        //Debug.LogFormat("Change stamina yay {0} {1} {2}", before, after, this);
+        if (before != after) OnChangeStamina?.Invoke(this);
+    }
+
+
     #endregion
 
     #region Places
@@ -1521,14 +1537,17 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public bool IsSensing(GameObject threat)
     {
-        SensorTarget threatTarget = threat.GetComponentInParent<SensorTarget>();
-        if (threatTarget != null) return IsSensing(threatTarget);
-        MoodPawn pawn = threat.GetComponentInParent<IMoodPawnBelonger>()?.GetMoodPawnOwner();
-        if(pawn != null)
+        if(threat != null)
         {
-            return IsSensing(pawn);
+            SensorTarget threatTarget = threat.GetComponentInParent<SensorTarget>();
+            if (threatTarget != null) return IsSensing(threatTarget);
+            MoodPawn pawn = threat.GetComponentInParent<IMoodPawnBelonger>()?.GetMoodPawnOwner();
+            if (pawn != null)
+            {
+                return IsSensing(pawn);
+            }
         }
-        else return false;
+        return false;
     }
 
     public bool IsSensing(MoodPawn pawn)

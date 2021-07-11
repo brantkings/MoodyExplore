@@ -6,6 +6,7 @@ public class HealthFeedback : AddonBehaviour<Health>
 {
     public ScriptableEvent[] onDeath;
     public ScriptableEvent[] onDamage;
+    public ScriptableEvent[] onHeal;
 
     private void OnEnable()
     {
@@ -27,7 +28,17 @@ public class HealthFeedback : AddonBehaviour<Health>
 
     private void OnDamage(DamageInfo info, Health health)
     {
-        onDamage.Invoke(transform);
+        if(info.feedbacks)
+        {
+            if(info.damage < 0)
+            {
+                onHeal.Invoke(transform);
+            }
+            else
+            {
+                onDamage.Invoke(transform);
+            }
+        }
     }
 
     private void OnDeath(DamageInfo info, Health health)

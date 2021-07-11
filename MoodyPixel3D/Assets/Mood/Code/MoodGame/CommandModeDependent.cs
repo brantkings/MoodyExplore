@@ -6,6 +6,7 @@ using System.Linq;
 public class CommandModeDependent : MonoBehaviour
 {
     public GameObject[] objectToChange;
+    public LHH.Switchable.Switchable[] switchables;
     public MoodPlayerController.Mode[] modesToAppear = { MoodPlayerController.Mode.Command_Skill, MoodPlayerController.Mode.Command_Focus};
     //public TweenOnEnable tweens;
 
@@ -30,6 +31,7 @@ public class CommandModeDependent : MonoBehaviour
     {
         bool active = Corresponds(set);
         foreach (GameObject g in objectToChange) g.SetActive(active);
+        foreach (LHH.Switchable.Switchable s in switchables) s.Set(active);
     }
 
 

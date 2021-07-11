@@ -11,6 +11,7 @@ public class AttachItself : MonoBehaviour
     public bool cancelSelfRotation;
 
     public Vector3 localPosition;
+    public Vector3 localRotation;
 
     public bool attachOnStart;
 
@@ -33,6 +34,6 @@ public class AttachItself : MonoBehaviour
     public void Attach()
     {
         if(whereToAttach != null) whereToAttach.Attach(transform, part, localPosition);
-        if(cancelSelfRotation) this.transform.localRotation = Quaternion.identity;
+        if(cancelSelfRotation) this.transform.localRotation = Quaternion.Euler(localRotation);
     }
 }

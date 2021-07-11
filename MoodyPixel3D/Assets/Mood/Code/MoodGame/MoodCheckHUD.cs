@@ -53,7 +53,23 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     
     public interface ITalkAsset
     {
-        public List<string> GetDialogue();
+        public struct DialogueLine
+        {
+            public delegate void DelHappening();
+            public string line;
+            public int letterToDoEvent;
+            public DelHappening evt;
+
+            public void Dispose()
+            {
+                evt = null;
+            }
+
+        }
+
+        public int GetAmountOfLines();
+
+        public IEnumerable<DialogueLine> GetDialogue(Transform where);
         public float GetTimeBetweenChars();
     }
 
@@ -144,11 +160,11 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
         videoPlayer.gameObject.SetActive(false);
     }
     
-    public void ShowText(ITalkAsset asset)
+    public void ShowText(Transform origin, ITalkAsset asset)
     {
         text.text = string.Empty;
         SetTextVisible(true);
-        StartCoroutine(Write(asset));
+        StartCoroutine(Write(origin, asset));
     }
     
     public void HideText()
@@ -172,29 +188,34 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     }
 
 
-    private IEnumerator Write(ITalkAsset asset)
+    private IEnumerator Write(Transform where, ITalkAsset asset)
     {
         _skipNextText = false;
-        List<string> dialogue = asset.GetDialogue();
-        for(int i = 0, len = dialogue.Count;i<len;i++)
+        int i = 0, len = asset.GetAmountOfLines();
+        foreach(ITalkAsset.DialogueLine d in asset.GetDialogue(where))
         {
-            string str = dialogue[i];
-            yield return Write(str, asset.GetTimeBetweenChars(), i == (len - 1));
+            yield return Write(d.line, asset.GetTimeBetweenChars(), ++i == len, d.evt, d.letterToDoEvent);
+            d.Dispose();
         }
         
     }
 
-    private IEnumerator Write(string dialogue, float timeBetweenChars, bool lastDialogue)
+    private IEnumerator Write(string dialogue, float timeBetweenChars, bool lastDialogue, ITalkAsset.DialogueLine.DelHappening happen, int whenLetter)
     {
         OnPressNext += SkipText; //Careful with interruptions in text.
         string written = "";
         string toWrite = dialogue.Substring(0);
+        int letter = 0;
         while (toWrite.Length > 0)
         {
             char newC = toWrite[0];
             toWrite = toWrite.Substring(1);
             written += newC;
             Write(written, toWrite, "#ffffff");
+            if(letter++ == whenLetter)
+            {
+                happen?.Invoke();
+            }
             if (PassableChars.Contains(newC)) continue;
             if (!_skipNextText)
             {

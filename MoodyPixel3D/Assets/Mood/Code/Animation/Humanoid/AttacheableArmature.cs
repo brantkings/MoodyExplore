@@ -27,6 +27,7 @@ public class AttacheableArmature : MonoBehaviour
     private void Attach(Transform model, Transform part, Vector3 offset)
     {
         model.SetParent(part, true);
+        model.localRotation = Quaternion.identity;
         model.localPosition = offset;
     }
 

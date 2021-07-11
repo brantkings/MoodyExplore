@@ -92,6 +92,10 @@ PrefabInstance:
       value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: 2695979654220633308, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: _maxStamina.baseValue
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695979654220633308, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: staminaRecoveryMoving
       value: 1
       objectReference: {fileID: 0}
@@ -317,7 +321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.size
-      value: 0
+      value: 9677
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.fieldNameHash.Array.size
@@ -8577,7 +8581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[301]
-      value: 192
+      value: 224
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[302]
@@ -21533,7 +21537,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[4130]
-      value: 192
+      value: 224
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[4131]
@@ -31601,7 +31605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[7269]
-      value: 192
+      value: 224
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[7270]
@@ -33868,6 +33872,18 @@ PrefabInstance:
       value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[7961]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[7962]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[7963]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[7964]
       value: 77
       objectReference: {fileID: 0}
@@ -34054,6 +34070,18 @@ PrefabInstance:
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8010]
       value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8011]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8012]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8013]
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8014]
@@ -34284,6 +34312,26 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8078]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8079]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8080]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8081]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8082]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8083]
       value: 66
       objectReference: {fileID: 0}
@@ -34422,6 +34470,10 @@ PrefabInstance:
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8117]
       value: 108
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8118]
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8119]
@@ -34860,6 +34912,18 @@ PrefabInstance:
       value: 58
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8228]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8229]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8230]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8231]
       value: 83
       objectReference: {fileID: 0}
@@ -35008,8 +35072,76 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8269]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8270]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8271]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8272]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8273]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8274]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8275]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8276]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8277]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8278]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8279]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8280]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8281]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8282]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8283]
       value: 59
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8284]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8285]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8286]
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8287]
@@ -35068,6 +35200,14 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8301]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8302]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8303]
       value: 199
       objectReference: {fileID: 0}
@@ -35094,6 +35234,46 @@ PrefabInstance:
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8309]
       value: 67
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8310]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8311]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8312]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8313]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8314]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8315]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8316]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8317]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8318]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8319]
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8320]
@@ -35274,6 +35454,18 @@ PrefabInstance:
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8364]
       value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8365]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8366]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
+      propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8367]
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4825940105124312491, guid: 2f6c8e57568c1e2409711f8b6fb32966, type: 3}
       propertyPath: mBehaviorSource.mTaskData.fieldSerializationData.byteDataArray.Array.data[8368]

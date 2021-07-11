@@ -1,16 +1,21 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "LongHatHouse/GrayscaleUnlit"
 {
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
-        _ShadowColor("ShadowColor", Color) = (0,0,1,1)
-        _ShadowIntensity("ShadowIntensity", Float) = 0.1
+        _ShadowColor("Shadow Color", Color) = (0,0,1,1)
+        _ShadowIntensity("Shadow Intensity", Float) = 0.1
+        _BorderColor("Border Color", Color) = (0,0,0,1)
+        _BorderThickness("Border Thickness", Float) = 0
     }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
         LOD 200
+
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
@@ -63,6 +68,13 @@ Shader "LongHatHouse/GrayscaleUnlit"
             o.Alpha = c.a;
         }
         
+        ENDCG
+
+        
+        Cull Front
+        CGPROGRAM
+        #include "SurfaceBorder.cginc"
+        #pragma surface borderSurf Lambert vertex:borderVert
         ENDCG
         
     }

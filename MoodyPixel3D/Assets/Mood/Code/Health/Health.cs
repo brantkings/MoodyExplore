@@ -15,7 +15,7 @@ public struct DamageInfo
 {
     public const int BASE_SINGLE_UNIT_DAMAGE = 10;
 
-    public int amount;
+    public int damage;
     public DamageTeam team;
     public GameObject origin;
 
@@ -28,11 +28,13 @@ public struct DamageInfo
     public bool shouldStaggerAnimation;
     public bool ignorePhaseThrough;
 
+    public bool feedbacks;
+
     public float stunTime;
 
     public DamageInfo(int damage = 0, DamageTeam damageTeam = DamageTeam.Neutral, GameObject damageOrigin = null)
     {
-        amount = damage;
+        this.damage = damage;
         team = damageTeam;
         origin = damageOrigin;
         attackDirection = Vector3.zero;
@@ -42,6 +44,7 @@ public struct DamageInfo
         unreactable = false;
         ignorePhaseThrough = false;
         shouldStaggerAnimation = true;
+        feedbacks = true;
         stunTime = 0f;
     }
 
@@ -95,11 +98,17 @@ public struct DamageInfo
         return this;
     }
 
+    public DamageInfo SetFeedback(bool set)
+    {
+        feedbacks = set;
+        return this;
+    }
+
 
 
     public override string ToString()
     {
-        return string.Format("[{0} damage with '{1}' by '{2}']", amount, team, origin);
+        return string.Format("[{0} damage with '{1}' by '{2}']", damage, team, origin);
     }
 }
 
@@ -133,13 +142,15 @@ public class Health : MonoBehaviour {
 
     public GameObject toDestroy;
 
-    public delegate void DelHealthFeedback(DamageInfo damage, Health damaged);
+    public delegate void DelHealthFeedback(Health health);
+    public delegate void DelHealthDamageFeedback(DamageInfo damage, Health damaged);
     public delegate void DelHealthModifier(ref DamageInfo damage, Health damaged);
     public event DelHealthModifier OnBeforeDamage;
-    public event DelHealthFeedback OnDamage;
-    public event DelHealthFeedback OnDeath;
+    public event DelHealthDamageFeedback OnDamage;
+    public event DelHealthDamageFeedback OnDeath;
+    public event DelHealthFeedback OnMaxHealthChange;
 
-    public int MaxLife
+    public virtual int MaxLife
     {
         get
         {
@@ -147,7 +158,7 @@ public class Health : MonoBehaviour {
         }
     }
 
-    public int Life
+    public virtual int Life
     {
         get
         {
@@ -159,7 +170,7 @@ public class Health : MonoBehaviour {
     {
         get
         {
-            return (float)_lifeNow / _maxLife;
+            return (float)Life / MaxLife;
         }
     }
 
@@ -179,40 +190,65 @@ public class Health : MonoBehaviour {
         }
     }
 
-    private void Start()
+    protected virtual void Start()
     {
-        _lifeNow = _maxLife;
+        _lifeNow = MaxLife;
     }
 
     public bool IsAlive()
     {
-        return _lifeNow > 0;
+        return Life > 0;
+    }
+
+    protected virtual void CallMaxHealthChange()
+    {
+        OnMaxHealthChange?.Invoke(this);
+    }
+
+    public static DamageInfo MakeSimpleDamage(int amount, GameObject origin = null, bool unreactable = true, bool ignorePhaseThrough = true, bool feedbacks = true)
+    {
+        return new DamageInfo()
+        {
+            damage = amount,
+            stunTime = 0f,
+            team = DamageTeam.Neutral,
+            unreactable = unreactable,
+            origin = origin,
+            ignorePhaseThrough = ignorePhaseThrough,
+            feedbacks = feedbacks
+        };
     }
 
     public virtual DamageResult Damage(DamageInfo info)
     {
-        Debug.LogFormat("[DAMAGE] Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info), _lifeNow, PhasingThroughAttacks, Invulnerable);
+        Debug.LogFormat("[DAMAGE] Damage {0} with {1}. Can damage? {2}. Life now is {3} (pha:{4} inv:{5})", this, info, CanDamage(info), Life, PhasingThroughAttacks, Invulnerable);
         if (CanDamage(info))
         {
             if (Invulnerable) return DamageResult.NotDamagingHit;
 
             OnBeforeDamage?.Invoke(ref info, this);
-            int lifeBefore = _lifeNow;
-            _lifeNow = Mathf.Clamp(_lifeNow - info.amount, 0, _maxLife);
+            int lifeBefore = Life;
+            _lifeNow = Mathf.Clamp(Life - info.damage, 0, MaxLife);
             //Debug.LogErrorFormat("{0} is dead? {1} <= 0 so {2}", this, _lifeNow, _lifeNow <= 0);
             OnDamage?.Invoke(info, this);
-            if (_lifeNow <= 0)
+            if (Life <= 0)
             {
                 Die(info);
                 return DamageResult.KillingHit;
             }
 
-            if (_lifeNow > lifeBefore) return DamageResult.HealHit;
-            else if (_lifeNow < lifeBefore) return DamageResult.DamagingHit;
-            else return DamageResult.NotDamagingHit;
+            Debug.LogFormat("[DAMAGE] Now {0} is {1}/{2}", name, Life, MaxLife);
+            return GetResult(Life, lifeBefore);
 
         }
         return DamageResult.Nothing;
+    }
+
+    private DamageResult GetResult(int lifeNow, int lifeBefore)
+    {
+        if (lifeNow > lifeBefore) return DamageResult.HealHit;
+        else if (lifeNow < lifeBefore) return DamageResult.DamagingHit;
+        else return DamageResult.NotDamagingHit;
     }
 
     public static bool IsDamage(DamageResult result)
@@ -222,7 +258,7 @@ public class Health : MonoBehaviour {
 
     public void Kill(DamageTeam team = DamageTeam.Neutral, GameObject origin = null)
     {
-        Damage(new DamageInfo(_maxLife, team, origin));
+        Damage(new DamageInfo(MaxLife, team, origin));
     }
 
     protected bool CanDamage(DamageInfo info)

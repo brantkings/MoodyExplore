@@ -9,6 +9,9 @@ Shader "Long Hat House/Pixel Art/Emissive True Color"
         _Emissive ("Emissive Color", Range(0,1)) = 0.0
         _EmissiveTrue ("Emissive True Color", Range(0,1)) = 0.0
         _EmissiveTrueExtraRadius ("True Color Vertex Border", Float) = 0.0
+        [Space]
+        _BorderColor("Border Color", Color) = (0,0,0,1)
+        _BorderThickness("Border Thickness", Float) = 0
     }
     SubShader
     {
@@ -55,6 +58,12 @@ Shader "Long Hat House/Pixel Art/Emissive True Color"
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
         }
+        ENDCG
+
+        Cull Front
+        CGPROGRAM
+        #include "../../LHH/Shaders/SurfaceBorder.cginc"
+        #pragma surface borderSurf Lambert vertex:borderVert
         ENDCG
     }
     FallBack "Diffuse"

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3b0c6c59037fb64ba664b01b30c4358, type: 3}
+  m_Name: Thought_Everything Smells like
+  m_EditorClassIdentifier: 
+  thoughtPhrase: Everything smells like hand sanitizer
+  description: Remove your stamina if not dealed with. Increases your max stamina
+    afterwards.
+  thoughtIcon: {fileID: 21300000, guid: 4e539afaae83a6743849949fba7dc6f8, type: 3}
+  thoughtIconColor: {r: 1, g: 0.36320752, b: 0.7071237, a: 1}
+  thoughtPhraseColor: {r: 1, g: 0.3647059, b: 0.7058824, a: 1}
+  focusablePrefab: {fileID: 1545226270074874435, guid: 932222e3e6abe7f4caee9421e8ec81db, type: 3}
+  consumedWhenExperienced: 1
+  experienceNeeded: 3
+  onUnfocused:
+  - {fileID: 11400000, guid: b408d21bf352b754a965e5fe1cd92363, type: 2}
+  onActivated: []
+  onExperienceComplete:
+  - {fileID: 11400000, guid: 7a609f6ac602cee49bf203b681263705, type: 2}
+  onExperienceCompleteEquip: []

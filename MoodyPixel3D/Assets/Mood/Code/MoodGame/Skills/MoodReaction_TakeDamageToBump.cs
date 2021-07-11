@@ -26,7 +26,7 @@ public class MoodReaction_TakeDamageToBump : MoodReaction, IMoodReaction<Reactio
     {
         DamageInfo dmgInfo = new DamageInfo()
         {
-            amount = damage,
+            damage = damage,
             attackDirection = Vector3.zero,
             shouldStaggerAnimation = stagger,
             origin = pawn.gameObject,

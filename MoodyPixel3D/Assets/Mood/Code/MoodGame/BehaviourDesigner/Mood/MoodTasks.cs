@@ -506,7 +506,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
 
         private void OnDamage(DamageInfo damage, Health damaged)
         {
-            if (!outDamage.IsNone) outDamage.Value = damage.amount;
+            if (!outDamage.IsNone) outDamage.Value = damage.damage;
             if (!outHitKnockback.IsNone) outHitKnockback.Value = damage.distanceKnockback;
             if (!outHitDuration.IsNone) outHitDuration.Value = damage.durationKnockback;
             this.damaged = true;
