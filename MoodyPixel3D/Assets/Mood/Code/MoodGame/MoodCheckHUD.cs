@@ -86,6 +86,9 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     public GameObject pressNextObject;
     public GameObject textBG;
 
+    private IVideoAsset _currentVideo;
+    private ITalkAsset _currentTalk;
+
     private void Start()
     {
         HideAll();
@@ -148,6 +151,7 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     public void ShowVideo(IVideoAsset asset)
     {
         SetVideoBGVisible(true);
+        _currentVideo = asset;
         videoPlayer.clip = asset.GetClip();
         videoPlayer.Play();
         videoPlayer.gameObject.SetActive(true);
@@ -156,13 +160,20 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     public void HideVideo()
     {
         SetVideoBGVisible(false);
+        _currentVideo = null;
         videoPlayer.Stop();
         videoPlayer.gameObject.SetActive(false);
+    }
+
+    public bool IsShowingVideo(IVideoAsset asset)
+    {
+        return _currentVideo == asset;
     }
     
     public void ShowText(Transform origin, ITalkAsset asset)
     {
         text.text = string.Empty;
+        _currentTalk = asset;
         SetTextVisible(true);
         StartCoroutine(Write(origin, asset));
     }
@@ -170,8 +181,14 @@ public class MoodCheckHUD : Singleton<MoodCheckHUD>
     public void HideText()
     {
         StopAllCoroutines();
+        _currentTalk = null;
         OnPressNext -= SkipText;
         SetTextVisible(false);
+    }
+
+    public bool IsShowingText(ITalkAsset asset)
+    {
+        return _currentTalk == asset;
     }
     
     public void ShowImage(IImageAsset asset)

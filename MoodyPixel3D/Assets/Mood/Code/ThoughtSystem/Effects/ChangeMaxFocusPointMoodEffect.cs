@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "Mood/Effect/Max Focus", fileName = "Effect_FocusChange_")]
 public class ChangeMaxFocusPointMoodEffect : MoodPawnEffect<ChangeMaxFocusPointMoodEffect.Status>
 {
+
+    public int amountAdd = 1;
 
     public struct Status
     {
@@ -18,6 +21,23 @@ public class ChangeMaxFocusPointMoodEffect : MoodPawnEffect<ChangeMaxFocusPointM
         };
     }
 
+    private void Change(ThoughtSystemController system, int amount)
+    {
+        while(amount != 0)
+        {
+            if(amount > 0)
+            {
+                amount--;
+                system.CreateFocusPoint();
+            }
+            else if (amount < 0)
+            {
+                amount++;
+                system.RemoveFocusPoint();
+            }
+        }
+    }
+
     protected override void UpdateStatusAdd(MoodPawn p, ref Status? status)
     {
         if (status.HasValue)
@@ -29,7 +49,7 @@ public class ChangeMaxFocusPointMoodEffect : MoodPawnEffect<ChangeMaxFocusPointM
             s.amountAdded++;
             status = s;
 
-            system.CreateFocusPoint();
+            Change(system, amountAdd);
         }
     }
 
@@ -53,7 +73,7 @@ public class ChangeMaxFocusPointMoodEffect : MoodPawnEffect<ChangeMaxFocusPointM
                     status = null;
                 }
 
-                system.RemoveFocusPoint();
+                Change(system, -amountAdd);
             }
         }
     }

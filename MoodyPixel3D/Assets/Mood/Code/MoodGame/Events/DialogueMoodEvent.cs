@@ -19,11 +19,25 @@ namespace Code.MoodGame.Events
             }
         }
 
+        [System.Serializable]
+        public class WhatHappenFT
+        {
+            public int line;
+            public FlyingThoughtInstance toAdd;
+
+            public override string ToString()
+            {
+                return $"Line {line} - {toAdd}";
+            }
+        }
+
+        [TextArea]
         public List<string> dialogue;
         public List<WhatHappen> toHappen;
         [Tooltip("Leave destination as null")]
+        public List<WhatHappenFT> flyingThoughtsDuring;
         public List<FlyingThoughtInstance> flyingThoughtsAfter;
-    
+
         protected override void Effect(Transform where)
         {
             MoodCheckHUD.Instance.ShowText(where, this);
@@ -49,6 +63,7 @@ namespace Code.MoodGame.Events
                 //Make the happening if something will occur
                 MoodCheckHUD.ITalkAsset.DialogueLine.DelHappening happening = null;
                 WhatHappen evt = toHappen?.FirstOrDefault((x) => x.line == i);
+                WhatHappenFT evtFT = flyingThoughtsDuring?.FirstOrDefault((x) => x.line == i);
                 //Debug.LogFormat("Dialogue {0}/{1} has line {2} and event {3}", i, len, dialogue[i], evt);
                 if (evt != null)
                 {
@@ -57,6 +72,16 @@ namespace Code.MoodGame.Events
                         happening = () =>
                         {
                             thoughtSystem.AddThought(evt.toAdd, player.Pawn);
+                        };
+                    }
+                }
+                if(evtFT != null)
+                {
+                    if (thoughtSystem != null)
+                    {
+                        happening = () =>
+                        {
+                            evtFT.toAdd.Do(origin, player.Pawn.ObjectTransform);
                         };
                     }
                 }
@@ -79,6 +104,14 @@ namespace Code.MoodGame.Events
         public int GetAmountOfLines()
         {
             return dialogue.Count;
+        }
+
+        public override void SetInteracting(bool set)
+        {
+            if (!set && MoodCheckHUD.Instance.IsShowingText(this))
+            {
+                MoodCheckHUD.Instance.HideText();
+            }
         }
     }
 }

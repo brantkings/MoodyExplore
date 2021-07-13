@@ -18,5 +18,13 @@ namespace Code.MoodGame.Events
         {
             return clip;
         }
+
+        public override void SetInteracting(bool set)
+        {
+            if(!set && MoodCheckHUD.Instance.IsShowingVideo(this))
+            {
+                MoodCheckHUD.Instance.HideVideo();
+            }
+        }
     }
 }

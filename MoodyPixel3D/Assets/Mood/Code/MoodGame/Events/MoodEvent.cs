@@ -7,6 +7,8 @@ public abstract class MoodEvent : ScriptableObject
     public delegate void DelMoodEvent(Transform where);
 
     public event DelMoodEvent OnExecute;
+
+    public abstract void SetInteracting(bool set);
     
     public virtual void Execute(Transform where)
     {

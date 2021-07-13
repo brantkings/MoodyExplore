@@ -109,7 +109,8 @@ public class OutlineMaterialFeedback : MonoBehaviour
     private Color CalculateColor(Color main, Gradient grad, float gradX)
     {
         Color gradColor = grad.Evaluate(gradX);
-        return Color.Lerp(main, gradColor, gradColor.a);
+        return main + gradColor * gradColor.a;
+        //return Color.Lerp(main, gradColor, gradColor.a);
     }
 
 

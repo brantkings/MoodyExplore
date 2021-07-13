@@ -10,19 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3b0c6c59037fb64ba664b01b30c4358, type: 3}
-  m_Name: Thought_You can do this
+  m_Name: Thought_Violence Rampant
   m_EditorClassIdentifier: 
-  thoughtPhrase: You can do this!
-  description: What your father told you. Focusing on this will increase your HP
-    and letting it conclude will increase it even further.
+  thoughtPhrase: Someone could jump on you
+  description: Violence is around. This is just toxic to you, and it will make you
+    more fragile until you get over it.
   thoughtIcon: {fileID: 21300000, guid: 4e539afaae83a6743849949fba7dc6f8, type: 3}
-  thoughtIconColor: {r: 0, g: 0.8000001, b: 1, a: 1}
-  thoughtPhraseColor: {r: 0, g: 0.80392164, b: 1, a: 1}
+  thoughtIconColor: {r: 1, g: 0.36320752, b: 0.7071237, a: 1}
+  thoughtPhraseColor: {r: 1, g: 0.3647059, b: 0.7058824, a: 1}
   focusablePrefab: {fileID: 1545226270074874435, guid: 932222e3e6abe7f4caee9421e8ec81db, type: 3}
   consumedWhenExperienced: 1
-  experienceNeeded: 5
-  onUnfocused: []
-  onActivated: []
-  onExperienceComplete:
-  - {fileID: 11400000, guid: 3259176f03d72714f98741325dbb4b56, type: 2}
+  experienceNeeded: 8
+  onUnfocused:
+  - {fileID: 11400000, guid: 03b33be34a9a4ad49b82e6c232cad217, type: 2}
+  onActivated:
+  - {fileID: 11400000, guid: 03b33be34a9a4ad49b82e6c232cad217, type: 2}
+  onExperienceComplete: []
   onExperienceCompleteEquip: []

@@ -36,5 +36,21 @@ public class MoodEventInteractable : MoodInteractable
 
         feedback.Invoke(FeedbackTransform);
     }
-    
+
+    private void OnTriggerEnter(Collider other)
+    {
+        foreach (var evt in whatHappen)
+        {
+            evt.SetInteracting(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        foreach (var evt in whatHappen)
+        {
+            evt.SetInteracting(false);
+        }
+    }
+
 }

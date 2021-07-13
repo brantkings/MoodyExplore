@@ -16,7 +16,7 @@ public struct FlyingThoughtInstance
 
     public void Do(Transform origin, Transform destination)
     {
-        flyingThought.InvokeReturnExtraParameter(origin, data.SetDestination(destination));
+        flyingThought.InvokeReturnExtraParameter(origin, data.GetCopy().SetDestination(destination));
     }
 }
 
@@ -28,6 +28,16 @@ public class FlyingThought : ScriptableEvent<Rigidbody, FlyingThought.FlyingThou
     {
         public Transform destination;
         public Thought thought;
+
+        public FlyingThoughtData GetCopy()
+        {
+            return new FlyingThoughtData()
+            {
+                destination = destination,
+                thought = thought
+            };
+
+        }
 
         public FlyingThoughtData SetDestination(Transform d)
         {
