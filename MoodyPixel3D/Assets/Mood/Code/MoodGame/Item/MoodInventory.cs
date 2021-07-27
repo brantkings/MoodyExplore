@@ -131,7 +131,11 @@ public class MoodInventory : MonoBehaviour
         }
 
         item.SetEquipped(Pawn, true);
-        if(feedbacks) DispatchInventoryChanged();
+        if (feedbacks)
+        {
+            BattleLog.Log($"{Pawn.GetName()} equips '{BattleLog.Paint(item.GetName(), BattleLog.Instance.itemColor)}'.", BattleLog.LogType.Item);
+            DispatchInventoryChanged();
+        }
         return true;
     }
 
@@ -144,11 +148,16 @@ public class MoodInventory : MonoBehaviour
     {
         if (equippedItems != null)
         {
+            EquippableMoodItem item = equippedItems[category];
             equippedItems[category]?.SetEquipped(Pawn, false);
 
             if (equippedItems.Remove(category))
             {
-                if(feedbacks) DispatchInventoryChanged();
+                if (feedbacks)
+                {
+                    BattleLog.Log($"{Pawn.GetName()} removes '{BattleLog.Paint(item.GetName(), BattleLog.Instance.itemColor)}'.", BattleLog.LogType.Item);
+                    DispatchInventoryChanged();
+                }
                 return true;
             }
 
@@ -160,7 +169,9 @@ public class MoodInventory : MonoBehaviour
     {
         if (categoryLessItems == null) categoryLessItems = new Dictionary<ConsumableMoodItem, int>(CATEGORY_LESS_ITEMS_NUMBER);
 
-        if(categoryLessItems.ContainsKey(item))
+
+        if(feedbacks) BattleLog.Log($"{Pawn.GetName()} obtained '{BattleLog.Paint(item.GetName(), BattleLog.Instance.itemColor)}'.", BattleLog.LogType.Item);
+        if (categoryLessItems.ContainsKey(item))
         {
             categoryLessItems[item] = categoryLessItems[item] + 1;
             return true;
@@ -181,7 +192,11 @@ public class MoodInventory : MonoBehaviour
             if(categoryLessItems[item] > 0)
             {
                 categoryLessItems[item] = categoryLessItems[item] - 1;
-                if(feedbacks) DispatchInventoryChanged();
+                if (feedbacks)
+                {
+                    BattleLog.Log($"{Pawn.GetName()} consumed '{BattleLog.Paint(item.GetName(), BattleLog.Instance.itemColor)}'.", BattleLog.LogType.Item);
+                    DispatchInventoryChanged();
+                }
                 return true;
             }
         }

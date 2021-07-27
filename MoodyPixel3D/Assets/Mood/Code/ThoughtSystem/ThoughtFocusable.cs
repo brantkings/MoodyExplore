@@ -24,7 +24,7 @@ public class ThoughtFocusable : MonoBehaviour
         this.thought = t;
         foreach(Text txt in thoughtText)
         { 
-            txt.text = $"\"{t.thoughtPhrase}\"";
+            txt.text = $"\"{t.GetName()}\"";
             txt.color = t.thoughtPhraseColor;
         }
         foreach (Image i in thoughtIcon)
@@ -47,7 +47,7 @@ public class ThoughtFocusable : MonoBehaviour
 
     public bool IsFocused()
     {
-        return focusedSwitchable != null? focusedSwitchable.IsOn() : false;
+        return focusedSwitchable != null && focusedSwitchable.IsOn().HasValue? focusedSwitchable.IsOn().Value : false;
     }
 
     public void SetFocused(bool set, MoodPawn pawn)

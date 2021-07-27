@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca8aa405edc4db042a0035213c4dc23d, type: 3}
   m_Name: Item_E_Spear
   m_EditorClassIdentifier: 
+  _itemName: Pipe Spear
+  _itemDescription: 
   pickupPrefab: {fileID: 4693325823449663037, guid: 2c15b69c46883a64cacbeceb3e1e29eb, type: 3}
   category: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
   skillsToGrant:

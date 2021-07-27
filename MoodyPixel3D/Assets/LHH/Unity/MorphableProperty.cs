@@ -10,6 +10,11 @@ namespace LHH.Unity
     public abstract class ScriptableValue<T> : ScriptableObject, IPropertyValueGetter<T>
     {
         public abstract T Get();
+
+        public static implicit operator T(ScriptableValue<T> v)
+        {
+            return v.Get();
+        }
     }
 
     public class ScriptableDirectValue<T> : ScriptableValue<T>

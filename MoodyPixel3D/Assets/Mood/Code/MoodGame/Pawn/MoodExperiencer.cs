@@ -23,6 +23,7 @@ public class MoodExperiencer : MonoBehaviour
 
     internal void GetXP(MoodExperienceGiver origin, int amountXP)
     {
+        BattleLog.Log($"{_pawn.GetName()} gets {BattleLog.Paint($"{amountXP.ToString()} points of experience", BattleLog.Instance.thoughtColor)}.", BattleLog.LogType.ThoughtSystem);
         OnExperienceChange?.Invoke(amountXP);
     }
 

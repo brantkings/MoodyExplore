@@ -4,7 +4,10 @@ using UnityEngine;
 
 public abstract class MoodItem : ScriptableObject
 {
+    [SerializeField]
     private string _itemName;
+    [SerializeField]
+    [TextArea]
     private string _itemDescription;
 
     [SerializeField]

@@ -6,7 +6,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Mood/Thought System/Thought", fileName = "Thought_")]
 public class Thought : ScriptableObject
 {
-    public string thoughtPhrase;
+    [SerializeField]
+    private string thoughtPhrase;
     [TextArea]
     public string description;
     public Sprite thoughtIcon;
@@ -88,6 +89,11 @@ public class Thought : ScriptableObject
     public virtual ThoughtFocusable GetThoughtFocusablePrefab()
     {
         return focusablePrefab;
+    }
+
+    public string GetName()
+    {
+        return thoughtPhrase;
     }
 
     public string GetDescription()

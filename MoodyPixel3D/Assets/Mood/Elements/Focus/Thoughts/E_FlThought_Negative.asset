@@ -18,7 +18,7 @@ MonoBehaviour:
   initialVelocity: 20
   feedbackData:
     caughtDistance: 1
-    forceAttractionBegin: 1
+    forceAttractionBegin: -5
     forceAttractionEnd: 300
     forceAttractionYMultiplier: 0.05
     durationForce: 10

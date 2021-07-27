@@ -202,7 +202,13 @@ namespace Code.MoodGame.Skills
                 //Debug.LogFormat("Result is {0}", result.collider);
                 if (result.collider != null)
                 {
+                    if(!hit)
+                    {
+                        BattleLog.Log($"{pawn.GetName()} hits with '{GetName()}'!", BattleLog.LogType.Battle);
+                    }
+
                     hit = true;
+                    
 
                     Debug.LogWarningFormat("Attack {0} found collider {1} from '{2}'", name, result.collider.name, result.collider.GetComponentInParent<MoodPawn>()?.name);
                     Health enemyHealth = result.collider.GetComponentInParent<Health>();
@@ -234,6 +240,7 @@ namespace Code.MoodGame.Skills
 
                 }
             }
+            if(!hit) BattleLog.Log($"{pawn.GetName()} whiffs!", BattleLog.LogType.Battle);
             return hit;
         }
 

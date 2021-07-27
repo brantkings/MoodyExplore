@@ -120,6 +120,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         PositionThoughtList(GetList(where), GetThoughtListAngle(where));
         t.AddThoughtInMind(p, this);
         if(outlineFeedbackData.HasValue) outlineFeedback?.DoFeedback(outlineFeedbackData.Value);
+        BattleLog.Log(BattleLog.Paint($"{p.GetName()} is thinking about '{BattleLog.Paint(t.GetName(), BattleLog.Instance.importantColor)}'.", BattleLog.Instance.thoughtColor), BattleLog.LogType.ThoughtSystem);
         RecaptureBoardObjects();
     }
 
@@ -128,6 +129,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         List<ThoughtFocusable> list = GetList(where);
         ThoughtFocusable toDestroy = list.Find((x) => x.GetThought() == t);
         if (outlineFeedbackData.HasValue) outlineFeedback?.DoFeedback(outlineFeedbackData.Value);
+        BattleLog.Log(BattleLog.Paint($"{p.GetName()} is not thinking about '{BattleLog.Paint(t.GetName(), BattleLog.Instance.importantColor)}' anymore.", BattleLog.Instance.thoughtColor), BattleLog.LogType.ThoughtSystem);
         RemoveThought(t, p, toDestroy, list, where);
     }
 

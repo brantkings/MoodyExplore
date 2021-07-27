@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LHH.Switchable
 {
-    public class SwitchableCanvasGroup : SwitchableEffect
+    public class SwitchableCanvasGroup : SwitchableAddon
     {
         [SerializeField]
         CanvasGroup[] sideOn;
@@ -25,6 +25,7 @@ namespace LHH.Switchable
 
         public IEnumerator TurnRoutine(bool on, float duration)
         {
+            //Debug.LogFormat(this, "Hey {0} am turning {1} with duration {2}", this, on, duration);
             float timeCount = 0f;
             float alphaMidValue = 0f;
             while (timeCount < duration)
@@ -44,6 +45,7 @@ namespace LHH.Switchable
             {
                 c.alpha = GetAlphaValue(alphaMidValue, minAlpha, maxAlpha);
                 if (deactivateAfter) c.gameObject.SetActive(on);
+                //Debug.LogFormat(this, "Setting {0} alpha as {1}", c, GetAlphaValue(alphaMidValue, minAlpha, maxAlpha));
             }
             foreach (CanvasGroup c in sideOff)
             {
@@ -70,10 +72,14 @@ namespace LHH.Switchable
             else yield return new WaitForSeconds(time);
         }
 
-        protected override void Effect(bool on)
+        public override IEnumerator SwitchSet(bool on, ISwitchableAddon.DelSwitchableAddonEvent onFinish = null)
         {
-            StopAllCoroutines();
-            StartCoroutine(TurnRoutine(on, defaultDuration));
+            yield return TurnRoutine(on, defaultDuration);
+        }
+
+        public override void SwitchSetImmediate(bool on)
+        {
+            StartCoroutine(TurnRoutine(on, 0f));
         }
     }
 }

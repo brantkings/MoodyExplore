@@ -54,7 +54,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public event DelMoodPawnDamageEvent OnPawnDeath;
     public event DelMoodPawnUndirectedSkillEvent OnEndSkill;
     public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
-    
+
+    public string pawnNameOverrided = "Being";
+    public LHH.Unity.StringValue pawnName;
     public KinematicPlatformer mover;
     public Animator animator;
     private LookAtIK _lookAtControl;
@@ -305,6 +307,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         ThreatFixedUpdate(_threatDirection);
     }
 
+    #region Identification
+    public string GetName()
+    {
+        if (pawnName != null) return pawnName;
+        else return pawnNameOverrided;
+    }
+    #endregion
+
     #region Feedback
 
     public void PrepareForSwing(MoodSwing.MoodSwingBuildData swing, Vector3 direction)
@@ -335,6 +345,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     protected virtual void OnDamage(DamageInfo info, Health health)
     {
         Debug.LogFormat("[PAWN] {0} takes damage with info {1}.", name , info);
+        BattleLog.Log($"{GetName()} takes {BattleLog.Paint($"{Mathf.FloorToInt(info.damage / 10)} damage", BattleLog.Instance.importantColor)}!", BattleLog.LogType.Battle);
         if (info.damage > 0 && pawnConfiguration != null) 
             AddFlag(pawnConfiguration.onDamage);
         HandleDamageInfo(info, health);
@@ -362,6 +373,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private void OnDeath(DamageInfo info, Health health)
     {
         Debug.LogFormat("{0} perished.", this);
+        BattleLog.Log($"{GetName()} perished.", BattleLog.LogType.Battle);
         OnAnyMoodPawnDie?.Invoke(this, info);
         OnPawnDeath?.Invoke(this, info);
         if (toDestroyOnDeath != null) Destroy(toDestroyOnDeath);
@@ -409,6 +421,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         MarkUsingSkill(skill, skillDirection);
         if(pawnConfiguration?.stanceOnSkill != null) AddStance(pawnConfiguration.stanceOnSkill);
+        BattleLog.Log($"{GetName()} readies '{skill.GetName()}'.", BattleLog.LogType.Battle);
         yield return skill.ExecuteRoutine(this, skillDirection);
         if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
         _currentSkillRoutine = null;
@@ -420,6 +433,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(_currentSkill != null)
         {
             Debug.LogFormat("{0} gonna interrupt current skill {1}", this.name, _currentSkill?.name);
+            BattleLog.Log($"{GetName()} was interrupted!", BattleLog.LogType.Battle);
             InterruptSkill(_currentSkill);
         }
     }
