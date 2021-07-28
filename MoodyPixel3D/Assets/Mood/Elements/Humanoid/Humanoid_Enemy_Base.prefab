@@ -125,6 +125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99061cbf3ff46a441a6b0077fd9d74f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pawnNameOverrided: Being
+  pawnName: {fileID: 0}
   mover: {fileID: 6543790190532030750}
   animator: {fileID: 4745266871561790116}
   _health: {fileID: 3753761908181155500}
@@ -149,7 +151,8 @@ MonoBehaviour:
   pawnRadius: 0.5
   extraRangeBase: 0
   cantMoveWhileThreatened: 1
-  maxStamina: 1
+  _maxStamina:
+    baseValue: 1
   infiniteStamina: 0
   recoverStaminaWhileUsingSkill: 0
   staminaRecoveryIdlePerSecond:
@@ -207,9 +210,9 @@ MonoBehaviour:
     onStartedBeingSensed:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2716376964094504017}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
+        - m_Target: {fileID: 6426466221052614200}
+          m_TargetAssemblyTypeName: LHH.Switchable.Switchable, LHH
+          m_MethodName: Set
           m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -222,9 +225,9 @@ MonoBehaviour:
     onStoppedBeingSensed:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2716376964094504017}
-          m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_MethodName: SetActive
+        - m_Target: {fileID: 6426466221052614200}
+          m_TargetAssemblyTypeName: LHH.Switchable.Switchable, LHH
+          m_MethodName: Set
           m_Mode: 6
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -825,6 +828,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4406220225232928530, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
+      propertyPath: switchableDebug
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5628018950249261875, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
       propertyPath: m_Name
       value: PawnCanvasBase
@@ -972,11 +979,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2805302739734864935, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
   m_PrefabInstance: {fileID: 7208412567054919978}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2716376964094504017 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4736642754353628539, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
+--- !u!114 &6426466221052614200 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4406220225232928530, guid: cfbb591b91dff77419120e6fd7d876eb, type: 3}
   m_PrefabInstance: {fileID: 7208412567054919978}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c6a2bab0ccd8f0458504a37e5846a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8360482217406696911
 PrefabInstance:
   m_ObjectHideFlags: 0

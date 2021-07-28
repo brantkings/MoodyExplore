@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Skill_EN_Fake_NotPerceivedSkill
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: ?????
+  _name: ????
+  _description: 
+  _category: {fileID: 0}
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.8160377, b: 0.8160377, a: 1}
     _getter: {fileID: 0}

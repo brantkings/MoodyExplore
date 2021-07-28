@@ -72,7 +72,7 @@ namespace LHH.Switchable
             else yield return new WaitForSeconds(time);
         }
 
-        public override IEnumerator SwitchSet(bool on, ISwitchableAddon.DelSwitchableAddonEvent onFinish = null)
+        public override IEnumerator SwitchSet(bool on)
         {
             yield return TurnRoutine(on, defaultDuration);
         }

@@ -479,10 +479,10 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         if (state != null)
         {
             experience = state.experienceCount;
-        }
-        if(clear)
-        {
-            state.ClearCount();
+            if (clear)
+            {
+                state.ClearCount();
+            }
         }
         return experience;
     }

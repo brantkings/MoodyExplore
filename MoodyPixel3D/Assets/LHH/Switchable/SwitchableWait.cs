@@ -10,7 +10,7 @@ public class SwitchableWait : SwitchableAddon
     public float waitOffing;
     public bool unscaled;
 
-    public override IEnumerator SwitchSet(bool on, ISwitchableAddon.DelSwitchableAddonEvent onFinish = null)
+    public override IEnumerator SwitchSet(bool on)
     {
         if (unscaled) yield return new WaitForSecondsRealtime((on? waitOning : waitOffing) + allWaitsAdd);
         else yield return new WaitForSeconds((on ? waitOning : waitOffing) + allWaitsAdd);

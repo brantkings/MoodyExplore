@@ -479,7 +479,7 @@ MonoBehaviour:
   findAddonsOnChildren: 1
   howToWaitAddons: 0
   orderAddons: 0
-  switchableDebug: 1
+  switchableDebug: 0
   _state: 0
 --- !u!114 &3605708526133442753
 MonoBehaviour:
@@ -571,8 +571,8 @@ CanvasGroup:
   m_GameObject: {fileID: 5990886828802765785}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!1 &6279147870792968296
 GameObject:
@@ -871,7 +871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OnStart: 2
-  findAddonsOnChildren: 1
+  findAddonsOnChildren: 0
   howToWaitAddons: 0
   orderAddons: 0
   switchableDebug: 0

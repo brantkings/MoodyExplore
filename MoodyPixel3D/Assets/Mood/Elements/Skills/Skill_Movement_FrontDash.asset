@@ -38,7 +38,7 @@ MonoBehaviour:
   _debug: 0
   _cost: 1
   minDistance: 4
-  maxDistance: 5
+  maxDistance: 7
   hopHeight: 0
   hopDurationInMultiplier: 0
   hopDurationOutMultiplier: 0

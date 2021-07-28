@@ -78,6 +78,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shows:
   - {fileID: 8856613980002895418}
+--- !u!114 &4406220225232928530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5628018950249261875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c6a2bab0ccd8f0458504a37e5846a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnStart: 2
+  findAddonsOnChildren: 1
+  howToWaitAddons: 0
+  orderAddons: 0
+  switchableDebug: 0
+  _state: 0
+--- !u!114 &841840082857516682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5628018950249261875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d77ed400485024a838e861d2e48ad6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toOn:
+  - {fileID: 4736642754353628539}
+  toOff: []
 --- !u!1001 &3816605242246059516
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -609,7 +642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6099604486958605225, guid: a35f375dfa91c5d409629c6220b867f5, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6970033598111752679, guid: a35f375dfa91c5d409629c6220b867f5, type: 3}
       propertyPath: m_Pivot.x

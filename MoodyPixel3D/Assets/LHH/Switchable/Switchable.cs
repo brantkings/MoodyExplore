@@ -14,7 +14,7 @@ namespace LHH.Switchable
         /// </summary>
         /// <param name="on"></param>
         /// <returns></returns>
-        IEnumerator SwitchSet(bool on, DelSwitchableAddonEvent onFinish = null);
+        IEnumerator SwitchSet(bool on);
         void SwitchSetImmediate(bool on);
     }
 
@@ -79,6 +79,7 @@ namespace LHH.Switchable
         [ReadOnly]
         private SwitchState _state;
         private List<ISwitchableAddon> _addons;
+        private Coroutine _currentRoutine;
 
         private void Awake()
         {
@@ -121,86 +122,112 @@ namespace LHH.Switchable
             Set(OnStart, true, true);
         }
 
-        public void Set(bool on, bool forceEvents = false, bool immediate = false)
+        private void OnDisable()
         {
-            StartCoroutine(SetRoutine(on, forceEvents, immediate, this));
+#if UNITY_EDITOR
+            if(_currentRoutine != null)
+            {
+                Debug.LogWarningFormat("[SWITCHABLE] Disabling {0} with a coroutine!. Object is active? {1}", this, gameObject.activeInHierarchy);
+            }
+#endif
+        }
+
+        public void Set(bool on)
+        {
+            Set(on, false, false);
+        }
+
+        public void SetImmediate(bool on)
+        {
+            Set(on, false, true);
+        }
+
+        public void Set(bool on, bool forceEvents, bool immediate)
+        {
+            if (_currentRoutine != null)
+            {
+                Debug.LogFormat(this, "[SWITCHABLE] Coroutine is not null on {0}", this);
+                StopCoroutine(_currentRoutine);
+            }
+            _currentRoutine = StartCoroutine(SetRoutine(on, forceEvents, immediate, this));
         }
 
         private IEnumerator SetRoutine(bool on, bool forceEvents, bool immediate, MonoBehaviour coroutineMaster)
         {
             bool? isOn = IsOn();
             bool different = on != isOn || forceEvents;
-            coroutineMaster.StopAllCoroutines();
             SetState(on, false);
             if (different && OnBeforeSwitch != null) OnBeforeSwitch(on);
             if (immediate)
             {
-                if (different) 
+                foreach (var addon in _addons)
                 {
-                    foreach (var addon in _addons)
-                    {
 #if UNITY_EDITOR
-                        if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}' immediately. [{3}]", this, addon, on, Time.time);
+                    if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}' immediately. [{3}]", this, addon, on, Time.time);
 #endif
-                        addon.SwitchSetImmediate(on);
-                    }
+                    addon.SwitchSetImmediate(on);
                 }
             }
             else
             {
-                if(different)
+                switch (howToWaitAddons)
                 {
-                    switch (howToWaitAddons)
-                    {
-                        case WaitStyle.AllAtOnce:
-                            HashSet<ISwitchableAddon> waitingToEnd = new HashSet<ISwitchableAddon>(_addons);
-                            ISwitchableAddon.DelSwitchableAddonEvent onFinish = (x) =>
-                            {
-                                waitingToEnd.Remove(x);
-                            };
-                            foreach (var addon in _addons)
-                            {
-#if UNITY_EDITOR
-                                if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}'. Gonna wait for all. [{3}]", this, addon, on, Time.time);
-#endif
-                                coroutineMaster.StartCoroutine(addon.SwitchSet(on, onFinish));
-                            }
-                            while(waitingToEnd.Count > 0)
-                            {
-                                yield return null;
-                            }
-                            waitingToEnd = null;
-                            break;
-                        case WaitStyle.OneAtATime:
-                            foreach (var addon in _addons)
-                            {
-#if UNITY_EDITOR
-                                if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}'. Waiting. [{3}]", this, addon, on, Time.time);
-#endif
-                                yield return addon.SwitchSet(on);
-                            }
-                            break;
-                        case WaitStyle.NeverWait:
-                            foreach (var addon in _addons)
-                            {
-#if UNITY_EDITOR
-                                if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}'. Not waiting. [{3}]", this, addon, on, Time.time);
-#endif
-                                yield return coroutineMaster.StartCoroutine(addon.SwitchSet(on));
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                    case WaitStyle.AllAtOnce:
+                        HashSet<ISwitchableAddon> waitingToEnd = new HashSet<ISwitchableAddon>(_addons);
+                        ISwitchableAddon.DelSwitchableAddonEvent onFinish = (x) =>
+                        {
+
+                            waitingToEnd.Remove(x);
+    #if UNITY_EDITOR
+                            if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Waited for {1} as 'on:{2}'! Still need {3} will wait for all. [{4}]", this, x, on, waitingToEnd.Count, Time.time);
+    #endif
+                        };
+                        foreach (var addon in _addons)
+                        {
+    #if UNITY_EDITOR
+                            if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}'. Gonna wait for all. [{3}]", this, addon, on, Time.time);
+    #endif
+                            coroutineMaster.StartCoroutine(WaitForCoroutine(addon.SwitchSet(on), addon, onFinish));
+                        }
+                        if(waitingToEnd.Count > 0)
+                        {
+                            yield return new WaitWhile(() => waitingToEnd.Count > 0);
+                        }
+                        waitingToEnd = null;
+                        break;
+                    case WaitStyle.OneAtATime:
+                        foreach (var addon in _addons)
+                        {
+    #if UNITY_EDITOR
+                            if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}'. Waiting. [{3}]", this, addon, on, Time.time);
+    #endif
+                            yield return addon.SwitchSet(on);
+                        }
+                        break;
+                    case WaitStyle.NeverWait:
+                        foreach (var addon in _addons)
+                        {
+    #if UNITY_EDITOR
+                            if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting {1} as 'on:{2}'. Not waiting. [{3}]", this, addon, on, Time.time);
+    #endif
+                            yield return coroutineMaster.StartCoroutine(addon.SwitchSet(on));
+                        }
+                        break;
+                    default:
+                        break;
                 }
-
-#if UNITY_EDITOR
-                if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Finished turning 'on:{1}'. [{2}]", this, on, Time.time);
-#endif
-
-                SetState(on, true);
-                if (different && OnAfterSwitch != null) OnAfterSwitch(on);
             }
+
+
+            SetState(on, true); //This has a debug log
+            if (different && OnAfterSwitch != null) OnAfterSwitch(on);
+            _currentRoutine = null;
+        }
+
+        private IEnumerator WaitForCoroutine(IEnumerator routine, ISwitchableAddon addon, ISwitchableAddon.DelSwitchableAddonEvent onEnd)
+        {
+            yield return routine;
+            onEnd?.Invoke(addon);
         }
 
         private IEnumerable<ISwitchableAddon> GetAddons(bool on)
@@ -215,7 +242,17 @@ namespace LHH.Switchable
             }
         }
 
-        public void Set(SwitchCommand state, bool forceEvents = false, bool immediate = false)
+        public void Set(SwitchCommand state)
+        {
+            Set(state, false, false);
+        }
+
+        public void SetImmediate(SwitchCommand state)
+        {
+            Set(state, false, true);
+        }
+
+        public void Set(SwitchCommand state, bool forceEvents, bool immediate)
         {
             switch (state)
             {
@@ -273,6 +310,9 @@ namespace LHH.Switchable
         private void SetState(SwitchState state)
         {
             _state = state;
+#if UNITY_EDITOR
+            if (switchableDebug) Debug.LogFormat(this, "[SWITCHABLE] {0} Setting state '{1}'. [{2}]", this, state, Time.time);
+#endif
         }
 
         private void SetState(bool on, bool completed)

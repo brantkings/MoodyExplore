@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class SwitchableAddon : MonoBehaviour, LHH.Switchable.ISwitchableAddon
 {
-    public abstract IEnumerator SwitchSet(bool on, ISwitchableAddon.DelSwitchableAddonEvent onFinish = null);
+    public abstract IEnumerator SwitchSet(bool on);
 
     public abstract void SwitchSetImmediate(bool on);
 }
