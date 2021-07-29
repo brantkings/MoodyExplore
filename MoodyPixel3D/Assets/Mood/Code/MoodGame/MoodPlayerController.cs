@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
+using System.Linq;
 using Cinemachine;
 using Code.Animation.Humanoid;
 using LHH.Utils;
@@ -63,10 +64,39 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     public MoodInteractor interactor;
     public MoodCheckHUD checkHud;
 
+    [System.Serializable]
+    private class ModeToCameraAnimator
+    {
+        public Mode mode;
+        public string animatorIntegerID;
+        public int animatorIntegerValue;
+        public bool hasInputDirectionFeedback;
+        public ScriptableEvent[] onChangeTo;
+        private int _animatorBooleanID;
+        public int GetId()
+        {
+            if (_animatorBooleanID == 0) _animatorBooleanID = Animator.StringToHash(animatorIntegerID);
+            return _animatorBooleanID;
+        }
+
+        public bool HasID()
+        {
+            return _animatorBooleanID != 0 || !string.IsNullOrWhiteSpace(animatorIntegerID);
+        }
+
+        public void SetAnimator(Animator anim)
+        {
+            if (HasID()) anim.SetInteger(GetId(), animatorIntegerValue);
+        }
+
+        public void UnsetAnimator(Animator anim)
+        {
+            if (HasID()) anim.SetInteger(GetId(), 0);
+        }
+    }
     public Animator animatorCamera;
-    public ScriptableEvent[] onCameraOut;
-    public ScriptableEvent[] onCameraIn;
-    public string animatorCameraCommandBoolean;
+    [SerializeField]
+    private ModeToCameraAnimator[] cameraAnimatorStates;
     public CinemachineBlendListCamera cameraBlendList;
 
     public Transform inputDirectionFeedback;
@@ -486,7 +516,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         Mode currentMode = CheckCurrentMode(showCommandAction.Pressing);
 
         SetCommandMode(currentMode == Mode.Command_Skill);
-        SetCameraMode(isCameraUpwards);
+        SetCameraMode(currentMode);
         if (isInCommandMode) //The command is open (holding space)
         {
 
@@ -893,20 +923,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     #endregion
 
 
-    private bool? _wasInCamera = null;
+    private ModeToCameraAnimator _oldCameraState;
 
-    private void SetCameraMode(bool upwards, bool feedback = true)
+    private void SetCameraMode(Mode cameraMode, bool feedback = true)
     {
-        if(_wasInCamera != upwards)
+        ModeToCameraAnimator animState = cameraAnimatorStates.First((x) => x.mode == cameraMode);
+
+        if(animState != null && animState != _oldCameraState)
         {
-            animatorCamera.SetBool(animatorCameraCommandBoolean, upwards);
+            //if (_oldCameraState != null) _oldCameraState.UnsetAnimator(animatorCamera);
+            animState.SetAnimator(animatorCamera);
             if (feedback)
             {
-                if (upwards) onCameraOut.Invoke(transform);
-                else onCameraIn.Invoke(transform);
+                animState.onChangeTo.Invoke(Pawn.ObjectTransform);
             }
-            _wasInCamera = upwards;
-            inputDirectionFeedback.gameObject.SetActive(upwards);
+            inputDirectionFeedback.gameObject.SetActive(animState.hasInputDirectionFeedback);
+
+            _oldCameraState = animState;
         }
     }
     
