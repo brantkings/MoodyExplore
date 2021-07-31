@@ -1501,7 +1501,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public float GetStaminaRatio()
     {
         if (infiniteStamina) return 1f;
-        return GetStamina() / GetMaxStamina();
+        float maxStamina = GetMaxStamina();
+        if (maxStamina == 0f) return 0f;
+        return GetStamina() / maxStamina;
     }
 
     public float GetMaxStamina()

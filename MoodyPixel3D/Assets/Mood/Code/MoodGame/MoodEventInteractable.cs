@@ -53,4 +53,9 @@ public class MoodEventInteractable : MoodInteractable
         }
     }
 
+    public override bool IsBeingInteracted()
+    {
+        return false;
+    }
+
 }

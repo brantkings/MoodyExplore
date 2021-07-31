@@ -120,8 +120,7 @@ public class BattleLog : Singleton<BattleLog>
     }
 
     private IEnumerator InstanceRoutine(LogInstance inst, float duration)
-    {
-        Debug.LogFormat("{0} Setting switchable on!", this);
+    { 
         inst.switchable?.Set(true);
         yield return new WaitForSecondsRealtime(duration);
         if(inst.switchable != null)

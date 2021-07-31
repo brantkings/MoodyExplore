@@ -313,34 +313,26 @@ public class MoodCommandMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        if(!current.IsValidSelection())
+        /*if(!current.IsValidSelection())
         {
             if (current.ThereIsValidOption()) current.Validate();
             else current.Set(main, 0);
         }
         else
         {
-        }
-        SetTreeActivated(current);
+        }*/
+        current.Set(main, 0);
+        SetColumnActivated(current);
         StartCoroutine(SelectFeedbackRoutine(0f));
     }
 
     #region Interface to outside
-    private void FeedbackCurrentOption(bool feedbacks)
-    {
-        if (feedbacks) current.GetCurrent()?.instance.FeedbackConfirmSelection();
-    }
-
-    private void FeedbackChangeSound(bool feedbacks)
-    {
-        if (feedbacks) onChangeOption.Invoke(transform);
-    }
 
     public void Select(bool feedbacks)
     {
         if (current.WillEnter())
         {
-            SetTreeActivated(current);
+            SetColumnActivated(current);
             FeedbackCurrentOption(feedbacks);
         }
         bool moved = current.Enter();
@@ -378,7 +370,7 @@ public class MoodCommandMenu : MonoBehaviour
     private IEnumerator DeselectFeedbackRoutine(float duration)
     {
         yield return GotoColumn(current.GetCurrentColumn(), duration);
-        SetTreeActivated(current);
+        SetColumnActivated(current);
     }
 
     public void DeselectAll(bool feedbacks)
@@ -399,6 +391,16 @@ public class MoodCommandMenu : MonoBehaviour
     public Option GetCurrentOption()
     {
         return current.GetCurrent();
+    }
+
+    private void FeedbackCurrentOption(bool feedbacks)
+    {
+        if (feedbacks) current.GetCurrent()?.instance.FeedbackConfirmSelection();
+    }
+
+    private void FeedbackChangeSound(bool feedbacks)
+    {
+        if (feedbacks) onChangeOption.Invoke(transform);
     }
 
     #region Tween
@@ -430,7 +432,6 @@ public class MoodCommandMenu : MonoBehaviour
         foreach (Tuple<MoodSkill, MoodItem> skill in skills)
         {
             MoodSkillCategory cat = skill.Item1.GetCategory();
-            Debug.LogFormat("Adding skill {0} of {1}, category {2}", skill.Item1, skill.Item2, skill.Item1.GetCategory());
             Option theOption = new Option(null, skill.Item1, skill.Item2);
             if (cat != null)
             {
@@ -478,8 +479,6 @@ public class MoodCommandMenu : MonoBehaviour
         if (column.options.Count <= 0) 
             return;
 
-        Debug.LogFormat("Making instance of {0}", column.category);
-
         if(column.instance == null) column.instance = Instantiate(columnPrefab, columnParent);
         column.instance.localPosition = Vector3.zero;
         column.instance.localRotation = Quaternion.identity;
@@ -500,7 +499,7 @@ public class MoodCommandMenu : MonoBehaviour
         }
     }
 
-    private void SetTreeActivated(Selection select)
+    private void SetColumnActivated(Selection select)
     {
         int i = 0;
         foreach (Option opt in select.current?.options)
@@ -520,6 +519,37 @@ public class MoodCommandMenu : MonoBehaviour
             if (opt.children != null)
                 SetTreeActivatedRecursively(opt.children, active);
         }
+    }
+
+    #endregion
+
+    #region Paint Options
+
+    public void PaintOptions(MoodPawn pawn, Vector3 direction)
+    {
+        if (current.Validate())
+        {
+            current.SelectCurrent();
+        }
+        foreach (Option opt in GetAllOptions())
+        {
+            bool canBeShown = opt.GetSelectable().CanBeShown(pawn);
+            if (!canBeShown)
+            {
+                PaintOption(opt, canBeShown, false);
+            }
+            else
+            {
+                bool canExecute = opt.GetSelectable().CanBePressed(pawn, direction);
+                PaintOption(opt, canBeShown, canExecute);
+            }
+        }
+    }
+
+    private void PaintOption(Option opt, bool canBeShown, bool canExecute)
+    {
+        opt.instance.gameObject.SetActive(canBeShown);
+        opt.instance.SetPossible(canExecute, opt.GetSelectable());
     }
 
     #endregion
@@ -552,34 +582,4 @@ public class MoodCommandMenu : MonoBehaviour
 
     #endregion
 
-    #region Paint Options
-
-    public void PaintOptions(MoodPawn pawn, Vector3 direction)
-    {
-        if(current.Validate())
-        {
-            current.SelectCurrent();
-        }
-        foreach(Option opt in GetAllOptions())
-        {
-            bool canBeShown = opt.GetSelectable().CanBeShown(pawn);
-            if (!canBeShown)
-            {
-                PaintOption(opt, canBeShown, false);
-            }
-            else
-            {
-                bool canExecute = opt.GetSelectable().CanBePressed(pawn, direction);
-                PaintOption(opt, canBeShown, canExecute);
-            }
-        }
-    }
-
-    private void PaintOption(Option opt, bool canBeShown, bool canExecute)
-    {
-        opt.instance.gameObject.SetActive(canBeShown);
-        opt.instance.SetPossible(canExecute, opt.GetSelectable());
-    }
-
-    #endregion
 }

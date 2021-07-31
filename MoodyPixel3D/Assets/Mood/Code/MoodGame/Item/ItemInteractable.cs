@@ -61,4 +61,9 @@ public class ItemInteractable : MoodInteractable
     {
         inventory.AddUntypedItem(item);
     }
+
+    public override bool IsBeingInteracted()
+    {
+        return false;
+    }
 }

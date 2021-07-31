@@ -21,4 +21,11 @@ public abstract class MoodInteractable : MonoBehaviour
     }
 
     public abstract void Interact(MoodInteractor interactor);
+
+    public virtual bool CanBeInteracted(MoodInteractor t)
+    {
+        return !IsBeingInteracted();
+    }
+
+    public abstract bool IsBeingInteracted();
 }

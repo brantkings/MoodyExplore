@@ -73,10 +73,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c6a2bab0ccd8f0458504a37e5846a8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnStart: 2
+  OnStart: 1
   findAddonsOnChildren: 1
   howToWaitAddons: 1
   orderAddons: 0
+  switchableDebug: 0
+  _state: 0
 --- !u!114 &1444474504957616378
 MonoBehaviour:
   m_ObjectHideFlags: 0

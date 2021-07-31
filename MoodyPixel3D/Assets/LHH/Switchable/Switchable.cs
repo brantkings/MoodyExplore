@@ -119,7 +119,7 @@ namespace LHH.Switchable
 
         protected virtual void Start()
         {
-            Set(OnStart, true, true);
+            if(_state == SwitchState.Undefined) Set(OnStart, true, true);
         }
 
         private void OnDisable()
@@ -146,7 +146,7 @@ namespace LHH.Switchable
         {
             if (_currentRoutine != null)
             {
-                Debug.LogFormat(this, "[SWITCHABLE] Coroutine is not null on {0}", this);
+                Debug.LogWarningFormat(this, "[SWITCHABLE] Coroutine is not null on {0}", this);
                 StopCoroutine(_currentRoutine);
             }
             _currentRoutine = StartCoroutine(SetRoutine(on, forceEvents, immediate, this));

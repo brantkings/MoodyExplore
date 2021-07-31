@@ -7,6 +7,8 @@ public class MoodDoorInteractable : MoodInteractable
 {
 
     MoodDoor door;
+    Coroutine routine;
+    bool isOpeningDoor;
     private void Awake()
     {
         door = GetComponent<MoodDoor>();
@@ -17,8 +19,20 @@ public class MoodDoorInteractable : MoodInteractable
         MoodPawn pawn = interactor.GetComponentInParent<MoodPawn>();
         if(pawn != null)
         {
-            StartCoroutine(door.OpenDoorRoutine(pawn));
+            routine = StartCoroutine(DoorRoutine(pawn));
         }
+    }
+
+    private IEnumerator DoorRoutine(MoodPawn pawn)
+    {
+        isOpeningDoor = true;
+        yield return door.OpenDoorRoutine(pawn);
+        isOpeningDoor = false;
+    }
+
+    public override bool IsBeingInteracted()
+    {
+        return isOpeningDoor;
     }
 
 }

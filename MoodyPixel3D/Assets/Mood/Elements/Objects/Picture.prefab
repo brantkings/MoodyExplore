@@ -86,6 +86,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 00214ec25c3584247acda644e5c444c0, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dd059c2d3620b484fab1c11576918587, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00214ec25c3584247acda644e5c444c0, type: 3}
 --- !u!4 &6822734049222841542 stripped
@@ -102,7 +106,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1469167424617391832, guid: 0f2fb161f2356f34f9e46166f171d6fe, type: 3}
       propertyPath: m_Name
-      value: DialogueInteractable
+      value: Picture
       objectReference: {fileID: 0}
     - target: {fileID: 1469167424617391847, guid: 0f2fb161f2356f34f9e46166f171d6fe, type: 3}
       propertyPath: m_RootOrder
