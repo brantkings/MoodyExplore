@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68dd5cfef14425346b87ca65c76809c3, type: 3}
   m_Name: SkillCategory_Movement
   m_EditorClassIdentifier: 
-  _name: Movement
+  _name: <size=20>2.</size>Movement
   _icon: {fileID: 0}
   _description: Skills that move you around.
   _priority: 3

@@ -7,6 +7,8 @@ public interface IMoodSelectable
 {
     string name { get; }
 
+    string GetName();
+
     Color? GetColor();
 
     void DrawCommandOption(MoodCommandOption option);

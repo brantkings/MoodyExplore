@@ -31,7 +31,7 @@ public class ChainSkill : StaminaCostMoodSkill
         MoodSkill interrupted = null;
         onInterruptSkill = (p, x) =>
         {
-            Debug.LogErrorFormat("Interrupted! {0} and {1}", this, x);
+            //Debug.LogErrorFormat("Interrupted! {0} and {1}", this, x);
             interrupted = x;
         };
         pawn.OnInterruptSkill += onInterruptSkill;
@@ -40,9 +40,9 @@ public class ChainSkill : StaminaCostMoodSkill
         foreach (MoodSkill skill in skills)
         {
             pawn.MarkUsingSkill(skill, skillDirection);
-            Debug.LogFormat("Gonna use skill {0}, {1}", skill, Time.time);
+            //Debug.LogFormat("Gonna use skill {0}, {1}", skill, Time.time);
             yield return skill.ExecuteRoutine(pawn, skillDirection);
-            Debug.LogFormat("Finished skill {0}, {1}", skill, Time.time);
+            //Debug.LogFormat("Finished skill {0}, {1}", skill, Time.time);
             pawn.UnmarkUsingSkill(skill);
 
             if (interrupted == skill)

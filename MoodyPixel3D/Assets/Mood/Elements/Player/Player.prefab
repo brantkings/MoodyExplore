@@ -2061,6 +2061,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  useInvertedCurve: 0
+  invertedCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!225 &3561135842296972397
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2999,6 +3006,15 @@ MonoBehaviour:
   inputDirectionFeedback: {fileID: 5933902371246874704}
   timeSlowOnThreat: 0.25
   timeSlowOnCommand: 0.01
+  shortcuts:
+  - category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
+    keys: 3100000001010000
+  - category: {fileID: 11400000, guid: e72374fe75c8d0e49965e3301f22023a, type: 2}
+    keys: 3200000002010000
+  - category: {fileID: 11400000, guid: e0a9f87f936277d4b9c4521b02d92d15, type: 2}
+    keys: 3300000003010000
+  - category: {fileID: 11400000, guid: be719bf8ca157714b9735198fd5a9b65, type: 2}
+    keys: 3400000004010000
 --- !u!114 &7004230067239678946
 MonoBehaviour:
   m_ObjectHideFlags: 0

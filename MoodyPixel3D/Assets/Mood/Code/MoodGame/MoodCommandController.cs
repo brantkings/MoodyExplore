@@ -294,6 +294,10 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
+    public MoodCommandMenu.SelectCategoryResult SelectCategory(MoodSkillCategory category)
+    {
+        return _menu.SelectCategory(category);
+    }
 
 
     private void SetNullAsSelected(bool setNotSelectingAnyone)

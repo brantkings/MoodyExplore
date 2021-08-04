@@ -11,6 +11,9 @@ public class MoodCommandMenu : MonoBehaviour
     public RectTransform columnPrefab;
     public MoodCommandOption optionPrefab;
 
+    public Text titleText;
+    public string titlePrefix = "< ";
+
     public RectTransform columnParent;
 
     public ScriptableEvent[] onChangeOption;
@@ -72,6 +75,10 @@ public class MoodCommandMenu : MonoBehaviour
             return instance != null && instance.gameObject.activeSelf;
         }
 
+        public bool Is(IMoodSelectable selectable)
+        {
+            return GetSelectable() == selectable;
+        }
     }
 
     internal class OptionColumn : IEnumerable<Option>
@@ -213,18 +220,18 @@ public class MoodCommandMenu : MonoBehaviour
             SelectCurrent();
         }
 
-        public void Set(OptionColumn column, int how)
+        public void Set(OptionColumn column, int newIndex)
         {
             DeselectCurrent();
             current = column;
-            index = current != null ? Mathf.RoundToInt(Mathf.Clamp(how, 0, current.options.Count)) : -1;
+            index = current != null ? Mathf.RoundToInt(Mathf.Clamp(newIndex, 0, current.options.Count)) : -1;
             SelectCurrent();
         }
 
-        public void Set(int how)
+        public void Set(int newIndex)
         {
             DeselectCurrent();
-            index = current != null ? Mathf.RoundToInt(Mathf.Clamp(how, 0, current.options.Count)) : -1;
+            index = current != null ? Mathf.RoundToInt(Mathf.Clamp(newIndex, 0, current.options.Count)) : -1;
             SelectCurrent();
         }
 
@@ -298,6 +305,27 @@ public class MoodCommandMenu : MonoBehaviour
             Debug.LogFormat("[MENU] Setting '{0}' from '{1}', selected as true", GetCurrentColumn()?.instance, GetCurrent()?.instance);
             GetCurrent()?.instance.SetSelected(true);
         }
+
+        public bool Is(IMoodSelectable selectable)
+        {
+            Option current = GetCurrent();
+            if(current != null)
+            {
+                return current.Is(selectable);
+            }
+            return false;
+        }
+
+        public bool IsOrIsChildOf(IMoodSelectable selectable)
+        {
+            Option current = GetCurrent();
+            while (current != null)
+            {
+                if (current.Is(selectable)) return true;
+                current = current.parent?.parentOption;
+            }
+            return false;
+        }
     }
 
     #endregion
@@ -347,11 +375,6 @@ public class MoodCommandMenu : MonoBehaviour
         FeedbackChangeSound(feedbacks);
     }
 
-    private IEnumerator SelectFeedbackRoutine(float duration)
-    {
-        yield return null;
-        GotoColumn(current.GetCurrentColumn(), duration);
-    }
 
     public void Deselect(bool feedbacks)
     {
@@ -365,12 +388,6 @@ public class MoodCommandMenu : MonoBehaviour
             TrembleMovement(-10, trembleDuration);
         }
         FeedbackChangeSound(feedbacks);
-    }
-
-    private IEnumerator DeselectFeedbackRoutine(float duration)
-    {
-        yield return GotoColumn(current.GetCurrentColumn(), duration);
-        SetColumnActivated(current);
     }
 
     public void DeselectAll(bool feedbacks)
@@ -403,7 +420,44 @@ public class MoodCommandMenu : MonoBehaviour
         if (feedbacks) onChangeOption.Invoke(transform);
     }
 
+    /// <summary>
+    /// Select directly an option that represents a category and returns if it changed the option or not.
+    /// </summary>
+    /// <param name="category"></param>
+    /// <returns>If the category changed</returns>
+    /// 
+    public enum SelectCategoryResult
+    {
+        Changed,
+        Unchanged,
+        ParameterNotValid
+    }
+    public SelectCategoryResult SelectCategory(MoodSkillCategory category)
+    {
+        Option option = main.options.FirstOrDefault((x) => (MoodSkillCategory)x.GetSelectable() == category);
+        if(option != null)
+        {
+            if (current.IsOrIsChildOf(category)) return SelectCategoryResult.Unchanged;
+            current.Set(option.parent, option.parent.IndexOf(option));
+            return SelectCategoryResult.Changed;
+        }
+        else return SelectCategoryResult.ParameterNotValid;
+    }
+
     #region Tween
+
+
+    private IEnumerator SelectFeedbackRoutine(float duration)
+    {
+        yield return null;
+        yield return GotoColumn(current.GetCurrentColumn(), duration);
+    }
+
+    private IEnumerator DeselectFeedbackRoutine(float duration)
+    {
+        yield return GotoColumn(current.GetCurrentColumn(), duration);
+        SetColumnActivated(current);
+    }
 
     private Tween _columnTween;
 
@@ -418,6 +472,25 @@ public class MoodCommandMenu : MonoBehaviour
     {
         _columnTween.KillIfActive(true);
         _columnTween = columnParent.transform.DOLocalMoveX(-column.instance.localPosition.x, duration).SetUpdate(true).SetEase(Ease.OutElastic, changeElasticOvershoot, changeElasticPeriod);
+        if(titleText != null)
+        {
+            if(column.parentOption != null)
+            {
+                titleText.text = titlePrefix + column.parentOption.GetSelectable().GetName();
+                Color? parentColor = column.parentOption.GetSelectable().GetColor();
+                if (parentColor.HasValue)
+                    titleText.color = parentColor.Value;
+                else
+                    titleText.color = Color.white;
+                titleText.transform.position = column.parentOption.instance.transform.position;
+                titleText.transform.DOLocalMove(Vector3.zero, duration).SetUpdate(true).SetEase(Ease.OutExpo, changeElasticOvershoot, changeElasticPeriod);
+            }
+            else
+            {
+                titleText.text = "";
+                titleText.color = Color.white;
+            }
+        }
         return _columnTween;
     }
     #endregion

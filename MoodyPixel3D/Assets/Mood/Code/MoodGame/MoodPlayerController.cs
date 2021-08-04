@@ -60,6 +60,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
 
 
+
     public MoodCommandController command;
     public MoodInteractor interactor;
     public MoodCheckHUD checkHud;
@@ -106,6 +107,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     public float timeSlowOnThreat = 0.2f;
     public float timeSlowOnCommand = 0.02f;
+
+
+    [System.Serializable]
+    private struct ShortCutMenuOption
+    {
+        public MoodSkillCategory category;
+        public KeyCode[] keys;
+    }
+    [SerializeField]
+    private ShortCutMenuOption[] shortcuts;
 
     private bool _focusMode;
 
@@ -588,19 +599,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 }
                 else if (executeAction.JustDown)
                 {
-                    command.SelectCurrentOption();
-                    if (skill != null)
-                    {
-                        if (skill.CanExecute(_pawn, currentDirection))
-                        {
-                            option.FeedbackExecute();
-                            StartSkillRoutine(skill, item, currentDirection);
-                        }
-                        else if (skill.IsBufferable(Pawn))
-                        {
-                            StartBufferingSkill(option, skill, item, currentDirection);
-                        }
-                    }
+                    SelectExecuteCurrentSkill(skill, item, option, currentDirection);
                 }
 
                 if (secondaryAction.Pressing)
@@ -621,9 +620,28 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                     _lookAtVector = currentDirection;
                     //pawn.SetHorizontalDirection(currentDirection);
                 }
-            }
 
-            
+                //Check shortcuts
+                foreach (var shortcut in shortcuts)
+                {
+                    for(int i = 0,len = shortcut.keys.Length;i<len;i++)
+                    {
+                        KeyCode key = shortcut.keys[i];
+                        if(Input.GetKeyDown(key))
+                        {
+                            switch (command.SelectCategory(shortcut.category))
+                            {
+                                case MoodCommandMenu.SelectCategoryResult.Changed:
+                                    command.SelectCurrentOption();
+                                    break;
+                                case MoodCommandMenu.SelectCategoryResult.Unchanged:
+                                    SelectExecuteCurrentSkill(skill, item, option, currentDirection);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
         }
         else //The command is not open
         {
@@ -666,6 +684,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
         //SolveCommandSlowDown(executeAction.Pressing, true);
         SolveCommandSlowDown(false, true);
+    }
+
+    private void SelectExecuteCurrentSkill(MoodSkill currentSkill, MoodItem currentItem, MoodCommandOption currentOption, Vector3 currentDirection)
+    {
+        command.SelectCurrentOption();
+        if (currentSkill != null)
+        {
+            if (currentSkill.CanExecute(_pawn, currentDirection))
+            {
+                currentOption.FeedbackExecute();
+                StartSkillRoutine(currentSkill, currentItem, currentDirection);
+            }
+            else if (currentSkill.IsBufferable(Pawn))
+            {
+                StartBufferingSkill(currentOption, currentSkill, currentItem, currentDirection);
+            }
+        }
     }
 
     private bool CanExecute(MoodSkill skill, MoodItem item, Vector3 skillDirection)

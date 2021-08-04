@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68dd5cfef14425346b87ca65c76809c3, type: 3}
   m_Name: SkillCategory_Tech
   m_EditorClassIdentifier: 
-  _name: Tech
+  _name: <size=20>3.</size>Tech
   _icon: {fileID: 0}
   _description: Use special utility.
   _priority: 2
