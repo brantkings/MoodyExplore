@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using LHH.ScriptableObjects.Events;
 
 public class MoodCommandMenu : MonoBehaviour
 {
@@ -220,19 +221,24 @@ public class MoodCommandMenu : MonoBehaviour
             SelectCurrent();
         }
 
-        public void Set(OptionColumn column, int newIndex)
+        public bool Set(OptionColumn column, int newIndex)
         {
+            int oldIndex = index;
+            OptionColumn oldColumn = current;
             DeselectCurrent();
             current = column;
             index = current != null ? Mathf.RoundToInt(Mathf.Clamp(newIndex, 0, current.options.Count)) : -1;
             SelectCurrent();
+            return oldColumn != current || oldIndex != index;
         }
 
-        public void Set(int newIndex)
+        public bool Set(int newIndex)
         {
+            int oldIndex = index;
             DeselectCurrent();
             index = current != null ? Mathf.RoundToInt(Mathf.Clamp(newIndex, 0, current.options.Count)) : -1;
             SelectCurrent();
+            return oldIndex != index;
         }
 
         public bool WillEnter()
@@ -350,8 +356,8 @@ public class MoodCommandMenu : MonoBehaviour
         {
         }*/
         current.Set(main, 0);
-        SetColumnActivated(current);
-        StartCoroutine(SelectFeedbackRoutine(0f));
+        SetChildrenColumnsActivated(current);
+        StartCoroutine(JustSelectFeedbackRoutine(0f));
     }
 
     #region Interface to outside
@@ -360,34 +366,18 @@ public class MoodCommandMenu : MonoBehaviour
     {
         if (current.WillEnter())
         {
-            SetColumnActivated(current);
+            SetChildrenColumnsActivated(current);
             FeedbackCurrentOption(feedbacks);
         }
         bool moved = current.Enter();
-        if (moved)
-        {
-            StartCoroutine(SelectFeedbackRoutine(changeDuration));
-        }
-        else
-        {
-            TrembleMovement(10, trembleDuration);
-        }
-        FeedbackChangeSound(feedbacks);
+        FeedbackTreeMovementTry(moved, feedbacks, JustSelectFeedbackRoutine);
     }
 
 
     public void Deselect(bool feedbacks)
     {
         bool moved = current.Exit();
-        if (moved)
-        {
-            StartCoroutine(DeselectFeedbackRoutine(changeDuration));
-        }
-        else
-        {
-            TrembleMovement(-10, trembleDuration);
-        }
-        FeedbackChangeSound(feedbacks);
+        FeedbackTreeMovementTry(moved, feedbacks, SelectAndActivateTreeFeedbackRoutine);
     }
 
     public void DeselectAll(bool feedbacks)
@@ -395,7 +385,7 @@ public class MoodCommandMenu : MonoBehaviour
         bool did = false;
         while (current.Exit()) did = true;
 
-        if (did) StartCoroutine(DeselectFeedbackRoutine(changeDuration));
+        if (did) StartCoroutine(SelectAndActivateTreeFeedbackRoutine(changeDuration));
     }
 
 
@@ -408,6 +398,20 @@ public class MoodCommandMenu : MonoBehaviour
     public Option GetCurrentOption()
     {
         return current.GetCurrent();
+    }
+
+    private delegate IEnumerator DelMovementRoutine(float duration);
+    private void FeedbackTreeMovementTry(bool moved, bool feedbacks, DelMovementRoutine movementRoutine)
+    {
+        if (moved)
+        {
+            StartCoroutine(movementRoutine(changeDuration));
+        }
+        else
+        {
+            TrembleMovement(10, trembleDuration);
+        }
+        FeedbackChangeSound(feedbacks);
     }
 
     private void FeedbackCurrentOption(bool feedbacks)
@@ -432,45 +436,44 @@ public class MoodCommandMenu : MonoBehaviour
         Unchanged,
         ParameterNotValid
     }
-    public SelectCategoryResult SelectCategory(MoodSkillCategory category)
+    public SelectCategoryResult SelectCategory(MoodSkillCategory category, bool feedbacks)
     {
         Option option = main.options.FirstOrDefault((x) => (MoodSkillCategory)x.GetSelectable() == category);
         if(option != null)
         {
             if (current.IsOrIsChildOf(category)) return SelectCategoryResult.Unchanged;
-            current.Set(option.parent, option.parent.IndexOf(option));
+            bool changed = current.Set(option.parent, option.parent.IndexOf(option));
+            FeedbackTreeMovementTry(changed, feedbacks, SelectAndActivateTreeFeedbackRoutine);
             return SelectCategoryResult.Changed;
         }
         else return SelectCategoryResult.ParameterNotValid;
     }
 
     #region Tween
-
-
-    private IEnumerator SelectFeedbackRoutine(float duration)
+    private IEnumerator JustSelectFeedbackRoutine(float duration)
     {
         yield return null;
         yield return GotoColumn(current.GetCurrentColumn(), duration);
     }
 
-    private IEnumerator DeselectFeedbackRoutine(float duration)
+    private IEnumerator SelectAndActivateTreeFeedbackRoutine(float duration)
     {
-        yield return GotoColumn(current.GetCurrentColumn(), duration);
-        SetColumnActivated(current);
+        yield return null;
+        yield return GotoColumn(current.GetCurrentColumn(), duration).OnKill(()=>SetChildrenColumnsActivated(current));
     }
 
     private Tween _columnTween;
 
     private Tween TrembleMovement(float force, float duration)
     {
-        _columnTween.KillIfActive(true);
+        _columnTween.CompleteIfActive(true);
         _columnTween = columnParent.transform.DOShakePosition(duration, Vector3.right * force, 60, 90).SetUpdate(true).SetEase(Ease.OutCirc);
         return _columnTween;
     }
 
     private Tween GotoColumn(OptionColumn column, float duration)
     {
-        _columnTween.KillIfActive(true);
+        _columnTween.CompleteIfActive(true);
         _columnTween = columnParent.transform.DOLocalMoveX(-column.instance.localPosition.x, duration).SetUpdate(true).SetEase(Ease.OutElastic, changeElasticOvershoot, changeElasticPeriod);
         if(titleText != null)
         {
@@ -494,6 +497,7 @@ public class MoodCommandMenu : MonoBehaviour
         return _columnTween;
     }
     #endregion
+
     #endregion
 
     #region Make options
@@ -541,7 +545,7 @@ public class MoodCommandMenu : MonoBehaviour
         if (!current.IsExistingOption()) current.Set(main, 0);
         if(current.Validate())
         {
-            StartCoroutine(DeselectFeedbackRoutine(changeDuration));
+            StartCoroutine(SelectAndActivateTreeFeedbackRoutine(changeDuration));
         }
         
         current.SelectCurrent();
@@ -555,31 +559,38 @@ public class MoodCommandMenu : MonoBehaviour
         if(column.instance == null) column.instance = Instantiate(columnPrefab, columnParent);
         column.instance.localPosition = Vector3.zero;
         column.instance.localRotation = Quaternion.identity;
+
 #if UNITY_EDITOR
         column.instance.name = "<CommandSet>" + (string.IsNullOrEmpty(column.category?.name) ? "" : "_" + column.category.name);
 #endif
+
         foreach (Option opt in column)
         {
             if(opt.instance == null) opt.instance = Instantiate(optionPrefab, column.instance);
             opt.instance.transform.localPosition = Vector3.zero;
             opt.instance.transform.localRotation = Quaternion.identity;
+
 #if UNITY_EDITOR
-            opt.instance.name = "Command_" + (string.IsNullOrEmpty(opt.item?.name) ? "" : opt.item.name + "_") + opt.GetSelectable()?.name;
+            opt.instance.name = "<Command>" + (string.IsNullOrEmpty(opt.item?.name) ? "" : opt.item.name + "_") + opt.GetSelectable()?.name;
 #endif
+
             opt.GetSelectable()?.DrawCommandOption(opt.instance);
             if (opt.children != null)
                 MakeInstances(opt.children);
         }
     }
 
-    private void SetColumnActivated(Selection select)
+    private void SetChildrenColumnsActivated(Selection select)
     {
         int i = 0;
-        foreach (Option opt in select.current?.options)
+        if(select.current != null)
         {
-            bool active = i++ == select.index;
-            if(opt.children != null)
-                SetTreeActivatedRecursively(opt.children, active);
+            foreach (Option opt in select.current.options)
+            {
+                bool active = i++ == select.index;
+                if(opt.children != null)
+                    SetTreeActivatedRecursively(opt.children, active);
+            }
         }
     }
 

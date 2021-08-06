@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using LHH.ScriptableObjects.Events;
 
 public class MoodPlayerController : Singleton<MoodPlayerController>
 {
@@ -629,7 +630,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                         KeyCode key = shortcut.keys[i];
                         if(Input.GetKeyDown(key))
                         {
-                            switch (command.SelectCategory(shortcut.category))
+                            switch (command.SelectCategory(shortcut.category, true))
                             {
                                 case MoodCommandMenu.SelectCategoryResult.Changed:
                                     command.SelectCurrentOption();

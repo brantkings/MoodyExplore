@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LHH.ScriptableObjects.Events;
 
 namespace Code.MoodGame.Skills
 {
-    
+
     [CreateAssetMenu(fileName = "Skill_Attack_", menuName = "Mood/Skill/Attack", order = 0)]
     public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver, RangeArea.IRangeShowPropertyGiver, RangeArea.IRangeShowLivePropertyGiver, RangeArrow.IRangeShowPropertyGiver
     {
@@ -19,6 +20,8 @@ namespace Code.MoodGame.Skills
         public int priorityPreAttack = PRIORITY_NOT_CANCELLABLE;
         public int priorityAfterAttack = PRIORITY_CANCELLABLE;
         public int priorityAfterWhiff = PRIORITY_NOT_CANCELLABLE;
+        public LHH.Unity.MorphableProperty<Thought> _painThought;
+        public FlyingThought _flyingThought;
 
         [System.Serializable]
         private struct DashStruct
@@ -251,7 +254,9 @@ namespace Code.MoodGame.Skills
 
         private DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
-            return new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, out float angle), angle, knockback.Get().GetDuration());
+            DamageInfo info = new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, out float angle), angle, knockback.Get().GetDuration());
+            if (_painThought != null) info.AddPainThought(new FlyingThoughtInstance() { flyingThought = _flyingThought, data = new FlyingThought.FlyingThoughtData() { destination = null, thought = _painThought, where = ThoughtSystemController.ThoughtPlacement.Down} });
+            return info;
         }
 
         RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()

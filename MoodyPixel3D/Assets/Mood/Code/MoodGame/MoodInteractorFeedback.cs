@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class MoodInteractorFeedback : LHH.Structures.InterfaceCaptureFeedback<MoodInteractable>
+public class MoodInteractorFeedback : LHH.Interface.InterfaceCaptureFeedback<MoodInteractable>
 {
     [System.Serializable]
     public class UnityEventBool : UnityEvent<bool>

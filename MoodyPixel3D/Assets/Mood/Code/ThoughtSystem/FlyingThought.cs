@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using LHH.ScriptableObjects.Events;
 
 [Serializable]
 public struct FlyingThoughtInstance
@@ -9,12 +10,17 @@ public struct FlyingThoughtInstance
     public FlyingThought flyingThought;
     public FlyingThought.FlyingThoughtData data;
 
+    public bool CanDo()
+    {
+        return flyingThought != null;
+    }
+
     public void Do(Transform origin)
     {
         flyingThought.InvokeReturnExtraParameter(origin, data);
     }
 
-    public void Do(Transform origin, Transform destination)
+    public void InstatiateFlyingThought(Transform origin, Transform destination)
     {
         flyingThought.InvokeReturnExtraParameter(origin, data.GetCopy().SetDestination(destination));
     }
@@ -28,13 +34,15 @@ public class FlyingThought : ScriptableEvent<Rigidbody, FlyingThought.FlyingThou
     {
         public Transform destination;
         public Thought thought;
+        public ThoughtSystemController.ThoughtPlacement where;
 
         public FlyingThoughtData GetCopy()
         {
             return new FlyingThoughtData()
             {
                 destination = destination,
-                thought = thought
+                thought = thought,
+                where = where,
             };
 
         }
@@ -67,7 +75,7 @@ public class FlyingThought : ScriptableEvent<Rigidbody, FlyingThought.FlyingThou
         Vector3 distance = origin.position - data.destination.position;
         Thought thoughtToAdd = data.thought;
         Debug.LogFormat("Prefab is {0}, origin is {1}, data dest is {2}, thought is {3}", prefab, origin, data.destination, thoughtToAdd);
-        Rigidbody newRB = OriginDestinationFeedback.Instance.CreateFeedback(prefab, origin.position, origin.rotation, data.destination, (Quaternion.Euler(45f, 45f, 0f) * distance).normalized *  initialVelocity, feedbackData,
+        Rigidbody newRB = OriginDestinationFeedback.Instance.CreateFeedback(prefab, origin.position, origin.rotation, data.destination, (Quaternion.Euler(45f, 45f, 0f) * (distance + Vector3.up)).normalized *  initialVelocity, feedbackData,
             (Transform destination)=>
             {
                 MoodPawn pawn = destination.GetComponentInParent<MoodPawn>();

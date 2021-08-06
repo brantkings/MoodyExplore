@@ -81,7 +81,7 @@ namespace Code.MoodGame.Events
                     {
                         happening = () =>
                         {
-                            evtFT.toAdd.Do(origin, player.Pawn.ObjectTransform);
+                            evtFT.toAdd.InstatiateFlyingThought(origin, player.Pawn.ObjectTransform);
                         };
                     }
                 }
@@ -97,7 +97,7 @@ namespace Code.MoodGame.Events
 
             foreach(var ft in flyingThoughtsAfter)
             {
-                ft.Do(origin, player.Pawn.ObjectTransform);
+                ft.InstatiateFlyingThought(origin, player.Pawn.ObjectTransform);
             }
         }
 

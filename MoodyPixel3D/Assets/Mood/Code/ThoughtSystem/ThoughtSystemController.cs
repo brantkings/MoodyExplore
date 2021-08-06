@@ -25,6 +25,7 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     private List<FocusPointState> _focusState = new List<FocusPointState>(9);
 
     [Header("Objects")]
+    private MoodPawn pawn;
     private MoodExperiencer experiencer;
     public OutlineMaterialFeedback outlineFeedback;
     public Transform thoughtObjectsParent;
@@ -70,7 +71,8 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     private void Awake()
     {
-        experiencer = GetComponentInParent<MoodPawn>()?.GetComponentInChildren<MoodExperiencer>();
+        pawn = GetComponentInParent<MoodPawn>();
+        experiencer = pawn?.GetComponentInChildren<MoodExperiencer>();
         raycaster = GetComponentInChildren<GraphicRaycaster>();
         canvasCamera = board.GetComponentInParent<Canvas>()?.worldCamera;
         if (canvasCamera == null) canvasCamera = Camera.main;
@@ -78,17 +80,26 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
 
     private void OnEnable()
     {
-        if (experiencer != null)
+        if(pawn != null)
         {
-            experiencer.OnExperienceChange += OnExperienceChange;
+            pawn.OnPawnDamaged += OnDamaged;
+            if (experiencer != null)
+            {
+                experiencer.OnExperienceChange += OnExperienceChange;
+            }
         }
+
     }
 
     private void OnDisable()
     {
-        if (experiencer != null)
+        if (pawn != null)
         {
-            experiencer.OnExperienceChange -= OnExperienceChange;
+            pawn.OnPawnDamaged -= OnDamaged;
+            if (experiencer != null)
+            {
+                experiencer.OnExperienceChange -= OnExperienceChange;
+            }
         }
     }
 
@@ -435,7 +446,9 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         }
     }
 
+
     internal int _experienceChange = 0;
+
     private void OnExperienceChange(int amount)
     {
         _experienceChange += amount;
@@ -529,6 +542,21 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
     private IEnumerator RemoveEffectRoutine(MoodPawn p, Thought t)
     {
         yield return StartCoroutine(t.RemoveFocusEffect(p, this));
+    }
+
+
+    private void OnDamaged(MoodPawn pawn, DamageInfo info)
+    {
+        if(info.pain != null && info.pain.Count > 0)
+        {
+            foreach (var t in info.pain)
+            {
+                if(t.flyingThoughtInstance.CanDo())
+                {
+                    t.flyingThoughtInstance.InstatiateFlyingThought(pawn.ObjectTransform, pawn.ObjectTransform);
+                }
+            }
+        }
     }
     #endregion
 

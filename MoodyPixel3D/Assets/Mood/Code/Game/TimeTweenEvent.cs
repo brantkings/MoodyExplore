@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using LHH.ScriptableObjects.Events;
 
 [CreateAssetMenu(menuName = "Mood/Event/Time delta tween", fileName = "E_Time_TimeDelta_", order = 0)]
 public class TimeTweenEvent : ScriptableEvent

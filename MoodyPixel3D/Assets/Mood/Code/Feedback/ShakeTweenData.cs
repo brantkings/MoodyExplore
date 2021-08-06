@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-
+using LHH.ScriptableObjects.Events;
 
 [CreateAssetMenu(menuName = "Long Hat House/Events/Shake", fileName = "Shake_")]
 public class ShakeTweenData : ScriptableEvent<Tween>

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LHH.Events;
+using LHH.ScriptableObjects.Events;
 
 public class MoodHealthEvents : AddonBehaviour<Health>
 {

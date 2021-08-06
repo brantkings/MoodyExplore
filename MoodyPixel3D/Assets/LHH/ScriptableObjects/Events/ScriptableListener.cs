@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace LHH.Events
+namespace LHH.ScriptableObjects.Events
 {
 
     [CreateAssetMenu(menuName = "Long Hat House/Listener/Basic Listener", fileName = "L_", order = 0)]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using DG.Tweening;
+using LHH.ScriptableObjects.Events;
 
 public class MoodDoor : MonoBehaviour
 {

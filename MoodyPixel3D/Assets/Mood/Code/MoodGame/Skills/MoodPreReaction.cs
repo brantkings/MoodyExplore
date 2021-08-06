@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
-
-
+using LHH.ScriptableObjects.Events;
 
 [CreateAssetMenu(menuName = "Mood/Skill/General Reaction", fileName = "Reaction_")]
 public class MoodPreReaction : MoodReaction, IMoodReaction<ReactionInfo>, IMoodReaction<DamageInfo>

@@ -5,7 +5,7 @@ using FMODUnity;
 using FMOD.Studio;
 using System.Linq;
 using UnityEngine.Serialization;
-
+using LHH.ScriptableObjects.Events;
 
 public class SoundEffectInstance
 {

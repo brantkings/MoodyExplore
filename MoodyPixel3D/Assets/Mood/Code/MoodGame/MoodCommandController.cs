@@ -294,9 +294,9 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
-    public MoodCommandMenu.SelectCategoryResult SelectCategory(MoodSkillCategory category)
+    public MoodCommandMenu.SelectCategoryResult SelectCategory(MoodSkillCategory category, bool feedbacks)
     {
-        return _menu.SelectCategory(category);
+        return _menu.SelectCategory(category, feedbacks);
     }
 
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace LHH.Structures
+namespace LHH.Interface
 {
     public abstract class InterfaceTriggerCapture<T> : InterfaceCapture<T> where T:class
     {

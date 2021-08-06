@@ -51,6 +51,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillEvent OnUseSkill;
     public event DelMoodPawnItemEvent OnUseItem;
+    public event DelMoodPawnDamageEvent OnPawnDamaged;
     public event DelMoodPawnDamageEvent OnPawnDeath;
     public event DelMoodPawnUndirectedSkillEvent OnEndSkill;
     public event DelMoodPawnUndirectedSkillEvent OnInterruptSkill;
@@ -358,7 +359,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void HandleDamageInfo(DamageInfo info, Health health)
     {
-        
+        OnPawnDamaged?.Invoke(this, info);
     }
 
     private void OnBeforeDamage(ref DamageInfo damage, Health damaged)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using LHH.ScriptableObjects.Events;
 
 public class RangeSkillBark : RangeShow
 {

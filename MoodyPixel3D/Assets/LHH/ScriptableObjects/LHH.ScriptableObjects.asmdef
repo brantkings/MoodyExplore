@@ -1,0 +1,16 @@
+{
+    "name": "LHH.ScriptableObjects",
+    "rootNamespace": "",
+    "references": [
+        "GUID:acf679b418ee9e14abec6bfaa8f3f859"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

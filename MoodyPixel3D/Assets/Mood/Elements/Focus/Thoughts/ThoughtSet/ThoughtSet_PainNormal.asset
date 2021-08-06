@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff7c0450acfb02643ac8366bc0f96b06, type: 3}
+  m_Name: ThoughtSet_PainNormal
+  m_EditorClassIdentifier: 
+  set:
+  - weight: 1
+    element: {fileID: 11400000, guid: db6f991f978d39643a0c5d6dd94314bd, type: 2}
+  - weight: 1
+    element: {fileID: 11400000, guid: 66cdb8d3b57a5b34cba29bd5c280678a, type: 2}

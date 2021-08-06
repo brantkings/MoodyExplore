@@ -28,6 +28,13 @@ public struct DamageInfo
     public bool shouldStaggerAnimation;
     public bool ignorePhaseThrough;
 
+    public struct ThoughtInDamage
+    {
+        public FlyingThoughtInstance flyingThoughtInstance;
+    }
+
+    public List<ThoughtInDamage> pain;
+
     public bool feedbacks;
 
     public float stunTime;
@@ -45,6 +52,7 @@ public struct DamageInfo
         ignorePhaseThrough = false;
         shouldStaggerAnimation = true;
         feedbacks = true;
+        pain = null;
         stunTime = 0f;
     }
 
@@ -101,6 +109,13 @@ public struct DamageInfo
     public DamageInfo SetFeedback(bool set)
     {
         feedbacks = set;
+        return this;
+    }
+
+    public DamageInfo AddPainThought(FlyingThoughtInstance f) 
+    {
+        if (pain == null) pain = new List<ThoughtInDamage>(2);
+        pain.Add(new ThoughtInDamage() {flyingThoughtInstance = f});
         return this;
     }
 

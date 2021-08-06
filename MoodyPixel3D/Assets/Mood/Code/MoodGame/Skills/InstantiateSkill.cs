@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using LHH.Utils;
 using UnityEngine;
+using LHH.ScriptableObjects.Events;
 
 [CreateAssetMenu(fileName = "Skill_Instantiate_", menuName = "Mood/Skill/Instantiate", order = 0)]
 public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver

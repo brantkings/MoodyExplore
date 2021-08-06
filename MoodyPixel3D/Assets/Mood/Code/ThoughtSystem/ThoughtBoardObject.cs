@@ -15,6 +15,7 @@ public class ThoughtBoardObject : MonoBehaviour, IThoughtBoardObject
 
     public void SetMaximize(bool set)
     {
-        maximizedSwitchable?.Set(set);
+        if(maximizedSwitchable != null)
+            maximizedSwitchable.Set(set);
     }
 }

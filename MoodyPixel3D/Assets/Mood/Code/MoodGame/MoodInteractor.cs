@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoodInteractor : LHH.Structures.InterfaceTriggerCapture<MoodInteractable>
+public class MoodInteractor : LHH.Interface.InterfaceTriggerCapture<MoodInteractable>
 {
 
 

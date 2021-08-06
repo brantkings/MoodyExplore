@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace LHH.Structures
+namespace LHH.Interface
 {
     public class InterfaceCaptureFeedback<T> : MonoBehaviour where T:class
     {

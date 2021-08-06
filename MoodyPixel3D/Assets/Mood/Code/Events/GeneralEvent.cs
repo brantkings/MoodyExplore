@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using LHH.ScriptableObjects.Events;
 
 public class GeneralEvent : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class GeneralEvent : MonoBehaviour
     protected ScriptableEvent[] scriptableEventToCall;
 
     [SerializeField]
-    private LHH.Events.ScriptableListener toListenTo;
+    private ScriptableListener toListenTo;
 
     protected virtual void OnEnable()
     {

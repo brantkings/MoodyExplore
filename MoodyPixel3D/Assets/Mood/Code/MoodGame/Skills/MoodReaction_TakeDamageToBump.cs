@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LHH.ScriptableObjects.Events;
 
 [CreateAssetMenu(menuName = "Mood/Skill/Damaging Reaction", fileName = "Reaction_")]
 public class MoodReaction_TakeDamageToBump : MoodReaction, IMoodReaction<ReactionInfo>
