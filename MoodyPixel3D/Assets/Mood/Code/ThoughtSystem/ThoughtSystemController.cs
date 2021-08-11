@@ -615,7 +615,8 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         if(newFocus != _currentFocusable)
         {
             newFocus?.SetHovered(true);
-            _currentFocusable?.SetHovered(false);
+            if(_currentFocusable != null)
+                _currentFocusable.SetHovered(false);
             _currentFocusable = newFocus;
             OnNewSelectedFocusable(newFocus);
         } else if (forceFeedback)

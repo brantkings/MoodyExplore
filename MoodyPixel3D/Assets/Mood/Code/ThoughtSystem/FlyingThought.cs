@@ -58,7 +58,7 @@ public class FlyingThought : ScriptableEvent<Rigidbody, FlyingThought.FlyingThou
     public Rigidbody prefab;
     public float initialVelocity = 5f;
 
-    public OriginDestinationFeedback.Data feedbackData = OriginDestinationFeedback.Data.DefaultValue;
+    public OriginDestinationOrbitFeedback.Data feedbackData = OriginDestinationOrbitFeedback.Data.DefaultValue;
     public OutlineMaterialFeedback.Data outlineFeedbackData;
 
     public override FlyingThoughtData GetDefaultExtraParameter()
@@ -75,7 +75,7 @@ public class FlyingThought : ScriptableEvent<Rigidbody, FlyingThought.FlyingThou
         Vector3 distance = origin.position - data.destination.position;
         Thought thoughtToAdd = data.thought;
         Debug.LogFormat("Prefab is {0}, origin is {1}, data dest is {2}, thought is {3}", prefab, origin, data.destination, thoughtToAdd);
-        Rigidbody newRB = OriginDestinationFeedback.Instance.CreateFeedback(prefab, origin.position, origin.rotation, data.destination, (Quaternion.Euler(45f, 45f, 0f) * (distance + Vector3.up)).normalized *  initialVelocity, feedbackData,
+        Rigidbody newRB = OriginDestinationOrbitFeedback.Instance.CreateFeedback(prefab, origin.position, origin.rotation, data.destination, (Quaternion.Euler(45f, 45f, 0f) * (distance + Vector3.up)).normalized *  initialVelocity, feedbackData,
             (Transform destination)=>
             {
                 MoodPawn pawn = destination.GetComponentInParent<MoodPawn>();

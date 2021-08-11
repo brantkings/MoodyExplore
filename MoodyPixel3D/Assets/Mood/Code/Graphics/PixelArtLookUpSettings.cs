@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
+
+
 [PostProcess(typeof(PixelArtLookUpRender), PostProcessEvent.AfterStack, "Long Hat House/Pixel Art Look Up")]
 public class PixelArtLookUpSettings : PostProcessEffectSettings
 {
@@ -10,7 +12,9 @@ public class PixelArtLookUpSettings : PostProcessEffectSettings
     public ParameterOverride<FilterMode> mode = new ParameterOverride<FilterMode>(FilterMode.Point);
     public ParameterOverride<Shader> shader = new ParameterOverride<Shader>();
     public ParameterOverride<Texture3D> textureIlluminated = new ParameterOverride<Texture3D>();
+    public ParameterOverride<PixelArtLookUpSettingsData> textureIlluminatedEffect = new ParameterOverride<PixelArtLookUpSettingsData>();
     public ParameterOverride<Texture3D> textureNotIlluminated = new ParameterOverride<Texture3D>();
+    public ParameterOverride<PixelArtLookUpSettingsData> textureNotIlluminatedEffect = new ParameterOverride<PixelArtLookUpSettingsData>();
     public IntParameter textureSize = new IntParameter();
     public BoolParameter changeBefore = new BoolParameter();
     public FloatParameter ditheringForceIlluminated = new FloatParameter();
@@ -68,15 +72,32 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
     }
 
 
+    private void AddScreenColorEffect(Material mat, PixelArtLookUpSettingsData effect, string colorAdd, string colorMult)
+    {
+        if(effect != null)
+        {
+            mat.SetColor(colorAdd, effect.addColor);
+            mat.SetColor(colorMult, effect.multiplyColor);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="mat"></param>
+    /// <param name="context"></param>
+    /// <returns>If true, the material is product ready. If false, it is a test and should return.</returns>
     protected virtual bool InitMaterial(Material mat, PostProcessRenderContext context)
     {
-        Graphics.ClearRandomWriteTargets();
+        //Graphics.ClearRandomWriteTargets();
         mat.SetTexture("_LookUpTableI", settings.textureIlluminated.value);
         mat.SetTexture("_LookUpTableN", settings.textureNotIlluminated.value);
         mat.SetFloat("_DitheringForceI", settings.ditheringForceIlluminated.value);
         mat.SetFloat("_DitheringForceN", settings.ditheringForceNotIlluminated.value);
         mat.SetFloat("_DitheringNeutral", settings.ditheringNeutral.value);
         mat.SetFloat("_TextureSize", settings.textureSize.value);
+        AddScreenColorEffect(mat, settings.textureIlluminatedEffect.value, "_ColorAddI", "_ColorMulI");
+        AddScreenColorEffect(mat, settings.textureNotIlluminatedEffect.value, "_ColorAddN", "_ColorMulN");
         /* mat.SetBuffer("debug", buffer);
         Graphics.SetRandomWriteTarget(1, buffer, false);
         buffer.GetData(element);
@@ -88,7 +109,6 @@ public class PixelArtLookUpRender : PostProcessEffectRenderer<PixelArtLookUpSett
             RenderTexture tex = GlobalCameraBuffer.GetBuffer(context.camera, settings.customBufferName.value);
             if (tex != null)
             {
-                //Debug.LogFormat(tex, "Found the texture {0} for {1} ({2}/{3})", tex, context.camera, index, indexGroup);
                 mat.SetTexture(Shader.PropertyToID(settings.textureParameterID.value), tex);
 
                 if(settings.onlyRenderIlluminationTexture)

@@ -1833,7 +1833,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4813272952109751330}
-  m_LocalRotation: {x: 0.000059723854, y: 0.9799246, z: -0.19936825, w: 0.00029355288}
+  m_LocalRotation: {x: -0.000037219375, y: 0.99281776, z: -0.11963623, w: -0.00030890107}
   m_LocalPosition: {x: 0, y: 5, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1870,7 +1870,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.6726974, y: 1}
+    m_SensorSize: {x: 1.25, y: 1}
   m_Transitions:
     m_BlendHint: 2
     m_InheritPosition: 0
@@ -2677,7 +2677,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.6726974, y: 1}
+    m_SensorSize: {x: 1.25, y: 1}
   m_Transitions:
     m_BlendHint: 2
     m_InheritPosition: 0
@@ -6545,7 +6545,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7054111352717382884}
-  m_LocalRotation: {x: -0.15596932, y: 0.80570555, z: -0.51717615, w: -0.24298361}
+  m_LocalRotation: {x: -0.15596937, y: 0.80570555, z: -0.5171761, w: -0.24298371}
   m_LocalPosition: {x: 8.845979, y: 40, z: 13.332238}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6582,7 +6582,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.6726974, y: 1}
+    m_SensorSize: {x: 1.25, y: 1}
   m_Transitions:
     m_BlendHint: 3
     m_InheritPosition: 1
@@ -11140,6 +11140,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 9d5a49c0ea4f2d44f85cb4acb8a4237e, type: 2}
+    - target: {fileID: 5929697886324249627, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
+      propertyPath: m_Name
+      value: humanoidFBX Player
+      objectReference: {fileID: 0}
     - target: {fileID: 7196775014748694906, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -11162,7 +11166,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7273907392517274814, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
       propertyPath: m_Name
-      value: Basic_Humanoid
+      value: Basic_Humanoid Player
       objectReference: {fileID: 0}
     - target: {fileID: 7893228480550640122, guid: 0d8a95c95d5d5c64ba0460010977df1d, type: 3}
       propertyPath: m_CullingMode

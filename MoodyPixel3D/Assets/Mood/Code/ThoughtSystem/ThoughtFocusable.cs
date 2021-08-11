@@ -37,7 +37,10 @@ public class ThoughtFocusable : MonoBehaviour
 
     public void SetHovered(bool set)
     {
-        selectedSwitchable?.Set(set);
+        if(selectedSwitchable != null)
+        {
+            selectedSwitchable.Set(set);
+        }
     }
 
     public bool CanSetFocus(MoodPawn pawn)
@@ -52,7 +55,10 @@ public class ThoughtFocusable : MonoBehaviour
 
     public void SetFocused(bool set, MoodPawn pawn)
     {
-        focusedSwitchable?.Set(set);
+        if(focusedSwitchable != null)
+        {
+            focusedSwitchable.Set(set);
+        }
     }
 
     /// <summary>

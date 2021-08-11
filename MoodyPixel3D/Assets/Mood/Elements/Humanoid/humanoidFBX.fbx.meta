@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 32394cc973055fc4baaf1459c05284ef
 ModelImporter:
-  serializedVersion: 20200
+  serializedVersion: 21100
   internalIDToNameTable:
   - first:
       74: 2170291860772046871
@@ -81,6 +81,12 @@ ModelImporter:
   - first:
       74: 5738589174699959890
     second: DudeArmature|GetUp
+  - first:
+      74: 6054205607346823232
+    second: DudeArmature|Hurt_Arm
+  - first:
+      74: 7210913248466552220
+    second: DudeArmature|Hurt_Arm2
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -565,6 +571,64 @@ ModelImporter:
       keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
       heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: f4353c6696356b1438d2219ad51bd7be, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DudeArmature|Hurt_Arm
+      takeName: DudeArmature|Hurt_Arm
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 8
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: f4353c6696356b1438d2219ad51bd7be, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DudeArmature|Hurt_Arm2
+      takeName: DudeArmature|Hurt_Arm2
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 8
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []

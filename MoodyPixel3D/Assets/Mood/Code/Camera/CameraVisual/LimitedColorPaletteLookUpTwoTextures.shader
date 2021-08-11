@@ -91,9 +91,13 @@
             sampler2D _MainTex;
             sampler2D _LightSample;
             sampler3D _LookUpTableI;
+            fixed4 _ColorAddI;
+            fixed4 _ColorMulI;
             fixed _TextureSize;
             float4 _LookUpTableI_TexelSize;
             sampler3D _LookUpTableN;
+            fixed4 _ColorAddN;
+            fixed4 _ColorMulN;
             float4 _LookUpTableN_TexelSize;
             sampler2D _IlluminatedTex;
             fixed4 _MainTex_TexelSize;
@@ -122,7 +126,9 @@
                 if(_TextureSize>0)
                     colN = round(colN  * _TextureSize) / _TextureSize;
                 float4 colorI = tex3D(_LookUpTableI, colI);
+                colorI = (colorI + _ColorAddI) * _ColorMulI;
                 float4 colorN = tex3D(_LookUpTableN, colN);
+                colorN = (colorN + _ColorAddN) * _ColorMulN;
                 //return iChoice;
                 //return smoothstep(0, 1, iChoice);
                 //return shadowmap;

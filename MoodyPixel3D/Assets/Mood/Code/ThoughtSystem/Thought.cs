@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LHH.ScriptableObjects.Events;
 
 [CreateAssetMenu(menuName = "Mood/Thought System/Thought", fileName = "Thought_")]
 public class Thought : ScriptableObject
@@ -18,6 +19,8 @@ public class Thought : ScriptableObject
 
     public bool consumedWhenExperienced = true;
     public int experienceNeeded;
+    public MoodSkill skillOnGet;
+    public LHH.ScriptableObjects.Events.ScriptableEvent[] eventsOnGet;
     public MoodPawnEffect[] onUnfocused;
     public MoodPawnEffect[] onActivated;
     public MoodPawnEffect[] onExperienceComplete;
@@ -28,12 +31,23 @@ public class Thought : ScriptableObject
         return expCondition >= experienceNeeded;
     }
 
+    private void OnGetThought(MoodPawn pawn)
+    {
+        eventsOnGet.Invoke(pawn.ObjectTransform);
+        if (skillOnGet != null)
+        {
+            if (pawn.CanUseSkill(skillOnGet)) pawn.ExecuteSkill(skillOnGet, Vector3.zero);
+        }
+    }
+
     public virtual void AddThoughtInMind(MoodPawn pawn, ThoughtSystemController thought)
     {
         foreach (var effect in onUnfocused)
         {
             effect.AddEffect(pawn);
         }
+
+        OnGetThought(pawn);
     }
 
     public virtual void RemoveThoughtFromMind(MoodPawn pawn, ThoughtSystemController thought)

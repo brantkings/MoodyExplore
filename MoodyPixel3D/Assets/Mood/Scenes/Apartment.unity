@@ -50904,11 +50904,13 @@ MonoBehaviour:
   regularFeedbackPrefab: {fileID: 0}
   defaultValue:
     caughtDistance: 0.25
-    forceAttractionBegin: 1
-    forceAttractionEnd: 10
-    forceAttractionYMultiplier: 0.25
-    durationForce: 2
-    minimalTime: 1
+    orbitRadius: 2
+    orbitY: 8
+    durationToOrbit: 1
+    toOrbitEase: 21
+    durationOrbit: 2
+    readyToVelocityDuration: 0.1
+    velocityToDestination: 10
     offsetDestination: {x: 0, y: 1, z: 0}
 --- !u!4 &1926903279
 Transform:
@@ -54040,7 +54042,7 @@ PrefabInstance:
       objectReference: {fileID: 1276967549}
     - target: {fileID: 3492613771632298877, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_VersionIndex
-      value: 280
+      value: 301
       objectReference: {fileID: 0}
     - target: {fileID: 3492613771632298877, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_MeshFormatVersion
@@ -54048,7 +54050,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3589087819999240830, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -20.00048
+      value: -20.000473
       objectReference: {fileID: 0}
     - target: {fileID: 3611560924295641276, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchorMax.y
@@ -54196,7 +54198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5390907015469078228, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.6710526
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 5434935755319723075, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchorMax.y
@@ -54396,7 +54398,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5938188665409695491, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.6710526
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 5938188665409695516, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_LocalPosition.x
@@ -54476,7 +54478,7 @@ PrefabInstance:
       objectReference: {fileID: 205967465}
     - target: {fileID: 5938188666411864144, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_VersionIndex
-      value: 277
+      value: 298
       objectReference: {fileID: 0}
     - target: {fileID: 5938188666411864144, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_MeshFormatVersion
@@ -54604,19 +54606,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6992980727287213994, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.00029358268
+      value: 0.0032912493
       objectReference: {fileID: 0}
     - target: {fileID: 6992980727287213994, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.000059723854
+      value: 0.00059121475
       objectReference: {fileID: 0}
     - target: {fileID: 6992980727287213994, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9799246
+      value: 0.984241
       objectReference: {fileID: 0}
     - target: {fileID: 6992980727287213994, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.19936824
+      value: -0.17680076
       objectReference: {fileID: 0}
     - target: {fileID: 7028379516915894397, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchorMax.y
@@ -54696,7 +54698,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7531457977663148638, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.6710526
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 7550764320256020881, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_SizeDelta.x

@@ -18,11 +18,13 @@ MonoBehaviour:
   initialVelocity: 20
   feedbackData:
     caughtDistance: 1
-    forceAttractionBegin: -5
-    forceAttractionEnd: 300
-    forceAttractionYMultiplier: 0.05
-    durationForce: 10
-    minimalTime: 5
+    orbitRadius: 2
+    orbitY: 8
+    durationToOrbit: 2
+    toOrbitEase: 21
+    durationOrbit: 6
+    readyToVelocityDuration: 0.5
+    velocityToDestination: 10
     offsetDestination: {x: 0, y: 3.5, z: 0}
   outlineFeedbackData:
     outlineColor:
