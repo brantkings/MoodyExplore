@@ -1833,7 +1833,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4813272952109751330}
-  m_LocalRotation: {x: -0.000037219375, y: 0.99281776, z: -0.11963623, w: -0.00030890107}
+  m_LocalRotation: {x: 0.00059121475, y: 0.984241, z: -0.17680076, w: 0.0032912493}
   m_LocalPosition: {x: 0, y: 5, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2640,7 +2640,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5938188665409695490}
-  m_LocalRotation: {x: -0.1855021, y: 0.7400694, z: -0.22678296, w: -0.60535586}
+  m_LocalRotation: {x: -0.18550205, y: 0.7400694, z: -0.22678298, w: -0.60535586}
   m_LocalPosition: {x: 31.364744, y: 27.5, z: 6.344528}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -11756,7 +11756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.1855021
+      value: -0.18550205
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.y
@@ -11764,7 +11764,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.22678296
+      value: -0.22678298
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -11847,7 +11847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1507541639539477094, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
       propertyPath: m_Name
-      value: HumanoidObject
+      value: HumanoidObject Player
       objectReference: {fileID: 0}
     - target: {fileID: 1507541639539477096, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
       propertyPath: preciseWallCorrections

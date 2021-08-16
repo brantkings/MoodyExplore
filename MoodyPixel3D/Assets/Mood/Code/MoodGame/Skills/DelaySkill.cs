@@ -23,6 +23,7 @@ public class DelaySkill : MoodSkill
     {
         DoFeedback(pawn, true);
         SolveStun(pawn, true);
+        pawn.SetVelocity(Vector3.zero);
         yield return base.ExecuteRoutine(pawn, skillDirection);
         SolveStun(pawn, false);
         DoFeedback(pawn, false);

@@ -16,7 +16,7 @@ namespace Code.Animation.Humanoid
             
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             _walk.SetSpeed(platformer.Velocity);
             _walk.SetGrounded(platformer.Grounded);

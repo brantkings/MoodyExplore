@@ -13,7 +13,8 @@ public class CommandModeDependent : MonoBehaviour
     private void OnEnable()
     {
         OnCommandModeChange(MoodPlayerController.Mode.None);
-        MoodPlayerController.Instance.OnChangeCommandMode += OnCommandModeChange;
+        if (MoodPlayerController.Instance != null)
+            MoodPlayerController.Instance.OnChangeCommandMode += OnCommandModeChange;
     }
 
     private void OnDisable()

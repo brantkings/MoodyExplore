@@ -9,6 +9,7 @@ public class AlwaysFaceCamera : MonoBehaviour
     void Start()
     {
         _main = Camera.main;
+        if (_main == null) enabled = false;
     }
 
     void LateUpdate()

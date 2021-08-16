@@ -5,6 +5,13 @@ using UnityEngine;
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
+
+#if UNITY_EDITOR
+    public bool debugCantFindSingleton = true;
+    private static bool alreadyToldCantFind = false;
+
+#endif
+
     public static T Instance
     {
         get
@@ -15,7 +22,11 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 #if UNITY_EDITOR
                 if(_instance == null)
                 {
-                    Debug.LogErrorFormat("Couldnt find singleton of type {0}!", typeof(T));
+                    if(!alreadyToldCantFind)
+                    {
+                        Debug.LogErrorFormat("Couldnt find singleton of type {0}!", typeof(T));
+                        alreadyToldCantFind = true;
+                    }
                 }
 #endif
             }

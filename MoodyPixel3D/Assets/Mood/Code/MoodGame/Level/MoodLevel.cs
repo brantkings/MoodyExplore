@@ -22,18 +22,23 @@ public class MoodLevel : MonoBehaviour
     {
         MoodLevelRoom playerRoom = GetPlayerRoom();
 
-        foreach(var room in Rooms)
+        if(playerRoom != null)
         {
-            Debug.LogWarningFormat("Got room '{0}' and going to activate? '{1}'", room, room == playerRoom);
-            if (room == playerRoom) room.StartActivationRoutine(true, true);
-            else room.StartActivationRoutine(false, true);
-
+            foreach(var room in Rooms)
+            {
+                Debug.LogWarningFormat("Got room '{0}' and going to activate? '{1}'", room, room == playerRoom);
+                if (room == playerRoom) room.StartActivationRoutine(true, true);
+                else room.StartActivationRoutine(false, true);
+            }
         }
+
     }
 
     public MoodLevelRoom GetPlayerRoom()
     {
-        return GetRoom(MoodPlayerController.Instance.Pawn.Position);
+        if (MoodPlayerController.Instance != null)
+            return GetRoom(MoodPlayerController.Instance.Pawn.Position);
+        else return null;
     }
 
     public MoodLevelRoom GetRoom(Vector3 pos)

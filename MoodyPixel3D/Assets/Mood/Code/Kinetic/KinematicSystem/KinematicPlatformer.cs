@@ -22,18 +22,26 @@ public partial class KinematicPlatformer : MonoBehaviour
         None
     }
 
+    public static float SMALL_AMOUNT = 0.001f;
+    public static float SMALL_AMOUNT_SQRD = SMALL_AMOUNT * SMALL_AMOUNT;
     public static float GRAVITY = 10f;
 
     public Caster groundCaster;
     public Caster ceilingCaster;
     public Caster wallCaster;
-    [SerializeField]
-    private bool _setPositionDirectlyToTransform;
 
     public bool _hasGravity;
     public bool preciseWallCorrections = true;
 
     private Rigidbody _body;
+    public enum ManipulatingStyle
+    {
+        Transform,
+        RigidbodyInParent,
+        RigidbodyInChild,
+    }
+    public ManipulatingStyle manipulatingStyle = ManipulatingStyle.RigidbodyInParent;
+        
 
     public float mass = 1f;
     public float airResistanceCoefficient = 0f;
@@ -133,7 +141,15 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     private void Awake()
     {
-        _body = GetComponentInParent<Rigidbody>();
+        switch (manipulatingStyle)
+        {
+            case ManipulatingStyle.RigidbodyInChild:
+                _body = GetComponentInChildren<Rigidbody>();
+                break;
+            default:
+                _body = GetComponentInParent<Rigidbody>();
+                break;
+        }
     }
 
     public void AddForce(Vector3 force)
@@ -149,14 +165,29 @@ public partial class KinematicPlatformer : MonoBehaviour
         _velocity = Vector3.zero;
     }
 
+    private int _frame;
+    private int count;
 
     public Vector3 Position
     {
         protected set
         {
-            if (!_setPositionDirectlyToTransform && _body != null)
+            if(Debugging)
             {
-                _body.position = value;
+                if(_frame != Time.frameCount)
+                {
+                    count = 0;
+                    _frame = Time.frameCount;
+                }
+                count++;
+                Debug.LogFormat("Going from [{0} to {1}] for the {2}th time in frame {3}", _body.position.ToString("F4"), value.ToString("F4"), count, Time.frameCount);
+                //if (count > 1) return;
+            }
+
+            if (UsingRigidbody())
+            {
+                //_body.position = value;
+                _body.MovePosition(value);
             }
             else
             {
@@ -165,7 +196,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
         get
         {
-            if (!_setPositionDirectlyToTransform && _body != null)
+            if (UsingRigidbody())
             {
                 return _body.position;
             }
@@ -183,8 +214,51 @@ public partial class KinematicPlatformer : MonoBehaviour
         {
             if(value.sqrMagnitude != 0f)
             {
-                transform.forward = value;
+                if(UsingRigidbody())
+                {
+                    _body.MoveRotation(Quaternion.LookRotation(value));
+
+                }
+                else
+                {
+                    transform.forward = value;
+                }
             }
+        }
+    }
+
+    private bool UsingRigidbody()
+    {
+        switch (manipulatingStyle)
+        {
+            case ManipulatingStyle.Transform:
+                return false;
+            default:
+                return _body != null;
+        }
+    }
+
+    public void SetPosition(Vector3 pos)
+    {
+        if(UsingRigidbody())
+        {
+            _body.position = pos;
+        }
+        else
+        {
+            transform.position = pos;
+        }
+    }
+
+    public void SetRotation(Vector3 dir)
+    {
+        if(UsingRigidbody())
+        {
+            _body.rotation = Quaternion.LookRotation(dir);
+        }
+        else
+        {
+            transform.forward = dir;
         }
     }
     
@@ -210,13 +284,13 @@ public partial class KinematicPlatformer : MonoBehaviour
     public void AddVelocitySource(IKinematicPlatformerFrameVelocityGetter getter)
     {
         FrameSources.AddLast(getter);
-        Debug.LogFormat("Added {0} and has {1}", getter, Sources.Count);
+        //Debug.LogFormat("Added {0} and has {1}", getter, Sources.Count);
     }
 
     public void RemoveVelocitySource(IKinematicPlatformerFrameVelocityGetter getter)
     {
         FrameSources.Remove(getter);
-        Debug.LogFormat("Removed {0} and has {1}", getter, Sources.Count);
+        //Debug.LogFormat("Removed {0} and has {1}", getter, Sources.Count);
     }
 
     public void AddVelocity(Vector3 vel)
@@ -371,6 +445,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         if (movementMade.IsNaN())
         {
             Debug.LogErrorFormat("[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} frame:{4} extract:{5} total:{6}. Delta time is {7}", this, movementMade, verticalMovement, horizontalMovement, frameMovement, extractMovement, totalMovement, Time.fixedDeltaTime);
+            return;
         }
 #endif
 
@@ -409,21 +484,27 @@ public partial class KinematicPlatformer : MonoBehaviour
         return new Vector3(0f, totalMovement.y, 0f);
     }
 
-    private Vector3 ApproachColliderThroughNormal(Caster caster, RaycastHit hit, Vector3 originOffset, Vector3 movementToHitWall)
+    private Vector3 ApproachColliderThroughNormal(Caster caster, in RaycastHit hit, in Vector3 originOffset, in Vector3 movementToHitWall)
     {
-        Vector3 lateralAmountToHugWall = Vector3.Project(movementToHitWall, hit.normal); //This didn't let corners have different resting positions for difference forces.
+        Vector3 lateralAmountToHugWall = Vector3.Project(movementToHitWall, hit.normal); //This didn't let corners have different resting positions for different forces.
 
-        if (caster.CastLengthOffset(originOffset, lateralAmountToHugWall, out RaycastHit precisionHit))
+        int count = 0;
+        while (lateralAmountToHugWall.sqrMagnitude > SMALL_AMOUNT_SQRD && caster.CastLengthOffset(originOffset, lateralAmountToHugWall, out RaycastHit precisionHit))
         {
-            return lateralAmountToHugWall.normalized * precisionHit.distance;
+            lateralAmountToHugWall = lateralAmountToHugWall.normalized * precisionHit.distance;
+
+#if UNITY_EDITOR
+            if(count++ > 10)
+            {
+                Debug.LogErrorFormat("Possible infinite loop detected: {0} to {1} in hug collider approaching normal.", movementToHitWall.ToString("F4"), precisionHit.collider);
+                break;
+            }
+#endif
         }
-        else
-        {
-            return lateralAmountToHugWall;
-        }
+        return lateralAmountToHugWall;
     }
 
-    private void CheckAndReflectMovement(ref Vector3 movement, out Vector3 reflection, out bool foundCast, Vector3 originOffset, Caster caster, bool hugColliderApproachingNormal)
+    private void CheckAndReflectMovement(ref Vector3 movement, out Vector3 reflection, out bool foundCast, in Vector3 originOffset, Caster caster, bool hugColliderApproachingNormal)
     {
         foundCast = false;
         reflection = Vector3.zero;
@@ -526,14 +607,14 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private void SolveReflection(Vector3 inVel, float minVelToReflect, float reflectionAbsortion)
+    private void SolveReflection(in Vector3 inVel, float minVelToReflect, float reflectionAbsortion)
     {
 
     }
 
 
 
-    private void Move(Vector3 movement)
+    private void Move(in Vector3 movement)
     {
         if (movement.sqrMagnitude != 0f) 
             _latestNonZeroValidMovement = movement;
@@ -545,8 +626,8 @@ public partial class KinematicPlatformer : MonoBehaviour
         if (movement != Vector3.zero)
         {
             if (Debugging)
-                Debug.LogFormat("{0} going to {1} + {2} = {3}", 
-                    this, Position, movement.ToString("F4"), Position + movement);
+                Debug.LogFormat("{0} going from {1} with {2} = {3}", 
+                    this, Position.ToString("F4"), movement.ToString("F4"), (Position + movement).ToString("F4"));
             Position = Position + movement;
         }
     }

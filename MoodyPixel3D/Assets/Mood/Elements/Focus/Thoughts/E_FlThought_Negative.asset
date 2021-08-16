@@ -19,10 +19,10 @@ MonoBehaviour:
   feedbackData:
     caughtDistance: 1
     orbitRadius: 2
-    orbitY: 8
+    orbitY: 5
     durationToOrbit: 2
     toOrbitEase: 21
-    durationOrbit: 6
+    durationOrbit: 1
     readyToVelocityDuration: 0.5
     velocityToDestination: 10
     offsetDestination: {x: 0, y: 3.5, z: 0}
