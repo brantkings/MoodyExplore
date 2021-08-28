@@ -23,6 +23,10 @@ namespace Code.Animation.Humanoid
 
         public void SetSpeed(Vector3 speed)
         {
+            if(speed.sqrMagnitude < KinematicPlatformer.SMALL_AMOUNT_SQRD)
+            {
+                speed = Vector3.zero;
+            }
             _anim.SetFloat(speedX, speed.x);
             _anim.SetFloat(speedZ, speed.y);
             float speedNum = speed.ProjectOntoPlane(Vector3.up).magnitude;

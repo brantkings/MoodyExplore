@@ -13,15 +13,9 @@ namespace LHH.Caster
         [SerializeField]
         private LayerMask _obstacleMask;
         [SerializeField]
-        private Transform _defaultOrigin;
-        [SerializeField]
-        private Vector3 _defaultOriginOffset = Vector3.zero;
-        [SerializeField]
-        private Vector3 _defaultDirectionRelative = -Vector3.up;
-        [SerializeField]
-        private float _distance = 1f;
-        [SerializeField]
         private int _maxSimultaneousHits = 5;
+        [SerializeField]
+        private Transform _overridedOrigin;
 
         [Header("Offsets and distances")]
         [Tooltip("An amount of distance added moving the origin backwards so give leeway to hit a collider right in front.")]
@@ -29,13 +23,20 @@ namespace LHH.Caster
         protected float _safetyDistance = 0f;
         [Tooltip("Move the origin in an offset forward to simulate it actually beginning in an sphere around the origin.")]
         [SerializeField]
-        protected float _originDistanceOffset = 0f;
-        [Tooltip("Move the origin normalized means that it will always have the exact length of the number above.")]
-        [SerializeField]
-        protected bool _normalizeOriginDistanceOffset = true;
+        [UnityEngine.Serialization.FormerlySerializedAs("_originDistanceOffset")]
+        protected float _originForwardOffset = 0f;
         [Tooltip("Restrict the origin distance offset to a plane dictated by a vector, relative to the caster's transform. If the plane is 0,0,0 nothing will happen.")]
         [SerializeField]
         protected Vector3 _restrictOriginDistanceOffsetToPlane;
+
+
+        [Header("Default values")]
+        [SerializeField]
+        private float _defaultDistance = 1f;
+        [SerializeField]
+        private Vector3 _defaultOriginOffset = Vector3.zero;
+        [SerializeField]
+        private Vector3 _defaultDirectionRelative = -Vector3.up;
 
         private RaycastHit[] _hitsAllArray;
 
@@ -76,8 +77,8 @@ namespace LHH.Caster
         {
             get
             {
-                if (_defaultOrigin == null) _defaultOrigin = transform;
-                return _defaultOrigin;
+                if (_overridedOrigin == null) _overridedOrigin = transform;
+                return _overridedOrigin;
             }
         }
 
@@ -89,11 +90,19 @@ namespace LHH.Caster
             }
         }
 
+        public float CastDistanceOffset
+        {
+            get
+            {
+                return _originForwardOffset;
+            }
+        }
+
         public virtual Vector3 GetOriginPosition()
         {
             return Origin.TransformPoint(_defaultOriginOffset);
         }
-        public Vector3 GetOriginPosition(Vector3 offset)
+        public Vector3 GetOriginPositionOffset(in Vector3 offset)
         {
             return GetOriginPosition() + offset;
         }
@@ -110,26 +119,36 @@ namespace LHH.Caster
 
         public float GetDefaultDistance()
         {
-            return _distance;
+            return _defaultDistance;
         }
 
-        public abstract Vector3 GetCasterCenterOfHit(RaycastHit hit, float addedDistance);
-
-        public Vector3 GetCentroidDistance(RaycastHit hit, Vector3 offsetUsed)
+        public Vector3 GetDefaultDistanceLength()
         {
-            if (hit.distance == 0f && hit.point == Vector3.zero) return Vector3.zero; //An invalid hit that means that the cast was done from within the ground so CenterOfHit(hit) should be equal GetOriginPosition().
-            else return GetCasterCenterOfHit(hit, _originDistanceOffset) - GetOriginPosition(offsetUsed);
+            return GetDefaultDirectionNormalized() * GetDefaultDistance();
         }
-    
+
         /// <summary>
-        /// Get the distance between the centroid of the hit and the centroid now.
+        /// Get the center of the shape where the caster had this hit.
         /// </summary>
         /// <param name="hit"></param>
+        /// <param name="addedDistance"></param>
         /// <returns></returns>
-        public Vector3 GetCentroidDistance(RaycastHit hit)
+        public virtual Vector3 GetCenterPositionOfHit(RaycastHit hit)
         {
-            return GetCasterCenterOfHit(hit, _originDistanceOffset) - GetOriginPosition();
+            return GetCenterPositionOfHit(hit.point, hit.normal);
         }
+
+        public virtual Vector3 GetCenterPositionOfHit(Vector3 point, Vector3 hitNormal)
+        {
+            return point + GetSpecificMinimumDistanceFromHit(hitNormal);
+        }
+
+        public virtual Vector3 GetMinimumDistanceFromHit(Vector3 hitNormal)
+        {
+            return GetSpecificMinimumDistanceFromHit(hitNormal) + hitNormal.normalized * _originForwardOffset;
+        }
+
+        protected abstract Vector3 GetSpecificMinimumDistanceFromHit(Vector3 hitNormal);
 
         /// <summary>
         /// Did this cast was made from outside the casted collider?
@@ -150,17 +169,17 @@ namespace LHH.Caster
         public bool Cast()
         {
             RaycastHit hit;
-            return CastAndValidate(GetOriginPosition(), Origin.TransformDirection(_defaultDirectionRelative), LayerMask, _distance, out hit);
+            return CastAndValidate(GetOriginPosition(), Origin.TransformDirection(_defaultDirectionRelative), LayerMask, _defaultDistance, out hit);
         }
 
         public bool Cast(out RaycastHit hit)
         {
-            return CastAndValidate(GetOriginPosition(), Origin.TransformDirection(_defaultDirectionRelative), LayerMask, _distance, out hit);
+            return CastAndValidate(GetOriginPosition(), Origin.TransformDirection(_defaultDirectionRelative), LayerMask, _defaultDistance, out hit);
         }
 
         public bool Cast(Vector3 direction, out RaycastHit hit)
         {
-            return CastAndValidate(GetOriginPosition(), direction, LayerMask, _distance, out hit);
+            return CastAndValidate(GetOriginPosition(), direction, LayerMask, _defaultDistance, out hit);
         }
 
         public bool CastLength(Vector3 directionLength, out RaycastHit hit)
@@ -170,7 +189,7 @@ namespace LHH.Caster
 
         public bool CastLengthOffset(Vector3 originOffset, Vector3 directionLength, out RaycastHit hit)
         {
-            return CastAndValidate(GetOriginPosition(originOffset), directionLength, LayerMask, directionLength.magnitude, out hit);
+            return CastAndValidate(GetOriginPositionOffset(originOffset), directionLength, LayerMask, directionLength.magnitude, out hit);
         }
 
         public bool CastLength(Vector3 origin, Vector3 directionLength, out RaycastHit hit)
@@ -180,17 +199,17 @@ namespace LHH.Caster
 
         public bool Cast(Vector3 origin, Vector3 direction, out RaycastHit hit)
         {
-            return CastAndValidate(origin, direction, LayerMask, _distance, out hit);
+            return CastAndValidate(origin, direction, LayerMask, _defaultDistance, out hit);
         }
 
         public IEnumerable<RaycastHit> CastAll()
         {
-            return CastAndValidateAll(GetOriginPosition(), Origin.TransformDirection(_defaultDirectionRelative), LayerMask, _distance);
+            return CastAndValidateAll(GetOriginPosition(), Origin.TransformDirection(_defaultDirectionRelative), LayerMask, _defaultDistance);
         }
 
         public IEnumerable<RaycastHit> CastAll(Vector3 direction)
         {
-            return CastAndValidateAll(GetOriginPosition(), direction, LayerMask, _distance);
+            return CastAndValidateAll(GetOriginPosition(), direction, LayerMask, _defaultDistance);
         }
 
         public IEnumerable<RaycastHit> CastAllLength(Vector3 directionLength)
@@ -200,17 +219,16 @@ namespace LHH.Caster
 
         public IEnumerable<RaycastHit> CastAllLengthOffset(Vector3 offset, Vector3 directionLength)
         {
-            return CastAndValidateAll(GetOriginPosition(offset), directionLength, LayerMask, directionLength.magnitude);
+            return CastAndValidateAll(GetOriginPositionOffset(offset), directionLength, LayerMask, directionLength.magnitude);
         }
 
 
-        protected void CorrectDistances(ref Vector3 origin, ref float distance, Vector3 directionNormalized)
+        protected void SanitizeCastParameters(ref Vector3 origin, ref float distance, Vector3 directionNormalized)
         {
             origin -= directionNormalized * _safetyDistance;
-            if(_originDistanceOffset != 0f)
+            if(_originForwardOffset != 0f)
             {
-                Vector3 addedDistance = directionNormalized * _originDistanceOffset;
-                if (!_normalizeOriginDistanceOffset) addedDistance *= distance;
+                Vector3 addedDistance = directionNormalized * _originForwardOffset;
                 if (_restrictOriginDistanceOffsetToPlane != Vector3.zero) addedDistance = Vector3.ProjectOnPlane(addedDistance, transform.TransformDirection(_restrictOriginDistanceOffsetToPlane));
 
                 origin += addedDistance;
@@ -218,12 +236,10 @@ namespace LHH.Caster
 
             distance += _safetyDistance;
         }
-        private bool CheckCast(ref RaycastHit hit)
+        private bool SanitizeHitResult(ref RaycastHit hit)
         {
             float hitdistanceold = hit.distance;
-            //if (hitdistanceold == 0f && hit.point == Vector3.zero) return false;
-            //hit.distance = Mathf.Max(0f, hitdistanceold - _safetyDistance);
-            hit.distance = hitdistanceold - _safetyDistance;
+            hit.distance = hitdistanceold - _safetyDistance; //Yes distance can be less than 0 if the safety is too much (so it knows it should go back)
             return HitMask.Contains(hit.collider.gameObject.layer);
         }
 
@@ -231,7 +247,7 @@ namespace LHH.Caster
         {
             if (castOK)
             {
-                return CheckCast(ref hit);
+                return SanitizeHitResult(ref hit);
             }
             return false;
         }
@@ -242,7 +258,7 @@ namespace LHH.Caster
             Debug.DrawRay(origin, direction.normalized * distance, Color.red);
     #endif
             Vector3 directionNormalized = direction.normalized;
-            CorrectDistances(ref origin, ref distance, directionNormalized);
+            SanitizeCastParameters(ref origin, ref distance, directionNormalized);
             bool casted = CheckCast(MakeTheCast(origin, directionNormalized, mask, distance, out hit), ref hit);
         
             return casted;
@@ -254,12 +270,12 @@ namespace LHH.Caster
             Debug.DrawRay(origin, direction.normalized * distance, Color.red);
     #endif
             Vector3 directionNormalized = direction.normalized;
-            CorrectDistances(ref origin, ref distance, directionNormalized);
+            SanitizeCastParameters(ref origin, ref distance, directionNormalized);
             int casted = MakeTheCastAll(origin, directionNormalized, mask, distance, HitsCache);
 
             for (int i = 0; i < casted; i++)
             {
-                if (CheckCast(ref HitsCache[i]))
+                if (SanitizeHitResult(ref HitsCache[i]))
                 {
                     yield return HitsCache[i];
                 }
@@ -270,27 +286,54 @@ namespace LHH.Caster
 
         protected abstract int MakeTheCastAll(Vector3 origin, Vector3 direction, LayerMask mask, float distance, RaycastHit[] results);
 
-
-        private void OnDrawGizmos()
-        {
-            Color gizmo = GizmosUtils.InformativeColor;
-
-            if (Cast()) gizmo = GizmosUtils.SuccessColor;
-            gizmo *= 0.25f;
-            Gizmos.color = gizmo;
-            DrawGizmos();
-        }
-
         private void OnDrawGizmosSelected()
         {
-            Color gizmo = GizmosUtils.InformativeColor;
-
-            if (Cast()) gizmo = GizmosUtils.SuccessColor;
-        
-            Gizmos.color = gizmo;
-            DrawGizmos();
+            if(GetDefaultDistance() > 0f && GetDefaultDirection() != Vector3.zero)
+                DrawGizmoForCast(GetOriginPosition(), GetDefaultDirection(), GetDefaultDistance(), out RaycastHit hit);
         }
 
-        protected abstract void DrawGizmos();
+        public void DrawGizmoForCast(in Vector3 origin, in Vector3 direction, in float distance, out RaycastHit hit)
+        {
+            Vector3 sanitizedOrigin = origin;
+            float sanitizedDistance = distance;
+            SanitizeCastParameters(ref sanitizedOrigin, ref sanitizedDistance, direction);
+
+            Gizmos.color = GizmosUtils.InformativeColor * 0.5f;
+            DrawFormatGizmo(origin);
+            Gizmos.DrawWireSphere(origin, Mathf.Abs(_originForwardOffset));
+
+            if (_originForwardOffset != 0f)
+            {
+                Gizmos.color = GizmosUtils.InformativeColor;
+                DrawFormatGizmo(origin + direction * _originForwardOffset);
+            }
+            Gizmos.color = GizmosUtils.InformativeColor * 0.75f;
+            DrawFormatGizmo(sanitizedOrigin);
+            Gizmos.color = GizmosUtils.InformativeColor * 0.75f;
+            DrawFormatGizmo(sanitizedOrigin + direction * sanitizedDistance);
+
+
+            if (CastLengthOffset(origin, direction * distance, out hit))
+            {
+                Gizmos.color = GizmosUtils.SuccessColor * 0.5f;
+                Gizmos.DrawLine(origin, hit.point);
+
+                Gizmos.color = GizmosUtils.SuccessColor * 0.75f;
+                DrawFormatGizmo(hit.point);
+                GizmosUtils.DrawArrow(origin, origin + direction * hit.distance, 0.5f);
+
+                Gizmos.color = GizmosUtils.SuccessColor;
+                DrawFormatGizmo(GetCenterPositionOfHit(hit));
+            }
+            else
+            {
+                Gizmos.color = GizmosUtils.InformativeColor;
+                DrawFormatGizmo(origin + direction * distance);
+                Gizmos.DrawLine(origin, origin + direction * distance);
+                GizmosUtils.DrawArrow(origin, origin + direction * distance, 0.5f);
+            }
+        }
+
+        public abstract void DrawFormatGizmo(Vector3 position);
     }
 }

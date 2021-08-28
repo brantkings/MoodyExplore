@@ -10,7 +10,7 @@ public class DelaySkill : MoodSkill
     public MoodPawn.StunType[] stuns;
     public MoodEffectFlag[] flags;
 
-    [Header("Feedback delay")]
+    [Header("Delay Feedback")]
     public SoundEffect sfx;
     public ActivateableMoodStance[] toAdd;
     [SerializeField]

@@ -14,21 +14,14 @@ namespace LHH.Caster
         private Vector3 _lastOrigin;
         private Vector3 _lastDirectionTimesDistance;
 
-        protected override void DrawGizmos()
+        public override void DrawFormatGizmo(Vector3 center)
         {
-            Gizmos.DrawWireSphere(GetOriginPosition(), _radius);
-            Gizmos.DrawLine(GetOriginPosition(), GetOriginPosition() + GetDefaultDirectionNormalized() * GetDefaultDistance());
-
-            if(_lastDirectionTimesDistance != Vector3.zero)
-            {
-                Gizmos.DrawWireSphere(_lastOrigin + _lastDirectionTimesDistance, _radius);
-                Gizmos.DrawWireSphere(_lastOrigin + _lastDirectionTimesDistance.normalized * -_safetyDistance, _radius);
-            }
+            Gizmos.DrawWireSphere(center, _radius);
         }
 
-        public override Vector3 GetCasterCenterOfHit(RaycastHit hit, float addedDistance)
+        protected override Vector3 GetSpecificMinimumDistanceFromHit(Vector3 hitNormal)
         {
-            return hit.point + hit.normal * (_radius + addedDistance);
+            return hitNormal * _radius;
         }
 
         protected override bool MakeTheCast(Vector3 origin, Vector3 direction, LayerMask mask, float distance, out RaycastHit hit)

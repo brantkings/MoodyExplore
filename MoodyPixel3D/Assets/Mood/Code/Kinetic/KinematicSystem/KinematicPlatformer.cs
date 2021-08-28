@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using LHH.Caster;
+using System.Linq;
+
+public interface IKinematicForceGetter
+{
+    void SetGettingForce(bool set);
+}
 
 public interface IKinematicPlatformerVelocityGetter
 {
@@ -22,7 +28,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         None
     }
 
-    public static float SMALL_AMOUNT = 0.001f;
+    public static float SMALL_AMOUNT = 0.01f;
     public static float SMALL_AMOUNT_SQRD = SMALL_AMOUNT * SMALL_AMOUNT;
     public static float GRAVITY = 10f;
 
@@ -31,7 +37,6 @@ public partial class KinematicPlatformer : MonoBehaviour
     public Caster wallCaster;
 
     public bool _hasGravity;
-    public bool preciseWallCorrections = true;
 
     private Rigidbody _body;
     public enum ManipulatingStyle
@@ -41,11 +46,20 @@ public partial class KinematicPlatformer : MonoBehaviour
         RigidbodyInChild,
     }
     public ManipulatingStyle manipulatingStyle = ManipulatingStyle.RigidbodyInParent;
-        
+    
+    [System.Serializable]
+    private class MovementData
+    {
+        public float airResistanceCoefficient = 0f;
+        public float minMagnitude = 0.1f;
+        public float reflectionMultiplier = 0f;
+        public float dragMultiplier = 1f;
+    }
 
-    public float mass = 1f;
     public float airResistanceCoefficient = 0f;
     public float minVelocityMagnitude = 0.1f;
+    public float reflectionMultiplier = 0f;
+    public float dragMultiplier = 1f;
 
 #if UNITY_EDITOR
     [SerializeField]
@@ -69,8 +83,6 @@ public partial class KinematicPlatformer : MonoBehaviour
     private Vector3 _debugCurrentOtherSourcesInputVelocity;
 #endif
     private Vector3 _setFrameMovement;
-    private LinkedList<IKinematicPlatformerVelocityGetter> _velocitySources;
-    private LinkedList<IKinematicPlatformerFrameVelocityGetter> _frameVelocitySources;
 
 
     private Vector3 _latestNonZeroValidMovement;
@@ -93,7 +105,7 @@ public partial class KinematicPlatformer : MonoBehaviour
     private bool _debugGrounded;
     [ReadOnly]
     [SerializeField]
-    private int _debugWalled;
+    private bool _debugWalled;
     [ReadOnly]
     [SerializeField]
     private bool _debugHittingHead;
@@ -121,20 +133,125 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private LinkedList<IKinematicPlatformerVelocityGetter> Sources
+#if UNITY_EDITOR
+    internal struct CastHistoryElement
+    {
+        internal Vector3 offset;
+        internal Vector3 distance;
+        internal Caster caster;
+        internal RaycastHit hit;
+        internal string comment;
+    }
+
+    internal class CastHistory : IEnumerable<CastHistoryElement>
+    {
+        public List<CastHistoryElement> elements;
+
+        public void Add(CastHistoryElement elem)
+        {
+            elements.Add(elem);
+        }
+
+        public CastHistory()
+        {
+            elements = new List<CastHistoryElement>(8);
+        }
+
+        public IEnumerator<CastHistoryElement> GetEnumerator()
+        {
+            return ((IEnumerable<CastHistoryElement>)elements).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)elements).GetEnumerator();
+        }
+    }
+
+    private CastHistory history;
+#endif
+
+    private class VelocityGetter<T> : IEnumerable<T>
+    {
+        public Dictionary<int, LinkedList<T>> _values;
+
+        public T Current => throw new System.NotImplementedException();
+
+        public VelocityGetter()
+        {
+            _values = new Dictionary<int, LinkedList<T>>(8);
+        }
+
+
+        public LinkedList<T> this[int key]
+        {
+            get
+            {
+                if (!_values.ContainsKey(key))
+                {
+                    _values.Add(key, new LinkedList<T>());
+                }
+                return _values[key];
+            }
+        }
+
+        private KeyValuePair<int, LinkedList<T>> FindMaxValue(KeyValuePair<int, LinkedList<T>> x, KeyValuePair<int, LinkedList<T>> y)
+        {
+            return x.Key > y.Key ? x : y;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            if(_values.Count > 0)
+            {
+                KeyValuePair<int, LinkedList<T>> r = _values.Aggregate(FindMaxValue);
+                if (r.Value != null)
+                {
+                    LinkedListNode<T> node = r.Value.First;
+                    while (node != null)
+                    {
+                        yield return node.Value;
+                        node = node.Next;
+                    }
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            if (_values.Count > 0)
+            {
+                KeyValuePair<int, LinkedList<T>> r = _values.Aggregate(FindMaxValue);
+                if (r.Value != null)
+                {
+                    LinkedListNode<T> node = r.Value.First;
+                    while (node != null)
+                    {
+                        yield return node.Value;
+                        node = node.Next;
+                    }
+                }
+            }
+        }
+    }
+
+    private VelocityGetter<IKinematicPlatformerVelocityGetter> _velocitySources;
+    private VelocityGetter<IKinematicPlatformerFrameVelocityGetter> _frameVelocitySources;
+
+    private VelocityGetter<IKinematicPlatformerVelocityGetter> Sources
     {
         get
         {
-            if (_velocitySources == null) _velocitySources = new LinkedList<IKinematicPlatformerVelocityGetter>();
+            if (_velocitySources == null) _velocitySources = new VelocityGetter<IKinematicPlatformerVelocityGetter>();
             return _velocitySources;
         }
     }
 
-    private LinkedList<IKinematicPlatformerFrameVelocityGetter> FrameSources
+    private VelocityGetter<IKinematicPlatformerFrameVelocityGetter> FrameSources
     {
         get
         {
-            if (_velocitySources == null) _frameVelocitySources = new LinkedList<IKinematicPlatformerFrameVelocityGetter>();
+            if (_velocitySources == null) _frameVelocitySources = new VelocityGetter<IKinematicPlatformerFrameVelocityGetter>();
             return _frameVelocitySources;
         }
     }
@@ -154,9 +271,10 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     public void AddForce(Vector3 force)
     {
-        if (mass != 0f)
+        float m = Mass;
+        if (m != 0f)
         {
-            _velocity += force / mass;
+            _velocity += force / m;
         }
     }
 
@@ -172,6 +290,7 @@ public partial class KinematicPlatformer : MonoBehaviour
     {
         protected set
         {
+#if UNITY_EDITOR
             if(Debugging)
             {
                 if(_frame != Time.frameCount)
@@ -180,9 +299,10 @@ public partial class KinematicPlatformer : MonoBehaviour
                     _frame = Time.frameCount;
                 }
                 count++;
-                Debug.LogFormat("Going from [{0} to {1}] for the {2}th time in frame {3}", _body.position.ToString("F4"), value.ToString("F4"), count, Time.frameCount);
+                //Debug.LogFormat("Going from [{0} to {1}] for the {2}th time in frame {3}", _body.position.ToString("F4"), value.ToString("F4"), count, Time.frameCount);
                 //if (count > 1) return;
             }
+#endif
 
             if (UsingRigidbody())
             {
@@ -224,6 +344,15 @@ public partial class KinematicPlatformer : MonoBehaviour
                     transform.forward = value;
                 }
             }
+        }
+    }
+
+    public float Mass
+    {
+        get
+        {
+            if (_body != null) return _body.mass;
+            else return 1f;
         }
     }
 
@@ -271,25 +400,25 @@ public partial class KinematicPlatformer : MonoBehaviour
         _currentInputVelocity = vel;
     }
 
-    public void AddVelocitySource(IKinematicPlatformerVelocityGetter getter)
+    public void AddVelocitySource(IKinematicPlatformerVelocityGetter getter, int priority = 0)
     {
-        Sources.AddLast(getter);
+        Sources[priority].AddLast(getter);
     }
 
-    public void RemoveVelocitySource(IKinematicPlatformerVelocityGetter getter)
+    public void RemoveVelocitySource(IKinematicPlatformerVelocityGetter getter, int priority = 0)
     {
-        Sources.Remove(getter);
+        Sources[priority].Remove(getter);
     }
 
-    public void AddVelocitySource(IKinematicPlatformerFrameVelocityGetter getter)
+    public void AddVelocitySource(IKinematicPlatformerFrameVelocityGetter getter, int priority = 0)
     {
-        FrameSources.AddLast(getter);
+        FrameSources[priority].AddLast(getter);
         //Debug.LogFormat("Added {0} and has {1}", getter, Sources.Count);
     }
 
-    public void RemoveVelocitySource(IKinematicPlatformerFrameVelocityGetter getter)
+    public void RemoveVelocitySource(IKinematicPlatformerFrameVelocityGetter getter, int priority = 0)
     {
-        FrameSources.Remove(getter);
+        FrameSources[priority].Remove(getter);
         //Debug.LogFormat("Removed {0} and has {1}", getter, Sources.Count);
     }
 
@@ -412,6 +541,10 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     void FixedUpdate()
     {
+#if UNITY_EDITOR 
+        history = new CastHistory();
+#endif
+
         Vector3 totalMovement = GetCurrentVelocity();
         
         if (HasGravity()) totalMovement += GetGravityForce();
@@ -428,14 +561,21 @@ public partial class KinematicPlatformer : MonoBehaviour
 
         bool nowGrounded = Grounded, nowHittingHead = HittingHead, nowWalled = Walled;
         //Horizontal movement resolve
-        CheckAndReflectMovement(ref horizontalMovement, out Vector3 lateralReflection, out nowWalled, movementMade, wallCaster, preciseWallCorrections);
-        
+        CheckAndReflectMovement(ref horizontalMovement, out Vector3 lateralReflection, out Vector3 lateralDrag, out nowWalled, movementMade, wallCaster);
+
+        if (Debugging && (horizontalMovement + lateralDrag) != Vector3.zero)
+        {
+            Debug.LogWarningFormat(this, "{0} + {1} = {2}", horizontalMovement.ToString("F3"), lateralDrag.ToString("F3"), (horizontalMovement + lateralDrag).ToString("F3"));
+            LHH.Utils.DebugUtils.DrawNormalStar(Position + horizontalMovement + lateralDrag, 0.5f, Quaternion.identity, Color.green, 0f);
+            Debug.DebugBreak();
+        }
         //Divide vertical movement and add total horizontal movement into final movement.
-        verticalMovement += Vector3.Project(horizontalMovement, Vector3.up);
-        movementMade += Vector3.ProjectOnPlane(horizontalMovement, Vector3.up);
+        Vector3 totalHorizontalMovement = horizontalMovement + lateralDrag;
+        verticalMovement += GetVerticalMovement(totalHorizontalMovement);
+        movementMade += GetHorizontalMovement(totalHorizontalMovement);
 
         //After moving horizontally, then checks the ground so players can squeeze better through places.
-        Vector3 verticalReflection;
+        Vector3 verticalReflection = Vector3.zero;
         if (verticalMovement.y > 0f) CheckAndStopMovement(ref verticalMovement, out verticalReflection, out nowHittingHead, movementMade, ceilingCaster);
         else CheckAndStopMovement(ref verticalMovement, out verticalReflection, out nowGrounded, movementMade, groundCaster);
 
@@ -444,7 +584,7 @@ public partial class KinematicPlatformer : MonoBehaviour
 #if UNITY_EDITOR
         if (movementMade.IsNaN())
         {
-            Debug.LogErrorFormat("[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} frame:{4} extract:{5} total:{6}. Delta time is {7}", this, movementMade, verticalMovement, horizontalMovement, frameMovement, extractMovement, totalMovement, Time.fixedDeltaTime);
+            Debug.LogErrorFormat(this, "[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} frame:{4} extract:{5} total:{6}. Delta time is {7}", this, movementMade, verticalMovement, horizontalMovement, frameMovement, extractMovement, totalMovement, Time.fixedDeltaTime);
             return;
         }
 #endif
@@ -470,41 +610,55 @@ public partial class KinematicPlatformer : MonoBehaviour
 #if UNITY_EDITOR
         _debugGrounded = Grounded;
         _debugHittingHead = HittingHead;
-        _debugWalled = Walled ? 1 : 0;
+        _debugWalled = Walled;
+
+        if(Debugging && history.elements.Count > ((int)CasterClass.None - 1))
+        {
+            Debug.LogWarningFormat(this, "There has been {0} casts on fixed frame {1} [part of frame {2}].", history.elements.Count, Time.fixedTime, Time.frameCount);
+            int i = 1;
+            foreach (var elem in history) Debug.LogFormat(this, "Cast from {0} to {1} using {2}. It hit '{3}'. (Reason: {4}) [Cast {5}]", elem.offset.ToString("F3"), elem.distance.ToString("F3"), elem.caster, elem.hit.collider, elem.comment, i++);
+        }
 #endif
     }
 
-    private Vector3 GetHorizontalMovement(Vector3 totalMovement)
+    private Vector3 GetHorizontalMovement(in Vector3 totalMovement)
     {
-        return new Vector3(totalMovement.x, 0f, totalMovement.z);
+        return Vector3.ProjectOnPlane(totalMovement, Vector3.up);
     }
 
-    private Vector3 GetVerticalMovement(Vector3 totalMovement)
+    private Vector3 GetVerticalMovement(in Vector3 totalMovement)
     {
-        return new Vector3(0f, totalMovement.y, 0f);
+        return Vector3.Project(totalMovement, Vector3.up);
     }
 
     private Vector3 ApproachColliderThroughNormal(Caster caster, in RaycastHit hit, in Vector3 originOffset, in Vector3 movementToHitWall)
-    {
+    { 
+        Vector3 totalMovement = movementToHitWall;
         Vector3 lateralAmountToHugWall = Vector3.Project(movementToHitWall, hit.normal); //This didn't let corners have different resting positions for different forces.
+        Vector3 origin = originOffset + movementToHitWall;
 
-        int count = 0;
-        while (lateralAmountToHugWall.sqrMagnitude > SMALL_AMOUNT_SQRD && caster.CastLengthOffset(originOffset, lateralAmountToHugWall, out RaycastHit precisionHit))
-        {
-            lateralAmountToHugWall = lateralAmountToHugWall.normalized * precisionHit.distance;
 
 #if UNITY_EDITOR
-            if(count++ > 10)
+        int count = 0;
+#endif
+        while (lateralAmountToHugWall.sqrMagnitude > SMALL_AMOUNT_SQRD && CastLengthOffsetInFrame(caster, origin, lateralAmountToHugWall, out RaycastHit precisionHit, comment: "Approach through normal"))
+        {
+            lateralAmountToHugWall = lateralAmountToHugWall.normalized * precisionHit.distance;
+            totalMovement += lateralAmountToHugWall;
+            origin += lateralAmountToHugWall;
+
+#if UNITY_EDITOR
+            if (count++ > 10)
             {
-                Debug.LogErrorFormat("Possible infinite loop detected: {0} to {1} in hug collider approaching normal.", movementToHitWall.ToString("F4"), precisionHit.collider);
+                Debug.LogErrorFormat(this, "Possible infinite loop detected: {0} to {1} in hug collider approaching normal.", movementToHitWall.ToString("F4"), precisionHit.collider);
                 break;
             }
 #endif
         }
-        return lateralAmountToHugWall;
+        return totalMovement;
     }
 
-    private void CheckAndReflectMovement(ref Vector3 movement, out Vector3 reflection, out bool foundCast, in Vector3 originOffset, Caster caster, bool hugColliderApproachingNormal)
+    private void CheckAndReflectMovementOld(ref Vector3 movement, out Vector3 reflection, out bool foundCast, in Vector3 originOffset, Caster caster, bool hugColliderApproachingNormal)
     {
         foundCast = false;
         reflection = Vector3.zero;
@@ -515,10 +669,10 @@ public partial class KinematicPlatformer : MonoBehaviour
 
             Vector3 movementToGlueWithWall = Vector3.zero;
             int numberOfHits = 0;
-            while (movement != Vector3.zero && caster.CastLengthOffset(originOffset, movement, out RaycastHit hit))
+            while (movement != Vector3.zero && CastLengthOffsetInFrame(caster, originOffset, movement, out RaycastHit hit, comment: "Check and reflect movement"))
             {
                 float moveMagnitude = movement.magnitude;
-                if(hit.distance < moveMagnitude) foundCast = true; //If movement is going to end up inside the collider, it is a solid hit
+                if (hit.distance < moveMagnitude) foundCast = true; //If movement is going to end up inside the collider, it is a solid hit
 
                 Vector3 amountToHugWall = movement.normalized * Mathf.Min(hit.distance, moveMagnitude); //Hug the wall.
                 Vector3 toGlueWithWallThisTime;
@@ -528,9 +682,9 @@ public partial class KinematicPlatformer : MonoBehaviour
                     toGlueWithWallThisTime = amountToHugWall;
 
 #if UNITY_EDITOR
-                if(movement.IsNaN() || reflection.IsNaN() || movementToGlueWithWall.IsNaN() || toGlueWithWallThisTime.IsNaN())
+                if (movement.IsNaN() || reflection.IsNaN() || movementToGlueWithWall.IsNaN() || toGlueWithWallThisTime.IsNaN())
                 {
-                    Debug.LogErrorFormat("[PLATFORMER] {0} NAN ALERT -> mov:{1} ref:{2} movToGlue:{3} movToGlueNow:{4}", this, movement, reflection, movementToGlueWithWall, toGlueWithWallThisTime);
+                    Debug.LogErrorFormat(this, "[PLATFORMER] {0} NAN ALERT -> mov:{1} ref:{2} movToGlue:{3} movToGlueNow:{4}", this, movement, reflection, movementToGlueWithWall, toGlueWithWallThisTime);
                 }
 #endif
                 movementToGlueWithWall += toGlueWithWallThisTime;
@@ -540,25 +694,125 @@ public partial class KinematicPlatformer : MonoBehaviour
 
                 if (++numberOfHits > 10)
                 {
-                    Debug.LogErrorFormat("Infinite loop! {0} {1}", hit.normal, hit.collider);
+                    Debug.LogErrorFormat(this, "Infinite loop! {0} {1}", hit.normal, hit.collider);
                     break;
                 }
             }
 
             movement += movementToGlueWithWall;
+
+
+        }
+    }
+
+    private void CheckAndReflectMovement(ref Vector3 movement, out Vector3 reflection, out Vector3 drag, out bool foundCast, in Vector3 originOffset, Caster caster)
+    {
+        foundCast = false;
+        Vector3 currentMovement = movement;
+        Vector3 extraMovement = Vector3.zero;
+        Vector3 originalMovement = movement;
+        Vector3 origin = originOffset;
+        reflection = Vector3.zero;
+        drag = Vector3.zero;
+        if (caster != null)
+        {
+            if(currentMovement.sqrMagnitude > SMALL_AMOUNT_SQRD && CastLengthOffsetInFrame(caster, origin, currentMovement, out RaycastHit hitFirst, comment: "CheckAndReflect new"))
+            {
+                float moveMagnitude = currentMovement.magnitude;
+                //if (hitFirst.distance < moveMagnitude) //If movement is going to end up inside the collider, it is a solid hit
+                //{
+                    foundCast = true;
+
+                    Vector3 hugWall = currentMovement.normalized * hitFirst.distance;
+                    if (hugWall.sqrMagnitude < SMALL_AMOUNT_SQRD) hugWall = Vector3.zero;
+                    origin += hugWall;
+                    extraMovement = currentMovement - hugWall;
+                    currentMovement = hugWall;
+
+                    //Old hug wall algorthm
+                    //currentMovement = caster.GetCenterPositionOfHit(hitFirst) - caster.GetOriginPositionOffset(originOffset); //Hug the wall
+                    //extraMovement = originalMovement.normalized * (moveMagnitude - currentMovement.magnitude);
+
+                    //Excess movement
+                    reflection += Vector3.Reflect(extraMovement, hitFirst.normal) * reflectionMultiplier;
+                    drag = Vector3.ProjectOnPlane(extraMovement, hitFirst.normal) * dragMultiplier;
+                    //If drag will stop at a wall, stop it.
+                    if (drag.sqrMagnitude > SMALL_AMOUNT_SQRD && CastLengthOffsetInFrame(caster, origin, drag, out RaycastHit hitSecond, comment: "Drag movement check"))
+                    {
+                        //Sum with the distances to actually get the intersection between the planes where the distances are already considering where the caster should be
+                        Vector3 plane1Pos = hitFirst.point + caster.GetMinimumDistanceFromHit(hitFirst.normal);
+                        Vector3 plane2Pos = hitSecond.point + caster.GetMinimumDistanceFromHit(hitSecond.normal);
+                        //The line of the intersection between the two planes
+                        Vector3 lineIntersection = Vector3.Cross(hitFirst.normal, hitSecond.normal);
+                        //Discover a direction alongside plane that we can make a parametric equation with
+                        Vector3 directionAlongsidePlaneHit = Vector3.Cross(hitSecond.normal, lineIntersection);
+                        float numerator = Vector3.Dot(hitFirst.normal, directionAlongsidePlaneHit);
+                        Vector3 plane1ToPlane2 = plane1Pos - plane2Pos;
+                        float t = Vector3.Dot(hitFirst.normal, plane1ToPlane2) / numerator; //Discover where does the planes intersect parametrically (I think? Need to study)
+                        Vector3 pointBetween = plane2Pos + t * directionAlongsidePlaneHit; // Go alonside the plane 2 with the direction to the intersection
+
+                        Vector3 originalDrag = drag;
+                        drag = pointBetween - (caster.GetOriginPositionOffset(originOffset) + currentMovement);
+                        if (Debugging)
+                        {
+                            LHH.Utils.DebugUtils.DrawNormalStar(pointBetween, 1f, Quaternion.identity, Color.yellow, 10f);
+                            LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset), caster.GetCenterPositionOfHit(hitFirst), 1f, 45f, Color.green, 0f);
+                            LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset + currentMovement), pointBetween, 1f, 45f, Color.red, 0f);
+                            Debug.LogFormat(this, "{8} Yes Hit Drag! {0} is now movement {1} with extra {2} [dist:{6}, moveMag:{7}] (drag {3} (was {4}) + reflect {5}) --> {9} Will end up on {10}", originalMovement.ToString("F3"), currentMovement.ToString("F3"), extraMovement.ToString("F3"), 
+                                drag.ToString("F3"), originalDrag.ToString("F3"),
+                                reflection.ToString("F3"), hitFirst.distance, moveMagnitude, Time.fixedTime,
+                                Position.ToString("F3"), (Position + currentMovement + drag).ToString("F3"));
+                        }
+                    }
+                    else
+                    {
+                        if (Debugging)
+                        {
+                            LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset), caster.GetCenterPositionOfHit(hitFirst), 1f, 45f, Color.green, 0f);
+                            LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset) + currentMovement, caster.GetOriginPositionOffset(originOffset) + currentMovement + drag, 1f, 45f, Color.red, 0f); 
+                            Debug.LogFormat(this, "{8} No Hit Drag! {0} is now movement {1} with extra {2} [dist:{6}, moveMag:{7}] (drag {3} (was {4}) + reflect {5}) --> {9} Will end up on {10}", originalMovement.ToString("F3"), currentMovement.ToString("F3"), extraMovement.ToString("F3"),
+                                     drag.ToString("F3"), drag.ToString("F3"),
+                                     reflection.ToString("F3"), hitFirst.distance, moveMagnitude, Time.fixedTime,
+                                     Position.ToString("F3"), (Position + currentMovement + drag).ToString("F3"));
+                        }
+                    }
+
+                    movement = currentMovement;
+                //}
+            }
             
             
         }
     }
 
-    public Collider WhatIsWhereIAmTryingToGo(CasterClass caster, out RaycastHit hit)
+    /// <summary>
+    /// Cast private wrapper for debug reasons.
+    /// </summary>
+    /// <returns></returns>
+    private bool CastLengthOffsetInFrame(Caster caster, in Vector3 offset, in Vector3 distance, out RaycastHit hit, string comment)
     {
-        return WhatIsInThere(GetCurrentVelocity(), caster, out hit);
+        bool success = caster.CastLengthOffset(offset, distance, out hit);
+#if UNITY_EDITOR
+        history.Add(new CastHistoryElement()
+        {
+            hit = hit,
+            caster = caster,
+            offset = offset,
+            distance = distance,
+            comment = comment
+        });
+#endif
+        return success;
     }
 
-    public Collider WhatIsInThere(Vector3 checkDistance, CasterClass caster, out RaycastHit hit)
+    public Collider WhatIsWhereIAmTryingToGo(CasterClass caster, out RaycastHit hit)
     {
-        return WhatIsInThere(checkDistance, GetCaster(caster), out hit);
+        return WhatIsInThere(GetCurrentVelocity(), Vector3.zero, caster, out hit);
+    }
+
+    public Collider WhatIsInThere(in Vector3 checkDistance, in Vector3 offset, CasterClass caster, out RaycastHit hit)
+    {
+        return WhatIsInThere(checkDistance, offset, GetCaster(caster),out hit);
     }
 
     public Caster GetCaster(CasterClass caster)
@@ -576,24 +830,24 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private Collider WhatIsInThere(Vector3 checkDistance, Caster caster, out RaycastHit hit)
+    private Collider WhatIsInThere(in Vector3 checkDistance, in Vector3 offset, Caster caster, out RaycastHit hit)
     {
         hit = default(RaycastHit);
-        if (caster != null && caster.Cast(checkDistance, out hit))
+        if (caster != null && CastLengthOffsetInFrame(caster, offset, checkDistance, out hit, "What is in there"))
         {
             return hit.collider;
         }
         else return null;
     }
 
-    private void CheckAndStopMovement(ref Vector3 movement, out Vector3 reflection, out bool foundCast, Vector3 originOffset, Caster caster)
+    private void CheckAndStopMovement(ref Vector3 movement, out Vector3 reflection, out bool foundCast, in Vector3 originOffset, Caster caster)
     {
         foundCast = false;
         reflection = Vector3.zero;
         if (caster != null)
         {
             Vector3 oldMove = movement;
-            if (movement != Vector3.zero && caster.CastLengthOffset(originOffset, movement, out RaycastHit hit))
+            if (movement != Vector3.zero && CastLengthOffsetInFrame(caster, originOffset, movement, out RaycastHit hit, "Check and stop movement"))
             {
                 float moveMagnitude = movement.magnitude;
                 if (hit.distance < moveMagnitude)
@@ -622,6 +876,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         _latestValidVelocity = movement;
 #if UNITY_EDITOR
         _lastValidVelDebug = _latestValidVelocity / Time.fixedDeltaTime;
+        //if (name.Contains("Player")) Debug.LogFormat(this, "Movement is {0} and Last val debug is {1}", movement.ToString("F4"), _lastValidVelDebug.ToString("F4"));
 #endif
         if (movement != Vector3.zero)
         {

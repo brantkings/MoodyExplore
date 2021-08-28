@@ -246,7 +246,7 @@ public class OldParabolaJumper : CustomPhysicsController, IPlatformer
         newOrigin.y = data.origin.y;
         data.origin = newOrigin;*/
 
-        Vector3 hitPosition = _wallCaster.GetCasterCenterOfHit(hit, 0f);
+        Vector3 hitPosition = _wallCaster.GetCenterPositionOfHit(hit);
         data.origin.x = hitPosition.x;
         data.origin.z = hitPosition.z;
         data.jumpDistance = 0f;

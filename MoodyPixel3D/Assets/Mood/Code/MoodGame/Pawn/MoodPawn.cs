@@ -958,7 +958,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void Bump(Vector3 currentVelocity)
     {
-        Collider col = mover.WhatIsInThere(currentVelocity.normalized * 0.25f, KinematicPlatformer.CasterClass.Side, out RaycastHit hit);
+        Collider col = mover.WhatIsInThere(currentVelocity.normalized * 0.25f, Vector3.zero, KinematicPlatformer.CasterClass.Side, out RaycastHit hit);
         if(col != null)
         {
             col.GetComponentInParent<IBumpeable>()?.OnBumped(this.gameObject, currentVelocity, hit.normal);

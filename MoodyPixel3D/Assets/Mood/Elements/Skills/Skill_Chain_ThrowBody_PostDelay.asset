@@ -21,7 +21,7 @@ MonoBehaviour:
     _getter: {fileID: 11400000, guid: ca09c6643e4cfe44395f633baa9e794d, type: 2}
   onlyNeutralStance: 0
   needs: []
-  consumeNeededStances: 0
+  consumeNeededStances: 1
   toConsume: []
   restrictions: []
   _possibleAngles: []

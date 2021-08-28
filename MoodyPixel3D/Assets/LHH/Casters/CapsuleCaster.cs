@@ -16,24 +16,28 @@ namespace LHH.Caster
         private Vector3 _lastOrigin;
         private Vector3 _lastDirectionTimesDistance;
 
-        public override Vector3 GetCasterCenterOfHit(RaycastHit hit, float addedDistance)
+        public override Vector3 GetCenterPositionOfHit(RaycastHit hit)
         {
-            Vector3 centerOfSphere = hit.point + hit.normal * (_radius + addedDistance);
+            Vector3 centerOfSphere = hit.point + hit.normal * _radius;
             Vector3 sphereDistance = hit.point - centerOfSphere;
 
-            float cosine = Vector3.Dot(hit.normal, _capsuleDirection);
+            return centerOfSphere + GetSpecificMinimumDistanceFromHit(hit.normal);
+        }
+
+        protected override Vector3 GetSpecificMinimumDistanceFromHit(Vector3 hitNormal)
+        {
+            float cosine = Vector3.Dot(hitNormal, _capsuleDirection);
             if (cosine > 0f) //Top part of the direction
             {
-                return centerOfSphere - _capsuleDirection * (_length * 0.5f);
+                return -_capsuleDirection * (_length * 0.5f);
             }
             else if (cosine < 0f) //Bottom part of the direction
             {
-                return centerOfSphere + _capsuleDirection * (_length * 0.5f);
+                return _capsuleDirection * (_length * 0.5f);
             }
             else //It is in the middle, in the cylinder
             {
                 throw new NotImplementedException();
-                return centerOfSphere; // THIS IS WRONG
             }
         }
 
@@ -42,11 +46,16 @@ namespace LHH.Caster
             return _radius;
         }
 
+        private Vector3 GetHalfLength()
+        {
+            return _capsuleDirection.normalized * (0.5f * _length);
+        }
+
         protected override bool MakeTheCast(Vector3 origin, Vector3 direction, LayerMask mask, float distance, out RaycastHit hit)
         {
             _lastOrigin = origin;
             _lastDirectionTimesDistance = direction * distance;
-            Vector3 halfLength = _capsuleDirection * (0.5f * _length);
+            Vector3 halfLength = GetHalfLength();
             Vector3 point1 = origin - halfLength;
             Vector3 point2 = origin + halfLength;
             return Physics.CapsuleCast(point1, point2, _radius, direction, out hit, distance, mask.value);
@@ -56,22 +65,18 @@ namespace LHH.Caster
         {
             _lastOrigin = origin;
             _lastDirectionTimesDistance = direction * distance;
-            Vector3 halfLength = _capsuleDirection * (0.5f * _length);
+            Vector3 halfLength = GetHalfLength();
             Vector3 point1 = origin - halfLength;
             Vector3 point2 = origin + halfLength;
             return Physics.CapsuleCastNonAlloc(point1, point2, _radius, direction, results, distance, mask.value);
         }
 
-        protected override void DrawGizmos()
+        public override void DrawFormatGizmo(Vector3 position)
         {
-            Gizmos.DrawWireSphere(GetOriginPosition(), _radius);
-            Gizmos.DrawLine(GetOriginPosition(), GetOriginPosition() + GetDefaultDirectionNormalized() * GetDefaultDistance());
-
-            if(_lastDirectionTimesDistance != Vector3.zero)
-            {
-                Gizmos.DrawWireSphere(_lastOrigin + _lastDirectionTimesDistance, _radius);
-                Gizmos.DrawWireSphere(_lastOrigin + _lastDirectionTimesDistance.normalized * -_safetyDistance, _radius);
-            }
+            Vector3 halfLength = GetHalfLength();
+            Gizmos.DrawWireSphere(position + halfLength, _radius);
+            Gizmos.DrawWireSphere(position - halfLength, _radius);
         }
+
     }
 }

@@ -78,7 +78,7 @@ namespace Mood.Swing.Maker
                 Gizmos.color = gizmoColor;
                 Gizmos.DrawWireSphere(transform.position + node.localPosition, node.radius);
                 Gizmos.color = arrowColor;
-                GizmosUtils.DrawArrow(transform.position + node.localPosition, transform.position + node.localPosition + node.direction);
+                GizmosUtils.DrawArrow(transform.position + node.localPosition, transform.position + node.localPosition + node.direction, 0.5f);
                 Gizmos.color = fillColor;
                 Gizmos.DrawSphere(transform.position + node.localPosition, node.radius);
             }

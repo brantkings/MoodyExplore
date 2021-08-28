@@ -260,15 +260,15 @@ MonoBehaviour:
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 0
-  _defaultOrigin: {fileID: 8524307204831194355}
-  _defaultOriginOffset: {x: 0, y: 0, z: 0}
-  _defaultDirectionRelative: {x: -0, y: 0, z: 1}
   _distance: 15
   _maxSimultaneousHits: 5
   _safetyDistance: 0
   _originDistanceOffset: 0
   _normalizeOriginDistanceOffset: 1
   _restrictOriginDistanceOffsetToPlane: {x: 0, y: 0, z: 0}
+  _defaultOrigin: {fileID: 8524307204831194355}
+  _defaultOriginOffset: {x: 0, y: 0, z: 0}
+  _defaultDirectionRelative: {x: -0, y: 0, z: 1}
   _radius: 0.25
 --- !u!114 &8524307205861290700
 MonoBehaviour:

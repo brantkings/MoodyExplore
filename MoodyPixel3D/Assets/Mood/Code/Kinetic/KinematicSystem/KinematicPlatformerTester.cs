@@ -7,6 +7,7 @@ public class KinematicPlatformerTester : AddonBehaviour<KinematicPlatformer>
     public float velocity = 10f;
     public float velocityAddStep = 2.5f;
     public float angleCameraChange = 10f;
+    public Vector3 alignDirectionToPlaneOnly = Vector3.zero;
     public Camera _camera;
     private Vector3 _cameraDistance;
     private Vector2 _posMouseOld;
@@ -116,8 +117,9 @@ public class KinematicPlatformerTester : AddonBehaviour<KinematicPlatformer>
 
         Vector3 direction = Addon.Direction;
         direction = Quaternion.Euler(new Vector3(0f, mouseAxis.x, 0f) * angleCameraChange) * direction;
-        direction = Quaternion.Euler(new Vector3(-mouseAxis.y, 0f, 0f) * angleCameraChange) * direction;
-        Addon.Direction = Quaternion.Euler(new Vector3(-mouseAxis.y, mouseAxis.x, 0f) * angleCameraChange) * Addon.Direction;
+        direction = Quaternion.AngleAxis(-mouseAxis.y * angleCameraChange, transform.right) * direction;
+        direction = Vector3.ProjectOnPlane(direction, alignDirectionToPlaneOnly);
+        Addon.Direction = direction;
         if(_camera != null)
         {
             _camera.transform.forward = Addon.Direction;

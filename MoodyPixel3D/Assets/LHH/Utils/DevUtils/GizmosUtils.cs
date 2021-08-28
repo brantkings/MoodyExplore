@@ -17,10 +17,11 @@ namespace LHH.Utils
             return isSuccess ? SuccessColor : FailureColor;
         }
 
-        public static void DrawArrow(Vector3 from, Vector3 to)
+        public static void DrawArrow(Vector3 from, Vector3 to, float length)
         {
             Gizmos.DrawLine(from, to);
-            Gizmos.DrawSphere(to, 0.1f);
+            //Gizmos.DrawSphere(to, 0.1f);
+            DrawCone(to, (from - to).normalized, 30f, length, 4);
             //Gizmos.matrix = GetMatrix(to, Quaternion.LookRotation(from - to));
             //Gizmos.DrawFrustum(to, 90f, 0.25f, 0f, 0.5f);
         }
@@ -32,7 +33,7 @@ namespace LHH.Utils
             Vector3 firstConeRayDirection = Quaternion.AngleAxis(angle, toUpAngle) * direction;
             for (int i = 0; i < amount; i++)
             {
-                Gizmos.DrawRay(from, Quaternion.AngleAxis(rotAngleStep * i, direction) * firstConeRayDirection);
+                Gizmos.DrawRay(from, (Quaternion.AngleAxis(rotAngleStep * i, direction) * firstConeRayDirection).normalized  * length);
             }
         }
 

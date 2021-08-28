@@ -18,22 +18,22 @@ public class WatchableState<T>
         return new WatchableState<T>(){state = b};
     }
 
-    internal void Update(T newState)
+    internal bool Update(T newState)
     {
         if (!state.Equals(newState))
         {
             this.state = newState;
             if (OnChanged != null) OnChanged(newState);
+            return true;
         }
+        else return false;
     }
 
     public void Update(T newState, string debug)
     {
-        if (!state.Equals(newState))
+        if(Update(newState))
         {
             //Debug.LogFormat("Changed {0} to {1}", debug, newState);
-            this.state = newState;
-            if (OnChanged != null) OnChanged(newState);
         }
     }
 

@@ -13,7 +13,7 @@ public class AI_ConstantForceToDirection : AI_ForceRigibody
     private void OnDrawGizmos()
     {
         Gizmos.color = GizmosUtils.AI_Color;
-        GizmosUtils.DrawArrow(transform.position, transform.position + GetDirection());
+        GizmosUtils.DrawArrow(transform.position, transform.position + GetDirection(), 0.5f);
     }
     
     private void FixedUpdate()
