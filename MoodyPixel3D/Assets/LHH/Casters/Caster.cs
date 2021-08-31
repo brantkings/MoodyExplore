@@ -256,7 +256,11 @@ namespace LHH.Caster
         {
     #if UNITY_EDITOR
             Debug.DrawRay(origin, direction.normalized * distance, Color.red);
-    #endif
+            if(Application.isPlaying)
+            {
+                CasterDebugger.Instance.JustDoneCast(this, distance);
+            }
+#endif
             Vector3 directionNormalized = direction.normalized;
             SanitizeCastParameters(ref origin, ref distance, directionNormalized);
             bool casted = CheckCast(MakeTheCast(origin, directionNormalized, mask, distance, out hit), ref hit);
@@ -268,7 +272,11 @@ namespace LHH.Caster
         {
     #if UNITY_EDITOR
             Debug.DrawRay(origin, direction.normalized * distance, Color.red);
-    #endif
+            if (Application.isPlaying)
+            {
+                CasterDebugger.Instance.JustDoneCast(this, distance);
+            }
+#endif
             Vector3 directionNormalized = direction.normalized;
             SanitizeCastParameters(ref origin, ref distance, directionNormalized);
             int casted = MakeTheCastAll(origin, directionNormalized, mask, distance, HitsCache);

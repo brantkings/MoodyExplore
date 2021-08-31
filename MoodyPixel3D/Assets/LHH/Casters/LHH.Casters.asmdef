@@ -1,6 +1,8 @@
 {
     "name": "LHH.Casters",
+    "rootNamespace": "",
     "references": [
+        "GUID:2cd68c69b907c5e4fa7320ebbace82bb",
         "GUID:e86dc1930d0060f46b2723d0dbfef748"
     ],
     "includePlatforms": [],
@@ -10,5 +12,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }
