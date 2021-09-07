@@ -19,7 +19,7 @@ namespace LHH.Caster
             Gizmos.DrawWireSphere(center, _radius);
         }
 
-        protected override Vector3 GetSpecificMinimumDistanceFromHit(Vector3 hitNormal)
+        protected override Vector3 GetSpecificMinimumDistanceFromHit(in Vector3 hitPoint, in Vector3 hitNormal)
         {
             return hitNormal * _radius;
         }

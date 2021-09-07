@@ -1,4 +1,4 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
@@ -16,7 +16,7 @@ public partial class KinematicPlatformer
     private void SetPawnLerpPositionIgnoreGravity(Vector3 set)
     {
         Vector3 diff = set - _lerpPosition;
-        AddExactNextFrameMove(diff - KinematicPlatformer.GetGravityForce() * Time.fixedDeltaTime);
+        AddExactNextFrameMove(diff, 1);
         _lerpPosition = set;
     }
 
@@ -28,7 +28,7 @@ public partial class KinematicPlatformer
         if (diff.IsNaN())
             Debug.LogErrorFormat("{0} setting lerp position NaN! {1} - {2} = {3}", name, set, _lerpPosition, diff);
 #endif
-        AddExactNextFrameMove(diff);
+        AddExactNextFrameMove(diff, 0);
         _lerpPosition = set;
     }
 

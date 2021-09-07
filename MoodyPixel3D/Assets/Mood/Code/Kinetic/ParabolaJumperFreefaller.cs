@@ -18,7 +18,7 @@ public class ParabolaJumperFreefaller : ParabolaJumper
 
     public void BeginFreefall()
     {
-        _freefallData = GetJumpDataWithThisStartingPosition(Body.Velocity);
+        _freefallData = GetJumpDataWithThisStartingPosition(Body.AbsoluteVelocity);
         _freefallCount = 0f;
 
         _positionBefore = GetParabolaPositionOnTime(_freefallCount, _freefallData, HalfParabolaNoXFunction);

@@ -66,7 +66,7 @@ public class FollowPlatformerGroundedPosition : MonoBehaviour
 
     private bool Cast(out RaycastHit hit, float range = VERY_BIG_VALUE)
     {
-        return groundCaster.CastLength(-Vector3.up * VERY_BIG_VALUE, out hit);
+        return groundCaster.CastLength(-Vector3.up, VERY_BIG_VALUE, out hit);
     }
 
     private IEnumerator OnGroundedRoutine()

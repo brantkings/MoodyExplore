@@ -36,8 +36,8 @@ namespace LHH.Caster
                 oldHit = hit;
                 _toTest.DrawGizmoForCast(originNow, distanceNow.normalized, distanceNow.magnitude, out hit);
 
-                Vector3 dist2 = _toTest.GetMinimumDistanceFromHit(hit.normal);
-                Vector3 dist1 = _toTest.GetMinimumDistanceFromHit(oldHit.normal);
+                Vector3 dist2 = _toTest.GetMinimumDistanceFromHit(hit.point, hit.normal);
+                Vector3 dist1 = _toTest.GetMinimumDistanceFromHit(oldHit.point, oldHit.normal);
                 Gizmos.color = Color.yellow;
                 Vector3 lineIntersection = Vector3.Cross(oldHit.normal, hit.normal);
                 Vector3 directionAlongsidePlaneHit = Vector3.Cross(hit.normal, lineIntersection);

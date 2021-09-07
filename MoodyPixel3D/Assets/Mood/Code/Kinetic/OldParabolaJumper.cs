@@ -202,7 +202,7 @@ public class OldParabolaJumper : CustomPhysicsController, IPlatformer
     {
         if (_wallCaster != null)
         {
-            if (_wallCaster.CastLength(origin, velocity, out hit))
+            if (_wallCaster.CastLengthOrigin(origin, velocity, velocity.magnitude, out hit))
             {
                 return true;
             }

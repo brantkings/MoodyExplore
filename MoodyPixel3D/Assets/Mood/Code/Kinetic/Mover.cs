@@ -31,7 +31,7 @@ public class Mover : RigidbodyController , IHorizontalMover {
     private void FixedUpdate()
     {
         Vector3 movement = _latestSpeed * Time.deltaTime;
-        while (_wallCaster.CastLength(movement, out RaycastHit hit))
+        while (_wallCaster.CastLength(movement, movement.magnitude, out RaycastHit hit))
         {
             if (hit.distance > 0f)
             {

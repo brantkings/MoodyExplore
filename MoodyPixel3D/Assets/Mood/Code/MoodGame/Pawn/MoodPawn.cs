@@ -190,7 +190,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public DamageTeam DamageTeam => damageTeam;
 
-    private Vector3 _currentDirection;
+    //private Vector3 _currentDirection;
     private Vector3 _directionVel;
 
     [SerializeField]
@@ -279,7 +279,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private void Start()
     {
         _stamina = _maxStamina;
-        _currentDirection = Direction;
+        //_currentDirection = Direction;
         OnChangeStamina?.Invoke(this);
     }
 
@@ -289,6 +289,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(ShouldRecoverStamina())
             RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
 
+        Vector3 _currentDirection = Direction;
         //if (name.Contains("Player")) Debug.LogFormat("Before update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
         UpdateMovement(_inputVelocity, _inputRotation, ref _currentSpeed, ref _currentDirection);
         //if (name.Contains("Player")) Debug.LogFormat("After update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
@@ -919,7 +920,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         {
             if(IsDashing())
             {
-                Bump(mover.Velocity);
+                Bump(mover.AbsoluteVelocity);
             }
         }
     }
@@ -997,7 +998,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public bool IsMoving()
     {
-        return mover.Velocity.sqrMagnitude > 0.1f;
+        return mover.Velocity.sqrMagnitude > KinematicPlatformer.SMALL_AMOUNT_SQRD;
     }
 
     public bool IsDashing()
@@ -1054,13 +1055,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private Vector3 GetPawnLerpDirection()
     {
-        return _currentDirection;
+        return mover.Direction;
     }
 
     private void SetPawnLerpDirection(Vector3 set)
     {
-        _currentDirection = set;
-        Direction = _currentDirection;
+        mover.Direction = set;
+        //Direction = _currentDirection;
     }
 
     public void Dash(Vector3 direction, float duration, AnimationCurve curve)
@@ -1205,7 +1206,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void SetHorizontalDirection(Vector3 direction)
     {
-        _currentDirection = direction;
+        //_currentDirection = direction;
+        mover.Direction = direction;
         //Direction = Vector3.ProjectOnPlane(direction, Vector3.up);
     }
 

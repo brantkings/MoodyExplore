@@ -6,6 +6,7 @@ namespace LHH.Caster
     
     public class CapsuleCaster : Caster
     {
+        [Header("Capsule")]
         [SerializeField]
         private float _radius = 1f;
         [SerializeField]
@@ -16,29 +17,25 @@ namespace LHH.Caster
         private Vector3 _lastOrigin;
         private Vector3 _lastDirectionTimesDistance;
 
-        public override Vector3 GetCenterPositionOfHit(RaycastHit hit)
+        protected override Vector3 GetSpecificMinimumDistanceFromHit(in Vector3 hitPoint, in Vector3 hitNormal)
         {
-            Vector3 centerOfSphere = hit.point + hit.normal * _radius;
-            Vector3 sphereDistance = hit.point - centerOfSphere;
+            Vector3 simpleSphereDistance = hitNormal.normalized * _radius;
 
-            return centerOfSphere + GetSpecificMinimumDistanceFromHit(hit.normal);
-        }
+            return simpleSphereDistance;
 
-        protected override Vector3 GetSpecificMinimumDistanceFromHit(Vector3 hitNormal)
-        {
-            float cosine = Vector3.Dot(hitNormal, _capsuleDirection);
+            /*float cosine = Vector3.Dot(hitNormal, _capsuleDirection);
             if (cosine > 0f) //Top part of the direction
             {
-                return -_capsuleDirection * (_length * 0.5f);
+                return simpleSphereDistance - _capsuleDirection * (_length * 0.5f);
             }
             else if (cosine < 0f) //Bottom part of the direction
             {
-                return _capsuleDirection * (_length * 0.5f);
+                return simpleSphereDistance + _capsuleDirection * (_length * 0.5f);
             }
             else //It is in the middle, in the cylinder
             {
-                throw new NotImplementedException();
-            }
+                return simpleSphereDistance;
+            }*/
         }
 
         public override float GetOutsideDistance()

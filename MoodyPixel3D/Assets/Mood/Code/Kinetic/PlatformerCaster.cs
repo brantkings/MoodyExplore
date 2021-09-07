@@ -20,7 +20,7 @@ public class PlatformerCaster : MonoBehaviour, IPlatformer
 
     public bool Cast(Vector3 direction, float distance, out RaycastHit hit)
     {
-        return _groundCaster.CastLength(direction.normalized * distance, out hit);
+        return _groundCaster.CastLength(direction.normalized, distance, out hit);
     }
 
     protected LayerMask GroundLayer

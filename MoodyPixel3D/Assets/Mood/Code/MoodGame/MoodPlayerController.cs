@@ -973,7 +973,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             {
                 animState.onChangeTo.Invoke(Pawn.ObjectTransform);
             }
-            inputDirectionFeedback.gameObject.SetActive(animState.hasInputDirectionFeedback);
+            if(inputDirectionFeedback != null)
+                inputDirectionFeedback.gameObject.SetActive(animState.hasInputDirectionFeedback);
 
             _oldCameraState = animState;
         }

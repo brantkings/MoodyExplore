@@ -231,7 +231,7 @@ public class CustomPhysicsBody : RigidbodyController, IHorizontalMover
         bool checkedWall = false;
         if (wallCaster != null && vel.sqrMagnitude > 0f)
         {
-            while(wallCaster.CastLength(vel, out RaycastHit hit))
+            while(wallCaster.CastLength(vel, vel.magnitude, out RaycastHit hit))
             {
                 //pos = wallCaster.GetCasterCenterOfHit(hit);
                 vel = Vector3.ProjectOnPlane(vel, hit.normal);

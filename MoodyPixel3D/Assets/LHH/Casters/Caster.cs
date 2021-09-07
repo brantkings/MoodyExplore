@@ -13,7 +13,7 @@ namespace LHH.Caster
         [SerializeField]
         private LayerMask _obstacleMask;
         [SerializeField]
-        private int _maxSimultaneousHits = 5;
+        private int _maxSimultaneousHits = 8;
         [SerializeField]
         private Transform _overridedOrigin;
 
@@ -44,7 +44,7 @@ namespace LHH.Caster
         {
             get
             {
-                if (_hitsAllArray == null) _hitsAllArray = new RaycastHit[_maxSimultaneousHits];
+                if (_hitsAllArray == null) _hitsAllArray = new RaycastHit[Mathf.NextPowerOfTwo(_maxSimultaneousHits)];
                 return _hitsAllArray;
             }
         }
@@ -138,17 +138,23 @@ namespace LHH.Caster
             return GetCenterPositionOfHit(hit.point, hit.normal);
         }
 
-        public virtual Vector3 GetCenterPositionOfHit(Vector3 point, Vector3 hitNormal)
+        public virtual Vector3 GetCenterPositionOfHit(in Vector3 point, in Vector3 hitNormal)
         {
-            return point + GetSpecificMinimumDistanceFromHit(hitNormal);
+            return point + GetSpecificMinimumDistanceFromHit(point, hitNormal);
         }
 
-        public virtual Vector3 GetMinimumDistanceFromHit(Vector3 hitNormal)
+        public virtual Vector3 GetMinimumDistanceFromHit(in Vector3 hitPoint, in Vector3 hitNormal)
         {
-            return GetSpecificMinimumDistanceFromHit(hitNormal) + hitNormal.normalized * _originForwardOffset;
+            return GetSpecificMinimumDistanceFromHit(hitPoint, hitNormal) + hitNormal.normalized * _originForwardOffset;
         }
 
-        protected abstract Vector3 GetSpecificMinimumDistanceFromHit(Vector3 hitNormal);
+        /// <summary>
+        /// Based on a hit, gets the relative distance where the center of the cast is just grazing over that.
+        /// </summary>
+        /// <param name="hitPoint"></param>
+        /// <param name="hitNormal"></param>
+        /// <returns></returns>
+        protected abstract Vector3 GetSpecificMinimumDistanceFromHit(in Vector3 hitPoint, in Vector3 hitNormal);
 
         /// <summary>
         /// Did this cast was made from outside the casted collider?
@@ -177,29 +183,29 @@ namespace LHH.Caster
             return CastAndValidate(GetOriginPosition(), Origin.TransformDirection(_defaultDirectionRelative), LayerMask, _defaultDistance, out hit);
         }
 
-        public bool Cast(Vector3 direction, out RaycastHit hit)
+        public bool Cast(in Vector3 direction, out RaycastHit hit)
         {
             return CastAndValidate(GetOriginPosition(), direction, LayerMask, _defaultDistance, out hit);
         }
 
-        public bool CastLength(Vector3 directionLength, out RaycastHit hit)
-        {
-            return CastAndValidate(GetOriginPosition(), directionLength, LayerMask, directionLength.magnitude, out hit);
-        }
-
-        public bool CastLengthOffset(Vector3 originOffset, Vector3 directionLength, out RaycastHit hit)
-        {
-            return CastAndValidate(GetOriginPositionOffset(originOffset), directionLength, LayerMask, directionLength.magnitude, out hit);
-        }
-
-        public bool CastLength(Vector3 origin, Vector3 directionLength, out RaycastHit hit)
-        {
-            return CastAndValidate(origin, directionLength, LayerMask, directionLength.magnitude, out hit);
-        }
-
-        public bool Cast(Vector3 origin, Vector3 direction, out RaycastHit hit)
+        public bool Cast(in Vector3 origin, in Vector3 direction, out RaycastHit hit)
         {
             return CastAndValidate(origin, direction, LayerMask, _defaultDistance, out hit);
+        }
+
+        public bool CastLength(in Vector3 direction, in float length, out RaycastHit hit)
+        {
+            return CastAndValidate(GetOriginPosition(), direction, LayerMask, length, out hit);
+        }
+
+        public bool CastLengthOrigin(in Vector3 origin, in Vector3 direction, in float length, out RaycastHit hit)
+        {
+            return CastAndValidate(origin, direction, LayerMask, length, out hit);
+        }
+
+        public bool CastLengthOffset(in Vector3 originOffset, in Vector3 direction, in float length, out RaycastHit hit)
+        {
+            return CastAndValidate(GetOriginPositionOffset(originOffset), direction, LayerMask, length, out hit);
         }
 
         public IEnumerable<RaycastHit> CastAll()
@@ -254,15 +260,16 @@ namespace LHH.Caster
 
         protected virtual bool CastAndValidate(Vector3 origin, Vector3 direction, LayerMask mask, float distance, out RaycastHit hit)
         {
-    #if UNITY_EDITOR
+            Vector3 directionNormalized = direction.normalized;
+            SanitizeCastParameters(ref origin, ref distance, directionNormalized);
+
+#if UNITY_EDITOR
             Debug.DrawRay(origin, direction.normalized * distance, Color.red);
             if(Application.isPlaying)
             {
                 CasterDebugger.Instance.JustDoneCast(this, distance);
             }
 #endif
-            Vector3 directionNormalized = direction.normalized;
-            SanitizeCastParameters(ref origin, ref distance, directionNormalized);
             bool casted = CheckCast(MakeTheCast(origin, directionNormalized, mask, distance, out hit), ref hit);
         
             return casted;
@@ -321,13 +328,11 @@ namespace LHH.Caster
             DrawFormatGizmo(sanitizedOrigin + direction * sanitizedDistance);
 
 
-            if (CastLengthOffset(origin, direction * distance, out hit))
+            if (CastLengthOffset(origin, direction, distance, out hit))
             {
-                Gizmos.color = GizmosUtils.SuccessColor * 0.5f;
-                Gizmos.DrawLine(origin, hit.point);
-
-                Gizmos.color = GizmosUtils.SuccessColor * 0.75f;
+                Gizmos.color = GizmosUtils.SuccessColor * 0.25f;
                 DrawFormatGizmo(hit.point);
+                Gizmos.DrawLine(origin, hit.point);
                 GizmosUtils.DrawArrow(origin, origin + direction * hit.distance, 0.5f);
 
                 Gizmos.color = GizmosUtils.SuccessColor;
@@ -335,7 +340,7 @@ namespace LHH.Caster
             }
             else
             {
-                Gizmos.color = GizmosUtils.InformativeColor;
+                Gizmos.color = GizmosUtils.InformativeColor * 0.25f;
                 DrawFormatGizmo(origin + direction * distance);
                 Gizmos.DrawLine(origin, origin + direction * distance);
                 GizmosUtils.DrawArrow(origin, origin + direction * distance, 0.5f);

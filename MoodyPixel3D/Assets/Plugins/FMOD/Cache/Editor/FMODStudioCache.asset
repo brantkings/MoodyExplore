@@ -946,7 +946,7 @@ MonoBehaviour:
   ID:
     data1: 0
     data2: 0
-  Exists: 1
+  Exists: 0
 --- !u!114 &-6962657335104619232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1231,6 +1231,26 @@ MonoBehaviour:
   Name: Intensity Breath
   Min: 0
   Max: 100
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1
+--- !u!114 &-6136067069274890386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Rotation/Switch
+  m_EditorClassIdentifier: 
+  Name: Switch
+  Min: 0
+  Max: 1
   Default: 0
   ID:
     data1: 0
@@ -1776,7 +1796,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.strings.bank
   Name: Master.strings
-  lastModified: 637589713993055904
+  lastModified: 637660260900974001
   LoadResult: 0
   FileSizes:
   - Name: 
@@ -2024,7 +2044,7 @@ MonoBehaviour:
   ID:
     data1: 0
     data2: 0
-  Exists: 1
+  Exists: 0
 --- !u!114 &-3787749547401032121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2245,7 +2265,7 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 1
   Parameters:
-  - {fileID: -3789484954780152429}
+  - {fileID: 7658571421147197498}
   MinDistance: 2.8
   MaxDistance: 100
   Length: 0
@@ -2392,7 +2412,7 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 5989964855089784385}
+  - {fileID: 5106458219632025250}
   MinDistance: 0.5
   MaxDistance: 25
   Length: 0
@@ -2728,7 +2748,7 @@ MonoBehaviour:
   ID:
     data1: 0
     data2: 0
-  Exists: 1
+  Exists: 0
 --- !u!114 &-1945817471622355768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3032,7 +3052,7 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: 1565057007287731074}
+  - {fileID: 1129347412264960588}
   MinDistance: 30
   MaxDistance: 150
   Length: 2000
@@ -3448,7 +3468,7 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 1
   Parameters:
-  - {fileID: -1990882825157672039}
+  - {fileID: 7893075676895447091}
   MinDistance: 10
   MaxDistance: 200
   Length: 0
@@ -3606,7 +3626,7 @@ MonoBehaviour:
   - {fileID: 1765560307829669672}
   StringsBanks:
   - {fileID: -4503151341007156806}
-  stringsBankWriteTime: 637589713993055904
+  stringsBankWriteTime: 637660260900974001
   cacheVersion: 5
 --- !u!114 &59294950931164195
 MonoBehaviour:
@@ -4075,6 +4095,26 @@ MonoBehaviour:
     data1: 0
     data2: 0
   Exists: 0
+--- !u!114 &1129347412264960588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Breath/Intensity Breath
+  m_EditorClassIdentifier: 
+  Name: Intensity Breath
+  Min: 0
+  Max: 100
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1
 --- !u!114 &1166426671921954214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4297,7 +4337,7 @@ MonoBehaviour:
   ID:
     data1: 0
     data2: 0
-  Exists: 1
+  Exists: 0
 --- !u!114 &1595979212767481113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4337,7 +4377,7 @@ MonoBehaviour:
   ID:
     data1: 0
     data2: 0
-  Exists: 1
+  Exists: 0
 --- !u!114 &1685182845972878753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4412,7 +4452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/FMOD Bank/Desktop/Master.bank
   Name: Master
-  lastModified: 637589713993016009
+  lastModified: 637660260900934105
   LoadResult: 0
   FileSizes: []
   Exists: 1
@@ -5676,6 +5716,26 @@ MonoBehaviour:
     data1: 0
     data2: 0
   Exists: 0
+--- !u!114 &5106458219632025250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Breath/Intensity Breath
+  m_EditorClassIdentifier: 
+  Name: Intensity Breath
+  Min: 0
+  Max: 100
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1
 --- !u!114 &5116383247045394138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5919,8 +5979,8 @@ MonoBehaviour:
   Is3D: 1
   IsOneShot: 0
   Parameters:
-  - {fileID: -6962962978987382943}
-  - {fileID: 1623859871316211723}
+  - {fileID: 7052865437067897704}
+  - {fileID: -6136067069274890386}
   MinDistance: 0
   MaxDistance: 50
   Length: 2860
@@ -6006,7 +6066,7 @@ MonoBehaviour:
   ID:
     data1: 0
     data2: 0
-  Exists: 1
+  Exists: 0
 --- !u!114 &5998920598663987540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6393,6 +6453,26 @@ MonoBehaviour:
     data1: 0
     data2: 0
   Exists: 0
+--- !u!114 &7052865437067897704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Rotation/Size
+  m_EditorClassIdentifier: 
+  Name: Size
+  Min: 0
+  Max: 6
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1
 --- !u!114 &7068789232371855217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6679,6 +6759,26 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 0
+--- !u!114 &7658571421147197498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Step/Intensity Breath
+  m_EditorClassIdentifier: 
+  Name: Intensity Breath
+  Min: 0
+  Max: 100
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1
 --- !u!114 &7660068835521075815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6739,6 +6839,26 @@ MonoBehaviour:
     data1: 0
     data2: 0
   Exists: 0
+--- !u!114 &7893075676895447091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/Step/Intensity Breath
+  m_EditorClassIdentifier: 
+  Name: Intensity Breath
+  Min: 0
+  Max: 100
+  Default: 0
+  ID:
+    data1: 0
+    data2: 0
+  Exists: 1
 --- !u!114 &8091512418064078706
 MonoBehaviour:
   m_ObjectHideFlags: 0

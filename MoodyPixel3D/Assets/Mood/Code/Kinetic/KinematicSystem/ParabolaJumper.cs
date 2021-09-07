@@ -47,6 +47,9 @@ public class ParabolaJumper : MonoBehaviour
     private float _jumpDuration = 1f;
 
     [SerializeField]
+    private int _priority = 1;
+
+    [SerializeField]
     [Tooltip("Must be even!")]
     protected int jumpFormulaExponent = 2;
 
@@ -130,7 +133,7 @@ public class ParabolaJumper : MonoBehaviour
     {
         if (isActiveAndEnabled)
         {
-            routine = StartCoroutine(FollowFuncRoutine(Body.Velocity * _jumpDuration, ParabolaFunction));
+            routine = StartCoroutine(FollowFuncRoutine(Body.AbsoluteVelocity * _jumpDuration, ParabolaFunction));
         }
     }
 
@@ -219,7 +222,7 @@ public class ParabolaJumper : MonoBehaviour
     {
         Vector3 movement = positionNow - positionBefore;
         Ascending.Update(movement.y >= 0f);
-        Body.AddExactNextFrameMove(positionNow - positionBefore);
+        Body.AddExactNextFrameMove(positionNow - positionBefore, _priority);
     }
 
     protected bool IsEndOfJump(float timeCounter)
@@ -280,7 +283,6 @@ public class ParabolaJumper : MonoBehaviour
     {
         _isJumping = true;
         JumpData data = GetJumpDataWithThisStartingPosition(vel);
-        Body.LockGravity(JUMPER_ID);
 #if UNITY_EDITOR
         _latestJump = data;
         _latestJumpDebug = data.ToString();
@@ -291,7 +293,6 @@ public class ParabolaJumper : MonoBehaviour
     protected virtual void EndJump()
     {
         _isJumping = false;
-        Body.UnlockGravity(JUMPER_ID);
     }
 
     protected bool IsGrounded()
