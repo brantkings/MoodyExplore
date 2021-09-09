@@ -49,10 +49,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb20aba8fb8e40446b9418cff4fb36e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundCaster: {fileID: 1507541639241808723}
+  groundCaster: {fileID: 7750838692873181924}
   ceilingCaster: {fileID: 0}
   wallCaster: {fileID: 6342693573751636179}
-  _hasGravity: 0
   manipulatingStyle: 1
   airResistanceCoefficient: 0
   minVelocityMagnitude: 0.1
@@ -258,6 +257,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1507541639539477097}
     m_Modifications:
+    - target: {fileID: 1303193075842684403, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 1303193077165682250, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
       propertyPath: m_Name
       value: HumanoidObject_Casters
@@ -306,6 +309,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7611141060991455816, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
+      propertyPath: halfExtents.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611141060991455816, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
+      propertyPath: halfExtents.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611141060991455816, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
+      propertyPath: halfExtents.z
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
 --- !u!4 &1507541640035778792 stripped
@@ -313,9 +328,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1303193077165682251, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
   m_PrefabInstance: {fileID: 503842478542302883}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1507541639241808723 stripped
+--- !u!114 &7750838692873181924 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1303193075842684400, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7885381461653271623, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
   m_PrefabInstance: {fileID: 503842478542302883}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

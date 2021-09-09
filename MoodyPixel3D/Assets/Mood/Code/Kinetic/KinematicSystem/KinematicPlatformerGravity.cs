@@ -32,9 +32,9 @@ public class KinematicPlatformerGravity : AddonBehaviour<KinematicPlatformer>, I
         Addon.Grounded.OnChanged += OnChangedGrounded;
     }
 
-    private void OnChangedGrounded(bool change)
+    private void OnChangedGrounded(bool grounded)
     {
-        if(change)
+        if(grounded)
         {
             DOTween.Kill(this, true);
             _currentSpeed = groundedGravitySpeed;

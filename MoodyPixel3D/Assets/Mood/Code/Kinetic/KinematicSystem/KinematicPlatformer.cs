@@ -8,9 +8,15 @@ public interface IKinematicPlatformerVelocityGetter
 {
     Vector3 GetVelocity();
 }
+
 public interface IKinematicPlatformerFrameVelocityGetter
 {
     Vector3 GetFrameVelocity(float deltaTime);
+}
+
+public interface IKinematicPlatformerVelocityGetterActivateable
+{
+    void StartVelocity();
 }
 
 public interface IKinematicPlatformerVelocityGetterInputModifier

@@ -38,7 +38,7 @@ namespace LHH.Caster
             return Physics.SphereCastNonAlloc(origin, _radius, direction, results, distance, mask.value, QueryTriggerInteraction.Ignore);
         }
 
-        public override float GetOutsideDistance()
+        public override float GetOutsideDistance(Vector3 hitDirection)
         {
             return _radius;
         }

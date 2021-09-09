@@ -109,7 +109,7 @@ namespace LHH.Caster
 
         protected Vector3 GetDefaultDirection()
         {
-            return Origin.TransformDirection(_defaultDirectionRelative);
+            return Origin.TransformDirection(_defaultDirectionRelative).normalized;
         }
 
         public Vector3 GetDefaultDirectionNormalized()
@@ -163,14 +163,14 @@ namespace LHH.Caster
         /// <returns></returns>
         public virtual bool WasCastFromOutside(RaycastHit hit)
         {
-            return hit.distance <= GetOutsideDistance();
+            return hit.distance <= GetOutsideDistance(hit.normal);
         }
 
         /// <summary>
         /// Get the minimum distance that the hit.distance should return to prove that the cast was made from outside the intersection of the caster form and the hitted collider.
         /// </summary>
         /// <returns></returns>
-        public abstract float GetOutsideDistance();
+        public abstract float GetOutsideDistance(Vector3 hitDirection);
 
         public bool Cast()
         {
@@ -264,7 +264,7 @@ namespace LHH.Caster
             SanitizeCastParameters(ref origin, ref distance, directionNormalized);
 
 #if UNITY_EDITOR
-            Debug.DrawRay(origin, direction.normalized * distance, Color.red);
+            Debug.DrawRay(origin, directionNormalized * distance, Color.red);
             if(Application.isPlaying)
             {
                 CasterDebugger.Instance.JustDoneCast(this, distance);
@@ -311,32 +311,34 @@ namespace LHH.Caster
         {
             Vector3 sanitizedOrigin = origin;
             float sanitizedDistance = distance;
-            SanitizeCastParameters(ref sanitizedOrigin, ref sanitizedDistance, direction);
+            SanitizeCastParameters(ref sanitizedOrigin, ref sanitizedDistance, direction.normalized);
 
             Gizmos.color = GizmosUtils.InformativeColor * 0.5f;
             DrawFormatGizmo(origin);
             Gizmos.DrawWireSphere(origin, Mathf.Abs(_originForwardOffset));
+            
+            Gizmos.color = GizmosUtils.InformativeColor * 0.90f;
+            DrawFormatGizmo(origin + direction * _originForwardOffset);
 
-            if (_originForwardOffset != 0f)
-            {
-                Gizmos.color = GizmosUtils.InformativeColor;
-                DrawFormatGizmo(origin + direction * _originForwardOffset);
-            }
             Gizmos.color = GizmosUtils.InformativeColor * 0.75f;
             DrawFormatGizmo(sanitizedOrigin);
-            Gizmos.color = GizmosUtils.InformativeColor * 0.75f;
+            Gizmos.color = GizmosUtils.InformativeColor * 0.90f;
             DrawFormatGizmo(sanitizedOrigin + direction * sanitizedDistance);
 
 
-            if (CastLengthOffset(origin, direction, distance, out hit))
+            if (CastLengthOrigin(origin, direction, distance, out hit))
             {
-                Gizmos.color = GizmosUtils.SuccessColor * 0.25f;
-                DrawFormatGizmo(hit.point);
-                Gizmos.DrawLine(origin, hit.point);
-                GizmosUtils.DrawArrow(origin, origin + direction * hit.distance, 0.5f);
+                Gizmos.color = GizmosUtils.SuccessColor * 0.5f;
+                //SanitizeHitResult(ref hit);
+                Vector3 destPosition = origin + direction.normalized * hit.distance;
 
-                Gizmos.color = GizmosUtils.SuccessColor;
+                Gizmos.DrawLine(origin, destPosition);
+                //GizmosUtils.DrawArrow(origin, destPosition, 0.5f);
+
                 DrawFormatGizmo(GetCenterPositionOfHit(hit));
+                Gizmos.color = GizmosUtils.SuccessColor;
+                DrawFormatGizmo(destPosition);
+                //DrawFormatGizmo(GetCenterPositionOfHit(hit));
             }
             else
             {

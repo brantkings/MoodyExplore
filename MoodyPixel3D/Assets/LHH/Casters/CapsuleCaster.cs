@@ -38,7 +38,7 @@ namespace LHH.Caster
             }*/
         }
 
-        public override float GetOutsideDistance()
+        public override float GetOutsideDistance(Vector3 hitDirection)
         {
             return _radius;
         }

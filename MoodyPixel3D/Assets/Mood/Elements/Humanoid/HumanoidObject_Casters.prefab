@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1303193075842684403}
-  - component: {fileID: 1303193075842684400}
+  - component: {fileID: 7885381461653271623}
   m_Layer: 9
   m_Name: Ground
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 1303193077165682251}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1303193075842684400
+--- !u!114 &7885381461653271623
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -49,15 +49,15 @@ MonoBehaviour:
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 0
-  _maxSimultaneousHits: 5
+  _maxSimultaneousHits: 8
   _overridedOrigin: {fileID: 1303193075842684403}
   _safetyDistance: 1.25
-  _originForwardOffset: 0.05
+  _originForwardOffset: 0.01
   _restrictOriginDistanceOffsetToPlane: {x: 0, y: 0, z: 0}
   _defaultDistance: 1
   _defaultOriginOffset: {x: 0, y: 0, z: 0}
   _defaultDirectionRelative: {x: -0, y: -1, z: -0}
-  _radius: 0.45
+  _radius: 0.5
 --- !u!1 &1303193075978785119
 GameObject:
   m_ObjectHideFlags: 0
