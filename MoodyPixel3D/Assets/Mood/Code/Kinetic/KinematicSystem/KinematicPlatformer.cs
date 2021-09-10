@@ -194,6 +194,8 @@ public partial class KinematicPlatformer : MonoBehaviour
 
         public T Current => throw new System.NotImplementedException();
 
+        private int _latestPriority;
+
         public VelocityGetter()
         {
             _values = new Dictionary<int, LinkedList<T>>(8);
@@ -236,19 +238,26 @@ public partial class KinematicPlatformer : MonoBehaviour
         public LinkedList<T> GetBiggestPriorityList(out int biggestPriority)
         {
             biggestPriority = int.MinValue;
+            _latestPriority = biggestPriority;
             LinkedList<T> t = null;
             if (_values.Count > 0)
             {
-                foreach(KeyValuePair<int, LinkedList<T>> v in _values)
+                foreach (KeyValuePair<int, LinkedList<T>> v in _values)
                 {
-                    if(v.Key > biggestPriority)
+                    if (v.Key > biggestPriority)
                     {
                         t = v.Value;
                         biggestPriority = v.Key;
+                        _latestPriority = biggestPriority;
                     }
                 }
             }
             return t;
+        }
+
+        public int GetLatestPriority()
+        {
+            return _latestPriority;
         }
     }
 
@@ -545,6 +554,7 @@ public partial class KinematicPlatformer : MonoBehaviour
     private Vector3 ExtractNextFrameMoveFromSources(out int priority, float deltaTime)
     {
         Vector3 frameSourcesMovement = Vector3.zero;
+        int latestPriority = FrameSources.GetLatestPriority();
         var list = FrameSources.GetBiggestPriorityList(out priority);
         if(list != null)
         {
@@ -552,6 +562,8 @@ public partial class KinematicPlatformer : MonoBehaviour
             {
                 if (!getter.Equals(null))
                 {
+                    if (latestPriority != priority && getter is IKinematicPlatformerVelocityGetterActivateable) 
+                        (getter as IKinematicPlatformerVelocityGetterActivateable).StartVelocity();
                     Vector3 velFrame = getter.GetFrameVelocity(deltaTime);
                     if (velFrame != Vector3.zero)
                     {
@@ -736,11 +748,13 @@ public partial class KinematicPlatformer : MonoBehaviour
         Vector3 sourceVel = GetNaturalVelocity();
         if(_velocitySources != null)
         {
+            int latestPriority = _velocitySources.GetLatestPriority();
             var list = _velocitySources.GetBiggestPriorityList(out int biggestPriority);
             if(list != null)
             {
                 foreach (IKinematicPlatformerVelocityGetter getter in list)
                 {
+                    if (latestPriority != biggestPriority && getter is IKinematicPlatformerVelocityGetterActivateable) (getter as IKinematicPlatformerVelocityGetterActivateable).StartVelocity();
                     sourceVel += getter.GetVelocity();
                 }
             }

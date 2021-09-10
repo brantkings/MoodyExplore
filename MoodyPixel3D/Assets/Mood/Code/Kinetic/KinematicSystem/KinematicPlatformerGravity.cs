@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class KinematicPlatformerGravity : AddonBehaviour<KinematicPlatformer>, IKinematicPlatformerVelocityGetter
+public class KinematicPlatformerGravity : AddonBehaviour<KinematicPlatformer>, IKinematicPlatformerVelocityGetter, IKinematicPlatformerVelocityGetterActivateable
 {
     public float groundedGravitySpeed = 0.5f;
     public float finalGravitySpeed = 10f;
@@ -41,14 +41,23 @@ public class KinematicPlatformerGravity : AddonBehaviour<KinematicPlatformer>, I
         }
         else
         {
-            RestartFall();
+            RestartFall(groundedGravitySpeed);
+        }
+    }
+
+    public void StartVelocity()
+    {
+        Debug.LogFormat("Starting velocity for {0} and is grounded? {1}", this, Addon.Grounded);
+        if(!Addon.Grounded)
+        {
+            RestartFall(Addon.Velocity.y);
         }
     }
 
 
-    private void RestartFall()
+    private void RestartFall(float speed)
     {
-        _currentSpeed = groundedGravitySpeed;
+        _currentSpeed = speed;
         DOTween.Kill(this);
         DOTween.To(GetCurrentSpeed, SetCurrentSpeed, finalGravitySpeed, timeToMaxSpeed).SetEase(easeToMaxSpeed).SetId(this);
     }
@@ -69,4 +78,5 @@ public class KinematicPlatformerGravity : AddonBehaviour<KinematicPlatformer>, I
             gravityDirection, _currentSpeed, gravityDirection * _currentSpeed, this, Addon.Grounded? "grounded" : "not grounded");*/
         return gravityDirection * _currentSpeed;
     }
+
 }
