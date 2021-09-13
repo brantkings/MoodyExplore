@@ -518,6 +518,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         {
             Debug.LogErrorFormat("{0} += {1}! Putting NaN in this!", _setFrameMovement, move);
         }
+        Debug.LogFormat("Adding Move {0} to {1} with priority {2}", move.ToString("F3"), this, priority);
 #endif
 
         if (_setFrameMovement == null) _setFrameMovement = new Dictionary<int, Vector3>(2);
@@ -547,8 +548,10 @@ public partial class KinematicPlatformer : MonoBehaviour
             biggestPriority = int.MinValue;
             return Vector3.zero;
         }
-        biggestPriority = _setFrameMovement.Max((x) => x.Key);
-        return _setFrameMovement[biggestPriority];
+        biggestPriority = _setFrameMovement.Max((x) => x.Value.sqrMagnitude > SMALL_AMOUNT_SQRD? x.Key : -1);
+        if (biggestPriority >= 0)
+            return _setFrameMovement[biggestPriority];
+        else return Vector3.zero;
     }
 
     private Vector3 ExtractNextFrameMoveFromSources(out int priority, float deltaTime)
@@ -589,6 +592,24 @@ public partial class KinematicPlatformer : MonoBehaviour
     protected bool IsGrounded()
     {
         return Grounded;
+    }
+
+    /// <summary>
+    /// If this is not grounded, what is the height to the ground?
+    /// </summary>
+    /// <param name="max"></param>
+    /// <returns></returns>
+    public float GetHeightFromGround(float max = float.MaxValue)
+    {
+        if (groundCaster != null)
+        {
+            if (groundCaster.CastLength(-Vector3.up, max, out RaycastHit hit))
+            {
+                return hit.distance;
+            }
+            else return max;
+        }
+        else return 0f; //No concept of height over ground
     }
 
 
@@ -774,6 +795,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         Vector3 totalMovement = GetCurrentVelocity();
         
         Vector3 extractMovement = ExtractNextFrameMove(Time.fixedDeltaTime);
+        if(extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now {1} [{2}]", this, extractMovement.ToString("F3"), Time.fixedTime);
         Vector3 frameMovement = totalMovement * Time.fixedDeltaTime + extractMovement;
 #if UNITY_EDITOR
         _lastTotalVelDebug = frameMovement / Time.fixedDeltaTime;

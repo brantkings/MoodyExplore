@@ -824,6 +824,36 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Tween _currentDash;
     private Tween _currentRotationDash;
     private Tween _currentFakeHeightHop;
+    private Tween _currentHop;
+
+
+    public struct MovementData
+    {
+        public float duration;
+        public Ease ease;
+
+        public MovementData(float duration)
+        {
+            this.duration = duration;
+            this.ease = Ease.InOutCirc;
+        }
+
+        public static implicit operator float(MovementData d)
+        {
+            return d.duration;
+        }
+        public static implicit operator MovementData(float d)
+        {
+            return new MovementData(d);
+        }
+
+        public MovementData SetEase(Ease ease)
+        {
+            this.ease = ease;
+            return this;
+        }
+    }
+
 
     private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, ref Vector3 speed, ref Vector3 direction)
     {
@@ -991,9 +1021,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         SolveFinalVelocity(ref _inputVelocity);
     }
 
-    public float GetHeightFromGround()
+    public float GetHeightFromGround(float maxHeight = float.MaxValue)
     {
-        return GetPawnFakeHeight(); //TODO yeah this assumes no verticality in the world
+        return GetPawnFakeHeight() + mover.GetHeightFromGround(maxHeight);
     }
 
     public bool IsMoving()
@@ -1012,6 +1042,16 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         seq.Insert(0f, TweenFakeHeight(height, durationIn, Ease.OutCirc));
         seq.Insert(durationIn, TweenFakeHeight(0f, durationOut, Ease.InCirc));
         _currentFakeHeightHop = seq;
+        return seq;
+    }
+
+    public Tween Hop(float height, MovementData durationIn, MovementData durationOut)
+    {
+        _currentHop.KillIfActive();
+        Sequence seq = DOTween.Sequence();
+        seq.Insert(0f, mover.TweenMoverPosition(Vector3.up * height, durationIn, priority: 1, "HOP").SetEase(durationIn.ease));
+        seq.Insert(0f, mover.TweenMoverPosition(Vector3.up * height, durationOut, priority: 1, "HOP").SetEase(durationOut.ease));
+        _currentHop = seq;
         return seq;
     }
 
@@ -1067,13 +1107,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public void Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration)?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashAC")?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
     
     public void Dash(Vector3 direction, float duration, Ease ease)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration)?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashEAS")?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
 
     public void CancelCurrentDash()

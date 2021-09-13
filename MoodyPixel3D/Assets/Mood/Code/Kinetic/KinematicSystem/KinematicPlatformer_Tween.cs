@@ -2,70 +2,89 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System.Linq;
 
 public partial class KinematicPlatformer
 {
-    private Vector3 _lerpPosition;
-    private Vector3 _currentDirection;
 
-    private Vector3 GetPawnLerpPosition()
+    private DG.Tweening.Core.DOSetter<Vector3> SetPawnLerpSpecificPriorityDiff(int priority)
     {
-        return _lerpPosition;
-    }
-
-    private void SetPawnLerpPositionIgnoreGravity(Vector3 set)
-    {
-        Vector3 diff = set - _lerpPosition;
-        AddExactNextFrameMove(diff, 1);
-        _lerpPosition = set;
-    }
-
-    private void SetPawnLerpPosition(Vector3 set)
-    {
-        if (set.IsNaN()) return;
-        Vector3 diff = set - _lerpPosition;
+        return (Vector3 diff) =>
+        {
+            AddExactNextFrameMove(diff, priority);
 #if UNITY_EDITOR
-        if (diff.IsNaN())
-            Debug.LogErrorFormat("{0} setting lerp position NaN! {1} - {2} = {3}", name, set, _lerpPosition, diff);
+            if (diff.IsNaN())
+                Debug.LogErrorFormat("{0} setting lerp position NaN! {0} {1} + {2}", name, Position, diff);
 #endif
-        AddExactNextFrameMove(diff, 0);
-        _lerpPosition = set;
+        };
     }
 
-    private Vector3 GetPawnLerpDirection()
+    // Maybe this is useful if the tween is dando pau
+    private class TweenedValue<T>
     {
-        return _currentDirection;
+        public T value;
+        public bool used;
     }
 
-    private void SetPawnLerpDirection(Vector3 set)
+    private void CalculatePosition<T>(ref List<TweenedValue<T>> list, out int positionInList)
     {
-        _currentDirection = set;
-        Direction = _currentDirection;
+        if (list == null) list = new List<TweenedValue<T>>(16);
+
+        positionInList = -1;
+        if (list.Count > 0)
+        {
+            positionInList = list.FindIndex((x) => x.used == false);
+        }
+        if (positionInList == -1)
+        {
+            list.Add(new TweenedValue<T>());
+            positionInList = list.Count - 1;
+        }
     }
 
+    private List<TweenedValue<Vector3>> _localPositions;
+    private int _latestLocalPosition;
 
-    public Tween TweenMoverPositionIgnoreGravity(Vector3 movement, float duration)
-    {
-        _lerpPosition = Position;
-        Tween t = DOTween.To(GetPawnLerpPosition, SetPawnLerpPositionIgnoreGravity, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed);
-        return t;
-    }
+    private int commentIndex;
 
-    public Tween TweenMoverPosition(Vector3 movement, float duration)
+    public Tween TweenMoverPosition(Vector3 movement, float duration, int priority = 0, string comment = "")
     {
-        _lerpPosition = Position;
+        var setAndMove = SetPawnLerpSpecificPriorityDiff(priority);
+
         if (duration == 0f)
         {
-            SetPawnLerpPosition(Position + movement);
+            setAndMove(movement);
             return null;
         }
         else
         {
-            Tween t = DOTween.To(GetPawnLerpPosition, SetPawnLerpPosition, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed);
+            CalculatePosition(ref _localPositions, out int index);
+
+            _localPositions[index].used = true;
+            Vector3 p = Position;
+            Vector3 initP = Position;
+            _localPositions[index].value = Position;
+            comment = comment + "_" + commentIndex++;
+            int commentCount = 0;
+            
+            DG.Tweening.Core.DOSetter<Vector3> setter = (x) =>
+            {
+                setAndMove(x - p);
+                Debug.LogWarningFormat("{0} is going begin: {1} now is {2} going to be {3} -> diff is {4} ({5})", this, initP.ToString("F3"), p.ToString("F3"), x.ToString("F3"), (x - p).ToString("F3"), comment + "_" + commentCount++);
+                p = x;
+            };
+
+            DG.Tweening.Core.DOGetter<Vector3> getter = () =>
+            {
+                return p;
+            };
+
+            Tween t = DOTween.To(getter, setter, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed);
             return t;
         }
 
     }
+
 
     /*
     public Tween TweenMoverDirection(float angleAdd, float duration)
