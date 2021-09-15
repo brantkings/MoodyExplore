@@ -1049,8 +1049,25 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         _currentHop.KillIfActive();
         Sequence seq = DOTween.Sequence();
-        seq.Insert(0f, mover.TweenMoverPosition(Vector3.up * height, durationIn, priority: 1, "HOP").SetEase(durationIn.ease));
-        seq.Insert(0f, mover.TweenMoverPosition(Vector3.up * height, durationOut, priority: 1, "HOP").SetEase(durationOut.ease));
+
+        seq.Insert(0f, mover.TweenMoverPosition(Vector3.up * height, durationIn, priority: 1, 
+            KinematicPlatformer.PriorityVelocityOperation.Get(
+                -Vector3.up, 
+                KinematicPlatformer.GetPriorityNumber(KinematicPlatformer.CommonPriority.Normal), 
+                KinematicPlatformer.PriorityVelocityOperation.Origin.GetNextFrameFullVelocity, 
+                KinematicPlatformer.PriorityVelocityOperation.Modification.ProjectOnPositiveVector, 
+                KinematicPlatformer.PriorityVelocityOperation.Operation.Subtract), 
+            "HOPIn").SetEase(durationIn.ease));
+
+        seq.Insert(0f, mover.TweenMoverPosition(-Vector3.up * height, durationOut, priority: 1,
+            KinematicPlatformer.PriorityVelocityOperation.Get(
+                -Vector3.up,
+                KinematicPlatformer.GetPriorityNumber(KinematicPlatformer.CommonPriority.Normal),
+                KinematicPlatformer.PriorityVelocityOperation.Origin.GetNextFrameFullVelocity,
+                KinematicPlatformer.PriorityVelocityOperation.Modification.ProjectOnPositiveVector,
+                KinematicPlatformer.PriorityVelocityOperation.Operation.Subtract),
+            "HOPOut").SetEase(durationIn.ease));
+
         _currentHop = seq;
         return seq;
     }
@@ -1107,13 +1124,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public void Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashAC")?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = mover.TweenMoverPosition(direction, duration, 0, null, "dashAC")?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
     
     public void Dash(Vector3 direction, float duration, Ease ease)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashEAS")?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = mover.TweenMoverPosition(direction, duration, 0, null, "dashEAS")?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
 
     public void CancelCurrentDash()

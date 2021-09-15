@@ -38,6 +38,21 @@ public partial class KinematicPlatformer : MonoBehaviour
     public static float SMALL_AMOUNT_SQRD = SMALL_AMOUNT * SMALL_AMOUNT;
     public static float GRAVITY = 10f;
 
+
+    public enum CommonPriority
+    {
+        Normal = 0,
+        Anti_Gravity = 1,
+        ArtificialInput = 2 
+    }
+    
+    public static int GetPriorityNumber(CommonPriority type)
+    {
+        return (int)type;
+    }
+
+
+
     public Caster groundCaster;
     public Caster ceilingCaster;
     public Caster wallCaster;
@@ -135,6 +150,8 @@ public partial class KinematicPlatformer : MonoBehaviour
 
 #endif
 
+    #region Debug
+
     [SerializeField]
     private bool _debug;
 
@@ -187,6 +204,7 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     private CastHistory history;
 #endif
+    #endregion
 
     private class VelocityGetter<T>
     {
@@ -258,6 +276,20 @@ public partial class KinematicPlatformer : MonoBehaviour
         public int GetLatestPriority()
         {
             return _latestPriority;
+        }
+
+        public IEnumerable<T> GetAllUntilPriority(int maxPriorityIncluding = int.MaxValue)
+        {
+            foreach (KeyValuePair<int, LinkedList<T>> v in _values)
+            {
+                if (v.Key <= maxPriorityIncluding)
+                {
+                    foreach(var val in v.Value)
+                    {
+                        yield return val;
+                    }
+                }
+            }
         }
     }
 
@@ -529,32 +561,70 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private Vector3 ExtractNextFrameMove(float deltaTime)
+    public Vector3 GetNextFrameMove(float deltaTime, bool destroySetFrameMove = false, int maxPriorityIncluding = int.MaxValue)
     {
-        Vector3 setFrameMovement = ExtractNextFrameMoveFromSetFrameMove(out int frameSetPriority);
+        Vector3 nextFrameMove = Vector3.zero;
+        GetNextFrameMoveFromSetFrameMove(ref nextFrameMove, maxPriorityIncluding);
+        GetNextFrameMoveFromSources(ref nextFrameMove, deltaTime, maxPriorityIncluding);
+        if (destroySetFrameMove) CleanNextSetFrameMove();
+        return nextFrameMove;
+    }
+
+
+    private void GetNextFrameMoveFromSetFrameMove(ref Vector3 sum, int maxPriority = int.MaxValue)
+    {
+        if (_setFrameMovement == null)
+        {
+            maxPriority = int.MinValue;
+            return;
+        }
+
+        Vector3 totalValue = Vector3.zero;
+
+        foreach (Vector3 val in _setFrameMovement.Select((x) => x.Key <= maxPriority ? x.Value : Vector3.zero))
+        {
+            sum += val;
+        }
+    }
+
+    private void GetNextFrameMoveFromSources(ref Vector3 sum, float deltaTime, int maxPriority = int.MaxValue)
+    {
+        foreach(IKinematicPlatformerFrameVelocityGetter getter in FrameSources.GetAllUntilPriority(maxPriority))
+        {
+            if (!getter.Equals(null))
+            {
+                sum += getter.GetFrameVelocity(deltaTime);
+            }
+        }
+    }
+
+    private Vector3 ExtractNextFrameMoveClosedPriority(float deltaTime)
+    {
+        Vector3 setFrameMovement = Vector3.zero;
+        ExtractNextFrameMoveFromSetFrameMoveClosedPriority(ref setFrameMovement, out int frameSetPriority);
         CleanNextSetFrameMove();
 
-        Vector3 sourcesMovement = ExtractNextFrameMoveFromSources(out int sourcesPriority, deltaTime);
+        Vector3 sourcesMovement = ExtractNextFrameMoveFromSourcesClosedPriority(out int sourcesPriority, deltaTime);
 
         if (sourcesPriority == frameSetPriority) return setFrameMovement + sourcesMovement;
         else if (sourcesPriority > frameSetPriority) return sourcesMovement;
         else return setFrameMovement;
     }
 
-    private Vector3 ExtractNextFrameMoveFromSetFrameMove(out int biggestPriority)
+    private void ExtractNextFrameMoveFromSetFrameMoveClosedPriority(ref Vector3 sum, out int biggestPriority)
     {
         if (_setFrameMovement == null)
         {
             biggestPriority = int.MinValue;
-            return Vector3.zero;
+            return;
         }
-        biggestPriority = _setFrameMovement.Max((x) => x.Value.sqrMagnitude > SMALL_AMOUNT_SQRD? x.Key : -1);
+
+        biggestPriority = _setFrameMovement.Max((x) => x.Value.sqrMagnitude > SMALL_AMOUNT_SQRD ? x.Key : -1);
         if (biggestPriority >= 0)
-            return _setFrameMovement[biggestPriority];
-        else return Vector3.zero;
+            sum += _setFrameMovement[biggestPriority];
     }
 
-    private Vector3 ExtractNextFrameMoveFromSources(out int priority, float deltaTime)
+    private Vector3 ExtractNextFrameMoveFromSourcesClosedPriority(out int priority, float deltaTime)
     {
         Vector3 frameSourcesMovement = Vector3.zero;
         int latestPriority = FrameSources.GetLatestPriority();
@@ -637,89 +707,6 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    public class ArbitraryCheckData
-    {
-        public Vector3 direction;
-        public float length;
-        public CasterClass caster;
-        public bool consumable;
-    }
-
-    private Dictionary<CasterClass, List<ArbitraryCheckData>> _arbitraryChecks;
-
-    public ArbitraryCheckData AddArbitraryCheck(in Vector3 direction, float length, CasterClass caster)
-    {
-        ArbitraryCheckData data = new ArbitraryCheckData()
-        {
-            direction = direction,
-            length = length,
-            caster = caster,
-            consumable = false
-        };
-        if (_arbitraryChecks == null) _arbitraryChecks = new Dictionary<CasterClass, List<ArbitraryCheckData>>((int)CasterClass.None);
-        if (!_arbitraryChecks.ContainsKey(caster)) _arbitraryChecks.Add(caster, new List<ArbitraryCheckData>(4));
-        _arbitraryChecks[caster].Add(data);
-        return data;
-    }
-
-    public void AddArbitraryCheckConsumable(in Vector3 direction, float length, CasterClass caster)
-    {
-        ArbitraryCheckData data = new ArbitraryCheckData()
-        {
-            direction = direction,
-            length = length,
-            caster = caster,
-            consumable = true
-        };
-        if (_arbitraryChecks == null) _arbitraryChecks = new Dictionary<CasterClass, List<ArbitraryCheckData>>((int)CasterClass.None);
-        if (!_arbitraryChecks.ContainsKey(caster)) _arbitraryChecks.Add(caster, new List<ArbitraryCheckData>(4));
-        _arbitraryChecks[caster].Add(data);
-    }
-
-    public void RemoveArbitraryCheck(CasterClass caster, ref ArbitraryCheckData data)
-    {
-        if (_arbitraryChecks == null || !_arbitraryChecks.ContainsKey(caster)) return;
-        _arbitraryChecks[caster].Remove(data);
-        data = null;
-    }
-
-    /// <summary> 
-    /// Check certain arbitrary checks for a caster, and return the movement needed for those.
-    /// </summary>
-
-    private Vector3 CheckArbitraryChecks(in Vector3 offset, CasterClass caster)
-    {
-        if (_arbitraryChecks == null || !_arbitraryChecks.ContainsKey(caster)) return Vector3.zero;
-
-        List<ArbitraryCheckData> list = _arbitraryChecks[caster];
-
-        if (list.Count <= 0) return Vector3.zero;
-
-        Caster casterObj = GetCaster(caster);
-        Vector3 totalMove = Vector3.zero;
-
-        Debug.LogWarningFormat(this,"Checking out all the {0} contacts on {1}.", list.Count, caster);
-
-        int i = 0;
-        while(i < list.Count)
-        {
-            ArbitraryCheckData check = list[i];
-            if (this.CastLengthOffsetInFrame(casterObj, offset, check.direction, check.length, out RaycastHit hit, comment: "Arbitrary check asked from outside"))
-            {
-                totalMove += check.direction.normalized * hit.distance;
-            }
-            Debug.LogWarningFormat(this, "Got the total amount {0} from direction {1}. Cast result is '{2}'", totalMove.ToString("F3"), check.direction, hit.collider);
-            if (check.consumable)
-            {
-                list.Remove(check);
-                Debug.LogWarningFormat(this, "Removing now have {0} casts.", list.Count, caster);
-                continue;
-            }
-            i++;
-        }
-
-        return totalMove;
-    }
 
     private Dictionary<CasterClass, Vector3> _accumulatedValue;
 
@@ -764,26 +751,35 @@ public partial class KinematicPlatformer : MonoBehaviour
         return _velocity;
     }
 
-    private Vector3 GetCurrentVelocity()
+    private Vector3 GetCurrentVelocity(int maxPriority = int.MaxValue)
     {
         Vector3 sourceVel = GetNaturalVelocity();
-        if(_velocitySources != null)
-        {
-            int latestPriority = _velocitySources.GetLatestPriority();
-            var list = _velocitySources.GetBiggestPriorityList(out int biggestPriority);
-            if(list != null)
-            {
-                foreach (IKinematicPlatformerVelocityGetter getter in list)
-                {
-                    if (latestPriority != biggestPriority && getter is IKinematicPlatformerVelocityGetterActivateable) (getter as IKinematicPlatformerVelocityGetterActivateable).StartVelocity();
-                    sourceVel += getter.GetVelocity();
-                }
-            }
-        }
+        GetVelocityFromSources(ref sourceVel, maxPriority);
 #if UNITY_EDITOR
         _debugCurrentOtherSourcesInputVelocity = sourceVel;
 #endif
         return _currentInputVelocity + sourceVel;
+    }
+
+    private void GetVelocityFromSources(ref Vector3 sourceVel, int maxPriority = int.MaxValue)
+    {
+        if (_velocitySources != null)
+        {
+            foreach (IKinematicPlatformerVelocityGetter getter in _velocitySources.GetAllUntilPriority(maxPriority))
+            {
+                sourceVel += getter.GetVelocity();
+            }
+        }
+    }
+
+    public Vector3 GetNextFrameFullVelocity(float deltaTime, bool destroySetFrameMove = false, int maxPriority = int.MaxValue)
+    {
+        Vector3 velocityMovement = GetCurrentVelocity();
+
+        Vector3 extractMovement = GetNextFrameMove(deltaTime, destroySetFrameMove, maxPriority);
+        Vector3 frameMovement = velocityMovement * deltaTime + extractMovement;
+        if (extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now extr:{1} + vel:{2} = {3} [{4}]", this, extractMovement.ToString("F3"), (velocityMovement * deltaTime).ToString("F3"), frameMovement.ToString("F3"), Time.fixedTime);
+        return frameMovement;
     }
 
     void FixedUpdate()
@@ -791,12 +787,10 @@ public partial class KinematicPlatformer : MonoBehaviour
 #if UNITY_EDITOR 
         history = new CastHistory();
 #endif
-
-        Vector3 totalMovement = GetCurrentVelocity();
+        Vector3 frameMovement = Vector3.zero;
+        Vector3 fullVelocity = GetNextFrameFullVelocity(Time.fixedDeltaTime, true);
+        frameMovement += fullVelocity;
         
-        Vector3 extractMovement = ExtractNextFrameMove(Time.fixedDeltaTime);
-        if(extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now {1} [{2}]", this, extractMovement.ToString("F3"), Time.fixedTime);
-        Vector3 frameMovement = totalMovement * Time.fixedDeltaTime + extractMovement;
 #if UNITY_EDITOR
         _lastTotalVelDebug = frameMovement / Time.fixedDeltaTime;
 #endif
@@ -838,8 +832,8 @@ public partial class KinematicPlatformer : MonoBehaviour
 #if UNITY_EDITOR
         if (movementMade.IsNaN())
         {
-            Debug.LogErrorFormat(this, "[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} horizChecks:{4} frame:{5} extract:{6} total:{7}. Delta time is {8}", this, movementMade, verticalMovement,
-                horizontalMovement, horizontalChecks, frameMovement, extractMovement, totalMovement, Time.fixedDeltaTime);
+            Debug.LogErrorFormat(this, "[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} horizChecks:{4} total:{5} frame+velocity:{6}. Delta time is {8}", this, movementMade, verticalMovement,
+                horizontalMovement, horizontalChecks, frameMovement, fullVelocity, Time.fixedDeltaTime);
             return;
         }
 #endif
