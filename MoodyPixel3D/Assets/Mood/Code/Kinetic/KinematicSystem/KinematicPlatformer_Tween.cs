@@ -98,7 +98,7 @@ public partial class KinematicPlatformer
             switch (origin)
             {
                 case Origin.GetNextFrameFullVelocity:
-                    value = plat.GetNextFrameFullVelocity(priorityOrLess);
+                    value = plat.GetThisFrameMovement(priorityOrLess);
                     break;
                 case Origin.AbsoluteComparer:
                     value = comparer;

@@ -84,7 +84,7 @@ public partial class KinematicPlatformer : MonoBehaviour
     [SerializeField]
     [ReadOnly]
 #endif
-    private Vector3 _velocity;
+    private Vector3 _physicalVelocity;
 
 #if UNITY_EDITOR
     [SerializeField]
@@ -330,19 +330,6 @@ public partial class KinematicPlatformer : MonoBehaviour
         if (_desiredDirection == Vector3.zero) _desiredDirection = ActualDirection;
     }
 
-    public void AddForce(Vector3 force)
-    {
-        float m = Mass;
-        if (m != 0f)
-        {
-            _velocity += force / m;
-        }
-    }
-
-    public void RemoveAllForces()
-    {
-        _velocity = Vector3.zero;
-    }
 
     private int _frame;
     private int count;
@@ -385,6 +372,31 @@ public partial class KinematicPlatformer : MonoBehaviour
             {
                 return transform.position;
             }
+        }
+    }
+
+
+    public Vector3 AbsoluteVelocity
+    {
+        get
+        {
+            return _latestValidVelocity / Time.fixedDeltaTime;
+        }
+    }
+
+    public Vector3 Velocity
+    {
+        get
+        {
+            return AbsoluteVelocity - _outsideVelocity;
+        }
+    }
+
+    public Vector3 LatestNonZeroVelocity
+    {
+        get
+        {
+            return _latestNonZeroValidMovement / Time.fixedDeltaTime;
         }
     }
 
@@ -505,11 +517,6 @@ public partial class KinematicPlatformer : MonoBehaviour
 
 
 
-    public void SetVelocity(Vector3 vel)
-    {
-        //if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel.ToString("F3"));
-        _currentInputVelocity = vel;
-    }
 
     public void AddVelocitySource(IKinematicPlatformerVelocityGetter getter, int priority = 0)
     {
@@ -531,6 +538,12 @@ public partial class KinematicPlatformer : MonoBehaviour
     {
         FrameSources[priority].Remove(getter);
         //Debug.LogFormat("Removed {0} and has {1}", getter, Sources.Count);
+    }
+
+    public void SetVelocity(Vector3 vel)
+    {
+        //if (vel != _currentInputVelocity) Debug.LogFormat("Setting Velocity of {0} as {1}", transform.root, vel.ToString("F3"));
+        _currentInputVelocity = vel;
     }
 
     public void AddVelocity(Vector3 vel)
@@ -561,7 +574,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    public Vector3 GetNextFrameMove(float deltaTime, bool destroySetFrameMove = false, int maxPriorityIncluding = int.MaxValue)
+    public Vector3 GetSetFrameMove(float deltaTime, bool destroySetFrameMove = false, int maxPriorityIncluding = int.MaxValue)
     {
         Vector3 nextFrameMove = Vector3.zero;
         GetNextFrameMoveFromSetFrameMove(ref nextFrameMove, maxPriorityIncluding);
@@ -683,29 +696,8 @@ public partial class KinematicPlatformer : MonoBehaviour
     }
 
 
-    public Vector3 AbsoluteVelocity
-    {
-        get
-        {
-            return _latestValidVelocity / Time.fixedDeltaTime;
-        }
-    }
 
-    public Vector3 Velocity
-    {
-        get
-        {
-            return AbsoluteVelocity - _outsideVelocity;
-        }
-    }
-
-    public Vector3 LatestNonZeroVelocity
-    {
-        get
-        {
-            return _latestNonZeroValidMovement / Time.fixedDeltaTime;
-        }
-    }
+    #region Arbitrary Wall Checks
 
 
     private Dictionary<CasterClass, Vector3> _accumulatedValue;
@@ -738,22 +730,44 @@ public partial class KinematicPlatformer : MonoBehaviour
         return v;
     }
 
-    
-    private void AffectNaturalVelocityForcesCausedByVelocity(ref Vector3 vel)
+    #endregion
+
+    #region Input Velocity
+
+    #region Physical Velocity
+
+    public void AddForce(Vector3 force)
+    {
+        float m = Mass;
+        if (m != 0f)
+        {
+            _physicalVelocity += force / m;
+        }
+    }
+
+    public void RemoveAllForces()
+    {
+        _physicalVelocity = Vector3.zero;
+    }
+
+    private Vector3 GetPhysicalVelocity()
+    {
+        AffectPhysicalVelocityForcesCausedByVelocity(ref _physicalVelocity);
+        return _physicalVelocity;
+    }
+
+    private void AffectPhysicalVelocityForcesCausedByVelocity(ref Vector3 vel)
     {
         vel -= (vel.sqrMagnitude * vel.normalized) * airResistanceCoefficient * Time.fixedDeltaTime; //Resistance = v^2 * K
         if (vel.sqrMagnitude < (minVelocityMagnitude * minVelocityMagnitude)) vel = Vector3.zero;
     }
 
-    private Vector3 GetNaturalVelocity()
-    {
-        AffectNaturalVelocityForcesCausedByVelocity(ref _velocity);
-        return _velocity;
-    }
+    #endregion
+
 
     private Vector3 GetCurrentVelocity(int maxPriority = int.MaxValue)
     {
-        Vector3 sourceVel = GetNaturalVelocity();
+        Vector3 sourceVel = GetPhysicalVelocity();
         GetVelocityFromSources(ref sourceVel, maxPriority);
 #if UNITY_EDITOR
         _debugCurrentOtherSourcesInputVelocity = sourceVel;
@@ -772,38 +786,40 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    public Vector3 GetNextFrameFullVelocity(float deltaTime, bool destroySetFrameMove = false, int maxPriority = int.MaxValue)
+    public Vector3 GetThisFrameMovement(float deltaTime, bool destroySetFrameMove = false, int maxPriority = int.MaxValue)
     {
-        Vector3 velocityMovement = GetCurrentVelocity();
+        Vector3 velocityInThisFrame = GetCurrentVelocity();
 
-        Vector3 extractMovement = GetNextFrameMove(deltaTime, destroySetFrameMove, maxPriority);
-        Vector3 frameMovement = velocityMovement * deltaTime + extractMovement;
-        if (extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now extr:{1} + vel:{2} = {3} [{4}]", this, extractMovement.ToString("F3"), (velocityMovement * deltaTime).ToString("F3"), frameMovement.ToString("F3"), Time.fixedTime);
+        Vector3 extractMovement = GetSetFrameMove(deltaTime, destroySetFrameMove, maxPriority);
+        Vector3 frameMovement = velocityInThisFrame * deltaTime + extractMovement;
+        if (extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now extr:{1} + vel:{2} = {3} [{4}]", this, extractMovement.ToString("F3"), (velocityInThisFrame * deltaTime).ToString("F3"), frameMovement.ToString("F3"), Time.fixedTime);
         return frameMovement;
     }
+
+    #endregion
 
     void FixedUpdate()
     {
 #if UNITY_EDITOR 
         history = new CastHistory();
 #endif
-        Vector3 frameMovement = Vector3.zero;
-        Vector3 fullVelocity = GetNextFrameFullVelocity(Time.fixedDeltaTime, true);
-        frameMovement += fullVelocity;
+        Vector3 totalFrameMovement = Vector3.zero;
+        Vector3 inputFrameMovement = GetThisFrameMovement(Time.fixedDeltaTime, true);
+        totalFrameMovement += inputFrameMovement;
         
 #if UNITY_EDITOR
-        _lastTotalVelDebug = frameMovement / Time.fixedDeltaTime;
+        _lastTotalVelDebug = totalFrameMovement / Time.fixedDeltaTime;
 #endif
         Vector3 horizontalChecks = CheckAccumulatedValue(CasterClass.Side);
         Vector3 verticalChecks = CheckAccumulatedValue(CasterClass.Ground) + CheckAccumulatedValue(CasterClass.Ceiling);
-        frameMovement += horizontalChecks + verticalChecks;
+        totalFrameMovement += horizontalChecks + verticalChecks;
 
         CheckPlatformMovement(_currentPlatform, out Vector3 platformMovement, out Quaternion platformRotation);
         SaveRelativeSpeed(platformMovement / Time.fixedDeltaTime);
-        frameMovement += platformMovement;
+        totalFrameMovement += platformMovement;
 
-        Vector3 horizontalMovement = GetHorizontalMovement(frameMovement);
-        Vector3 verticalMovement = GetVerticalMovement(frameMovement);
+        Vector3 horizontalMovement = GetHorizontalMovement(totalFrameMovement);
+        Vector3 verticalMovement = GetVerticalMovement(totalFrameMovement);
 
         Vector3 movementMade = Vector3.zero;
 
@@ -833,7 +849,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         if (movementMade.IsNaN())
         {
             Debug.LogErrorFormat(this, "[PLATFORMER] {0} NAN ALERT -> mov:{1} vert:{2} horiz:{3} horizChecks:{4} total:{5} frame+velocity:{6}. Delta time is {8}", this, movementMade, verticalMovement,
-                horizontalMovement, horizontalChecks, frameMovement, fullVelocity, Time.fixedDeltaTime);
+                horizontalMovement, horizontalChecks, totalFrameMovement, inputFrameMovement, Time.fixedDeltaTime);
             return;
         }
 #endif
