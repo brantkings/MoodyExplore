@@ -39,19 +39,8 @@ public partial class KinematicPlatformer : MonoBehaviour
     public static float GRAVITY = 10f;
 
 
-    public enum CommonPriority
-    {
-        Normal = 0,
-        Anti_Gravity = 1,
-        ArtificialInput = 2 
-    }
-    
-    public static int GetPriorityNumber(CommonPriority type)
-    {
-        return (int)type;
-    }
-
-
+    public delegate void DelChangePlatform(Collider oldPlat, Collider newPlat);
+    public event DelChangePlatform OnChangePlatform;
 
     public Caster groundCaster;
     public Caster ceilingCaster;
@@ -206,131 +195,7 @@ public partial class KinematicPlatformer : MonoBehaviour
 #endif
     #endregion
 
-    private class VelocityGetter<T>
-    {
-        public Dictionary<int, LinkedList<T>> _values;
-
-        public T Current => throw new System.NotImplementedException();
-
-        private int _latestPriority;
-
-        public VelocityGetter()
-        {
-            _values = new Dictionary<int, LinkedList<T>>(8);
-        }
-
-        public int BiggestPriority
-        {
-            get
-            {
-                if (_values == null || _values.Count <= 0) return int.MinValue;
-                {
-                    return _values.Max(GetKey);
-                }
-            }
-        }
-
-        private int GetKey(KeyValuePair<int, LinkedList<T>> x)
-        {
-            return x.Key;
-        }
-
-
-        public LinkedList<T> this[int priority]
-        {
-            get
-            {
-                if (!_values.ContainsKey(priority))
-                {
-                    _values.Add(priority, new LinkedList<T>());
-                }
-                return _values[priority];
-            }
-        }
-
-        private KeyValuePair<int, LinkedList<T>> FindMaxValue(KeyValuePair<int, LinkedList<T>> x, KeyValuePair<int, LinkedList<T>> y)
-        {
-            return x.Key > y.Key ? x : y;
-        }
-
-        public LinkedList<T> GetBiggestPriorityList(out int biggestPriority)
-        {
-            biggestPriority = int.MinValue;
-            _latestPriority = biggestPriority;
-            LinkedList<T> t = null;
-            if (_values.Count > 0)
-            {
-                foreach (KeyValuePair<int, LinkedList<T>> v in _values)
-                {
-                    if (v.Key > biggestPriority)
-                    {
-                        t = v.Value;
-                        biggestPriority = v.Key;
-                        _latestPriority = biggestPriority;
-                    }
-                }
-            }
-            return t;
-        }
-
-        public int GetLatestPriority()
-        {
-            return _latestPriority;
-        }
-
-        public IEnumerable<T> GetAllUntilPriority(int maxPriorityIncluding = int.MaxValue)
-        {
-            foreach (KeyValuePair<int, LinkedList<T>> v in _values)
-            {
-                if (v.Key <= maxPriorityIncluding)
-                {
-                    foreach(var val in v.Value)
-                    {
-                        yield return val;
-                    }
-                }
-            }
-        }
-    }
-
-    private VelocityGetter<IKinematicPlatformerVelocityGetter> _velocitySources;
-    private VelocityGetter<IKinematicPlatformerFrameVelocityGetter> _frameVelocitySources;
-
-    private VelocityGetter<IKinematicPlatformerVelocityGetter> Sources
-    {
-        get
-        {
-            if (_velocitySources == null) _velocitySources = new VelocityGetter<IKinematicPlatformerVelocityGetter>();
-            return _velocitySources;
-        }
-    }
-
-    private VelocityGetter<IKinematicPlatformerFrameVelocityGetter> FrameSources
-    {
-        get
-        {
-            if (_frameVelocitySources == null) _frameVelocitySources = new VelocityGetter<IKinematicPlatformerFrameVelocityGetter>();
-            return _frameVelocitySources;
-        }
-    }
-
-    private void Awake()
-    {
-        switch (manipulatingStyle)
-        {
-            case ManipulatingStyle.RigidbodyInChild:
-                _body = GetComponentInChildren<Rigidbody>();
-                break;
-            default:
-                _body = GetComponentInParent<Rigidbody>();
-                break;
-        }
-
-        root = transform.root;
-        if (_desiredDirection == Vector3.zero) _desiredDirection = ActualDirection;
-    }
-
-
+    #region Getters and Setters
     private int _frame;
     private int count;
 
@@ -513,10 +378,232 @@ public partial class KinematicPlatformer : MonoBehaviour
             transform.forward = dir;
         }
     }
-    
+
+    protected bool IsGrounded()
+    {
+        return Grounded;
+    }
+
+    /// <summary>
+    /// If this is not grounded, what is the height to the ground?
+    /// </summary>
+    /// <param name="max"></param>
+    /// <returns></returns>
+    public float GetHeightFromGround(float max = float.MaxValue)
+    {
+        if (groundCaster != null)
+        {
+            if (groundCaster.CastLength(-Vector3.up, max, out RaycastHit hit))
+            {
+                return hit.distance;
+            }
+            else return max;
+        }
+        else return 0f; //No concept of height over ground
+    }
+
+    #endregion
+
+    #region Caster Commands
+
+    public Collider WhatIsWhereIAmTryingToGo(CasterClass caster, out RaycastHit hit)
+    {
+        return WhatIsInThere(GetCurrentVelocity(), Vector3.zero, caster, out hit);
+    }
+
+    public Collider WhatIsInThere(in Vector3 checkDistance, in Vector3 offset, CasterClass caster, out RaycastHit hit)
+    {
+        return WhatIsInThere(checkDistance, offset, GetCaster(caster), out hit);
+    }
+
+    public Caster GetCaster(CasterClass caster)
+    {
+        switch (caster)
+        {
+            case CasterClass.Ground:
+                return groundCaster;
+            case CasterClass.Ceiling:
+                return ceilingCaster;
+            case CasterClass.Side:
+                return wallCaster;
+            default:
+                return null;
+        }
+    }
+
+    private Collider WhatIsInThere(in Vector3 checkDistance, in Vector3 offset, Caster caster, out RaycastHit hit)
+    {
+        hit = default(RaycastHit);
+        if (caster != null && CastLengthOffsetInFrame(caster, offset, checkDistance, checkDistance.magnitude, out hit, "What is in there"))
+        {
+            return hit.collider;
+        }
+        else return null;
+    }
+    #endregion
+
+    #region Arbitrary Wall Checks
 
 
+    private Dictionary<CasterClass, Vector3> _accumulatedValue;
 
+    public void CheckSurfaceNow(CasterClass caster, in Vector3 offset, in Vector3 direction, float length, Vector3 extraValueIfOn)
+    {
+        if (direction == Vector3.zero) return;
+        Caster casterObj = GetCaster(caster);
+
+
+        if (this.CastLengthOffsetInFrame(casterObj, offset, direction, length, out RaycastHit hit, comment: "Immediate check on incoming surface"))
+        {
+            AddAccumulatedValue(caster, direction.normalized * hit.distance + extraValueIfOn);
+        }
+    }
+
+    private void AddAccumulatedValue(CasterClass caster, Vector3 v)
+    {
+        if (_accumulatedValue == null) _accumulatedValue = new Dictionary<CasterClass, Vector3>((int) CasterClass.None);
+        if (!_accumulatedValue.ContainsKey(caster)) _accumulatedValue.Add(caster, Vector3.zero);
+
+        _accumulatedValue[caster] += v;
+    }
+
+    private Vector3 CheckAccumulatedValue(CasterClass caster, bool destroy = true)
+    {
+        if (_accumulatedValue == null || !_accumulatedValue.ContainsKey(caster)) return Vector3.zero;
+        Vector3 v = _accumulatedValue[caster];
+        if(destroy) _accumulatedValue[caster] = Vector3.zero;
+        return v;
+    }
+
+    #endregion
+
+    #region Velocity
+
+    #region Interface Getter Structures for Velocity
+
+    public enum CommonVelocityPriority
+    {
+        Normal = 0,
+        Anti_Gravity = 1,
+        ArtificialInput = 2
+    }
+
+    public static int GetVelocityPriorityNumber(CommonVelocityPriority type)
+    {
+        return (int)type;
+    }
+
+    private class VelocityGetter<T>
+    {
+        public Dictionary<int, LinkedList<T>> _values;
+
+        public T Current => throw new System.NotImplementedException();
+
+        private int _latestPriority;
+
+        public VelocityGetter()
+        {
+            _values = new Dictionary<int, LinkedList<T>>(8);
+        }
+
+        public int BiggestPriority
+        {
+            get
+            {
+                if (_values == null || _values.Count <= 0) return int.MinValue;
+                {
+                    return _values.Max(GetKey);
+                }
+            }
+        }
+
+        private int GetKey(KeyValuePair<int, LinkedList<T>> x)
+        {
+            return x.Key;
+        }
+
+
+        public LinkedList<T> this[int priority]
+        {
+            get
+            {
+                if (!_values.ContainsKey(priority))
+                {
+                    _values.Add(priority, new LinkedList<T>());
+                }
+                return _values[priority];
+            }
+        }
+
+        private KeyValuePair<int, LinkedList<T>> FindMaxValue(KeyValuePair<int, LinkedList<T>> x, KeyValuePair<int, LinkedList<T>> y)
+        {
+            return x.Key > y.Key ? x : y;
+        }
+
+        public LinkedList<T> GetBiggestPriorityList(out int biggestPriority)
+        {
+            biggestPriority = int.MinValue;
+            _latestPriority = biggestPriority;
+            LinkedList<T> t = null;
+            if (_values.Count > 0)
+            {
+                foreach (KeyValuePair<int, LinkedList<T>> v in _values)
+                {
+                    if (v.Key > biggestPriority)
+                    {
+                        t = v.Value;
+                        biggestPriority = v.Key;
+                        _latestPriority = biggestPriority;
+                    }
+                }
+            }
+            return t;
+        }
+
+        public int GetLatestPriority()
+        {
+            return _latestPriority;
+        }
+
+        public IEnumerable<T> GetAllUntilPriority(int maxPriorityIncluding = int.MaxValue)
+        {
+            foreach (KeyValuePair<int, LinkedList<T>> v in _values)
+            {
+                if (v.Key <= maxPriorityIncluding)
+                {
+                    foreach (var val in v.Value)
+                    {
+                        yield return val;
+                    }
+                }
+            }
+        }
+    }
+
+    private VelocityGetter<IKinematicPlatformerVelocityGetter> _velocitySources;
+    private VelocityGetter<IKinematicPlatformerFrameVelocityGetter> _frameVelocitySources;
+
+    private VelocityGetter<IKinematicPlatformerVelocityGetter> Sources
+    {
+        get
+        {
+            if (_velocitySources == null) _velocitySources = new VelocityGetter<IKinematicPlatformerVelocityGetter>();
+            return _velocitySources;
+        }
+    }
+
+    private VelocityGetter<IKinematicPlatformerFrameVelocityGetter> FrameSources
+    {
+        get
+        {
+            if (_frameVelocitySources == null) _frameVelocitySources = new VelocityGetter<IKinematicPlatformerFrameVelocityGetter>();
+            return _frameVelocitySources;
+        }
+    }
+
+    #endregion
+
+    #region Input Velocity
 
     public void AddVelocitySource(IKinematicPlatformerVelocityGetter getter, int priority = 0)
     {
@@ -559,7 +646,7 @@ public partial class KinematicPlatformer : MonoBehaviour
     public void AddExactNextFrameMove(Vector3 move, int priority)
     {
 #if UNITY_EDITOR
-        if(move.IsNaN())
+        if (move.IsNaN())
         {
             Debug.LogErrorFormat("{0} += {1}! Putting NaN in this!", _setFrameMovement, move);
         }
@@ -583,6 +670,18 @@ public partial class KinematicPlatformer : MonoBehaviour
         return nextFrameMove;
     }
 
+    private void CleanNextSetFrameMove()
+    {
+        if (_setFrameMovement != null)
+        {
+            foreach (var x in _setFrameMovement.Keys.ToList())
+            {
+                _setFrameMovement[x] = Vector3.zero;
+            }
+        }
+    }
+
+
 
     private void GetNextFrameMoveFromSetFrameMove(ref Vector3 sum, int maxPriority = int.MaxValue)
     {
@@ -602,7 +701,7 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     private void GetNextFrameMoveFromSources(ref Vector3 sum, float deltaTime, int maxPriority = int.MaxValue)
     {
-        foreach(IKinematicPlatformerFrameVelocityGetter getter in FrameSources.GetAllUntilPriority(maxPriority))
+        foreach (IKinematicPlatformerFrameVelocityGetter getter in FrameSources.GetAllUntilPriority(maxPriority))
         {
             if (!getter.Equals(null))
             {
@@ -611,128 +710,38 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private Vector3 ExtractNextFrameMoveClosedPriority(float deltaTime)
+    private void GetVelocityFromSources(ref Vector3 sourceVel, int maxPriority = int.MaxValue)
     {
-        Vector3 setFrameMovement = Vector3.zero;
-        ExtractNextFrameMoveFromSetFrameMoveClosedPriority(ref setFrameMovement, out int frameSetPriority);
-        CleanNextSetFrameMove();
-
-        Vector3 sourcesMovement = ExtractNextFrameMoveFromSourcesClosedPriority(out int sourcesPriority, deltaTime);
-
-        if (sourcesPriority == frameSetPriority) return setFrameMovement + sourcesMovement;
-        else if (sourcesPriority > frameSetPriority) return sourcesMovement;
-        else return setFrameMovement;
-    }
-
-    private void ExtractNextFrameMoveFromSetFrameMoveClosedPriority(ref Vector3 sum, out int biggestPriority)
-    {
-        if (_setFrameMovement == null)
+        foreach (IKinematicPlatformerVelocityGetter getter in Sources.GetAllUntilPriority(maxPriority))
         {
-            biggestPriority = int.MinValue;
-            return;
-        }
-
-        biggestPriority = _setFrameMovement.Max((x) => x.Value.sqrMagnitude > SMALL_AMOUNT_SQRD ? x.Key : -1);
-        if (biggestPriority >= 0)
-            sum += _setFrameMovement[biggestPriority];
-    }
-
-    private Vector3 ExtractNextFrameMoveFromSourcesClosedPriority(out int priority, float deltaTime)
-    {
-        Vector3 frameSourcesMovement = Vector3.zero;
-        int latestPriority = FrameSources.GetLatestPriority();
-        var list = FrameSources.GetBiggestPriorityList(out priority);
-        if(list != null)
-        {
-            foreach (IKinematicPlatformerFrameVelocityGetter getter in list)
+            if (!getter.Equals(null))
             {
-                if (!getter.Equals(null))
-                {
-                    if (latestPriority != priority && getter is IKinematicPlatformerVelocityGetterActivateable) 
-                        (getter as IKinematicPlatformerVelocityGetterActivateable).StartVelocity();
-                    Vector3 velFrame = getter.GetFrameVelocity(deltaTime);
-                    if (velFrame != Vector3.zero)
-                    {
-                        frameSourcesMovement += velFrame;
-                    }
-                }
-            }
-        }
-        return frameSourcesMovement;
-    }
-
-    private void CleanNextSetFrameMove()
-    {
-        if(_setFrameMovement != null)
-        {
-            foreach(var x in _setFrameMovement.Keys.ToList())
-            {
-                _setFrameMovement[x] = Vector3.zero;
+                sourceVel += getter.GetVelocity();
             }
         }
     }
 
-    protected bool IsGrounded()
+    private Vector3 GetCurrentVelocity(int maxPriority = int.MaxValue)
     {
-        return Grounded;
-    }
-
-    /// <summary>
-    /// If this is not grounded, what is the height to the ground?
-    /// </summary>
-    /// <param name="max"></param>
-    /// <returns></returns>
-    public float GetHeightFromGround(float max = float.MaxValue)
-    {
-        if (groundCaster != null)
-        {
-            if (groundCaster.CastLength(-Vector3.up, max, out RaycastHit hit))
-            {
-                return hit.distance;
-            }
-            else return max;
-        }
-        else return 0f; //No concept of height over ground
+        Vector3 sourceVel = GetPhysicalVelocity();
+        GetVelocityFromSources(ref sourceVel, maxPriority);
+#if UNITY_EDITOR
+        _debugCurrentOtherSourcesInputVelocity = sourceVel;
+#endif
+        return _currentInputVelocity + sourceVel;
     }
 
 
-
-    #region Arbitrary Wall Checks
-
-
-    private Dictionary<CasterClass, Vector3> _accumulatedValue;
-
-    public void CheckSurfaceNow(CasterClass caster, in Vector3 offset, in Vector3 direction, float length, Vector3 extraValueIfOn)
+    public Vector3 GetThisFrameMovement(float deltaTime, bool destroySetFrameMove = false, int maxPriority = int.MaxValue)
     {
-        if (direction == Vector3.zero) return;
-        Caster casterObj = GetCaster(caster);
+        Vector3 velocityInThisFrame = GetCurrentVelocity();
 
-
-        if (this.CastLengthOffsetInFrame(casterObj, offset, direction, length, out RaycastHit hit, comment: "Immediate check on incoming surface"))
-        {
-            AddAccumulatedValue(caster, direction.normalized * hit.distance + extraValueIfOn);
-        }
+        Vector3 extractMovement = GetSetFrameMove(deltaTime, destroySetFrameMove, maxPriority);
+        Vector3 frameMovement = velocityInThisFrame * deltaTime + extractMovement;
+        if (extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now extr:{1} + vel:{2} = {3} [{4}]", this, extractMovement.ToString("F3"), (velocityInThisFrame * deltaTime).ToString("F3"), frameMovement.ToString("F3"), Time.fixedTime);
+        return frameMovement;
     }
-
-    private void AddAccumulatedValue(CasterClass caster, Vector3 v)
-    {
-        if (_accumulatedValue == null) _accumulatedValue = new Dictionary<CasterClass, Vector3>((int) CasterClass.None);
-        if (!_accumulatedValue.ContainsKey(caster)) _accumulatedValue.Add(caster, Vector3.zero);
-
-        _accumulatedValue[caster] += v;
-    }
-
-    private Vector3 CheckAccumulatedValue(CasterClass caster, bool destroy = true)
-    {
-        if (_accumulatedValue == null || !_accumulatedValue.ContainsKey(caster)) return Vector3.zero;
-        Vector3 v = _accumulatedValue[caster];
-        if(destroy) _accumulatedValue[caster] = Vector3.zero;
-        return v;
-    }
-
     #endregion
-
-    #region Input Velocity
 
     #region Physical Velocity
 
@@ -765,38 +774,28 @@ public partial class KinematicPlatformer : MonoBehaviour
     #endregion
 
 
-    private Vector3 GetCurrentVelocity(int maxPriority = int.MaxValue)
+    private void SetOutsideVelocity(Vector3 relativeSpeed)
     {
-        Vector3 sourceVel = GetPhysicalVelocity();
-        GetVelocityFromSources(ref sourceVel, maxPriority);
-#if UNITY_EDITOR
-        _debugCurrentOtherSourcesInputVelocity = sourceVel;
-#endif
-        return _currentInputVelocity + sourceVel;
-    }
-
-    private void GetVelocityFromSources(ref Vector3 sourceVel, int maxPriority = int.MaxValue)
-    {
-        if (_velocitySources != null)
-        {
-            foreach (IKinematicPlatformerVelocityGetter getter in _velocitySources.GetAllUntilPriority(maxPriority))
-            {
-                sourceVel += getter.GetVelocity();
-            }
-        }
-    }
-
-    public Vector3 GetThisFrameMovement(float deltaTime, bool destroySetFrameMove = false, int maxPriority = int.MaxValue)
-    {
-        Vector3 velocityInThisFrame = GetCurrentVelocity();
-
-        Vector3 extractMovement = GetSetFrameMove(deltaTime, destroySetFrameMove, maxPriority);
-        Vector3 frameMovement = velocityInThisFrame * deltaTime + extractMovement;
-        if (extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now extr:{1} + vel:{2} = {3} [{4}]", this, extractMovement.ToString("F3"), (velocityInThisFrame * deltaTime).ToString("F3"), frameMovement.ToString("F3"), Time.fixedTime);
-        return frameMovement;
+        _outsideVelocity = relativeSpeed;
     }
 
     #endregion
+
+    private void Awake()
+    {
+        switch (manipulatingStyle)
+        {
+            case ManipulatingStyle.RigidbodyInChild:
+                _body = GetComponentInChildren<Rigidbody>();
+                break;
+            default:
+                _body = GetComponentInParent<Rigidbody>();
+                break;
+        }
+
+        root = transform.root;
+        if (_desiredDirection == Vector3.zero) _desiredDirection = ActualDirection;
+    }
 
     void FixedUpdate()
     {
@@ -815,7 +814,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         totalFrameMovement += horizontalChecks + verticalChecks;
 
         CheckPlatformMovement(_currentPlatform, out Vector3 platformMovement, out Quaternion platformRotation);
-        SaveRelativeSpeed(platformMovement / Time.fixedDeltaTime);
+        SetOutsideVelocity(platformMovement / Time.fixedDeltaTime);
         totalFrameMovement += platformMovement;
 
         Vector3 horizontalMovement = GetHorizontalMovement(totalFrameMovement);
@@ -888,6 +887,8 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
 #endif
     }
+
+    #region Casting
 
     private Vector3 GetHorizontalMovement(in Vector3 totalMovement)
     {
@@ -1024,48 +1025,9 @@ public partial class KinematicPlatformer : MonoBehaviour
         return success;
     }
 
-    public Collider WhatIsWhereIAmTryingToGo(CasterClass caster, out RaycastHit hit)
-    {
-        return WhatIsInThere(GetCurrentVelocity(), Vector3.zero, caster, out hit);
-    }
+    #endregion
 
-    public Collider WhatIsInThere(in Vector3 checkDistance, in Vector3 offset, CasterClass caster, out RaycastHit hit)
-    {
-        return WhatIsInThere(checkDistance, offset, GetCaster(caster),out hit);
-    }
-
-    public Caster GetCaster(CasterClass caster)
-    {
-        switch (caster)
-        {
-            case CasterClass.Ground:
-                return groundCaster;
-            case CasterClass.Ceiling:
-                return ceilingCaster;
-            case CasterClass.Side:
-                return wallCaster;
-            default:
-                return null;
-        }
-    }
-
-    private Collider WhatIsInThere(in Vector3 checkDistance, in Vector3 offset, Caster caster, out RaycastHit hit)
-    {
-        hit = default(RaycastHit);
-        if (caster != null && CastLengthOffsetInFrame(caster, offset, checkDistance, checkDistance.magnitude, out hit, "What is in there"))
-        {
-            return hit.collider;
-        }
-        else return null;
-    }
-
-
-    private void SolveReflection(in Vector3 inVel, float minVelToReflect, float reflectionAbsortion)
-    {
-
-    }
-
-
+    #region Moving
 
     private void Move(in Vector3 movement, out Vector3 positionNow)
     {
@@ -1101,15 +1063,8 @@ public partial class KinematicPlatformer : MonoBehaviour
     {
         if(_currentPlatform.platform != hit.collider) //Just changed
         {
-            if(hit.collider != null)
-            {
-                _currentPlatform.platform = hit.collider;
-            }
-            else
-            {
-                _currentPlatform.platform = null;
-            }
-
+            GonnaChangePlatform(_currentPlatform, hit.collider);
+            _currentPlatform.platform = hit.collider;
             JustChangedPlatform(_currentPlatform);
         }
 
@@ -1134,12 +1089,16 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     private void JustChangedPlatform(PlatformState platform)
     {
+
     }
 
-    private void SaveRelativeSpeed(Vector3 relativeSpeed)
+    private void GonnaChangePlatform(PlatformState platform, Collider collider)
     {
-        _outsideVelocity = relativeSpeed;
+        OnChangePlatform?.Invoke(platform.platform, collider);
     }
+
+    #endregion
+
 }
 
 

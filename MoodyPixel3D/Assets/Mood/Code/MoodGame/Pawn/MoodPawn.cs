@@ -1053,7 +1053,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         seq.Insert(0f, mover.TweenMoverPosition(Vector3.up * height, durationIn, priority: 1, 
             KinematicPlatformer.PriorityVelocityOperation.Get(
                 -Vector3.up, 
-                KinematicPlatformer.GetPriorityNumber(KinematicPlatformer.CommonPriority.Normal), 
+                KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.Normal), 
                 KinematicPlatformer.PriorityVelocityOperation.Origin.GetNextFrameFullVelocity, 
                 KinematicPlatformer.PriorityVelocityOperation.Modification.ProjectOnPositiveVector, 
                 KinematicPlatformer.PriorityVelocityOperation.Operation.Subtract), 
@@ -1062,7 +1062,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         seq.Insert(0f, mover.TweenMoverPosition(-Vector3.up * height, durationOut, priority: 1,
             KinematicPlatformer.PriorityVelocityOperation.Get(
                 -Vector3.up,
-                KinematicPlatformer.GetPriorityNumber(KinematicPlatformer.CommonPriority.Normal),
+                KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.Normal),
                 KinematicPlatformer.PriorityVelocityOperation.Origin.GetNextFrameFullVelocity,
                 KinematicPlatformer.PriorityVelocityOperation.Modification.ProjectOnPositiveVector,
                 KinematicPlatformer.PriorityVelocityOperation.Operation.Subtract),
