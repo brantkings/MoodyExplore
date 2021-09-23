@@ -65,7 +65,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         SetFlags(pawn);
         AddStances(pawn);
         duration += base.ExecuteEffect(pawn, skillDirection);
-        if (hopHeight > 0) pawn.Hop(hopHeight, hopDurationInMultiplier * duration, hopDurationOutMultiplier * duration);
+        if (hopHeight > 0) pawn.Hop(hopHeight, new MoodPawn.MovementData(hopDurationInMultiplier * duration).SetEase(Ease.OutCirc), new MoodPawn.MovementData(hopDurationOutMultiplier * duration).SetEase(Ease.InCirc));
         //Debug.LogWarningFormat("{0} has duration {1}. Distance is {2} and velocity is {3}. Duration real is {4}", this, duration, distance.magnitude, velocityAdd, pawn.CurrentDashDuration());
         pawn.StartCoroutine(PriorityChangeCoroutine(pawn, GetPluginPriority(pawn) + priorityAdd, duration * priortyChangeTimeProportional));
         return duration;

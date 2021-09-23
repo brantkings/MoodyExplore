@@ -19,7 +19,7 @@ public partial class KinematicPlatformer
         };
     }
 
-    // Maybe this is useful if the tween is dando pau
+    #region If Needed a value not inside the setter
     private class TweenedValue<T>
     {
         public T value;
@@ -45,105 +45,16 @@ public partial class KinematicPlatformer
     private List<TweenedValue<Vector3>> _localPositions;
     private int _latestLocalPosition;
 
+    #endregion
+
     private int commentIndex;
 
 
-    public class PriorityVelocityOperation
-    {
-        public Vector3 comparer;
-        public int priorityOrLess;
-        public Origin origin = Origin.GetNextFrameFullVelocity;
-        public Modification modification = Modification.ProjectOnPositiveVector;
-        public Operation operation = Operation.Sum;
-
-        private PriorityVelocityOperation(Vector3 compareTo, int priorityOrLess, Origin origin, Modification modification, Operation operation)
-        {
-            this.comparer = compareTo;
-            this.priorityOrLess = priorityOrLess;
-            this.origin = origin;
-            this.modification = modification;
-            this.operation = operation;
-        }
-
-        public static PriorityVelocityOperation Get(Vector3 compareTo, int priorityOrLess, Origin origin, Modification modification, Operation operation)
-        {
-            return new PriorityVelocityOperation(compareTo, priorityOrLess, origin, modification, operation);
-        }
-
-        public enum Origin
-        {
-            GetNextFrameFullVelocity,
-            AbsoluteComparer,
-            Zero,
-        }
-
-        public enum Modification
-        {
-            Nothing,
-            ProjectOnVector,
-            ProjectOnPositiveVector,
-            ProjectOnPlane
-        }
-
-        public enum Operation
-        {
-            Sum,
-            Subtract
-        }
-
-        public void Operate(ref Vector3 originalVel, KinematicPlatformer plat)
-        {
-            Vector3 value;
-
-            switch (origin)
-            {
-                case Origin.GetNextFrameFullVelocity:
-                    value = plat.GetThisFrameMovement(priorityOrLess);
-                    break;
-                case Origin.AbsoluteComparer:
-                    value = comparer;
-                    break;
-                default:
-                    value = Vector3.zero;
-                    break;
-            }
-
-            if(comparer != Vector3.zero)
-            {
-                switch (modification)
-                {
-                    case Modification.ProjectOnVector:
-                        value = Vector3.Project(value, comparer);
-                        break;
-                    case Modification.ProjectOnPositiveVector:
-                        float cos = Vector3.Dot(value, comparer);
-                        value = Vector3.Project(value, comparer);
-                        value *= Mathf.Max(Mathf.Sign(cos), 0f);
-                        break;
-                    case Modification.ProjectOnPlane:
-                        value = Vector3.ProjectOnPlane(value, comparer);
-                        break;
-                }
-            }
-
-            switch (operation)
-            {
-                case Operation.Sum:
-                    originalVel += value;
-                    break;
-                case Operation.Subtract:
-                    originalVel -= value;
-                    break;
-            }
-
-        }
-
-
-    }
-
-    public Tween TweenMoverPosition(Vector3 movement, float duration, int priority = 0, PriorityVelocityOperation op = null, string comment = "")
+    public Tween TweenMoverPosition(Vector3 movement, float duration, int priority = 0, string comment = "")
     {
         var setAndMove = SetPawnLerpSpecificPriorityDiff(priority);
+        Debug.LogFormat("[TWEEN] {0} is going to tween {1} [frame count: {2} fixed: {3}]", this, comment, Time.frameCount, Time.fixedTime);
+
 
         if (duration == 0f)
         {
@@ -152,45 +63,40 @@ public partial class KinematicPlatformer
         }
         else
         {
-            CalculatePosition(ref _localPositions, out int index);
 
+            /*
+            CalculatePosition(ref _localPositions, out int index);
             _localPositions[index].used = true;
+            _localPositions[index].value = Position;
+            */
+
+            Tween t;
             Vector3 p = Position;
             Vector3 initP = Position;
-            _localPositions[index].value = Position;
             comment = comment + "_" + commentIndex++;
             int commentCount = 0;
 
             DG.Tweening.Core.DOSetter<Vector3> setter;
-            if (op != null)
+            setter = (x) =>
             {
-                KinematicPlatformer plat = this;
-                setter = (x) =>
+                Vector3 diff = x - p;
+                setAndMove(diff);
+
+#if UNITY_EDITOR
+                if(Debugging)
                 {
-                    Vector3 diff = x - p;
-                    op.Operate(ref diff, plat);
-                    setAndMove(diff);
-                    Debug.LogWarningFormat("{0} is going begin: {1} now is {2} going to be {3} -> diff is {4} (operated: {5}) ({6})", this, initP.ToString("F3"), p.ToString("F3"), x.ToString("F3"), (x - p).ToString("F3"), diff.ToString("F3"), comment + "_" + commentCount++);
-                    p = x;
-                };
-            }
-            else
-            {
-                setter = (x) =>
-                {
-                    Vector3 diff = x - p;
-                    setAndMove(diff);
-                    Debug.LogWarningFormat("{0} is going begin: {1} now is {2} going to be {3} -> diff is {4} ({5})", this, initP.ToString("F3"), p.ToString("F3"), x.ToString("F3"), (x - p).ToString("F3"), comment + "_" + commentCount++);
-                    p = x;
-                };
-            }
+                    Debug.LogWarningFormat("[TWEEN] {0} is going begin: {1} now is {2} going to be {3} -> diff is {4} ({5})", this, initP.ToString("F3"), p.ToString("F3"), x.ToString("F3"), (x - p).ToString("F3"), comment + "_" + commentCount++);
+                }
+#endif
+                p = x;
+            };
 
             DG.Tweening.Core.DOGetter<Vector3> getter = () =>
             {
                 return p;
             };
 
-            Tween t = DOTween.To(getter, setter, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed);
+            t = DOTween.To(getter, setter, movement, duration).SetId(this).SetRelative(true).SetUpdate(UpdateType.Fixed).SetLink(gameObject);
             return t;
         }
 

@@ -1050,25 +1050,24 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _currentHop.KillIfActive();
         Sequence seq = DOTween.Sequence();
 
-        seq.Insert(0f, mover.TweenMoverPosition(Vector3.up * height, durationIn, priority: 1, 
-            KinematicPlatformer.PriorityVelocityOperation.Get(
-                -Vector3.up, 
-                KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.Normal), 
-                KinematicPlatformer.PriorityVelocityOperation.Origin.GetNextFrameFullVelocity, 
-                KinematicPlatformer.PriorityVelocityOperation.Modification.ProjectOnPositiveVector, 
-                KinematicPlatformer.PriorityVelocityOperation.Operation.Subtract), 
+        seq.Append(mover.TweenMoverPosition(Vector3.up * height, durationIn.duration, priority: KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.Anti_Gravity),
             "HOPIn").SetEase(durationIn.ease));
 
-        seq.Insert(0f, mover.TweenMoverPosition(-Vector3.up * height, durationOut, priority: 1,
-            KinematicPlatformer.PriorityVelocityOperation.Get(
-                -Vector3.up,
-                KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.Normal),
-                KinematicPlatformer.PriorityVelocityOperation.Origin.GetNextFrameFullVelocity,
-                KinematicPlatformer.PriorityVelocityOperation.Modification.ProjectOnPositiveVector,
-                KinematicPlatformer.PriorityVelocityOperation.Operation.Subtract),
-            "HOPOut").SetEase(durationIn.ease));
+        seq.Append(mover.TweenMoverPosition(-Vector3.up * height, durationOut.duration, priority: KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.Anti_Gravity),
+            "HOPOut").SetEase(durationOut.ease));
 
         _currentHop = seq;
+
+        KinematicPlatformer.VelocityLock vLock = KinematicPlatformer.VelocityLock.Get(-Vector3.up,
+            KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.PhysicsAndNatural),
+            KinematicPlatformer.VelocityLock.Modification.ProjectOnPositiveVector, KinematicPlatformer.VelocityLock.Operation.CancelOut);
+        mover.AddOperationVelocityLock(vLock);
+        _currentHop.OnKill(() =>
+        {
+            mover.RemoveOperationVelocityLock(vLock);
+        });
+
+        _currentHop.Play();
         return seq;
     }
 
@@ -1124,13 +1123,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public void Dash(Vector3 direction, float duration, AnimationCurve curve)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration, 0, null, "dashAC")?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashAC")?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
     
     public void Dash(Vector3 direction, float duration, Ease ease)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration, 0, null, "dashEAS")?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashEAS")?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
     }
 
     public void CancelCurrentDash()

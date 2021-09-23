@@ -52548,7 +52548,7 @@ MonoBehaviour:
   minVelocityMagnitude: 0.1
   reflectionMultiplier: 0
   dragMultiplier: 1
-  _velocity: {x: 0, y: 0, z: 0}
+  _physicalVelocity: {x: 0, y: 0, z: 0}
   _torque: {x: 0, y: 0, z: 0}
   _currentInputVelocity: {x: 0, y: 0, z: 0}
   _debugCurrentOtherSourcesInputVelocity: {x: 0, y: 0, z: 0}

@@ -35,9 +35,9 @@ MonoBehaviour:
   _cost: 0
   minDistance: 6
   maxDistance: 7
-  hopHeight: 8
-  hopDurationInMultiplier: 0.1
-  hopDurationOutMultiplier: 1
+  hopHeight: 2
+  hopDurationInMultiplier: 0.5
+  hopDurationOutMultiplier: 0.5
   setHorizontalDirection: 1
   setDirectionInRelationToMovement: []
   velocityAdd: 16

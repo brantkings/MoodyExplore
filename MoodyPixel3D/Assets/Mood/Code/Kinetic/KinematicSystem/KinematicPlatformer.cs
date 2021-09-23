@@ -408,7 +408,7 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     public Collider WhatIsWhereIAmTryingToGo(CasterClass caster, out RaycastHit hit)
     {
-        return WhatIsInThere(GetCurrentVelocity(), Vector3.zero, caster, out hit);
+        return WhatIsInThere(GetThisFrameMovement(Time.fixedDeltaTime, false), Vector3.zero, caster, out hit);
     }
 
     public Collider WhatIsInThere(in Vector3 checkDistance, in Vector3 offset, CasterClass caster, out RaycastHit hit)
@@ -483,7 +483,7 @@ public partial class KinematicPlatformer : MonoBehaviour
 
     public enum CommonVelocityPriority
     {
-        Normal = 0,
+        PhysicsAndNatural = 0,
         Anti_Gravity = 1,
         ArtificialInput = 2
     }
@@ -565,18 +565,35 @@ public partial class KinematicPlatformer : MonoBehaviour
             return _latestPriority;
         }
 
-        public IEnumerable<T> GetAllUntilPriority(int maxPriorityIncluding = int.MaxValue)
+        public IEnumerable<T> GetPriority(int minPriority, int maxPriority)
         {
-            foreach (KeyValuePair<int, LinkedList<T>> v in _values)
+            foreach (var t in _values.Where((x) => x.Key >= minPriority && x.Key <= maxPriority).Select((x) => x.Value)) 
+                foreach (var v in t) 
+                    yield return v;
+        }
+    }
+
+    private struct PriorityRange
+    {
+        public int min, max;
+
+        public PriorityRange(int min, int max)
+        {
+            this.min = min;
+            this.max = max;
+        }
+
+        public static PriorityRange MaxRange
+        {
+            get
             {
-                if (v.Key <= maxPriorityIncluding)
-                {
-                    foreach (var val in v.Value)
-                    {
-                        yield return val;
-                    }
-                }
+               return new PriorityRange(int.MinValue, int.MaxValue);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"({min}<>{max})";
         }
     }
 
@@ -600,6 +617,132 @@ public partial class KinematicPlatformer : MonoBehaviour
             return _frameVelocitySources;
         }
     }
+
+    #endregion
+
+    #region Velocity Locks
+
+    public class VelocityLock
+    {
+        public Vector3 comparer;
+        public int priorityOrLess;
+        public Modification modification = Modification.ProjectOnPositiveVector;
+        public Operation operation = Operation.Sum;
+
+        private VelocityLock(Vector3 compareTo, int priorityOrLess, Modification modification, Operation operation)
+        {
+            this.comparer = compareTo;
+            this.priorityOrLess = priorityOrLess;
+            this.modification = modification;
+            this.operation = operation;
+        }
+
+        public static VelocityLock Get(Vector3 compareTo, int priorityToCompareTo, Modification modification, Operation operation)
+        {
+            return new VelocityLock(compareTo, priorityToCompareTo, modification, operation);
+        }
+
+        public enum Modification
+        {
+            Nothing,
+            ProjectOnVector,
+            ProjectOnPositiveVector,
+            ProjectOnPlane
+        }
+
+        public enum Operation
+        {
+            Sum,
+            CancelOut
+        }
+
+        public void Operate(ref Vector3 valueToOperate, KinematicPlatformer plat)
+        {
+            Vector3 oldValue = valueToOperate;
+            Vector3 value = Vector3.zero;
+
+            if (comparer != Vector3.zero)
+            {
+                switch (modification)
+                {
+                    case Modification.ProjectOnVector:
+                        value = Vector3.Project(valueToOperate, comparer);
+                        break;
+                    case Modification.ProjectOnPositiveVector:
+                        float cos = Vector3.Dot(valueToOperate, comparer);
+                        value = Vector3.Project(valueToOperate, comparer);
+                        value *= Mathf.Max(Mathf.Sign(cos), 0f);
+                        break;
+                    case Modification.ProjectOnPlane:
+                        value = Vector3.ProjectOnPlane(valueToOperate, comparer);
+                        break;
+                    default:
+                        value = Vector3.zero;
+                        break;
+                }
+            }
+
+
+            //Debug.LogFormat("[TWEEN op] Gonna {0} {1} (Obtained comparing with {2} with {3}) Priority is {4}!", operation, value.ToString("F3"), oldValue.ToString("F3"), comparer.ToString("F2"), priorityOrLess);
+
+            switch (operation)
+            {
+                case Operation.Sum:
+                    valueToOperate += value;
+                    break;
+                case Operation.CancelOut:
+                    valueToOperate -= value;
+                    break;
+            }
+
+        }
+    }
+
+    private HashSet<VelocityLock> _velocityOperationLocks;
+
+    private HashSet<VelocityLock> VelocityOperationLocks
+    {
+        get
+        {
+            if (_velocityOperationLocks == null) _velocityOperationLocks = new HashSet<VelocityLock>();
+            return _velocityOperationLocks;
+        }
+    }
+
+    public void AddOperationVelocityLock(VelocityLock data)
+    {
+        VelocityOperationLocks.Add(data);
+    }
+
+    public void RemoveOperationVelocityLock(VelocityLock data)
+    {
+        VelocityOperationLocks.Remove(data);
+    }
+
+    private IEnumerable<(VelocityLock, PriorityRange)> GetLocks(PriorityRange range)
+    {
+        if(_velocityOperationLocks == null || _velocityOperationLocks.Count <= 0)
+        {
+            yield return (null, range);
+            yield break;
+        }
+
+        PriorityRange currentRange = range;
+        foreach (var l in _velocityOperationLocks.OrderBy((x) => x.priorityOrLess)) 
+        {
+            currentRange.max = l.priorityOrLess;
+            yield return (l, currentRange);
+            currentRange.min = currentRange.max + 1;
+        }
+        currentRange.max = range.max;
+        yield return (null, currentRange);
+    }
+
+    private void UseLocks(ref Vector3 velocityUntilNow, float deltaTime, int priority)
+    {
+        
+    }
+
 
     #endregion
 
@@ -650,7 +793,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         {
             Debug.LogErrorFormat("{0} += {1}! Putting NaN in this!", _setFrameMovement, move);
         }
-        Debug.LogFormat("Adding Move {0} to {1} with priority {2}", move.ToString("F3"), this, priority);
+        //Debug.LogFormat("Adding Move {0} to {1} with priority {2}", move.ToString("F3"), this, priority);
 #endif
 
         if (_setFrameMovement == null) _setFrameMovement = new Dictionary<int, Vector3>(2);
@@ -661,12 +804,11 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    public Vector3 GetSetFrameMove(float deltaTime, bool destroySetFrameMove = false, int maxPriorityIncluding = int.MaxValue)
+    private Vector3 GetSetFrameMove(float deltaTime, in PriorityRange priorityRange)
     {
         Vector3 nextFrameMove = Vector3.zero;
-        GetNextFrameMoveFromSetFrameMove(ref nextFrameMove, maxPriorityIncluding);
-        GetNextFrameMoveFromSources(ref nextFrameMove, deltaTime, maxPriorityIncluding);
-        if (destroySetFrameMove) CleanNextSetFrameMove();
+        GetNextFrameMoveFromSetFrameMove(ref nextFrameMove, priorityRange);
+        GetNextFrameMoveFromSources(ref nextFrameMove, deltaTime, priorityRange);
         return nextFrameMove;
     }
 
@@ -683,25 +825,22 @@ public partial class KinematicPlatformer : MonoBehaviour
 
 
 
-    private void GetNextFrameMoveFromSetFrameMove(ref Vector3 sum, int maxPriority = int.MaxValue)
+    private void GetNextFrameMoveFromSetFrameMove(ref Vector3 sum, PriorityRange range)
     {
         if (_setFrameMovement == null)
         {
-            maxPriority = int.MinValue;
             return;
         }
 
-        Vector3 totalValue = Vector3.zero;
-
-        foreach (Vector3 val in _setFrameMovement.Select((x) => x.Key <= maxPriority ? x.Value : Vector3.zero))
+        foreach (Vector3 val in _setFrameMovement.Where((x) => x.Key == Mathf.Clamp(x.Key, range.min, range.max)).Select(x => x.Value))
         {
             sum += val;
         }
     }
 
-    private void GetNextFrameMoveFromSources(ref Vector3 sum, float deltaTime, int maxPriority = int.MaxValue)
+    private void GetNextFrameMoveFromSources(ref Vector3 sum, float deltaTime, in PriorityRange range)
     {
-        foreach (IKinematicPlatformerFrameVelocityGetter getter in FrameSources.GetAllUntilPriority(maxPriority))
+        foreach (IKinematicPlatformerFrameVelocityGetter getter in FrameSources.GetPriority(range.min, range.max))
         {
             if (!getter.Equals(null))
             {
@@ -710,9 +849,9 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private void GetVelocityFromSources(ref Vector3 sourceVel, int maxPriority = int.MaxValue)
+    private void GetVelocityFromSources(ref Vector3 sourceVel, in PriorityRange range)
     {
-        foreach (IKinematicPlatformerVelocityGetter getter in Sources.GetAllUntilPriority(maxPriority))
+        foreach (IKinematicPlatformerVelocityGetter getter in Sources.GetPriority(range.min, range.max))
         {
             if (!getter.Equals(null))
             {
@@ -721,10 +860,10 @@ public partial class KinematicPlatformer : MonoBehaviour
         }
     }
 
-    private Vector3 GetCurrentVelocity(int maxPriority = int.MaxValue)
+    private Vector3 GetCurrentVelocity(in PriorityRange range)
     {
         Vector3 sourceVel = GetPhysicalVelocity();
-        GetVelocityFromSources(ref sourceVel, maxPriority);
+        GetVelocityFromSources(ref sourceVel, range);
 #if UNITY_EDITOR
         _debugCurrentOtherSourcesInputVelocity = sourceVel;
 #endif
@@ -732,13 +871,31 @@ public partial class KinematicPlatformer : MonoBehaviour
     }
 
 
-    public Vector3 GetThisFrameMovement(float deltaTime, bool destroySetFrameMove = false, int maxPriority = int.MaxValue)
+    public Vector3 GetThisFrameMovement(float deltaTime, bool destroySetFrameMove, int minPriority = int.MinValue, int maxPriority = int.MaxValue)
     {
-        Vector3 velocityInThisFrame = GetCurrentVelocity();
+        PriorityRange range = new PriorityRange(minPriority, maxPriority);
+        Vector3 frameMovement = Vector3.zero;
+        foreach((VelocityLock l, PriorityRange r) in GetLocks(range))
+        {
+            Vector3 velocityInThisFrame = GetCurrentVelocity(r);
+            Vector3 extractMovement = GetSetFrameMove(deltaTime, r);
+            Vector3 singlePriorityFrameMovement = velocityInThisFrame * deltaTime + extractMovement;
+            if(l != null)
+                l.Operate(ref singlePriorityFrameMovement, this);
 
-        Vector3 extractMovement = GetSetFrameMove(deltaTime, destroySetFrameMove, maxPriority);
-        Vector3 frameMovement = velocityInThisFrame * deltaTime + extractMovement;
-        if (extractMovement != Vector3.zero) Debug.LogFormat("{0} exact movement is now extr:{1} + vel:{2} = {3} [{4}]", this, extractMovement.ToString("F3"), (velocityInThisFrame * deltaTime).ToString("F3"), frameMovement.ToString("F3"), Time.fixedTime);
+#if UNITY_EDITOR
+            if (Debugging)
+                Debug.LogFormat("<color={7}>[PLATFORMER VEL] {0} exact movement is now extr:{1} + vel:{2} = {3} Range is {10} |Total: {9}| [{4}; {5}] {6} DeltaTime is {8} </color>", this,
+                    extractMovement.ToString("F3"), (velocityInThisFrame * deltaTime).ToString("F3"), singlePriorityFrameMovement.ToString("F3"), Time.fixedTime, Time.frameCount,
+                    destroySetFrameMove, destroySetFrameMove ? "#ababea" : "#868686", deltaTime, frameMovement.ToString("F3"), r);
+#endif
+
+            frameMovement += singlePriorityFrameMovement;
+        }
+
+        if (destroySetFrameMove) CleanNextSetFrameMove();
+
+
         return frameMovement;
     }
     #endregion
