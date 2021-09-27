@@ -57,7 +57,7 @@ MonoBehaviour:
   minVelocityMagnitude: 0.1
   reflectionMultiplier: 0
   dragMultiplier: 1
-  _velocity: {x: 0, y: 0, z: 0}
+  _physicalVelocity: {x: 0, y: 0, z: 0}
   _torque: {x: 0, y: 0, z: 0}
   _currentInputVelocity: {x: 0, y: 0, z: 0}
   _debugCurrentOtherSourcesInputVelocity: {x: 0, y: 0, z: 0}
@@ -232,7 +232,7 @@ GameObject:
   m_Layer: 9
   m_Name: InstantiatePlace
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 8418204508859773708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1

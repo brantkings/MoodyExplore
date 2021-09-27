@@ -127,29 +127,20 @@ namespace LHH.Caster
             return GetDefaultDirectionNormalized() * GetDefaultDistance();
         }
 
+
         /// <summary>
-        /// Get the center of the shape where the caster had this hit.
+        /// Get the minimum relative distance vector that from this particular hit the caster would just be intersecting the point.
         /// </summary>
-        /// <param name="hit"></param>
-        /// <param name="addedDistance"></param>
+        /// <param name="hitPoint"></param>
+        /// <param name="hitNormal"></param>
         /// <returns></returns>
-        public virtual Vector3 GetCenterPositionOfHit(RaycastHit hit)
-        {
-            return GetCenterPositionOfHit(hit.point, hit.normal);
-        }
-
-        public virtual Vector3 GetCenterPositionOfHit(in Vector3 point, in Vector3 hitNormal)
-        {
-            return point + GetSpecificMinimumDistanceFromHit(point, hitNormal);
-        }
-
         public virtual Vector3 GetMinimumDistanceFromHit(in Vector3 hitPoint, in Vector3 hitNormal)
         {
             return GetSpecificMinimumDistanceFromHit(hitPoint, hitNormal) + hitNormal.normalized * _originForwardOffset;
         }
 
         /// <summary>
-        /// Based on a hit, gets the relative distance where the center of the cast is just grazing over that.
+        /// Based on a hit, gets the relative distance where the center would be just grazing the surface.
         /// </summary>
         /// <param name="hitPoint"></param>
         /// <param name="hitNormal"></param>
@@ -335,7 +326,6 @@ namespace LHH.Caster
                 Gizmos.DrawLine(origin, destPosition);
                 //GizmosUtils.DrawArrow(origin, destPosition, 0.5f);
 
-                DrawFormatGizmo(GetCenterPositionOfHit(hit));
                 Gizmos.color = GizmosUtils.SuccessColor;
                 DrawFormatGizmo(destPosition);
                 //DrawFormatGizmo(GetCenterPositionOfHit(hit));

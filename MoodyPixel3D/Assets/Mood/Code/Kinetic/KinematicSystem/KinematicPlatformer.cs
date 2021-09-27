@@ -682,7 +682,6 @@ public partial class KinematicPlatformer : MonoBehaviour
                 }
             }
 
-
             //Debug.LogFormat("[TWEEN op] Gonna {0} {1} (Obtained comparing with {2} with {3}) Priority is {4}!", operation, value.ToString("F3"), oldValue.ToString("F3"), comparer.ToString("F2"), priorityOrLess);
 
             switch (operation)
@@ -1100,7 +1099,6 @@ public partial class KinematicPlatformer : MonoBehaviour
                     if (Debugging)
                     {
                         LHH.Utils.DebugUtils.DrawNormalStar(pointBetween, 1f, Quaternion.identity, Color.yellow, 10f);
-                        LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset), caster.GetCenterPositionOfHit(foundHit), 1f, 45f, Color.green, 0f);
                         LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset + currentMovement), pointBetween, 1f, 45f, Color.red, 0f);
                         Debug.LogFormat(this, "{8} Yes Hit Drag! {0} is now movement {1} with extra {2} [dist:{6}, moveMag:{7}] (drag {3} (was {4}) + reflect {5}) --> {9} Will end up on {10}", originalMovement.ToString("F3"), currentMovement.ToString("F3"), extraMovement.ToString("F3"), 
                             drag.ToString("F3"), originalDrag.ToString("F3"),
@@ -1112,7 +1110,6 @@ public partial class KinematicPlatformer : MonoBehaviour
                 {
                     if (Debugging)
                     {
-                        LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset), caster.GetCenterPositionOfHit(foundHit), 1f, 45f, Color.green, 0f);
                         LHH.Utils.DebugUtils.DrawArrow(caster.GetOriginPositionOffset(originOffset) + currentMovement, caster.GetOriginPositionOffset(originOffset) + currentMovement + drag, 1f, 45f, Color.red, 0f); 
                         Debug.LogFormat(this, "{8} No Hit Drag! {0} is now movement {1} with extra {2} [dist:{6}, moveMag:{7}] (drag {3} (was {4}) + reflect {5}) --> {9} Will end up on {10}", originalMovement.ToString("F3"), currentMovement.ToString("F3"), extraMovement.ToString("F3"),
                                     drag.ToString("F3"), drag.ToString("F3"),

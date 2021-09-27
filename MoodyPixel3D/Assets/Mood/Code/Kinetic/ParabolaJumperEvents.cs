@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ParabolaJumperEvents : AddonBehaviour<OldParabolaJumper>
+public class ParabolaJumperEvents : AddonBehaviour<ParabolaJumper>
 {
     public UnityEvent OnJump;
     public UnityEvent OnStopJump;

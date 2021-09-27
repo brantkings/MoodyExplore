@@ -110,7 +110,21 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             }
         }
     }
-    
+
+    [TaskCategory("Mood/Pawn")]
+    [TaskDescription("Rotate with pawn's rotation velocity.")]
+    public class RotateTowardsDirection : Action
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private SharedVector3 direction;
+
+        public override TaskStatus OnUpdate()
+        {
+            pawn.Value.RotateTowards(direction.Value);
+            return TaskStatus.Success;
+        }
+    }
+
     [TaskCategory("Mood/Pawn")]
     public class SetPawnDirection : Action
     {
@@ -164,6 +178,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
     }
 
     [TaskCategory("Mood/Pawn")]
+    [TaskDescription("Move pawn in the direction for the amount needed. Pawn will rotate to accomodate.")]
     public class MoveDirection : Action
     {
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;

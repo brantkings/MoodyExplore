@@ -7,7 +7,7 @@ namespace LHH.Unity
     /// <summary>
     /// Only ever use this for prototyping.
     /// </summary>
-    public class PrototypeInstantiator : Instantiator<Transform>
+    public class PrototypeInstantiator : Instantiator<GameObject>
     {
         
     }

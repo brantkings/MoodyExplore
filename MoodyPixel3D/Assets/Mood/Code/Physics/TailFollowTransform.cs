@@ -70,11 +70,13 @@ public class TailFollowTransform : MonoBehaviour
 
     private void Start()
     {
-        EnforceTail(target, atStart);
+        if (target != null)
+            EnforceTail(target, atStart);
     }
 
     private void LateUpdate()
     {
-        EnforceTail(target);
+        if(target != null)
+            EnforceTail(target);
     }
 }

@@ -1187,7 +1187,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         Vector3 animPos = animator.transform.localPosition;
         animPos.y = h;
-        animator.transform.localPosition = animPos;
+
+        if (animator != null)
+            animator.transform.localPosition = animPos;
     }
 
     private void UpdateAnimation()
@@ -1210,12 +1212,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         lastAttack = str;
         timeStampAttack = Time.time;
 
-        animator.SetInteger(str, (int) phase);
+        if(animator != null)
+            animator.SetInteger(str, (int) phase);
     }
 
     public void FinishSkillAnimation(string str)
     {
-        animator.SetInteger(str, (int)AnimationPhase.None);
+        if (animator != null)
+            animator.SetInteger(str, (int)AnimationPhase.None);
     }
 
     public void SetDamageAnimationTween(Vector3 direction, float duration, float delay)

@@ -50,6 +50,11 @@ namespace LHH.Unity
             return thisIsParent ? transform : null;
         }
 
+        public void JustInstantiate()
+        {
+            Instantiate();
+        }
+        
         public T Instantiate()
         {
             return this.Instantiate(prefab, GetPosition(), GetRotation(), GetParent());

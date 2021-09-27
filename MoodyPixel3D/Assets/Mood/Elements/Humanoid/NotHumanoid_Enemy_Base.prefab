@@ -78,6 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99061cbf3ff46a441a6b0077fd9d74f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pawnNameOverrided: Being
+  pawnName: {fileID: 0}
   mover: {fileID: 6543790190532030750}
   animator: {fileID: 0}
   _health: {fileID: 3753761908181155500}
@@ -110,7 +112,7 @@ MonoBehaviour:
     beats: 8
   staminaRecoveryMovingPerSecond:
     beats: 8
-  _instantiateProjectilePosition: {fileID: 0}
+  _instantiateProjectilePosition: {fileID: 115938510025388480}
   damageTeam: 1
   _debug: 0
 --- !u!114 &1165887686459921071
@@ -843,3 +845,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dfb27117d352bc4aa71babe534726a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &115938510025388480 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5737602238937647798, guid: 4a06bd909738e3b4cb1ef0eaf62ae0db, type: 3}
+  m_PrefabInstance: {fileID: 5637358447042542454}
+  m_PrefabAsset: {fileID: 0}
