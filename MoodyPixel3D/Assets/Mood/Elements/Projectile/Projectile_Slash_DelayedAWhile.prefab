@@ -153,7 +153,7 @@ MonoBehaviour:
         m_CallState: 2
   scriptableEventToCall: []
   toListenTo: {fileID: 0}
-  _time: 0.75
+  _time: 0.5
 --- !u!114 &1061291822
 MonoBehaviour:
   m_ObjectHideFlags: 0

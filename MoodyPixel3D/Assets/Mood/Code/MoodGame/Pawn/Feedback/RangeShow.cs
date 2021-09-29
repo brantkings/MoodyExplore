@@ -157,7 +157,8 @@ public abstract class RangeShow<T> : RangeShow
                 }
                 wasShowing = shouldShow;
             }
-            directed?.SetDirection(pawn, skill, skillDirection);
+            if(!directed.Equals(null))
+                directed.SetDirection(pawn, skill, skillDirection);
             yield return null;
             //Debug.LogFormat("[RANGESHOW] {0} is still showing {1} with {2}. Its current skill is {3}", pawn.name, skill.name, propertyGetter, pawn.GetCurrentSkill());
         }

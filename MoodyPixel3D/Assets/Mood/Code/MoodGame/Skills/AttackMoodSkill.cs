@@ -139,11 +139,11 @@ namespace Code.MoodGame.Skills
             if(setDirection) pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection, buildData);
             ConsumeStances(pawn);
+            float preAttackDuration = Mathf.Max(preTime - Time.deltaTime, 0f);
+            Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
             yield return null;
             pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.PreAttack);
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
-            float preAttackDuration = Mathf.Max(preTime - Time.deltaTime, 0f);
-            Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
             yield return new WaitForSeconds(preAttackDuration);
 
             pawn.PrepareForSwing(buildData, skillDirection);
@@ -202,7 +202,7 @@ namespace Code.MoodGame.Skills
             bool hit = false;
             foreach (MoodSwing.MoodSwingResult result in swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(skillDirection)).TryHitMerged(pawn.Position, Quaternion.LookRotation(skillDirection, pawn.Up), targetLayer))
             {
-                //Debug.LogFormat("Result is {0}", result.collider);
+                Debug.LogFormat("Result is {0}", result.collider);
                 if (result.collider != null)
                 {
                     if(!hit)
@@ -211,7 +211,6 @@ namespace Code.MoodGame.Skills
                     }
 
                     hit = true;
-                    
 
                     Debug.LogWarningFormat("Attack {0} found collider {1} from '{2}'", name, result.collider.name, result.collider.GetComponentInParent<MoodPawn>()?.name);
                     Health enemyHealth = result.collider.GetComponentInParent<Health>();
@@ -278,7 +277,7 @@ namespace Code.MoodGame.Skills
             {
                 swingData = this.swingData,
                 offset = swingDataPositionOffset,
-                skillDirectionBeginning = GetSanitizerForFirstDash(),
+                skillPreviewSanitizer = GetSanitizerForFirstDash(),
             };
         }
 
@@ -300,6 +299,11 @@ namespace Code.MoodGame.Skills
                 directionFixer = GetSanitizerForFirstDash(),
                 width = 0.5f
             };
+        }
+
+        private RangeShow.SkillDirectionSanitizer GetClosedSanitizer()
+        {
+            return new RangeShow.SkillDirectionSanitizer(0f, 0f, DirectionFixer.LetAll);
         }
 
         private RangeShow.SkillDirectionSanitizer GetSanitizerForFirstDash()

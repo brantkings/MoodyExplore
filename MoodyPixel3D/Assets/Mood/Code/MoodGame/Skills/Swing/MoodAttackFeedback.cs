@@ -9,7 +9,7 @@ public class MoodAttackFeedback : MonoBehaviour
 
     const int MAX_QUAD = 16;
 
-    public float attackDuration = 0.08f;
+    public float attackDuration = 0.16f;
 
     MoodPawn pawn;
     Mesh mesh;
@@ -37,8 +37,12 @@ public class MoodAttackFeedback : MonoBehaviour
 
     private void GetProperties()
     {
-
         properties = GetComponentsInChildren<SlashTrailProperties>();
+
+        if(properties == null || properties.Length <= 0)
+        {
+            Debug.LogErrorFormat(this, "{0} has no slashTrailProperties!", this);
+        }
     }
 
     private void OnEnable()

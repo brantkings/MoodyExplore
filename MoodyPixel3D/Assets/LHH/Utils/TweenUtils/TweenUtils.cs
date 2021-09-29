@@ -19,4 +19,8 @@ public static class TweenUtils
     {
         return tween != null && tween.IsActive() && tween.IsPlaying();
     }
+    public static bool IsNotNullAndActive(this Tween tween)
+    {
+        return tween != null && tween.IsActive();
+    }
 }

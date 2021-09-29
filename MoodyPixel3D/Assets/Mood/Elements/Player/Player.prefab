@@ -3045,12 +3045,16 @@ MonoBehaviour:
   inherentReactions: []
   flagInherentStances: []
   _threatenable: {fileID: 0}
-  timeToMaxVelocity: 0.15
-  timeToZeroVelocity: 0.1
+  timeToMaxVelocity:
+    beats: 1
+  timeToZeroVelocity:
+    beats: 2
   snapToTargetSpeedDelta: 0.25
   angleToBeAbleToAccelerate: 55
-  turningTime:
-    beats: 1
+  turningDirectSpeed: 4
+  turningForwardVelocityRatio: 0.05
+  turningTimeTo360:
+    beats: 12
   height: 4
   pawnRadius: 0.5
   extraRangeBase: 0

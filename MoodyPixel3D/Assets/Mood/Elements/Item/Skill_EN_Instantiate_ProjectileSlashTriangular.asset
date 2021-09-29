@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c35f8d62a121c914493a1ea138b0e9e6, type: 3}
-  m_Name: Skill_Instantiate_ProjectileSlashTriangular
+  m_Name: Skill_EN_Instantiate_ProjectileSlashTriangular
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Throw Stone
+  _name: Triangular Slash
   _description: 
   _category: {fileID: 11400000, guid: be719bf8ca157714b9735198fd5a9b65, type: 2}
   _skillCommandColor:

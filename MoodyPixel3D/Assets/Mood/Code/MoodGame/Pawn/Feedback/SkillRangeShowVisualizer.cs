@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UpdateSkillRange : LHH.Unity.AddonParentBehaviour<MoodPawn>
+public class SkillRangeShowVisualizer : LHH.Unity.AddonParentBehaviour<MoodPawn>
 {
     public RangeShow[] shows;
 

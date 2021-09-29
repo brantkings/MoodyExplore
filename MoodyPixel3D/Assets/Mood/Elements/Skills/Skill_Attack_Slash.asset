@@ -38,10 +38,11 @@ MonoBehaviour:
   _shortcut: 120
   _debug: 0
   _cost: 1
-  damage: 10
+  damage: 20
   stunTime:
     beats: 4
   swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
+  swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -68,6 +69,10 @@ MonoBehaviour:
   priorityPreAttack: 2
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
+  _painThought:
+    _directProperty: {fileID: 0}
+    _getter: {fileID: 0}
+  _flyingThought: {fileID: 0}
   preAttackDash:
     distance: 0
     angle:

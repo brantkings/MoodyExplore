@@ -65,6 +65,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [SerializeField]
     private Health _health;
     [SerializeField]
+    private DamageTeam damageTeam = DamageTeam.Neutral;
+    [SerializeField]
     public MoodDamageModifier _undetectedDamageModifier;
     [SerializeField]
     private float knockBackMultiplier;
@@ -79,6 +81,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
+    [UnityEngine.Serialization.FormerlySerializedAs("_handPosition")]
+    public Transform _instantiateProjectilePosition;
+
 
     [SerializeField]
     private MoodPawnStanceConfiguration pawnConfiguration;
@@ -123,19 +128,23 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
-    [Space()]
-    public float timeToMaxVelocity;
-    public float timeToZeroVelocity = 0f;
-    public float snapToTargetSpeedDelta = 0.1f;
-    public float angleToBeAbleToAccelerate = 90f;
-    public TimeBeatManager.BeatQuantity turningTime = 1;
+    [Header("Movement")]
+    [Tooltip("The time it takes for the acceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToMaxVelocity = 1;
+    [Tooltip("The time it takes for the desacceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToZeroVelocity = 2;
+    [Tooltip("The distance when it snaps to target speed.")] public float snapToTargetSpeedDelta = 0.1f;
+    [Tooltip("What it considers rotated or not rotated.")] public float angleToBeAbleToAccelerate = 90f;
+    [Tooltip("The direct velocity the pawn goes exactly the direction it wants to when not rotated.")] public float turningDirectMaxSpeed = 1f;
+    [Tooltip("When not rotated, the ratio it goes to it's the direct velocity or it's own forward. On 1f, the pawn moves like a car.")] [Range(0f,1f)] public float turningForwardVelocityRatio = 0f;
+    [Tooltip("The time it takes to rotate 360 degrees.")] public TimeBeatManager.BeatQuantity turningTimeTo360 = 4;
     public float height = 2f;
     public float pawnRadius = 0.5f;
 
     public float extraRangeBase = 0f;
     public bool cantMoveWhileThreatened = true;
-    
-    [Space()]
+    public bool cantMoveWhileExecutingSkill = false;
+    public bool cantRotateWhileExecutingSkill = false;
+
+    [Header("Stamina")]
     [UnityEngine.Serialization.FormerlySerializedAs("_maxStamina")]
     public MoodParameter<float> _maxStamina = 1;
     private float _stamina;
@@ -145,11 +154,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public TimeBeatManager.BeatQuantity staminaRecoveryMovingPerSecond = 8;
     private Vector3 _damageAnimation;
 
-    [UnityEngine.Serialization.FormerlySerializedAs("_handPosition")]
-    public Transform _instantiateProjectilePosition;
-
-    [SerializeField]
-    private DamageTeam damageTeam = DamageTeam.Neutral;
 
     public delegate void PawnEvent();
 
@@ -821,7 +825,31 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Vector3 _currentSpeed;
     private Vector3 _movementDelta;
 
-    private Tween _currentDash;
+    public class DashData<T>
+    {
+        internal Tween tween;
+        public T initialPosition;
+        public T endPosition;
+        public float Duration
+        {
+            get
+            {
+                return tween.Duration();
+            }
+        }
+
+        public bool IsDashActive()
+        {
+            return tween.IsNotNullAndActive();
+        }
+
+        public void KillDash()
+        {
+            tween?.KillIfActive();
+        }
+    }
+
+    private DashData<Vector3> _currentDash;
     private Tween _currentRotationDash;
     private Tween _currentFakeHeightHop;
     private Tween _currentHop;
@@ -864,7 +892,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             //Maybe it is rotating while stopped
             if(inputDirection.sqrMagnitude >= 0.1f)
             {
-                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f);
+                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f * turningTimeTo360.GetInversedTime());
             }
         }
         else
@@ -872,7 +900,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
             Vector3 inputVelocityNormalized = inputVelocity.normalized;
                 
-            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f);
+            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f * turningTimeTo360.GetInversedTime());
 
             if (Vector3.Angle(inputVelocity, direction) < angleToBeAbleToAccelerate) //Already looking in the direction
             {
@@ -880,7 +908,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             }
             else //Has to turn first
             {
-                float maxVelocityTurning = 1f;
+                float maxVelocityTurning = turningDirectMaxSpeed;
                 float maxVelocityTurningSqrd = maxVelocityTurning * maxVelocityTurning;
                 float smoothTimeTurning;
                 if(speed.sqrMagnitude > maxVelocityTurningSqrd)
@@ -891,7 +919,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
                 {
                     smoothTimeTurning = timeToZeroVelocity;
                 }
-                UpdateMovementVector(ref speed, inputVelocityNormalized * maxVelocityTurning, smoothTimeTurning);
+
+                Vector3 turningDirectVelocity = inputVelocityNormalized * maxVelocityTurning;
+                Vector3 forwardMaxVelocity = Direction.normalized * inputVelocity.magnitude;
+                Vector3 totalVelocity = Vector3.Lerp(turningDirectVelocity, forwardMaxVelocity, turningForwardVelocityRatio);
+                UpdateMovementVector(ref speed, totalVelocity, smoothTimeTurning);
             }
         }
 
@@ -899,6 +931,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void UpdateDirectionVector(ref Vector3 direction, Vector3 targetDirection, float maxDelta)
     {
+        if (cantRotateWhileExecutingSkill && IsExecutingSkill()) 
+            return;
         float angleTurn = Vector3.SignedAngle(direction, targetDirection, Vector3.up);
         //Debug.LogFormat("Angle between [{3} <-> {4}] is {0} when total is {1} and max is {2}", Mathf.Sign(angleTurn) * Mathf.Max(Mathf.Abs(angleTurn), maxDelta), angleTurn, maxDelta, direction, targetDirection);
         angleTurn = Mathf.Sign(angleTurn) * Mathf.Min(Mathf.Abs(angleTurn), maxDelta);
@@ -912,6 +946,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void UpdateMovementVector(ref Vector3 movement, Vector3 destination, float smoothTime)
     {
+        if(cantMoveWhileExecutingSkill && IsExecutingSkill())
+        {
+            movement = Vector3.zero;
+            return;
+        }
         movement = Vector3.SmoothDamp(movement, destination, ref _movementDelta, smoothTime);
         if ((movement - destination).sqrMagnitude < (snapToTargetSpeedDelta * snapToTargetSpeedDelta)) movement = destination;
     }
@@ -1033,7 +1072,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public bool IsDashing()
     {
-        return _currentDash.IsNotNullAndMoving();
+        return _currentDash != null;
     }
 
     public Tween FakeHop(float height, float durationIn, float durationOut)
@@ -1071,13 +1110,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return seq;
     }
 
-    public float CurrentDashDuration()
+    
+
+    public DashData<Vector3> GetCurrentDashData()
     {
-        if (_currentDash != null)
-        {
-            return _currentDash.Duration();
-        }
-        else return 0f;
+        return _currentDash;
     }
 
     public void RotateDash(float angle, float duration, Ease ease = Ease.OutQuad)
@@ -1120,21 +1157,32 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         //Direction = _currentDirection;
     }
 
-    public void Dash(Vector3 direction, float duration, AnimationCurve curve)
+    public void Dash(Vector3 movement, float duration, AnimationCurve curve)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashAC")?.SetEase(curve).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = new DashData<Vector3>()
+        {
+            tween = mover.TweenMoverPosition(movement, duration, 0, "dashAC")?.SetEase(curve).OnKill(CallEndDash).OnStart(CallBeginDash).OnComplete(CallCompleteDash),
+            initialPosition = Position,
+            endPosition = Position + movement
+        };
     }
-    
-    public void Dash(Vector3 direction, float duration, Ease ease)
+
+    public void Dash(Vector3 movement, float duration, Ease ease)
     {
         CancelCurrentDash();
-        _currentDash = mover.TweenMoverPosition(direction, duration, 0, "dashEAS")?.SetEase(ease).OnKill(CallEndMove).OnStart(CallBeginMove).OnComplete(CallCompleteMove);
+        _currentDash = new DashData<Vector3>()
+        {
+            tween = mover.TweenMoverPosition(movement, duration, 0, "dashEAS")?.SetEase(ease).OnKill(CallEndDash).OnStart(CallBeginDash).OnComplete(CallCompleteDash),
+            initialPosition = Position,
+            endPosition = Position + movement
+        };
     }
 
     public void CancelCurrentDash()
     {
-        if (_currentDash != null) _currentDash.KillIfActive();
+        if (_currentDash != null) _currentDash.KillDash();
+        _currentDash = null;
     }
     public void CancelCurrentRotationDash()
     {
@@ -1150,7 +1198,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _currentFakeHeightHop;
     }
 
-    private void CallBeginMove()
+    private void CallBeginDash()
     {
         //Debug.LogWarningFormat("Start move {0}, {1}", this, Time.time);
         OnBeginMove?.Invoke();
@@ -1158,7 +1206,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         OnNextBeginMove = null;
     }
 
-    private void CallEndMove()
+    private void CallEndDash()
     {
         //Debug.LogWarningFormat("End move {0}, {1}", this, Time.time);
         SolveFinalVelocity(ref _inputVelocity);
@@ -1166,10 +1214,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         //Debug.LogFormat("Gonna do next end move on {0} which is {1}", this, OnNextEndMove?.GetInvocationList().Count());
         OnNextEndMove?.Invoke();
         OnNextEndMove = null;
+        _currentDash = null;
     }
 
 
-    private void CallCompleteMove()
+    private void CallCompleteDash()
     {
         OnCompleteMove?.Invoke();
         OnNextCompleteMove?.Invoke();

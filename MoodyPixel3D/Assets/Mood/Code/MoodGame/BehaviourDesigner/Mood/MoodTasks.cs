@@ -31,6 +31,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
     {
         [SerializeField] private SharedTransform customOrigin;
         [SerializeField] private SharedVector3 directionOut;
+        [SerializeField] private SharedBool normalized;
 
         public override TaskStatus OnUpdate()
         {
@@ -39,6 +40,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             if (o != null && d != null)
             {
                 directionOut.Value = PlayerTransform.position - o.position;
+                if (normalized.Value) directionOut.Value = directionOut.Value.normalized;
                 return TaskStatus.Success;
             }
             else

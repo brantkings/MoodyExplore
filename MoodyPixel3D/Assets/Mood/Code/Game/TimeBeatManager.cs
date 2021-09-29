@@ -14,6 +14,12 @@ public class TimeBeatManager : CreateableSingleton<TimeBeatManager>
             return TimeBeatManager.GetTime(beats);
         }
 
+        public float GetInversedTime()
+        {
+            if (beats != 0f) return 1f / GetTime();
+            else return 0f;
+        }
+
         public BeatQuantity SetTime(float time)
         {
             beats = TimeBeatManager.GetNumberOfBeats(time);

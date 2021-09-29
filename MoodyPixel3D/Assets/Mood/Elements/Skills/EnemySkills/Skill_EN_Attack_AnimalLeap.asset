@@ -10,42 +10,41 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Attack_TheSpike
+  m_Name: Skill_EN_Attack_AnimalLeap
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: The Spike
-  _description: Long distance safe attack. Needs a lot of free focus.
+  _name: Leap Attack
+  _description: Attack that dashes forward.
   _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.3254717, b: 0.3254717, a: 1}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
   onlyNeutralStance: 1
   needs: []
-  consumeNeededStances: 1
+  consumeNeededStances: 0
   toConsume: []
   restrictions:
   - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
-  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
   _possibleAngles:
   - angleFromForward: 0
-    coneAngle: 15
+    coneAngle: 45
     mirrored: 0
   startupPriority: 2
   heightCheckers: []
-  _freeFocusCost: 2
+  _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
-  _shortcut: 0
+  _shortcut: 120
   _debug: 0
-  _cost: 2
-  damage: 20
+  _cost: 1
+  damage: 10
   stunTime:
     beats: 4
-  swingData: {fileID: 11400000, guid: cbd2e5b57bdeb9d47beac6471f9eae80, type: 2}
+  swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
   swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 512
   knockback:
     _directProperty:
       knockbackByDealer:
@@ -74,7 +73,7 @@ MonoBehaviour:
     _getter: {fileID: 0}
   _flyingThought: {fileID: 0}
   preAttackDash:
-    distance: 0
+    distance: 6
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -85,7 +84,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
     dashFeedbackDirection: 1
   postAttackDash:
-    distance: 0
+    distance: -1
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -95,14 +94,14 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
   whiffAttackDash:
-    distance: 0
+    distance: 1
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
     dashFeedback:
-    - {fileID: 0}
+    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
@@ -116,6 +115,6 @@ MonoBehaviour:
   animationTime:
     beats: 1
   postTime:
-    beats: 3
+    beats: 8
   showPreview: 0
   addedStancesWithAttack: []
