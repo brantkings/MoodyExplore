@@ -9,6 +9,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 {
     [Header("Instantiate")] 
     public GameObject prefab;
+    public bool setDirection = true;
 
     public float range = 50f;
 
@@ -71,7 +72,7 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 
     public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
-        pawn.SetHorizontalDirection(skillDirection);
+        if(setDirection) pawn.SetHorizontalDirection(skillDirection);
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PreAttack);
         pawn.SetPlugoutPriority(priorityPreInstantiate);
         onStartInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
@@ -124,8 +125,8 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         yield return postTime;
     }
 
-    /*RangeTarget.Properties RangeShow<RangeTarget.Properties>.IRangeShowPropertyGiver.GetRangeProperty()
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
     {
-        return TargetProperties;
-    }*/
+        return WillHaveTargetResult.NonApplicable; //DIfficult to gauge if projectile will find opponent
+    }
 }

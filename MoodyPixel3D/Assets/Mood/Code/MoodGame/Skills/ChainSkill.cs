@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 
 [CreateAssetMenu(fileName = "Skill_Chain_", menuName = "Mood/Skill/Chain of Skills", order = 0)]
@@ -91,5 +92,14 @@ public class ChainSkill : StaminaCostMoodSkill
                 yield return time;
             }
         }
+    }
+
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    {
+        return skills.Select((x) => x.WillHaveTarget(pawn, skillDirection)).Aggregate(
+            (x, y) => {
+                return (WillHaveTargetResult)Mathf.Max((int)x, (int)y);
+            }
+        );
     }
 }

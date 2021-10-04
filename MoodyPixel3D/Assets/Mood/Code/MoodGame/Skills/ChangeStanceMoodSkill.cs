@@ -55,4 +55,9 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
         foreach (MoodStance stance in toToggle) 
             yield return stance;
     }
+
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    {
+        return WillHaveTargetResult.NonApplicable;
+    }
 }

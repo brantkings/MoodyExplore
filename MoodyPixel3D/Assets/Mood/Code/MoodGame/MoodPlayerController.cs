@@ -854,10 +854,15 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         return IsCommandOpen() && HasAvailableSkills() && !(pressingCommand && highlightingImpossibleCommand) && CouldSlowdown();
     }
 
+    private bool ShouldThoughtSystemSlowDown()
+    {
+        return GetCurrentMode() == Mode.Command_Focus;
+    }
+
     private EventfulParameter<bool> _commandSlowedDown;
     private void SolveCommandSlowDown(bool pressingCommand, bool highlightingImpossibleCommand)
     {
-        SolveSlowdown(timeSlowOnCommand, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown(pressingCommand, highlightingImpossibleCommand));
+        SolveSlowdown(timeSlowOnCommand, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown(pressingCommand, highlightingImpossibleCommand) || ShouldThoughtSystemSlowDown());
     }
 
 

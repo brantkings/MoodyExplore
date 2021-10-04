@@ -328,6 +328,21 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         ConsumeStances(pawn);
     }
 
+    public enum WillHaveTargetResult
+    {
+        NonApplicable,
+        NotHaveTarget,
+        WillHaveTarget,
+    }
+
+    /// <summary>
+    /// If this skill has a concept of having a target, then see if with the current pawn and direction this will indeed have a valid target.
+    /// </summary>
+    /// <param name="pawn"></param>
+    /// <param name="skillDirection"></param>
+    /// <returns></returns>
+    public abstract WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection);
+
     public virtual IEnumerable<MoodStance> GetStancesThatWillBeAdded()
     {
         yield break;

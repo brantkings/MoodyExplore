@@ -475,6 +475,35 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         }
     }
 
+    [TaskCategory("Mood/Skill")]
+    public class WillSkillHaveATarget : Conditional
+    {
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
+        [SerializeField] private MoodSharedBehaviourTypes.SharedMoodSkill skill;
+        [SerializeField] private SharedVector3 direction;
+        [SerializeField] private SharedBool considerNonApplicableAsOK = true;
+
+        public override TaskStatus OnUpdate()
+        {
+            //Debug.LogFormat("{0} can execute {1} on {2}? {3}", pawn, skill, direction, skill.Value.CanExecute(pawn.Value, direction.Value));
+            MoodSkill.WillHaveTargetResult result = skill.Value.WillHaveTarget(pawn.Value, direction.Value);
+            switch (result)
+            {
+                case MoodSkill.WillHaveTargetResult.NonApplicable:
+                    if (considerNonApplicableAsOK.Value) return TaskStatus.Success;
+                    break;
+                case MoodSkill.WillHaveTargetResult.NotHaveTarget:
+                    return TaskStatus.Failure;
+                case MoodSkill.WillHaveTargetResult.WillHaveTarget:
+                    return TaskStatus.Success;
+                default:
+                    if (considerNonApplicableAsOK.Value) return TaskStatus.Success;
+                    break;
+            }
+            return TaskStatus.Failure;
+        }
+    }
+
     [TaskCategory("Mood/Pawn")]
     public class HasStaminaForSkill : Conditional
     {

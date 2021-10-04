@@ -71,4 +71,8 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
         }
     }
 
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    {
+        return WillHaveTargetResult.NonApplicable;
+    }
 }

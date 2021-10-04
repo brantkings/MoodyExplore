@@ -24,7 +24,7 @@ namespace Code.MoodGame.Skills
         public FlyingThought _flyingThought;
 
         [System.Serializable]
-        private struct DashStruct
+        protected struct DashStruct
         {
             public float distance;
             public DirectionFixer angle;
@@ -76,18 +76,14 @@ namespace Code.MoodGame.Skills
 
         [Space()]
         [SerializeField]
-        private DashStruct preAttackDash = DashStruct.DefaultValue;
+        protected DashStruct preAttackDash = DashStruct.DefaultValue;
         [SerializeField]
-        private DashStruct postAttackDash = DashStruct.DefaultValue;
+        protected DashStruct postAttackDash = DashStruct.DefaultValue;
         [SerializeField]
-        private DashStruct whiffAttackDash = DashStruct.DefaultValue;
+        protected DashStruct whiffAttackDash = DashStruct.DefaultValue;
 
         [Space()]
-        public SoundEffect onStartAttack;
-        public SoundEffect onExecuteAttack;
-        public SoundEffect onEndAttack;
-        public ScriptableEventPositional[] onDamage;
-        public ScriptableEventPositional[] onGuardedDamage;
+        public RangeArea.Properties.Positioning previewPositioning = RangeArea.Properties.Positioning.OriginalPositionPlusDirection;
 
         [Space] 
         public TimeBeatManager.BeatQuantity preTime = 4;
@@ -96,6 +92,15 @@ namespace Code.MoodGame.Skills
         public bool showPreview;
         private RangeTarget.Properties _targetProp;
 
+        [Space()]
+        public string animationIntStepString = "Attack_Right";
+        public SoundEffect onStartAttack;
+        public SoundEffect onExecuteAttack;
+        public SoundEffect onEndAttack;
+        public ScriptableEventPositional[] onDamage;
+        public ScriptableEventPositional[] onGuardedDamage;
+
+        [Space]
         public ActivateableMoodStance[] addedStancesWithAttack;
 
         private RangeTarget.Properties TargetProperties =>
@@ -129,51 +134,94 @@ namespace Code.MoodGame.Skills
 
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
+            if (!SanityCheck(pawn, skillDirection)) yield break;
+            float preAttackDash = PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
+            yield return new WaitForSeconds(preAttackDash);
+
+            
+            float executingTime = ExecuteAttack(pawn, skillDirection, buildData, out bool hit);
+
+            yield return new WaitForSecondsRealtime(executingTime);
+
+            PostHitDash(pawn, skillDirection, hit);
+
+            yield return new WaitForSeconds(animationTime);
+
+            PostAnimationEnd(pawn, skillDirection, hit);
+
+            yield return new WaitForSeconds(postTime);
+
+            FinishAttack(pawn, skillDirection, hit);
+
+        }
+
+        protected bool SanityCheck(MoodPawn pawn, in Vector3 skillDirection)
+        {
             if (swingData == null)
             {
                 Debug.LogErrorFormat("{0} has no swing data!", this);
-                yield break;
+                return false;
             }
-            MoodSwing.MoodSwingBuildData buildData = swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(skillDirection));
+            return true;
+        }
+
+        protected float PrepareAttack(MoodPawn pawn, in Vector3 skillDirection, out MoodSwing.MoodSwingBuildData buildData)
+        {
+            if (setDirection) pawn.SetHorizontalDirection(skillDirection);
+            buildData = swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(skillDirection));
             pawn.SetPlugoutPriority(priorityPreAttack);
-            if(setDirection) pawn.SetHorizontalDirection(skillDirection);
             pawn.StartThreatening(skillDirection, buildData);
             ConsumeStances(pawn);
-            float preAttackDuration = Mathf.Max(preTime - Time.deltaTime, 0f);
+            float preAttackDuration = Mathf.Max(preTime, 0f);
             Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
-            yield return null;
-            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.PreAttack);
+            pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.PreAttack);
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
-            yield return new WaitForSeconds(preAttackDuration);
+            return preAttackDuration;
+        }
 
+        protected float ExecuteAttack(MoodPawn pawn, in Vector3 skillDirection, in MoodSwing.MoodSwingBuildData buildData, out bool hit)
+        {
             pawn.PrepareForSwing(buildData, skillDirection);
-            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.PostAttack);
+            pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.PostAttack);
             pawn.ShowSwing(buildData, skillDirection);
+            pawn.StopThreatening();
 
             DispatchExecuteEvent(pawn, skillDirection);
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
-            pawn.StopThreatening();
             AddStances(pawn);
-            bool hit = DealDamage(pawn, skillDirection);
-            float executingTime = ExecuteEffect(pawn, skillDirection);
-            yield return new WaitForSecondsRealtime(executingTime);
-            if(hit)
+            hit = DealDamage(pawn, skillDirection);
+            return ExecuteEffect(pawn, skillDirection);
+        }
+
+        protected void PostHitDash(MoodPawn pawn, in Vector3 skillDirection, bool hit)
+        {
+            if (hit)
                 Dash(pawn, skillDirection, postAttackDash, postTime + animationTime);
             else
                 Dash(pawn, skillDirection, whiffAttackDash, postTime + animationTime);
-            yield return new WaitForSeconds(animationTime);
+        }
+
+        protected void PostAnimationEnd(MoodPawn pawn, in Vector3 skillDirection, bool hit)
+        {
             if (hit)
                 pawn.SetPlugoutPriority(priorityAfterAttack);
             else
                 pawn.SetPlugoutPriority(priorityAfterWhiff);
 
             onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
-            yield return new WaitForSeconds(postTime);
-
-            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.None);
         }
 
-        private void Dash(MoodPawn pawn, Vector3 skillDirection, DashStruct dashData, float duration)
+        protected void FinishAttack(MoodPawn pawn, in Vector3 skillDirection, bool hit)
+        {
+            pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.None);
+        }
+
+        protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+        {
+            return base.ExecuteEffect(pawn, skillDirection);
+        }
+
+        protected void Dash(MoodPawn pawn, Vector3 skillDirection, DashStruct dashData, float duration)
         {
             if(dashData.HasDash())
             {
@@ -187,17 +235,17 @@ namespace Code.MoodGame.Skills
             Debug.LogWarningFormat("Interrupted {0} on {1}", name, pawn.name);
             base.Interrupt(pawn);
             pawn.StopThreatening();
-            pawn.SetAttackSkillAnimation("Attack_Right", MoodPawn.AnimationPhase.None);
+            pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.None);
         }
 
-        private void AddStances(MoodPawn pawn)
+        protected void AddStances(MoodPawn pawn)
         {
             if (addedStancesWithAttack != null)
                 foreach (ActivateableMoodStance stance in addedStancesWithAttack)
                     pawn.AddStance(stance);
         }
 
-        private bool DealDamage(MoodPawn pawn, Vector3 skillDirection)
+        protected bool DealDamage(MoodPawn pawn, Vector3 skillDirection)
         {
             bool hit = false;
             foreach (MoodSwing.MoodSwingResult result in swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(skillDirection)).TryHitMerged(pawn.Position, Quaternion.LookRotation(skillDirection, pawn.Up), targetLayer))
@@ -251,7 +299,7 @@ namespace Code.MoodGame.Skills
             foreach (MoodStance stance in addedStancesWithAttack) yield return stance;
         }
 
-        private DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
+        protected DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
             DamageInfo info = new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, out float angle), angle, knockback.Get().GetDuration());
             if (_painThought != null) info.AddPainThought(new FlyingThoughtInstance() { flyingThought = _flyingThought, data = new FlyingThought.FlyingThoughtData() { destination = null, thought = _painThought, where = ThoughtSystemController.ThoughtPlacement.Down} });
@@ -278,15 +326,16 @@ namespace Code.MoodGame.Skills
                 swingData = this.swingData,
                 offset = swingDataPositionOffset,
                 skillPreviewSanitizer = GetSanitizerForFirstDash(),
+                positioningWhenUsingSkill = previewPositioning,
             };
         }
 
-        private Vector3 GetSwingOffset(Vector3 skillDirection)
+        protected Vector3 GetSwingOffset(Vector3 skillDirection)
         {
             return swingDataPositionOffset;
         }
 
-        public bool ShouldShowNow(MoodPawn pawn)
+        public virtual bool ShouldShowNow(MoodPawn pawn)
         {
             return pawn.GetTimeElapsedSinceBeganCurrentSkill() < preTime;
             //return showPreview;
@@ -315,6 +364,17 @@ namespace Code.MoodGame.Skills
         {
             yield return preTime;
             yield return animationTime + postTime;
+        }
+
+        public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+        {
+            SanitizeDirection(pawn.Direction, ref skillDirection);
+            MoodSwing.MoodSwingResult? result = swingData.GetBuildData(pawn, swingDataPositionOffset).TryHitGetFirst(pawn.Position + skillDirection.normalized * preAttackDash.distance, Quaternion.LookRotation(skillDirection), targetLayer);
+            if (result.HasValue)
+            {
+                if (result.Value.IsValid()) return WillHaveTargetResult.WillHaveTarget;
+            }
+            return WillHaveTargetResult.NotHaveTarget;
         }
     }
 }

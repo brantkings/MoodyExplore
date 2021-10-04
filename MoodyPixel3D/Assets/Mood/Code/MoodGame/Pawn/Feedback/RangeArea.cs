@@ -8,9 +8,18 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
 {
     public struct Properties
     {
+        public enum Positioning
+        {
+            CurrentPosition,
+            DashingDestination,
+            OriginalPosition,
+            OriginalPositionPlusDirection,
+        }
+
         public MoodSwing swingData;
         public Vector3 offset;
         public SkillDirectionSanitizer skillPreviewSanitizer;
+        public Positioning positioningWhenUsingSkill;
     }
 
     LHH.Unity.ComponentGetter<MeshFilter> filter;
@@ -21,7 +30,8 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
     List<Vector3> vertexData = new List<Vector3>(16 * 4);
     List<int> triangleData = new List<int>(16 * 6);
 
-    SkillDirectionSanitizer currentSanitizer;
+    SkillDirectionSanitizer currentPositionSanitized;
+    Properties.Positioning whereToPosition;
 
     private void Start()
     {
@@ -33,8 +43,9 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
 
     public override void Show(MoodPawn pawn, Properties property)
     {
-        currentSanitizer = property.skillPreviewSanitizer;
-        Debug.LogWarningFormat("{0} is {1} now", currentSanitizer, property.skillPreviewSanitizer);
+        currentPositionSanitized = property.skillPreviewSanitizer;
+        whereToPosition = property.positioningWhenUsingSkill;
+        Debug.LogWarningFormat("{0} is {1} now", currentPositionSanitized, property.skillPreviewSanitizer);
 
         vertexData.Clear();
         triangleData.Clear();
@@ -44,6 +55,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
         mesh.SetTriangles(triangleData, 0);
         mesh.RecalculateBounds();
         meshRenderer.Get(gameObject).enabled = true;
+        Debug.LogWarningFormat(this, "Hey, {0} just showed {1}!", pawn?.name, this);
     }
 
     private void GetYRight(ref Vector3 top, ref Vector3 bot, int index, int length)
@@ -55,28 +67,57 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
     public override void Hide(MoodPawn p)
     {
         meshRenderer.Get(gameObject).enabled = false;
-        //Debug.LogFormat("Hiding {0} of {2} {1}", meshRenderer.Get(gameObject), meshRenderer.Get(gameObject).enabled, p.name);
+        Debug.LogWarningFormat(this, "Hey, {0} just hide {1}!", p?.name, this);
     }
 
     public void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 directionLength)
     {
-        transform.forward = currentSanitizer.Sanitize(directionLength.normalized, pawn.Direction);
+        Vector3 sanitizedDirection = currentPositionSanitized.Sanitize(directionLength, pawn.Direction);
+        transform.forward = directionLength;
         string debugType;
         if (pawn.UsedCurrentSkill() || skill != pawn.GetCurrentSkill()) //If it is not using a skill then it is previewing
         {
             debugType = "Preview";
             transform.position = pawn.Position;
-            transform.localPosition += transform.parent.InverseTransformVector(currentSanitizer.Sanitize(directionLength, pawn.Direction));
-        }
-        else if(pawn.IsDashing()) //If is dashing
-        {
-            debugType = "Dashing";
-            transform.position = pawn.GetCurrentDashData().endPosition;
+            transform.localPosition += transform.parent.InverseTransformVector(sanitizedDirection); 
+            transform.forward = directionLength;
         }
         else //Then use its own position
         {
-            debugType = "OwnPosition";
-            transform.position = pawn.Position;
+            switch (whereToPosition)
+            {
+                case Properties.Positioning.CurrentPosition:
+                    debugType = "OwnPosition";
+                    transform.position = pawn.Position;
+                    break;
+                case Properties.Positioning.DashingDestination:
+                    if(pawn.IsDashing())
+                    {
+                        debugType = "Dashing";
+                        transform.position = pawn.GetCurrentDashData().endPosition;
+                    }
+                    else
+                    {
+                        debugType = "TriedDashing";
+                        transform.position = pawn.Position;
+                    }
+                    break;
+                case Properties.Positioning.OriginalPositionPlusDirection:
+                    debugType = "OriginalPositionPlusDirection";
+                    transform.position = pawn.GetSkillPreviewOriginPosition();
+                    transform.localPosition += transform.parent.InverseTransformVector(sanitizedDirection); 
+                    transform.forward = sanitizedDirection;
+                    break;
+                case Properties.Positioning.OriginalPosition:
+                    debugType = "OriginalPosition";
+                    transform.position = pawn.GetSkillPreviewOriginPosition();
+                    break;
+                default:
+                    debugType = "DefaultedToPosition";
+                    transform.position = pawn.Position;
+                    break;
+            }
+
             //transform.position = pawn.GetSkillPreviewOriginPosition();
             //transform.localPosition += transform.parent.InverseTransformVector(currentSanitizer.Sanitize(directionLength, pawn.Direction));
         }

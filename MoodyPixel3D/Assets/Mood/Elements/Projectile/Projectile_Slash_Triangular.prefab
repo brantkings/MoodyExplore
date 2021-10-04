@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6813164445248011751}
-  - component: {fileID: 3363034103833714581}
   - component: {fileID: 1810116596919111475}
   - component: {fileID: 3352885185757036295}
+  - component: {fileID: 683573680785704656}
   m_Layer: 14
   m_Name: Left Checker
   m_TagString: Untagged
@@ -26,39 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5312530329273755634}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0.25, z: 0}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -3.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7861665046994391904}
+  m_Father: {fileID: 7096975104789677840}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &3363034103833714581
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5312530329273755634}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb7009848757ce7469a2f954d5e2d529, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hitMask:
-    serializedVersion: 2
-    m_Bits: 512
-  _obstacleMask:
-    serializedVersion: 2
-    m_Bits: 0
-  _maxSimultaneousHits: 8
-  _overridedOrigin: {fileID: 6813164445248011751}
-  _safetyDistance: 0
-  _originForwardOffset: 0
-  _restrictOriginDistanceOffsetToPlane: {x: 0, y: 0, z: 0}
-  _defaultDistance: 100
-  _defaultOriginOffset: {x: 0, y: 0, z: 0}
-  _defaultDirectionRelative: {x: -0, y: 0, z: 1}
 --- !u!114 &1810116596919111475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,11 +92,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 2242556836230007570, guid: 7fed04cfe235e1c4eaecaf2207ab9712, type: 3}
-  customPositionOrigin: {fileID: 6813164445248011751}
+  customPositionOrigin: {fileID: 3344581412110314230}
   globalOffset: {x: 0, y: 0, z: 0}
   customRotationOrigin: {fileID: 6813164445248011751}
   howToGetRotation: 0
   thisIsParent: 0
+--- !u!114 &683573680785704656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312530329273755634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ad2759d172ac964aa2ecc737ad2e344, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hitMask:
+    serializedVersion: 2
+    m_Bits: 512
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _maxSimultaneousHits: 8
+  _overridedOrigin: {fileID: 6813164445248011751}
+  _safetyDistance: 0
+  _originForwardOffset: 0
+  _restrictOriginDistanceOffsetToPlane: {x: 0, y: 0, z: 0}
+  _defaultDistance: 100
+  _defaultOriginOffset: {x: 0, y: 0, z: 0}
+  _defaultDirectionRelative: {x: -0, y: 0, z: 1}
+  halfExtents: {x: 3.25, y: 0.25, z: 0.5}
+  orientation: 0
+  eulerRotationMultiplier: {x: 0, y: 0, z: 0}
 --- !u!1 &8055997781708115806
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,9 +135,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2465454904836572171}
-  - component: {fileID: 8572355415153278211}
   - component: {fileID: 3708331962365178286}
   - component: {fileID: 5399539178745746051}
+  - component: {fileID: 5944201598851002441}
   m_Layer: 14
   m_Name: Right Checker
   m_TagString: Untagged
@@ -149,39 +152,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8055997781708115806}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0.25, z: 0}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -3.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7861665046994391904}
+  m_Father: {fileID: 7096975104789677840}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &8572355415153278211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8055997781708115806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb7009848757ce7469a2f954d5e2d529, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hitMask:
-    serializedVersion: 2
-    m_Bits: 512
-  _obstacleMask:
-    serializedVersion: 2
-    m_Bits: 0
-  _maxSimultaneousHits: 8
-  _overridedOrigin: {fileID: 2465454904836572171}
-  _safetyDistance: 0
-  _originForwardOffset: 0
-  _restrictOriginDistanceOffsetToPlane: {x: 0, y: 0, z: 0}
-  _defaultDistance: 100
-  _defaultOriginOffset: {x: 0, y: 0, z: 0}
-  _defaultDirectionRelative: {x: -0, y: 0, z: 1}
 --- !u!114 &3708331962365178286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,11 +218,72 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 2242556836230007570, guid: 7fed04cfe235e1c4eaecaf2207ab9712, type: 3}
-  customPositionOrigin: {fileID: 2465454904836572171}
+  customPositionOrigin: {fileID: 3344581412110314230}
   globalOffset: {x: 0, y: 0, z: 0}
   customRotationOrigin: {fileID: 2465454904836572171}
   howToGetRotation: 0
   thisIsParent: 0
+--- !u!114 &5944201598851002441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8055997781708115806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ad2759d172ac964aa2ecc737ad2e344, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hitMask:
+    serializedVersion: 2
+    m_Bits: 512
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _maxSimultaneousHits: 8
+  _overridedOrigin: {fileID: 2465454904836572171}
+  _safetyDistance: 0
+  _originForwardOffset: 0
+  _restrictOriginDistanceOffsetToPlane: {x: 0, y: 0, z: 0}
+  _defaultDistance: 100
+  _defaultOriginOffset: {x: 0, y: 0, z: 0}
+  _defaultDirectionRelative: {x: -0, y: 0, z: 1}
+  halfExtents: {x: 3.25, y: 0.25, z: 0.5}
+  orientation: 0
+  eulerRotationMultiplier: {x: 0, y: 0, z: 0}
+--- !u!1 &8899295013933215678
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7096975104789677840}
+  m_Layer: 14
+  m_Name: OnTimedEvent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7096975104789677840
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8899295013933215678}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2465454904836572171}
+  - {fileID: 6813164445248011751}
+  m_Father: {fileID: 7861665046994391904}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9174716960648712460
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,6 +293,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7861665046994391904}
+  - component: {fileID: 1545267719509104373}
   m_Layer: 14
   m_Name: CheckPlayer
   m_TagString: Untagged
@@ -273,11 +312,40 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2465454904836572171}
-  - {fileID: 6813164445248011751}
+  - {fileID: 7096975104789677840}
   m_Father: {fileID: 3344581412110314230}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1545267719509104373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9174716960648712460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460b46e5f6c40be49abeb33c2f00f8c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toCall:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8899295013933215678}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  scriptableEventToCall: []
+  toListenTo: {fileID: 0}
+  _time: 0.3125
 --- !u!1001 &5447637732688188192
 PrefabInstance:
   m_ObjectHideFlags: 0

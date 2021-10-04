@@ -164,4 +164,9 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         CalculateMovementData(skillDirection, out Vector3 distance, out float duration);
         yield return duration;
     }
+
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    {
+        return WillHaveTargetResult.NonApplicable;
+    }
 }

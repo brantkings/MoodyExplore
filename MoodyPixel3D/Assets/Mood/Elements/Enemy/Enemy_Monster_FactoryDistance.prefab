@@ -136,6 +136,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_Monster_FactoryDistance
       objectReference: {fileID: 0}
+    - target: {fileID: 5637358447622213147, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
 --- !u!4 &8682996488571026172 stripped
@@ -204,6 +208,10 @@ PrefabInstance:
     - target: {fileID: 6106285816634817510, guid: 7ee0628fb5daba345b688c9373c1e19b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6166872524985960903, guid: 7ee0628fb5daba345b688c9373c1e19b, type: 3}
+      propertyPath: m_Radius
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8231615357661558342, guid: 7ee0628fb5daba345b688c9373c1e19b, type: 3}
       propertyPath: m_Name

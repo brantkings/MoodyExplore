@@ -9,39 +9,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_EN_Attack_AnimalScratch
+  m_Script: {fileID: 11500000, guid: 2f8522c1f8570f24aa2f2a8db06b43b7, type: 3}
+  m_Name: Skill_EN_Attack_AnimalLeap_Touch
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Scratch
-  _description: Strong, slower attack that dashes forward.
+  _name: Leap Attack
+  _description: 
   _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
   _skillCommandColor:
-    _directProperty: {r: 1, g: 0.3254717, b: 0.3254717, a: 1}
+    _directProperty: {r: 1, g: 0.69411767, b: 0.69411767, a: 0}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
   onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
   toConsume: []
-  restrictions:
-  - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  restrictions: []
   _possibleAngles:
   - angleFromForward: 0
-    coneAngle: 45
+    coneAngle: 60
     mirrored: 0
   startupPriority: 2
   heightCheckers: []
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
-  _shortcut: 120
+  _shortcut: 0
   _debug: 0
   _cost: 2
-  damage: 20
+  damage: 10
   stunTime:
     beats: 4
-  swingData: {fileID: 11400000, guid: 6d5e5e03a9402f147af046330bf6dd50, type: 2}
-  swingDataPositionOffset: {x: 0, y: 0, z: -3}
+  swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
+  swingDataPositionOffset: {x: 0, y: 0, z: 1}
   targetLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -57,7 +56,7 @@ MonoBehaviour:
         magnitude: 1
       absoluteKnockback: {x: 0, y: 0, z: 0}
       knockbackFromForce: 0
-      knockbackPositionDifferenceNormalized: 1
+      knockbackPositionDifferenceNormalized: 0
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
       totalMagnitudeConstant: 0
       constantTotalMagnitude: 1
@@ -73,44 +72,41 @@ MonoBehaviour:
     _getter: {fileID: 0}
   _flyingThought: {fileID: 0}
   preAttackDash:
-    distance: 0
+    distance: 6
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
-    dashFeedback:
-    - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
-    - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
-    dashFeedbackDirection: 1
-  postAttackDash:
-    distance: -3
-    angle:
-      angleFromForward: 0
-      coneAngle: 180
-      mirrored: 0
-    ease: 21
-    dashFeedback:
-    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+    dashFeedback: []
     dashFeedbackDirection: 0
-  whiffAttackDash:
+  postAttackDash:
     distance: -1
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
-    dashFeedback:
-    - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
+    dashFeedback: []
+    dashFeedbackDirection: 0
+  whiffAttackDash:
+    distance: 1
+    angle:
+      angleFromForward: 0
+      coneAngle: 180
+      mirrored: 0
+    ease: 21
+    dashFeedback: []
     dashFeedbackDirection: 0
   previewPositioning: 0
   preTime:
-    beats: 4
+    beats: 8
   animationTime:
     beats: 1
   postTime:
-    beats: 8
+    beats: 16
   showPreview: 0
+  animationIntStepString: Attack_Right
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
@@ -119,3 +115,5 @@ MonoBehaviour:
   onGuardedDamage:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
   addedStancesWithAttack: []
+  timeUntilStartsTesting:
+    beats: 4

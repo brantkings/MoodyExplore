@@ -76,4 +76,8 @@ public class DelaySkill : MoodSkill
         yield return delay;
     }
 
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    {
+        return WillHaveTargetResult.NonApplicable;
+    }
 }

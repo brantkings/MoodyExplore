@@ -1433,6 +1433,16 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Vector3 _threatDirection;
     private MoodSwing.MoodSwingBuildData? _swingThreat;
 
+    public bool IsThereATarget(Vector3 direction, MoodSwing.MoodSwingBuildData data, LayerMask layer)
+    {
+        MoodSwing.MoodSwingResult? result = data.TryHitGetFirst(Position, this.ObjectTransform.rotation, layer);
+        if (result.HasValue)
+        {
+            return result.Value.IsValid();
+        }
+        else return false;
+    }
+
     public void StartThreatening(Vector3 direction, MoodSwing.MoodSwingBuildData data)
     {
         _threatDirection = direction;

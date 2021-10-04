@@ -28,7 +28,7 @@ public class SkillRangeShowVisualizer : LHH.Unity.AddonParentBehaviour<MoodPawn>
     {
         foreach (RangeShow show in shows)
         {
-            show.Hide(null);
+            show.Hide(Addon);
         }
     }
 
