@@ -170,6 +170,7 @@ public class TimeManager : CreateableSingleton<TimeManager>
     
     public void TweenTimeDelta(float targetTimeDelta, float duration, Ease ease = Ease.OutSine)
     {
+        Debug.LogFormat("[TIME] Time delta going to {0} from {1} in {2} seconds and {3} easing.", _staticTimeScale, targetTimeDelta, duration, ease);
         TweenTime(targetTimeDelta, duration).SetEase(ease);
     }
 

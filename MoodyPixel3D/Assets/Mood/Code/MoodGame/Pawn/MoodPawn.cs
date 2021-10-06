@@ -350,7 +350,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     protected virtual void OnDamage(DamageInfo info, Health health)
     {
-        Debug.LogFormat("[PAWN] {0} takes damage with info {1}.", name , info);
+        //Debug.LogFormat("[PAWN] {0} takes damage with info {1}.", name , info);
         BattleLog.Log($"{GetName()} takes {BattleLog.Paint($"{Mathf.FloorToInt(info.damage / 10)} damage", BattleLog.Instance.importantColor)}!", BattleLog.LogType.Battle);
         if (info.damage > 0 && pawnConfiguration != null) 
             AddFlag(pawnConfiguration.onDamage);
@@ -438,7 +438,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if(_currentSkill != null)
         {
-            Debug.LogFormat("{0} gonna interrupt current skill {1}", this.name, _currentSkill?.name);
+            Debug.LogFormat("[PAWN] {0} gonna interrupt current skill {1}", this.name, _currentSkill?.name);
             BattleLog.Log($"{GetName()} was interrupted!", BattleLog.LogType.Battle);
             InterruptSkill(_currentSkill);
         }
@@ -448,7 +448,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if(_currentSkill == skill && _currentSkill != null)
         {
-            Debug.LogFormat("{0} gonna interrupt skill {1}", this.name, skill?.name);
+            Debug.LogFormat("[PAWN] {0} gonna interrupt skill {1}", this.name, skill?.name);
             if (_currentSkillRoutine != null) StopCoroutine(_currentSkillRoutine);
             if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
             _currentSkillRoutine = null;
@@ -985,11 +985,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void OnWalledChange(bool change)
     {
+        Debug.LogFormat("[PAWN] {0} changed Walled to {1}. It is dashing? {2} [{3} {4}]", name, change, IsDashing(), Time.frameCount, Time.fixedDeltaTime);
         if(change)
         {
             if(IsDashing())
             {
-                Bump(mover.AbsoluteVelocity);
+                Vector3 dashDirection = GetCurrentDashData().endPosition - GetCurrentDashData().initialPosition;
+                Bump(dashDirection);
             }
         }
     }
@@ -1159,28 +1161,40 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void Dash(Vector3 movement, float duration, AnimationCurve curve)
     {
-        CancelCurrentDash();
-        _currentDash = new DashData<Vector3>()
-        {
-            tween = mover.TweenMoverPosition(movement, duration, 0, "dashAC")?.SetEase(curve).OnKill(CallEndDash).OnStart(CallBeginDash).OnComplete(CallCompleteDash),
-            initialPosition = Position,
-            endPosition = Position + movement
-        };
+        MakeCurrentDash(movement, duration)?.SetEase(curve);
     }
 
     public void Dash(Vector3 movement, float duration, Ease ease)
     {
+        MakeCurrentDash(movement, duration)?.SetEase(ease);
+    }
+
+    private Tween MakeCurrentDash(Vector3 movement, float duration)
+    {
         CancelCurrentDash();
-        _currentDash = new DashData<Vector3>()
+        if (Vector3.Angle(mover.WalledNormal, movement) > 90f)
         {
-            tween = mover.TweenMoverPosition(movement, duration, 0, "dashEAS")?.SetEase(ease).OnKill(CallEndDash).OnStart(CallBeginDash).OnComplete(CallCompleteDash),
-            initialPosition = Position,
-            endPosition = Position + movement
-        };
+            SetVelocity(Vector3.zero);
+            Bump(movement);
+            return null;
+        }
+        else
+        {
+            _currentDash = new DashData<Vector3>()
+            {
+                tween = mover.TweenMoverPosition(movement, duration, 0, "dash")?.OnKill(CallEndDash).OnStart(CallBeginDash).OnComplete(CallCompleteDash),
+                initialPosition = Position,
+                endPosition = Position + movement
+            };
+            //Debug.LogFormat("[PAWN] {0} is now gonna Dash! [{1} {2}]", name, Time.frameCount, Time.fixedDeltaTime);
+
+            return _currentDash.tween;
+        }
     }
 
     public void CancelCurrentDash()
     {
+        //Debug.LogFormat("[PAWN] {0} is dash cancelled anymore! [{1} {2}]", name, Time.frameCount, Time.fixedDeltaTime);
         if (_currentDash != null) _currentDash.KillDash();
         _currentDash = null;
     }
@@ -1208,6 +1222,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void CallEndDash()
     {
+        //Debug.LogFormat("[PAWN] {0} just stopped dashing! [{1} {2}]", name, Time.frameCount, Time.fixedDeltaTime);
         //Debug.LogWarningFormat("End move {0}, {1}", this, Time.time);
         SolveFinalVelocity(ref _inputVelocity);
         OnEndMove?.Invoke();

@@ -85,7 +85,8 @@ namespace Code.MoodGame.Skills
         [Space()]
         public RangeArea.Properties.Positioning previewPositioning = RangeArea.Properties.Positioning.OriginalPositionPlusDirection;
 
-        [Space] 
+        [Space]
+        public TimeBeatManager.BeatQuantity preDashDelay = 0;
         public TimeBeatManager.BeatQuantity preTime = 4;
         public TimeBeatManager.BeatQuantity animationTime = 1;
         public TimeBeatManager.BeatQuantity postTime = 3;
@@ -135,6 +136,9 @@ namespace Code.MoodGame.Skills
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
             if (!SanityCheck(pawn, skillDirection)) yield break;
+
+            yield return new WaitForSeconds(preDashDelay);
+
             float preAttackDash = PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
             yield return new WaitForSeconds(preAttackDash);
 
@@ -362,7 +366,7 @@ namespace Code.MoodGame.Skills
 
         public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
         {
-            yield return preTime;
+            yield return preTime + preDashDelay;
             yield return animationTime + postTime;
         }
 

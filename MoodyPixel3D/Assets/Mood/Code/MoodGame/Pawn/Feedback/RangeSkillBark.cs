@@ -64,19 +64,20 @@ public class RangeSkillBark : RangeShow
 
     public void TrueHide()
     {
+        Debug.LogErrorFormat("TRUE HIDE {0}, text was {1} [{2}]", pawn, text.text, Time.frameCount);
         anim.SetBool("Show", false);
         mainObject.gameObject.SetActive(false);
     }
 
     public override void Hide(MoodPawn pawn)
     {
-        //Debug.LogErrorFormat("Hide {0}", pawn);
+        Debug.LogErrorFormat("Hide {0}, text was {1} [{2}]", pawn, text.text, Time.frameCount);
         anim.SetBool("Show", false);
     }
 
     public override void ShowSkill(MoodPawn pawn, MoodSkill skill)
     {
-        //Debug.LogErrorFormat("Barking {0} {1}", pawn, skill);
+        Debug.LogErrorFormat("Barking for '{0}' with '{1}'! [{2}]", pawn.name, skill.name, Time.frameCount);
         text.color = skill.GetColor().HasValue ? skill.GetColor().Value : defaultColor;
         text.text = skill.GetName();
         anim.SetBool("Show", true);
@@ -154,10 +155,10 @@ public class RangeSkillBark : RangeShow
 
         //Debug.LogErrorFormat("[BARK] Show because begin {0}. Current skill is {1} [{2}]", skill, pawn.GetCurrentSkill(), Time.frameCount);
 
-        /*if(!MoodPlayerController.Instance.Pawn.IsSensing(pawn))
+        if(!MoodPlayerController.Instance.Pawn.IsSensing(pawn))
         {
             skill = notPerceivedSkill;
-        }*/
+        }
 
         ShowSkill(pawn, skill);
         JustBeganSkill();
@@ -169,64 +170,72 @@ public class RangeSkillBark : RangeShow
 
         progressObject.anchoredPosition = new Vector2(0f, progressObject.anchoredPosition.y);
 
-        while (pawn.GetCurrentSkill() == skill) 
+        if(pawn.GetCurrentSkill() == skill)
         {
-            float timeSinceSkill = pawn.GetTimeElapsedSinceBeganCurrentSkill();
-            int currentBeat = Mathf.FloorToInt(TimeBeatManager.GetNumberOfBeats(timeSinceSkill)) + 1;
-            float totalTime, progressPercentage; Color? progressColor;
-            if (continuous)
+
+            while (pawn.GetCurrentSkill() == skill) 
             {
-                skill.GetProgress(pawn, directionUsed, timeSinceSkill, out totalTime, out progressPercentage, out progressColor);
-            }
-            else
-            {
-                skill.GetProgress(pawn, directionUsed, TimeBeatManager.GetTime(currentBeat), out totalTime, out progressPercentage, out progressColor);
-            }
-            if(totalTime != totalTimeNow)
-            {
-                totalTimeNow = totalTime;
-                DivideTime(totalTimeNow, barksShownEachEveryNBeat);
-            }
-            //Debug.LogErrorFormat("Bark -> progress for {0} is (prog:{1} * sizx:{3} = {4}) because of time now is {2}.", skill, progress, pawn.GetTimeElapsedSinceBeganCurrentSkill(), mainObject.sizeDelta.x, mainObject.sizeDelta.x * progress);
-            if(continuous)
-            {
-                progressObject.anchoredPosition = new Vector2(mainObject.rect.width * progressPercentage, progressObject.anchoredPosition.y);
-                progressObjectRenderer.color = progressColor.HasValue ? progressColor.Value : ((progressPercentage >= progressPercentageBefore) ? defaultProgressIncreasingColor : defaultProgressDecreasingColor);
-                progressPercentageBefore = progressPercentage;
-                if (progressPercentage == 1f && progressPercentageBefore != 1f) JustExecutedBark();
-            }
-            else if(currentBeat != beatBefore)
-            {
-                progressObject.DOAnchorPos(
-                    new Vector2(mainObject.rect.width * progressPercentage, progressObject.anchoredPosition.y),
-                    TimeBeatManager.GetBeatLength() * (1f - beatMultiplierDelayEase))
-                    .SetEase(nonContinuousEase)
-                    .SetId(this)
-                    .SetDelay(TimeBeatManager.GetBeatLength() * beatMultiplierDelayEase).OnKill(() =>
-                    {
-                        //Debug.LogFormat("now{0} before{1} {2}", progressPercentage, progressPercentageBefore, skill);
-                        if (progressPercentage == 1f) JustExecutedBark();
-                    });
-                progressObjectRenderer.color = progressColor.HasValue ? progressColor.Value : ((progressPercentage >= progressPercentageBefore) ? defaultProgressIncreasingColor : defaultProgressDecreasingColor);
-                progressPercentageBefore = progressPercentage;
-            }
-            
-            beatBefore = currentBeat;
-            yield return null;
-            if(_interrupted == skill)
-            {
-                if(pawn.GetCurrentSkill() == null)
+                float timeSinceSkill = pawn.GetTimeElapsedSinceBeganCurrentSkill();
+                int currentBeat = Mathf.FloorToInt(TimeBeatManager.GetNumberOfBeats(timeSinceSkill)) + 1;
+                float totalTime, progressPercentage; Color? progressColor;
+                if (continuous)
                 {
-                    //Debug.LogErrorFormat("[BARK] Hide because interrupted {0} and current skill is {1} [{2}]", skill, pawn.GetCurrentSkill(), Time.frameCount);
-                    JustInterruptedSkillIntoNothing();
+                    skill.GetProgress(pawn, directionUsed, timeSinceSkill, out totalTime, out progressPercentage, out progressColor);
                 }
                 else
                 {
-                    JustInterruptedSkillIntoOtherSkill();
+                    skill.GetProgress(pawn, directionUsed, TimeBeatManager.GetTime(currentBeat), out totalTime, out progressPercentage, out progressColor);
                 }
-                _interrupted = null;
-                yield break;
+                if(totalTime != totalTimeNow)
+                {
+                    totalTimeNow = totalTime;
+                    DivideTime(totalTimeNow, barksShownEachEveryNBeat);
+                }
+                if(continuous)
+                {
+                    progressObject.anchoredPosition = new Vector2(mainObject.rect.width * progressPercentage, progressObject.anchoredPosition.y);
+                    progressObjectRenderer.color = progressColor.HasValue ? progressColor.Value : ((progressPercentage >= progressPercentageBefore) ? defaultProgressIncreasingColor : defaultProgressDecreasingColor);
+                    progressPercentageBefore = progressPercentage;
+                    if (progressPercentage == 1f && progressPercentageBefore != 1f) JustExecutedBark();
+                }
+                else if(currentBeat != beatBefore) //If it is beat by beat, with tweens
+                {
+                    progressObject.DOAnchorPos(
+                        new Vector2(mainObject.rect.width * progressPercentage, progressObject.anchoredPosition.y),
+                        TimeBeatManager.GetBeatLength() * (1f - beatMultiplierDelayEase))
+                        .SetEase(nonContinuousEase)
+                        .SetId(this)
+                        .SetDelay(TimeBeatManager.GetBeatLength() * beatMultiplierDelayEase).OnKill(() =>
+                        {
+                            //Debug.LogFormat("now{0} before{1} {2}", progressPercentage, progressPercentageBefore, skill);
+                            if (progressPercentage == 1f) JustExecutedBark();
+                        });
+                    progressObjectRenderer.color = progressColor.HasValue ? progressColor.Value : ((progressPercentage >= progressPercentageBefore) ? defaultProgressIncreasingColor : defaultProgressDecreasingColor);
+                    progressPercentageBefore = progressPercentage;
+                }
+            
+                beatBefore = currentBeat;
+                yield return null;
+                if(_interrupted == skill)
+                {
+                    if(pawn.GetCurrentSkill() == null)
+                    {
+                        //Debug.LogErrorFormat("[BARK] Hide because interrupted {0} and current skill is {1} [{2}]", skill, pawn.GetCurrentSkill(), Time.frameCount);
+                        JustInterruptedSkillIntoNothing();
+                    }
+                    else
+                    {
+                        JustInterruptedSkillIntoOtherSkill();
+                    }
+                    _interrupted = null;
+                    yield break;
+                }
             }
+        }
+        else
+        {
+            yield return null; //Let one frame pass so the animator leaves the off state.
+            Hide(pawn);
         }
         //Debug.LogErrorFormat("[BARK] Hide because end {0} [{1}]", skill, Time.frameCount);
         if (!pawn.IsExecutingSkill())

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Reaction_Bump_Natural_BumpOnWall
   m_EditorClassIdentifier: 
   interruptCurrentSkill: 0
-  stunDurationMultiplier: 1
+  stunDurationMultiplier: 2
   dashMultiplier: 1
+  dashAbsoluteAdd: 1
   dashEase: 3
   animationParameterMultiplier: 0.5

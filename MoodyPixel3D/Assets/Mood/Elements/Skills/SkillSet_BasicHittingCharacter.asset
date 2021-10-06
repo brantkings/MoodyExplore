@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SkillSet_BasicHittingCharacter
   m_EditorClassIdentifier: 
   skills:
+  - {fileID: 11400000, guid: 82a63758eb6e7a44a91b8b408c7d65a1, type: 2}
   - {fileID: 11400000, guid: 8f67c76044de50f4988276feace9983a, type: 2}
   - {fileID: 11400000, guid: edfd0a180eca603489b4378b98a95ad7, type: 2}
   - {fileID: 11400000, guid: 8f6efdc4de55f8e419293c400d69ae86, type: 2}

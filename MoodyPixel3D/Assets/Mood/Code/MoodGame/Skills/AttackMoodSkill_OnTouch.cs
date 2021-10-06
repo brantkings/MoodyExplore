@@ -13,6 +13,9 @@ namespace Code.MoodGame.Skills
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
             if (!SanityCheck(pawn, skillDirection)) yield break;
+
+            yield return new WaitForSeconds(preDashDelay);
+
             float preAttackDashDuration = PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
 
             float count = 0f;
@@ -34,9 +37,9 @@ namespace Code.MoodGame.Skills
                     }
                 }
 
-                yield return null;
-                preAttackDashDuration -= Time.deltaTime;
-                count += Time.deltaTime;
+                yield return new WaitForFixedUpdate();
+                preAttackDashDuration -= Time.fixedDeltaTime;
+                count += Time.fixedDeltaTime;
             }
 
             pawn.OnNextEndMove -= onDash;
@@ -65,9 +68,17 @@ namespace Code.MoodGame.Skills
         public override bool ShouldShowNow(MoodPawn pawn)
         {
             float timeSinceBegin = pawn.GetTimeElapsedSinceBeganCurrentSkill();
-            bool isTesting = timeSinceBegin >= timeUntilStartsTesting && timeSinceBegin <= preTime;
+            //bool isTesting = timeSinceBegin >= (timeUntilStartsTesting + preDashDelay) && timeSinceBegin <= (preTime + preDashDelay);
+            bool isTesting = timeSinceBegin >= preDashDelay && timeSinceBegin <= (preTime + preDashDelay);
             bool alreadyAttacked = pawn.UsedCurrentSkill();
             return isTesting && !alreadyAttacked;
+        }
+
+        public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
+        {
+            yield return timeUntilStartsTesting + preDashDelay;
+            yield return Mathf.Max(preTime - timeUntilStartsTesting, 0f);
+            yield return animationTime + postTime;
         }
     }
 

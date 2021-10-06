@@ -15,12 +15,18 @@ public abstract class CreateableSingleton<T> : MonoBehaviour where T:MonoBehavio
         {
             if(_instance == null)
             {
-                string name = "M";
-#if UNITY_EDITOR
-                name = string.Format("[{0}]", typeof(T).ToString());
-#endif
-                GameObject obj = new GameObject(name);
-                _instance = obj.AddComponent<T>();
+                _instance = GameObject.FindObjectOfType<T>();
+
+                if(_instance == null)
+                {
+                    string name = "M";
+    #if UNITY_EDITOR
+                    name = string.Format("[{0}]", typeof(T).ToString());
+    #endif
+                    GameObject obj = new GameObject(name);
+                    _instance = obj.AddComponent<T>();
+                }
+
             }
             return _instance;
         }

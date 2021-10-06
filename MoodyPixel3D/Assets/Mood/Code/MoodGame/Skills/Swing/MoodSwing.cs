@@ -72,11 +72,14 @@ public class MoodSwing : ScriptableObject
         {
             float currentDelay = 0f;
             _resultsCache.Clear();
+            float capsuleHeight = 4f;
+            Vector3 capsuleHalfHeight = Vector3.up * capsuleHeight * 0.5f;
             int b = 0;
             foreach (MoodSwingNode node in moodSwingItself.maker.Nodes)
             {
                 LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
-                int result = Physics.OverlapSphereNonAlloc(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
+                Vector3 capsuleCenter = GetCorrectPosition(posOrigin, rotOrigin, localOffset, node);
+                int result = Physics.OverlapCapsuleNonAlloc(capsuleCenter + capsuleHalfHeight, capsuleCenter - capsuleHalfHeight, node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
                 if (result > 0)
                 {
                     for (int j = 0, lenA = Mathf.Min(result, CACHE_SIZE); j < lenA; j++)

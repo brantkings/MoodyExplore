@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LHH.LeveledBehaviours.Sensors;
 
 
 [CreateAssetMenu(menuName = "Mood/Effect/Sensor Effect", fileName = "Effect_Sensor_")]
@@ -23,14 +24,13 @@ public class SensorEffect : MoodPawnEffect<SensorEffect.SensorEffectStatus>
             thought = system,
             instance = Instantiate(sensorPrefab, system.thoughtObjectsParent)
         };
+        s.instance.GetComponentInParent<SensorGroup>()?.FindSensors();
         s.instance.transform.localPosition = Vector3.zero;
-        Debug.LogFormat("{0} instantiated {1} for {2}.", this, s.instance, p);
         return s;
     }
 
     protected override void UpdateStatusAdd(MoodPawn p, ref SensorEffectStatus? status)
     {
-        Debug.LogFormat("{0} updating add {1} for {2}.", this, status?.instance, p);
         if (status.HasValue)
         {
             status.Value.instance.TryAddOneFocus();
@@ -39,7 +39,6 @@ public class SensorEffect : MoodPawnEffect<SensorEffect.SensorEffectStatus>
 
     protected override void UpdateStatusRemove(MoodPawn p, ref SensorEffectStatus? status)
     {
-        Debug.LogFormat("{0} updating remove {1} for {2}.", this, status?.instance, p);
         if (status.HasValue)
         {
             status.Value.instance.TryRemoveOneFocus();

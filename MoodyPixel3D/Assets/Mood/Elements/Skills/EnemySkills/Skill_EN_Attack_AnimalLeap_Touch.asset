@@ -25,8 +25,11 @@ MonoBehaviour:
   toConsume: []
   restrictions: []
   _possibleAngles:
-  - angleFromForward: 0
-    coneAngle: 60
+  - angleFromForward: 110
+    coneAngle: 15
+    mirrored: 0
+  - angleFromForward: -110
+    coneAngle: 15
     mirrored: 0
   startupPriority: 2
   heightCheckers: []
@@ -99,8 +102,10 @@ MonoBehaviour:
     dashFeedback: []
     dashFeedbackDirection: 0
   previewPositioning: 0
+  preDashDelay:
+    beats: 4
   preTime:
-    beats: 8
+    beats: 6
   animationTime:
     beats: 1
   postTime:
@@ -116,4 +121,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
   addedStancesWithAttack: []
   timeUntilStartsTesting:
-    beats: 4
+    beats: 2

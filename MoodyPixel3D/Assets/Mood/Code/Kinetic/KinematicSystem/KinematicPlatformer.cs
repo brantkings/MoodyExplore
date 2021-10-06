@@ -96,6 +96,7 @@ public partial class KinematicPlatformer : MonoBehaviour
     private Vector3 _outsideVelocity;
     private Vector3 _latestNonZeroValidMovement;
     private Vector3 _latestValidVelocity;
+    private Vector3 _latestWalledNormal;
 
     private Vector3 _desiredDirection;
 
@@ -262,6 +263,14 @@ public partial class KinematicPlatformer : MonoBehaviour
         get
         {
             return _latestNonZeroValidMovement / Time.fixedDeltaTime;
+        }
+    }
+
+    public Vector3 WalledNormal
+    {
+        get
+        {
+            return _latestWalledNormal;
         }
     }
 
@@ -443,15 +452,12 @@ public partial class KinematicPlatformer : MonoBehaviour
     #endregion
 
     #region Arbitrary Wall Checks
-
-
     private Dictionary<CasterClass, Vector3> _accumulatedValue;
 
     public void CheckSurfaceNow(CasterClass caster, in Vector3 offset, in Vector3 direction, float length, Vector3 extraValueIfOn)
     {
         if (direction == Vector3.zero) return;
         Caster casterObj = GetCaster(caster);
-
 
         if (this.CastLengthOffsetInFrame(casterObj, offset, direction, length, out RaycastHit hit, comment: "Immediate check on incoming surface"))
         {
@@ -981,7 +987,10 @@ public partial class KinematicPlatformer : MonoBehaviour
         bool nowGrounded = Grounded, nowHittingHead = HittingHead, nowWalled = Walled;
         //Horizontal movement resolve
         CheckAndReflectMovement(wallCaster, movementMade, ref horizontalMovement, out Vector3 lateralReflection, out Vector3 lateralDrag, out nowWalled, out RaycastHit newWall);
-        //Vector3 horizontalChecks = CheckAccumulatedValue(CasterClass.Side);
+        
+        //Walled valid registration
+        if (nowWalled) _latestWalledNormal = newWall.normal;
+        else _latestWalledNormal = Vector3.zero;
 
         //Divide vertical movement and add total horizontal movement into final movement.
         Vector3 totalHorizontalMovement = horizontalMovement + lateralDrag;
@@ -1011,14 +1020,6 @@ public partial class KinematicPlatformer : MonoBehaviour
 
         //Reflection and friction forces resolve
         Vector3 totalReflection = lateralReflection + verticalReflection;
-        /*if(nowGrounded && !Grounded) //Is going to be grounded
-        {
-
-        }
-        if(nowWalled && !Walled) //Is going to be walled
-        {
-
-        }*/
 
         _grounded.Update(nowGrounded, "Grounded");
         _hittingHead.Update(nowHittingHead, "HittingHead");

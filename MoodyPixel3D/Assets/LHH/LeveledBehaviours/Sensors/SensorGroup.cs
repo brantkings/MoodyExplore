@@ -9,7 +9,7 @@ namespace LHH.LeveledBehaviours.Sensors
     {
         public bool applyLevelToSubSensors = false;
 
-        public Sensor[] _group;
+        private Sensor[] _group;
 
         public void FindSensors()
         {
@@ -18,7 +18,7 @@ namespace LHH.LeveledBehaviours.Sensors
 
         public bool IsSensingTarget(SensorTarget target)
         {
-            if(target != null)
+            if(target != null && _group != null)
             {
                 foreach (var sensor in _group)
                 {

@@ -2980,7 +2980,7 @@ MonoBehaviour:
   _pawn: {fileID: 7004230067239678946}
   _focus: {fileID: 0}
   _thought: {fileID: 6844231490636534482}
-  maxVelocityPerBeat: 0.75
+  maxVelocityPerBeat: 1
   sphere: {fileID: 2026666750789948610}
   command: {fileID: 6861143338353298073}
   interactor: {fileID: 6204302892675674362}
@@ -3007,7 +3007,7 @@ MonoBehaviour:
   cameraBlendList: {fileID: 0}
   inputDirectionFeedback: {fileID: 5933902371246874704}
   timeSlowOnThreat: 0.25
-  timeSlowOnCommand: 0.01
+  timeSlowOnCommand: 0
   shortcuts:
   - category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
     keys: 3100000001010000
@@ -3034,6 +3034,7 @@ MonoBehaviour:
   mover: {fileID: 5938188666130470341}
   animator: {fileID: 4171312185703095712}
   _health: {fileID: 4368653479597202039}
+  damageTeam: 2
   _undetectedDamageModifier: {fileID: 11400000, guid: ce28bc31ca165544aa04ab7eb10fa566, type: 2}
   knockBackMultiplier: 1
   _attackFeedback: {fileID: 4790428603277664589}
@@ -3041,6 +3042,7 @@ MonoBehaviour:
   _ownSensorTarget: {fileID: 0}
   _inventory: {fileID: 1879472814530904980}
   toDestroyOnDeath: {fileID: 0}
+  _instantiateProjectilePosition: {fileID: 658507226196219163}
   pawnConfiguration: {fileID: 11400000, guid: 1876601f2e2b4eb408ce86ea4d088846, type: 2}
   inherentReactions: []
   flagInherentStances: []
@@ -3051,7 +3053,7 @@ MonoBehaviour:
     beats: 2
   snapToTargetSpeedDelta: 0.25
   angleToBeAbleToAccelerate: 55
-  turningDirectSpeed: 4
+  turningDirectMaxSpeed: 1
   turningForwardVelocityRatio: 0.05
   turningTimeTo360:
     beats: 12
@@ -3059,6 +3061,8 @@ MonoBehaviour:
   pawnRadius: 0.5
   extraRangeBase: 0
   cantMoveWhileThreatened: 0
+  cantMoveWhileExecutingSkill: 0
+  cantRotateWhileExecutingSkill: 0
   _maxStamina:
     baseValue: 3
   infiniteStamina: 0
@@ -3067,8 +3071,6 @@ MonoBehaviour:
     beats: 8
   staminaRecoveryMovingPerSecond:
     beats: 8
-  _instantiateProjectilePosition: {fileID: 658507226196219163}
-  damageTeam: 2
   _debug: 0
   sensorGroup: {fileID: 6111893301521731665}
 --- !u!114 &6861143338353298073

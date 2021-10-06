@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90ae4c23724f4444984bad838a8ad073, type: 3}
+  m_Name: Skill_Movement_NudgeDash
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _name: Nudge
+  _description: Dash forward.
+  _category: {fileID: 11400000, guid: e72374fe75c8d0e49965e3301f22023a, type: 2}
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 11400000, guid: 9a075322f5390804d902ef43c4bd550e, type: 2}
+  onlyNeutralStance: 1
+  needs: []
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions:
+  - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
+  _possibleAngles: []
+  startupPriority: 2
+  heightCheckers: []
+  _freeFocusCost: 0
+  _lockCamera: 1
+  lockMovement: 1
+  _shortcut: 0
+  _debug: 0
+  _cost: 1
+  minDistance: 1
+  maxDistance: 2
+  hopHeight: 0
+  hopDurationInMultiplier: 0
+  hopDurationOutMultiplier: 0
+  setHorizontalDirection: 0
+  setDirectionInRelationToMovement:
+  - angleFromForward: 180
+    coneAngle: 0
+    mirrored: 0
+  velocityAdd: 8
+  durationAdd: 0
+  showArrowWidth: 1
+  ease: 12
+  priortyChangeTimeProportional: 0.35
+  priorityAdd: -2
+  warningOnBumpWall: 0
+  eventsOnStart:
+  - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
+  - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
+  eventsOnEnd: []
+  toAdd: []
+  triggerAnim:
+    id: 
+  boolWhileInSkill:
+    id: 
+  onBeginningFlags: []
+  onEndFlags: []
+  onCompleteFlags: []

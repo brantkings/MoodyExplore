@@ -41,6 +41,7 @@ MonoBehaviour:
   stunTime:
     beats: 4
   swingData: {fileID: 11400000, guid: dfadf65a8e4142f4eba11a85d57b9af1, type: 2}
+  swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -67,6 +68,10 @@ MonoBehaviour:
   priorityPreAttack: 2
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
+  _painThought:
+    _directProperty: {fileID: 0}
+    _getter: {fileID: 0}
+  _flyingThought: {fileID: 0}
   preAttackDash:
     distance: 1
     angle:
@@ -98,13 +103,9 @@ MonoBehaviour:
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
-  onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
-  onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
-  onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
-  onDamage:
-  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
-  onGuardedDamage:
-  - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
+  previewPositioning: 3
+  preDashDelay:
+    beats: 0
   preTime:
     beats: 2
   animationTime:
@@ -112,4 +113,12 @@ MonoBehaviour:
   postTime:
     beats: 3
   showPreview: 0
+  animationIntStepString: Attack_Right
+  onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
+  onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
+  onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
+  onDamage:
+  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
+  onGuardedDamage:
+  - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
   addedStancesWithAttack: []

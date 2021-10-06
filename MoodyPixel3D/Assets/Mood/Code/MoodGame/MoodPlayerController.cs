@@ -54,7 +54,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     private FocusController _focus;
     [SerializeField]
     private ThoughtSystemController _thought;
-    public float maxVelocityPerBeat = 6f;
+    public float maxDistancePerBeat = 1f;
     [SerializeField]
     private RangeSphere sphere;
     private Camera _mainCamera;
@@ -146,6 +146,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         _pawn.Threatenable.OnThreatAppear += ChangeThreat;
         _pawn.Threatenable.OnThreatRelief += ChangeThreat;
         _pawn.OnInterruptSkill += OnInterruptSkill;
+        _pawn.OnPawnDamaged += OnDamage;
         OnStartCommand += SolveThreatSlowDown;
         OnStopCommand += SolveThreatSlowDown;
     }
@@ -156,8 +157,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         _pawn.Threatenable.OnThreatAppear -= ChangeThreat;
         _pawn.Threatenable.OnThreatRelief -= ChangeThreat;
         _pawn.OnInterruptSkill -= OnInterruptSkill;
-        OnStartCommand += SolveThreatSlowDown;
-        OnStopCommand += SolveThreatSlowDown;
+        _pawn.OnPawnDamaged -= OnDamage;
+        OnStartCommand -= SolveThreatSlowDown;
+        OnStopCommand -= SolveThreatSlowDown;
     }
 
     public MoodPawn Pawn => _pawn;
@@ -505,6 +507,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         OnStopCommand?.Invoke();
     }
 
+    private void OnDamage(MoodPawn pawn, DamageInfo info)
+    {
+        EndBufferingSkill();
+    }
+
     private bool IsExecutingCommand()
     {
         return _pawn.IsExecutingSkill();
@@ -713,7 +720,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private float GetMaxVelocity()
     {
-        return maxVelocityPerBeat / TimeBeatManager.GetBeatLength();
+        return maxDistancePerBeat / TimeBeatManager.GetBeatLength();
     }
 
     private void FocusCommand(DirectionalState direction, AxisState addCommand)
@@ -879,6 +886,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
             {
             }
             _wasInCommand = set;
+            command.SetActive(set);
 
             OnChangeCommandMode?.Invoke(GetCurrentMode());
         }
@@ -909,17 +917,6 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
                 break;
         }
         //Debug.LogFormat("Setting mouse mode as visible? {0}", visible);
-    }
-
-    private void SetFocusMode(bool set)
-    {
-        FocusMode = set;
-        _thought.SetActivated(set);
-    }
-
-    private void SetCommandMode(bool set)
-    {
-        command.SetActive(set);
     }
 
     #region Skill Buffer

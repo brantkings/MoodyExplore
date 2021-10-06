@@ -106,7 +106,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
                     debugType = "OriginalPositionPlusDirection";
                     transform.position = pawn.GetSkillPreviewOriginPosition();
                     transform.localPosition += transform.parent.InverseTransformVector(sanitizedDirection); 
-                    transform.forward = sanitizedDirection;
+                    transform.forward = pawn.Direction;
                     break;
                 case Properties.Positioning.OriginalPosition:
                     debugType = "OriginalPosition";
