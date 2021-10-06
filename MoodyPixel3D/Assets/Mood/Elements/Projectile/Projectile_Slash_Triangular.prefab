@@ -401,6 +401,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Projectile_Slash_Triangular
       objectReference: {fileID: 0}
+    - target: {fileID: 3525325395850825231, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3525325395850825231, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3525325395850825231, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5901348274059363923, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
+      propertyPath: m_Size.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5901348274059363923, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
+      propertyPath: m_Size.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416795376363059412, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
+      propertyPath: ShapeModule.m_Scale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416795376363059412, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
+      propertyPath: ShapeModule.m_Scale.z
+      value: 2.75
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e535f445bcb4024996097d84f63823a, type: 3}
 --- !u!4 &3344581412110314230 stripped

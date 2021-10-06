@@ -2980,7 +2980,7 @@ MonoBehaviour:
   _pawn: {fileID: 7004230067239678946}
   _focus: {fileID: 0}
   _thought: {fileID: 6844231490636534482}
-  maxVelocityPerBeat: 1
+  maxDistancePerBeat: 1
   sphere: {fileID: 2026666750789948610}
   command: {fileID: 6861143338353298073}
   interactor: {fileID: 6204302892675674362}
@@ -3007,7 +3007,7 @@ MonoBehaviour:
   cameraBlendList: {fileID: 0}
   inputDirectionFeedback: {fileID: 5933902371246874704}
   timeSlowOnThreat: 0.25
-  timeSlowOnCommand: 0
+  timeSlowOnCommand: 0.0075
   shortcuts:
   - category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
     keys: 3100000001010000
@@ -3053,10 +3053,10 @@ MonoBehaviour:
     beats: 2
   snapToTargetSpeedDelta: 0.25
   angleToBeAbleToAccelerate: 55
-  turningDirectMaxSpeed: 1
-  turningForwardVelocityRatio: 0.05
+  turningDirectMaxSpeed: 2
+  turningForwardVelocityRatio: 0.5
   turningTimeTo360:
-    beats: 12
+    beats: 8
   height: 4
   pawnRadius: 0.5
   extraRangeBase: 0
