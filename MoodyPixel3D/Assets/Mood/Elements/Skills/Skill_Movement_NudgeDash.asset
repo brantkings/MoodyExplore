@@ -49,7 +49,7 @@ MonoBehaviour:
   showArrowWidth: 1
   ease: 12
   priortyChangeTimeProportional: 0.35
-  priorityAdd: -2
+  priorityAdd: 0
   warningOnBumpWall: 0
   eventsOnStart:
   - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}

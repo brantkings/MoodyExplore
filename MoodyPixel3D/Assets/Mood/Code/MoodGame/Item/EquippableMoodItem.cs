@@ -12,7 +12,7 @@ public class EquippableMoodItem : MoodItem
 
     private List<AttachItself> _instances = new List<AttachItself>(8);
 
-    public override bool CanUse(MoodPawn pawn, MoodInventory inventory)
+    public override bool CanUse(MoodPawn pawn, MoodInventoryOld inventory)
     {
         return true;
     }

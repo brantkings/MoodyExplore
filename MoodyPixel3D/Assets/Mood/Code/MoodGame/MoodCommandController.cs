@@ -334,7 +334,7 @@ public class MoodCommandController : MonoBehaviour
         SetNullAsSelected(setNotSelectingAnyone);
     }
 
-    private void OnInventoryChange(MoodInventory inventory)
+    private void OnInventoryChange(MoodInventoryOld inventory)
     {
         _menu.CreateAndBuildOptions(ListAllSkills());
     }

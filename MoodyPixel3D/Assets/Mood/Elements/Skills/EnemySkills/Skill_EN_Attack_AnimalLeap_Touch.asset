@@ -81,6 +81,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 2
+    hopDurationRange: 0.5
     dashFeedback: []
     dashFeedbackDirection: 0
   postAttackDash:
@@ -90,6 +92,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback: []
     dashFeedbackDirection: 0
   whiffAttackDash:
@@ -99,6 +103,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback: []
     dashFeedbackDirection: 0
   previewPositioning: 0

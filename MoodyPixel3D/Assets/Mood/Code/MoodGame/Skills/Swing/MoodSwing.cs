@@ -86,8 +86,8 @@ public class MoodSwing : ScriptableObject
                     {
                         Collider collider = _colliderCache[j];
                         MoodSwingResult newResult = GetResultFrom(posOrigin, rotOrigin, localOffset, node, collider);
-                        UnityEngine.Debug.LogFormat("[SWING] MoodSwing {0}: {1} (from {2}) collider is found. Has collider? {3} ({4} iteration)", 
-                            layer.value, collider.name, collider.GetComponentInParent<MoodPawn>()?.name, _resultsCache.ContainsKey(collider), ++b);
+                        //UnityEngine.Debug.LogFormat("[SWING] MoodSwing {0}: {1} (from {2}) collider is found. Has collider? {3} ({4} iteration)", 
+                        //      layer.value, collider.name, collider.GetComponentInParent<MoodPawn>()?.name, _resultsCache.ContainsKey(collider), ++b);
                         if (_resultsCache.ContainsKey(collider))
                         {
                             _resultsCache[collider] = MoodSwingResult.Merge(_resultsCache[collider], newResult);

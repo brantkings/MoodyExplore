@@ -64,20 +64,20 @@ public class RangeSkillBark : RangeShow
 
     public void TrueHide()
     {
-        Debug.LogErrorFormat("TRUE HIDE {0}, text was {1} [{2}]", pawn, text.text, Time.frameCount);
+        //Debug.LogErrorFormat("TRUE HIDE {0}, text was {1} [{2}]", pawn, text.text, Time.frameCount);
         anim.SetBool("Show", false);
         mainObject.gameObject.SetActive(false);
     }
 
     public override void Hide(MoodPawn pawn)
     {
-        Debug.LogErrorFormat("Hide {0}, text was {1} [{2}]", pawn, text.text, Time.frameCount);
+        //Debug.LogErrorFormat("Hide {0}, text was {1} [{2}]", pawn, text.text, Time.frameCount);
         anim.SetBool("Show", false);
     }
 
     public override void ShowSkill(MoodPawn pawn, MoodSkill skill)
     {
-        Debug.LogErrorFormat("Barking for '{0}' with '{1}'! [{2}]", pawn.name, skill.name, Time.frameCount);
+        //Debug.LogErrorFormat("Barking for '{0}' with '{1}'! [{2}]", pawn.name, skill.name, Time.frameCount);
         text.color = skill.GetColor().HasValue ? skill.GetColor().Value : defaultColor;
         text.text = skill.GetName();
         anim.SetBool("Show", true);

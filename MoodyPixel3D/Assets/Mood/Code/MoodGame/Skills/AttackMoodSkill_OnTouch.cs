@@ -17,7 +17,7 @@ namespace Code.MoodGame.Skills
             yield return new WaitForSeconds(preDashDelay);
 
             float preAttackDashDuration = PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
-
+            
             float count = 0f;
 
             bool shouldBreak = false;

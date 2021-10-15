@@ -10,6 +10,9 @@ public class GlueToGround : MonoBehaviour
     public float maxRaycast;
     public float sphereRadius = 0.5f;
     public Renderer graphic;
+    public float yOffset = 0.1f;
+    public bool upAsNormal;
+    public bool rotationAsParent;
 
 
     Vector3 _lastPos;
@@ -70,18 +73,18 @@ public class GlueToGround : MonoBehaviour
         RaycastHit hit;
         if(Raycast(pos, out hit))
         {
-            transform.position = new Vector3(PlanePosition.x, hit.point.y + 0.1f, PlanePosition.z);
-            transform.up = hit.normal;
-            if (transform.parent != null)
+            transform.position = new Vector3(PlanePosition.x, hit.point.y + yOffset, PlanePosition.z);
+            if (upAsNormal) transform.up = hit.normal;
+            if (rotationAsParent && transform.parent != null)
             {
                 transform.forward = transform.parent.forward;
                 transform.right = transform.parent.right;
             }
-            graphic.enabled = true;
+            if(graphic != null) graphic.enabled = true;
         }
         else
         {
-            graphic.enabled = false;
+            if (graphic != null) graphic.enabled = false;
         }
     }
 }

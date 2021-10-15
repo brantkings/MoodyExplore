@@ -8,7 +8,7 @@ public class ConsumableMoodItem : MoodItem
 {
     public MoodSkill[] consumableSkills;
 
-    public override bool CanUse(MoodPawn pawn, MoodInventory inventory)
+    public override bool CanUse(MoodPawn pawn, MoodInventoryOld inventory)
     {
         return inventory;
     }

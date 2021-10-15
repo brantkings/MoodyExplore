@@ -77,7 +77,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [SerializeField]
     private SensorTarget _ownSensorTarget;
     [SerializeField]
-    private MoodInventory _inventory;
+    private MoodInventoryOld _inventory;
     [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
@@ -120,7 +120,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
-    public MoodInventory Inventory
+    public MoodInventoryOld Inventory
     {
         get
         {
@@ -880,6 +880,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             this.ease = ease;
             return this;
         }
+
+        public override string ToString()
+        {
+            return $"[MovData {duration} with {ease}]";
+        }
     }
 
 
@@ -1090,6 +1095,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         _currentHop.KillIfActive();
         Sequence seq = DOTween.Sequence();
+
+        Debug.LogFormat("{0} is hopping {0} {1}", name, durationIn, durationOut);
 
         seq.Append(mover.TweenMoverPosition(Vector3.up * height, durationIn.duration, priority: KinematicPlatformer.GetVelocityPriorityNumber(KinematicPlatformer.CommonVelocityPriority.Anti_Gravity),
             "HOPIn").SetEase(durationIn.ease));

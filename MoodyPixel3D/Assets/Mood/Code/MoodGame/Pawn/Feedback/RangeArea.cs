@@ -106,7 +106,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
                     debugType = "OriginalPositionPlusDirection";
                     transform.position = pawn.GetSkillPreviewOriginPosition();
                     transform.localPosition += transform.parent.InverseTransformVector(sanitizedDirection); 
-                    transform.forward = pawn.Direction;
+                    transform.forward = directionLength;
                     break;
                 case Properties.Positioning.OriginalPosition:
                     debugType = "OriginalPosition";
@@ -122,7 +122,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
             //transform.localPosition += transform.parent.InverseTransformVector(currentSanitizer.Sanitize(directionLength, pawn.Direction));
         }
 
-        Debug.LogFormat("Set direction with {0}, length {1} (Current for {2} is {3}). {4}: Position is {5} Direction is {6}", skill, directionLength, pawn, pawn.GetCurrentSkill(), debugType, transform.position, transform.forward);
+        //Debug.LogFormat("Set direction with {0}, length {1} (Current for {2} is {3}). {4}: Position is {5} Direction is {6}", skill, directionLength, pawn, pawn.GetCurrentSkill(), debugType, transform.position, transform.forward);
 
 
         /*Debug.LogErrorFormat("{0} is Used? {1} or Skill different than current? {2}. Pawn Position is {3} while OriginPosition is {4} ({5})", 

@@ -918,6 +918,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Preview_AreaOfEffect
       objectReference: {fileID: 0}
+    - target: {fileID: 7060902632664512144, guid: 7524087e6837e5048bd81c220fc6fa1b, type: 3}
+      propertyPath: yOffset
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 7094905400884192512, guid: 7524087e6837e5048bd81c220fc6fa1b, type: 3}
       propertyPath: m_RootOrder
       value: 0

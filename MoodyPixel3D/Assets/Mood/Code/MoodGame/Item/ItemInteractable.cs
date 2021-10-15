@@ -25,7 +25,7 @@ public class ItemInteractable : MoodInteractable
 
     public override void Interact(MoodInteractor interactor)
     {
-        MoodInventory inventory = interactor.GetComponentInParent<MoodInventory>();
+        MoodInventoryOld inventory = interactor.GetComponentInParent<MoodInventoryOld>();
         switch (consumableStyle)
         {
             case Consumes.OncePerInteract:
@@ -57,7 +57,7 @@ public class ItemInteractable : MoodInteractable
         }
     }
 
-    private void AddItem(MoodInventory inventory)
+    private void AddItem(MoodInventoryOld inventory)
     {
         inventory.AddUntypedItem(item);
     }

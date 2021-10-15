@@ -87,7 +87,7 @@ public class MoodAttackFeedback : MonoBehaviour
         SavePosition();
     }
 
-    private void OnInventoryChange(MoodInventory inventory)
+    private void OnInventoryChange(MoodInventoryOld inventory)
     {
         GetProperties();
     }

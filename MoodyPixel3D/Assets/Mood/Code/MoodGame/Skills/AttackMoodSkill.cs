@@ -29,6 +29,11 @@ namespace Code.MoodGame.Skills
             public float distance;
             public DirectionFixer angle;
             public DG.Tweening.Ease ease;
+            [Space()]
+            public float hopHeight;
+            [Range(0f, 1f)]
+            public float hopDurationRange;
+            [Space()]
             public ScriptableEvent[] dashFeedback;
             public enum Direction
             {
@@ -59,6 +64,8 @@ namespace Code.MoodGame.Skills
                     d.distance = 0f;
                     d.angle = DirectionFixer.LetAll;
                     d.ease = DG.Tweening.Ease.OutCirc;
+                    d.hopHeight = 0f;
+                    d.hopDurationRange = 0.5f;
                     return d;
                 }
             }
@@ -230,6 +237,7 @@ namespace Code.MoodGame.Skills
             if(dashData.HasDash())
             {
                 pawn.Dash(dashData.GetDashDistance(pawn.Direction, skillDirection), duration, dashData.ease);
+                if (dashData.hopHeight != 0f) pawn.Hop(dashData.hopHeight, new MoodPawn.MovementData(duration * dashData.hopDurationRange).SetEase(DG.Tweening.Ease.OutCirc), new MoodPawn.MovementData(duration * (1f - dashData.hopDurationRange)).SetEase(DG.Tweening.Ease.InCirc));
                 dashData.Feedback(pawn.ObjectTransform, pawn, skillDirection);
             }
         }

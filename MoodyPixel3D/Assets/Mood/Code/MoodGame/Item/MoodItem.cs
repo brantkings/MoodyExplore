@@ -29,7 +29,7 @@ public abstract class MoodItem : ScriptableObject
         return pickupPrefab;
     }
 
-    public abstract bool CanUse(MoodPawn pawn, MoodInventory inventory);
+    public abstract bool CanUse(MoodPawn pawn, MoodInventoryOld inventory);
 
     public abstract void OnAdquire(MoodPawn pawn);
 
