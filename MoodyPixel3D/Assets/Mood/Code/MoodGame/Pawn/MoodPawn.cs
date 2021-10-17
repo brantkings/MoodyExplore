@@ -39,7 +39,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnDamageEvent(MoodPawn pawn, DamageInfo info);
     public delegate void DelMoodPawnSkillEvent(MoodPawn pawn, MoodSkill skill, Vector3 direction);
-    public delegate void DelMoodPawnItemEvent(MoodPawn pawn, MoodItem item);
+    public delegate void DelMoodPawnItemEvent(MoodPawn pawn, MoodItemInstance item);
     public delegate void DelMoodPawnSwingEvent(MoodSwing.MoodSwingBuildData swing, Vector3 direction);
     public delegate void DelMoodPawnUndirectedSkillEvent(MoodPawn pawn, MoodSkill skill);
 
@@ -77,7 +77,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [SerializeField]
     private SensorTarget _ownSensorTarget;
     [SerializeField]
-    private MoodInventoryOld _inventory;
+    private MoodInventory _inventory;
     [Space]
     [SerializeField]
     private GameObject toDestroyOnDeath;
@@ -120,7 +120,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
-    public MoodInventoryOld Inventory
+    public IMoodInventory Inventory
     {
         get
         {
@@ -387,10 +387,9 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     #endregion
 
     #region Items
-    public void UseItem(MoodItem item, MoodSkill skill)
+    public void UseItem(MoodItemInstance item, MoodSkill skill)
     {
-        item.OnUse(this);
-        Inventory.UseItem(item);
+        item.Use(this);
         OnUseItem?.Invoke(this, item);
     }
     #endregion

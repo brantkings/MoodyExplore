@@ -12,7 +12,7 @@ public class EquippableMoodItem : MoodItem
 
     private List<AttachItself> _instances = new List<AttachItself>(8);
 
-    public override bool CanUse(MoodPawn pawn, MoodInventoryOld inventory)
+    public override bool CanUse(MoodPawn pawn, IMoodInventory inventory)
     {
         return true;
     }
@@ -47,5 +47,17 @@ public class EquippableMoodItem : MoodItem
     public override void OnUse(MoodPawn pawn)
     {
        
+    }
+
+    public override IEnumerable<MoodSkill> GetSkills()
+    {
+        return skillsToGrant;
+    }
+
+    public override string WriteItemStatus(in MoodItemInstance.Properties properties)
+    {
+        string str = "";
+        if (properties.quantity != 0) AddStatusText(ref str, "Dur:", properties.quantity);
+        return str;
     }
 }

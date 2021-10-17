@@ -16,6 +16,9 @@ MonoBehaviour:
   _itemDescription: 
   pickupPrefab: {fileID: 4693325823449663037, guid: e5ae8ab5d796d364bb8ef33d871059c1, type: 3}
   category: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
+  instancePrototype:
+    durability: 40
+    quanitity: 1
   skillsToGrant:
   - {fileID: 11400000, guid: feaf277a4a5525240abe9958ff8bf92f, type: 2}
   - {fileID: 11400000, guid: c1e8c24796a8efb4396f769094569527, type: 2}

@@ -161,16 +161,16 @@ public class MoodCommandController : MonoBehaviour
         _menu.CreateAndBuildOptions(ListAllSkills());
     }
 
-    private IEnumerable<Tuple<MoodSkill, MoodItem>> ListAllSkills()
+    private IEnumerable<(MoodSkill, MoodItemInstance)> ListAllSkills()
     {
         if (_innateEquippedSkills != null)
-            foreach (MoodSkill skill in _innateEquippedSkills) yield return new Tuple<MoodSkill, MoodItem>(skill, null);
+            foreach (MoodSkill skill in _innateEquippedSkills) yield return (skill, null);
         if (_pawn.Inventory != null)
-            foreach (Tuple<MoodSkill, MoodItem> tuple in _pawn.Inventory.GetAllUsableSkills()) yield return tuple;
+            foreach ((MoodSkill, MoodItemInstance) tuple in _pawn.Inventory.GetAllUsableSkills()) yield return tuple;
     }
 
     
-
+      
     public void Activate()
     {
         SetActive(false);
@@ -207,7 +207,7 @@ public class MoodCommandController : MonoBehaviour
         return _menu.GetCurrentOption()?.GetSelectable() as MoodSkill;
     }
 
-    public MoodItem GetCurrentItem()
+    public MoodItemInstance GetCurrentItem()
     {
         return _menu.GetCurrentOption()?.item;
     }
@@ -282,14 +282,14 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
-    public IEnumerable<Tuple<MoodSkill, MoodItem>> GetAllMoodSkills()
+    public IEnumerable<(MoodSkill, MoodItemInstance)> GetAllMoodSkills()
     {
         foreach (MoodCommandMenu.Option opt in _menu.GetAllOptions())
         {
             IMoodSelectable select = opt.GetSelectable();
             if(select is MoodSkill)
             {
-                yield return new Tuple<MoodSkill, MoodItem>(select as MoodSkill, opt.item);
+                yield return (select as MoodSkill, opt.item);
             }
         }
     }
@@ -334,7 +334,7 @@ public class MoodCommandController : MonoBehaviour
         SetNullAsSelected(setNotSelectingAnyone);
     }
 
-    private void OnInventoryChange(MoodInventoryOld inventory)
+    private void OnInventoryChange()
     {
         _menu.CreateAndBuildOptions(ListAllSkills());
     }

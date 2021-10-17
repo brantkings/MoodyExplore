@@ -479,7 +479,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         return _pawn.Position;
     }
 
-    private void StartSkillRoutine(MoodSkill skill, MoodItem item = null, Vector3 direction = default)
+    private void StartSkillRoutine(MoodSkill skill, MoodItemInstance item = null, Vector3 direction = default)
     {
         if (item != null)
         {
@@ -560,7 +560,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
 
             MoodSkill skill = command.GetCurrentSkill();
-            MoodItem item = command.GetCurrentItem();
+            MoodItemInstance item = command.GetCurrentItem();
             MoodCommandOption option = command.GetCurrentCommandOption(); 
             skill?.SanitizeDirection(_pawn.Direction, ref currentDirection);
 
@@ -694,7 +694,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         SolveCommandSlowDown(false, true);
     }
 
-    private void SelectExecuteCurrentSkill(MoodSkill currentSkill, MoodItem currentItem, MoodCommandOption currentOption, Vector3 currentDirection)
+    private void SelectExecuteCurrentSkill(MoodSkill currentSkill, MoodItemInstance currentItem, MoodCommandOption currentOption, Vector3 currentDirection)
     {
         command.SelectCurrentOption();
         if (currentSkill != null)
@@ -929,7 +929,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         return _skillBufferRoutine != null;
     }
 
-    private void StartBufferingSkill(MoodCommandOption option, MoodSkill skill, MoodItem item, Vector3 direction)
+    private void StartBufferingSkill(MoodCommandOption option, MoodSkill skill, MoodItemInstance item, Vector3 direction)
     {
         if (IsBufferingSkill()) EndBufferingSkill();
         _bufferingSkill = skill;
@@ -941,7 +941,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         _bufferingSkill = null;
     }
 
-    private IEnumerator SkillBuffer(MoodCommandOption option, MoodSkill skill, MoodItem item, Vector3 direction)
+    private IEnumerator SkillBuffer(MoodCommandOption option, MoodSkill skill, MoodItemInstance item, Vector3 direction)
     {
         option.FeedbackBuffer(true);
         while (skill == _bufferingSkill && skill != null && !skill.CanExecute(_pawn, direction))

@@ -30,18 +30,18 @@ public class MoodCommandMenu : MonoBehaviour
     public class Option : IEnumerable<Option>
     {
         private IMoodSelectable selectable;
-        public MoodItem item;
+        public MoodItemInstance item;
         public MoodCommandOption instance;
         internal OptionColumn children;
         internal OptionColumn parent;
 
-        internal Option(OptionColumn parent, IMoodSelectable selectable, MoodItem owner)
+        internal Option(OptionColumn parent, IMoodSelectable selectable, MoodItemInstance owner)
         {
             this.parent = parent;
             this.selectable = selectable;
             item = owner;
         }
-        internal Option(OptionColumn parent, IMoodSelectable selectable, MoodItem owner, OptionColumn children)
+        internal Option(OptionColumn parent, IMoodSelectable selectable, MoodItemInstance owner, OptionColumn children)
         {
             this.parent = parent;
             this.selectable = selectable;
@@ -501,12 +501,12 @@ public class MoodCommandMenu : MonoBehaviour
     #endregion
 
     #region Make options
-    public void CreateAndBuildOptions(IEnumerable<Tuple<MoodSkill, MoodItem>> skills)
+    public void CreateAndBuildOptions(IEnumerable<(MoodSkill, MoodItemInstance)> skills)
     {
         Dictionary<MoodSkillCategory, OptionColumn> dic = new Dictionary<MoodSkillCategory, OptionColumn>(8);
         List<Option> categoryLessSkills = new List<Option>(8);
 
-        foreach (Tuple<MoodSkill, MoodItem> skill in skills)
+        foreach ((MoodSkill, MoodItemInstance) skill in skills)
         {
             MoodSkillCategory cat = skill.Item1.GetCategory();
             Option theOption = new Option(null, skill.Item1, skill.Item2);
@@ -571,7 +571,7 @@ public class MoodCommandMenu : MonoBehaviour
             opt.instance.transform.localRotation = Quaternion.identity;
 
 #if UNITY_EDITOR
-            opt.instance.name = "<Command>" + (string.IsNullOrEmpty(opt.item?.name) ? "" : opt.item.name + "_") + opt.GetSelectable()?.name;
+            opt.instance.name = "<Command>" + (string.IsNullOrEmpty(opt.item?.itemData.name) ? "" : opt.item.itemData.name + "_") + opt.GetSelectable()?.name;
 #endif
 
             opt.GetSelectable()?.DrawCommandOption(opt.instance);

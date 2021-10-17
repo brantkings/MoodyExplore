@@ -27,6 +27,7 @@ namespace LHH.Menu
         {
             GetInput(out int move, out bool confirmed);
 
+
             if (move != 0) _menu.MoveSelection(move);
             if (confirmed) _menu.SelectCurrent();
         }

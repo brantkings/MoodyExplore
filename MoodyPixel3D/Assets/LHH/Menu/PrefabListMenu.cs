@@ -45,21 +45,10 @@ namespace LHH.Menu
             return opt;
         }
 
-        public void CompletelyRepopulate()
-        {
-            _options.Clear();
-            int index = 0;
-            int length = GetOptionsPopulationLength();
-            foreach(OptionInfoType type in GetOptionsPopulation())
-            {
-                Option opt = CreateNewOption(type);
-                _options.Add(opt);
-                Reposition(opt, index++, length, true);
-            }
-        }
-
         public void RepopulateWithDifferences()
         {
+            if (CurrentOption != null) SetSelected(CurrentOption, false);
+
             int index = 0;
             int length = GetOptionsPopulationLength();
             foreach (OptionInfoType type in GetOptionsPopulation())
@@ -99,6 +88,9 @@ namespace LHH.Menu
                 //Always up index in the foreach no matter the outcome
                 index++;
             }
+
+            if (CurrentOption != null) SetSelected(CurrentOption, true);
+
         }
 
         public int _currentSelection;
@@ -107,6 +99,7 @@ namespace LHH.Menu
         {
             get
             {
+                if (_currentSelection >= OptionLength || _currentSelection < 0) return null;
                 return _options[_currentSelection];
             }
         }
@@ -133,7 +126,8 @@ namespace LHH.Menu
         public void MoveSelection(int movement)
         {
             SetSelectedIfNotNull(CurrentOption, false);
-            _currentSelection = Mathf.FloorToInt(Mathf.Repeat(_currentSelection + movement, OptionLength - 1));
+            Debug.LogFormat("{0} + {1} = {2} (L:{3})", _currentSelection, movement, Mathf.FloorToInt(Mathf.Repeat(_currentSelection + movement, OptionLength)), OptionLength);
+            _currentSelection = Mathf.FloorToInt(Mathf.Repeat(_currentSelection + movement, OptionLength));
             SetSelectedIfNotNull(CurrentOption, true);
         }
 
