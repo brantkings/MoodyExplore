@@ -152,7 +152,7 @@ namespace Code.MoodGame.Skills
             
             float executingTime = ExecuteAttack(pawn, skillDirection, buildData, out bool hit);
 
-            yield return new WaitForSecondsRealtime(executingTime);
+            yield return new WaitForSeconds(executingTime);
 
             PostHitDash(pawn, skillDirection, hit);
 
@@ -197,11 +197,12 @@ namespace Code.MoodGame.Skills
             pawn.ShowSwing(buildData, skillDirection);
             pawn.StopThreatening();
 
-            DispatchExecuteEvent(pawn, skillDirection);
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             AddStances(pawn);
             hit = DealDamage(pawn, skillDirection);
-            return ExecuteEffect(pawn, skillDirection);
+            ExecutionResult success = hit ? ExecutionResult.Success : ExecutionResult.Failure;
+            DispatchExecuteEvent(pawn, skillDirection, success);
+            return ExecuteAttackEffect(pawn, skillDirection, success).Item1;
         }
 
         protected void PostHitDash(MoodPawn pawn, in Vector3 skillDirection, bool hit)
@@ -227,9 +228,9 @@ namespace Code.MoodGame.Skills
             pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.None);
         }
 
-        protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+        protected (float, ExecutionResult) ExecuteAttackEffect(MoodPawn pawn, Vector3 skillDirection, ExecutionResult success)
         {
-            return base.ExecuteEffect(pawn, skillDirection);
+            return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (0f, success));
         }
 
         protected void Dash(MoodPawn pawn, Vector3 skillDirection, DashStruct dashData, float duration)
@@ -267,7 +268,7 @@ namespace Code.MoodGame.Skills
                 {
                     if(!hit)
                     {
-                        BattleLog.Log($"{pawn.GetName()} hits with '{GetName()}'!", BattleLog.LogType.Battle);
+                        BattleLog.Log($"{pawn.GetName()} hits with '{GetName(pawn)}'!", BattleLog.LogType.Battle);
                     }
 
                     hit = true;

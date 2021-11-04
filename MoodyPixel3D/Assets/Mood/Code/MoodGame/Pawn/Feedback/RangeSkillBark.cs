@@ -79,7 +79,7 @@ public class RangeSkillBark : RangeShow
     {
         //Debug.LogErrorFormat("Barking for '{0}' with '{1}'! [{2}]", pawn.name, skill.name, Time.frameCount);
         text.color = skill.GetColor().HasValue ? skill.GetColor().Value : defaultColor;
-        text.text = skill.GetName();
+        text.text = skill.GetName(pawn);
         anim.SetBool("Show", true);
         mainObject.gameObject.SetActive(true);
     }

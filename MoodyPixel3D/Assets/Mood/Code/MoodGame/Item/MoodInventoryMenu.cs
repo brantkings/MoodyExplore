@@ -7,7 +7,8 @@ using DG.Tweening;
 
 public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemInstance>
 {
-    public IMoodInventory _inventory;
+    private IMoodInventory _inventory;
+    private MoodPawn _pawn;
     public RectTransform contentWalker;
     public RectTransform possibleView;
     public Transform bagParent;
@@ -23,13 +24,19 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
 
     private void Awake()
     {
-        if(_inventory == null)
-            _inventory = GetComponentInParent<IMoodInventory>();
-        if(_inventory == null)
-        {
-            Debug.LogErrorFormat(this, "No inventory for {0}", this);
-        }
+        Get(ref _inventory);
+        Get(ref _pawn);
         _optionHeight = optionPrefab.GetComponent<RectTransform>().rect.height;
+    }
+
+    private void Get<T>(ref T comp)
+    {
+        if (comp == null)
+            comp = GetComponentInParent<T>();
+        if(comp == null)
+        {
+            Debug.LogErrorFormat(this, "No {0} for {1}'s parents.", typeof(T), name);
+        }
     }
 
     private void OnEnable()
@@ -46,6 +53,19 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
     {
         yield return null;
         _started = true;
+    }
+
+    override public void SetActive(bool active)
+    {
+        gameObject.SetActive(active);
+        SetSelected(CurrentOption, false, false);
+        _currentSelection = 0;
+        SetSelected(CurrentOption, true, true);
+    }
+
+    override public bool IsActive()
+    {
+        return gameObject.activeSelf;
     }
 
     private void OnInventoryChange()
@@ -67,8 +87,12 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
     {
         instance.name = "Option_" + origin.itemData.name;
         if (instance.itemName != null) instance.itemName.text = origin.itemData.GetName();
-        if (instance.itemSecondary != null) instance.itemSecondary.text = origin.itemData.WriteItemStatus(origin.properties);
-        //if(instance.itemIcon != null) instance.itemIcon.sprite = origin.itemData.algumacoisa;
+        if (instance.itemSecondary != null) instance.itemSecondary.text = origin.itemData.WriteItemStatus(origin.properties, _pawn.HasEquipped(origin));
+        if (instance.itemIcon != null)
+        {
+            instance.itemIcon.sprite = origin.itemData.GetIcon();
+            instance.itemIcon.enabled = instance.itemIcon.sprite != null;
+        }
     }
 
     public override void Reposition(Option option, int index, int length, bool justCreated)
@@ -81,13 +105,27 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
         option.currentOptionView.transform.SetSiblingIndex(index);
     }
 
-    protected override void Select(Option option)
+    protected override void Select(Option option, bool feedbacks = true)
     {
-        option.currentOptionView.anim.SetTrigger("Select");
+        if(feedbacks) option.currentOptionView.anim.SetTrigger("Select");
+        Debug.LogFormat(option.currentOptionView, "Just selected {0}", option);
+
+        //TODO what happens when selected
+        if(!_pawn.HasEquipped(option.currentInformation))
+        {
+            _pawn.Equip(option.currentInformation);
+        }
+        else
+        {
+            _pawn.Unequip(option.currentInformation);
+        }
+        
     }
 
-    protected override void SetSelected(Option option, bool selected)
+    protected override void SetSelected(Option option, bool selected, bool feedbacks = true)
     {
+        if (option == null) return;
+
         option.currentOptionView.anim.SetBool("Selected", selected);
 
         if(selected && _started)

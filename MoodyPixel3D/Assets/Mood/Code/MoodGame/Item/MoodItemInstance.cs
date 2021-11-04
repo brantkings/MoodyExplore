@@ -7,6 +7,13 @@ public class MoodItemInstance
 {
     public MoodItem itemData;
     public Properties properties;
+    public MoodPawn equippedTo;
+
+    public delegate void DelMoodItemInstanceEvent(MoodPawn pawn, MoodItemInstance instance);
+    public delegate void DelMoodItemInstanceEventPawnLess(MoodItemInstance instance);
+    public event DelMoodItemInstanceEvent OnEquipChange;
+    public event DelMoodItemInstanceEvent OnUse;
+    public event DelMoodItemInstanceEventPawnLess OnDestroy;
 
     [System.Serializable]
     public struct Properties
@@ -29,6 +36,17 @@ public class MoodItemInstance
         }
     }
 
+    public static void Destroy(ref MoodItemInstance other)
+    {
+        other.Destroy();
+        other = null;
+    }
+
+    private void Destroy()
+    {
+        OnDestroy?.Invoke(this);
+    }
+
     public bool IsSameType(MoodItemInstance other)
     {
         return this.itemData == other.itemData;
@@ -42,12 +60,43 @@ public class MoodItemInstance
     public void MergeWithAndDestroy(ref MoodItemInstance other)
     {
         this.properties.quantity += other.properties.quantity;
-        other = null;
+        Destroy(ref other);
     }
 
-    public void Use(MoodPawn pawn)
+
+    public bool IsFunctional()
     {
-        itemData.OnUse(pawn);
+        return itemData.IsFunctional(properties);
+    }
+
+    public void Use(MoodPawn pawn, MoodSkill skill, DelMoodItemInstanceEventPawnLess onDestroy = null)
+    {
+        itemData.OnUse(pawn, skill, ref properties);
+        OnUse?.Invoke(pawn, this);
+        if(!itemData.IsFunctional(properties))
+        {
+            onDestroy?.Invoke(this);
+            Destroy();
+        }
+    }
+
+    public void SetEquipped(MoodPawn pawn, bool set)
+    {
+        if(set)
+            equippedTo = pawn;
+        else if(equippedTo == pawn)
+        {
+            equippedTo = null;
+        }
+
+        //Todo every item can be equipped in the final game?
+        if(itemData is EquippableMoodItem)
+        {
+            (itemData as EquippableMoodItem).SetEquipped(pawn, set);
+        }
+
+        OnEquipChange?.Invoke(pawn, this);
+
     }
 
     public override string ToString()

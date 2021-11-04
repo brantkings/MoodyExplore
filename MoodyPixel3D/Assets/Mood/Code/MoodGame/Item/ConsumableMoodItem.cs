@@ -17,19 +17,16 @@ public class ConsumableMoodItem : MoodItem
     {
     }
 
-    public override void OnUse(MoodPawn pawn)
-    {
-        
-    }
 
     public override IEnumerable<MoodSkill> GetSkills()
     {
         return consumableSkills;
     }
 
-    public override string WriteItemStatus(in MoodItemInstance.Properties properties)
+    public override string WriteItemStatus(in MoodItemInstance.Properties properties, in bool equipped)
     {
         string str = "";
+        if (equipped) str += "<color=green>Eqpd</color>\n";
         if (properties.quantity != 0) AddStatusText(ref str, "x", properties.quantity);
         return str;
     }

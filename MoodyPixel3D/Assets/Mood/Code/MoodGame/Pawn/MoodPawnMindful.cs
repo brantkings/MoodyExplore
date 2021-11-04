@@ -45,7 +45,6 @@ public class MoodPawnMindful : MoodPawn, IMindPawn
 
     public override bool IsSensing(SensorTarget target)
     {
-        Debug.LogErrorFormat("Is {0} sensing {1}? {2} || {3}", this, target, sensorGroup.IsSensingTarget(target), base.IsSensing(target));
         return sensorGroup.IsSensingTarget(target) || base.IsSensing(target);
     }
 

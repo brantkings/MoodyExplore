@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using LHH.ScriptableObjects.Events;
+using LHH.Menu;
 
 public class MoodCommandMenu : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class MoodCommandMenu : MonoBehaviour
 
     public ScriptableEvent[] onChangeOption;
 
+    public MoodSkillCategory inventoryItemCategory;
+    public MoodInventoryMenu inventoryMenu;
+
     public float changeDuration = 0.25f;
     public float changeElasticOvershoot = 0.25f;
     public float changeElasticPeriod = 1f;
@@ -26,6 +30,66 @@ public class MoodCommandMenu : MonoBehaviour
 
     #region Option types
     
+    public class CustomCommand : IMoodSelectable, IMoodSelectableCustomPress
+    {
+        public delegate void ArbitraryFunction();
+        ArbitraryFunction onSelect;
+        ArbitraryFunction onDeselect;
+        public string name;
+        public string buttonText;
+        public Color? color;
+        MoodSkillCategory category;
+
+        string IMoodSelectable.name => name;
+
+        public CustomCommand(string name, string buttonText, MoodSkillCategory category, ArbitraryFunction onSelect, ArbitraryFunction onDeselect, Color? color = null)
+        {
+            this.onSelect = onSelect;
+            this.onDeselect = onDeselect;
+            this.name = name;
+            this.buttonText = buttonText;
+            this.color = color;
+            this.category = category;
+        }
+
+
+        public bool CanBePressed(MoodPawn pawn, Vector3 where)
+        {
+            return true;
+        }
+
+        public bool CanBeShown(MoodPawn pawn)
+        {
+            return !pawn.Inventory.Equals(null);
+        }
+
+        public void DrawCommandOption(MoodPawn pawn, MoodCommandOption option)
+        {
+            option.SetText(GetName(pawn), "Open up your inventory", 0f);
+            option.SetFocusCost(0);
+            option.SetStancePreview(null);
+        }
+
+        public Color? GetColor()
+        {
+            return category.GetColor();
+        }
+
+        public string GetName(MoodPawn pawn)
+        {
+            return name;
+        }
+
+        public void Press()
+        {
+            onSelect?.Invoke();
+        }
+
+        public void Unpress()
+        {
+            onDeselect?.Invoke();
+        }
+    }
 
     public class Option : IEnumerable<Option>
     {
@@ -150,11 +214,6 @@ public class MoodCommandMenu : MonoBehaviour
 
         public bool IsValidSelection()
         {
-            return current != null && index >= 0 && index < current.options.Count;
-        }
-
-        public bool IsExistingOption()
-        {
             return current != null && index == Mathf.Clamp(index, 0, current.options.Count);
         }
 
@@ -205,7 +264,7 @@ public class MoodCommandMenu : MonoBehaviour
         {
             DeselectCurrent();
             MoveIndex(how);
-            if(IsExistingOption() && !IsCurrentValid())
+            if(IsValidSelection() && !IsCurrentValid())
             {
                 if(ThereIsValidOption())
                 {
@@ -296,7 +355,7 @@ public class MoodCommandMenu : MonoBehaviour
                 ExitCurrentOption();
                 changed = true;
             }
-            while (IsExistingOption() && !IsCurrentValid())
+            while (IsValidSelection() && !IsCurrentValid())
             {
                 DeselectCurrent();
                 MoveIndex(-1);
@@ -338,74 +397,132 @@ public class MoodCommandMenu : MonoBehaviour
 
     private OptionColumn main;
     private Selection current;
+    private MoodPawn commandPawn;
+    private IMoodSelectableCustomPress customPress;
 
     private void Awake()
     {
         current.Invalidate();
         current.Set(main, 0);
+
+        commandPawn = GetComponentInParent<MoodPawn>();
+        if (commandPawn == null) commandPawn = transform.root.GetComponentInChildren<MoodPawn>();
     }
 
     private void OnEnable()
     {
-        /*if(!current.IsValidSelection())
+        foreach(var menu in GetOtherMenus())
         {
-            if (current.ThereIsValidOption()) current.Validate();
-            else current.Set(main, 0);
+            if (!menu.Equals(null)) menu.SetActive(false);
         }
-        else
-        {
-        }*/
+
+        
         current.Set(main, 0);
         SetChildrenColumnsActivated(current);
-        StartCoroutine(JustSelectFeedbackRoutine(0f));
+        CheckCurrentCustomPress(current);
+        StartCoroutine(JustSelectFeedbackRoutine(commandPawn, 0f));
     }
 
     #region Interface to outside
 
-    public void Select(bool feedbacks)
+    public void Select(MoodPawn pawn, bool feedbacks)
     {
+        var sMenu = GetFirstValidSecondaryMenu();
+        if (sMenu != null)
+        {
+            sMenu.SelectCurrent(feedbacks);
+            return;
+        }
+
+        if(customPress != null && !customPress.Equals(null))
+        {
+            customPress.Press();
+        }
+
         if (current.WillEnter())
         {
             SetChildrenColumnsActivated(current);
             FeedbackCurrentOption(feedbacks);
         }
         bool moved = current.Enter();
-        FeedbackTreeMovementTry(moved, feedbacks, JustSelectFeedbackRoutine);
+        FeedbackTreeMovementTry(pawn, moved, feedbacks, JustSelectFeedbackRoutine);
     }
 
 
-    public void Deselect(bool feedbacks)
+    public void Deselect(MoodPawn pawn, bool feedbacks)
     {
+        var sMenu = GetFirstValidSecondaryMenu();
+        if (sMenu != null && sMenu is IPrefabListMenuDeselectCommand)
+        {
+            (sMenu as IPrefabListMenuDeselectCommand).Deselect(feedbacks);
+            return;
+        }
+
+        if (customPress != null && !customPress.Equals(null))
+        {
+            customPress.Unpress();
+        }
+
+
         bool moved = current.Exit();
-        FeedbackTreeMovementTry(moved, feedbacks, SelectAndActivateTreeFeedbackRoutine);
+        FeedbackTreeMovementTry(pawn, moved, feedbacks, SelectAndActivateTreeFeedbackRoutine);
     }
 
-    public void DeselectAll(bool feedbacks)
+    public void DeselectAll(MoodPawn pawn, bool feedbacks)
     {
         bool did = false;
         while (current.Exit()) did = true;
 
-        if (did) StartCoroutine(SelectAndActivateTreeFeedbackRoutine(changeDuration));
+        if (did) StartCoroutine(SelectAndActivateTreeFeedbackRoutine(pawn, changeDuration));
     }
 
 
     public void ChangeSelection(int change, bool feedbacks)
     {
+        var sMenu = GetFirstValidSecondaryMenu();
+        if (sMenu != null)
+        {
+            sMenu.MoveSelection(change, feedbacks);
+            return;
+        }
+
         current.Move(change);
         FeedbackChangeSound(feedbacks);
+        CheckCurrentCustomPress(current);
     }
+
 
     public Option GetCurrentOption()
     {
         return current.GetCurrent();
     }
 
-    private delegate IEnumerator DelMovementRoutine(float duration);
-    private void FeedbackTreeMovementTry(bool moved, bool feedbacks, DelMovementRoutine movementRoutine)
+    private void CheckCurrentCustomPress(Selection s)
+    {
+        //Current
+        if (customPress != null && !customPress.Equals(null))
+        {
+            customPress.Unpress();
+        }
+
+        //Get next
+        IMoodSelectable sel = s.GetCurrent()?.GetSelectable();
+        if(sel != null && sel is IMoodSelectableCustomPress)
+        {
+            customPress = sel as IMoodSelectableCustomPress;
+        }
+        else
+        {
+            customPress = null;
+        }
+    }
+
+    private delegate IEnumerator DelMovementRoutine(MoodPawn pawn, float duration);
+    private void FeedbackTreeMovementTry(MoodPawn pawn, bool moved, bool feedbacks, DelMovementRoutine movementRoutine)
     {
         if (moved)
         {
-            StartCoroutine(movementRoutine(changeDuration));
+            StartCoroutine(movementRoutine(pawn, changeDuration));
         }
         else
         {
@@ -436,30 +553,30 @@ public class MoodCommandMenu : MonoBehaviour
         Unchanged,
         ParameterNotValid
     }
-    public SelectCategoryResult SelectCategory(MoodSkillCategory category, bool feedbacks)
+    public SelectCategoryResult SelectCategory(MoodPawn pawn, MoodSkillCategory category, bool feedbacks)
     {
-        Option option = main.options.FirstOrDefault((x) => (MoodSkillCategory)x.GetSelectable() == category);
+        Option option = main.options.FirstOrDefault((x) => (x.GetSelectable() as MoodSkillCategory) == category);
         if(option != null)
         {
             if (current.IsOrIsChildOf(category)) return SelectCategoryResult.Unchanged;
             bool changed = current.Set(option.parent, option.parent.IndexOf(option));
-            FeedbackTreeMovementTry(changed, feedbacks, SelectAndActivateTreeFeedbackRoutine);
+            FeedbackTreeMovementTry(pawn, changed, feedbacks, SelectAndActivateTreeFeedbackRoutine);
             return SelectCategoryResult.Changed;
         }
         else return SelectCategoryResult.ParameterNotValid;
     }
 
     #region Tween
-    private IEnumerator JustSelectFeedbackRoutine(float duration)
+    private IEnumerator JustSelectFeedbackRoutine(MoodPawn pawn, float duration)
     {
         yield return null;
-        yield return GotoColumn(current.GetCurrentColumn(), duration);
+        yield return GotoColumn(pawn, current.GetCurrentColumn(), duration);
     }
 
-    private IEnumerator SelectAndActivateTreeFeedbackRoutine(float duration)
+    private IEnumerator SelectAndActivateTreeFeedbackRoutine(MoodPawn pawn, float duration)
     {
         yield return null;
-        yield return GotoColumn(current.GetCurrentColumn(), duration).OnKill(()=>SetChildrenColumnsActivated(current));
+        yield return GotoColumn(pawn, current.GetCurrentColumn(), duration).OnKill(()=>SetChildrenColumnsActivated(current));
     }
 
     private Tween _columnTween;
@@ -471,7 +588,7 @@ public class MoodCommandMenu : MonoBehaviour
         return _columnTween;
     }
 
-    private Tween GotoColumn(OptionColumn column, float duration)
+    private Tween GotoColumn(MoodPawn pawn, OptionColumn column, float duration)
     {
         _columnTween.CompleteIfActive(true);
         _columnTween = columnParent.transform.DOLocalMoveX(-column.instance.localPosition.x, duration).SetUpdate(true).SetEase(Ease.OutElastic, changeElasticOvershoot, changeElasticPeriod);
@@ -479,7 +596,7 @@ public class MoodCommandMenu : MonoBehaviour
         {
             if(column.parentOption != null)
             {
-                titleText.text = titlePrefix + column.parentOption.GetSelectable().GetName();
+                titleText.text = titlePrefix + column.parentOption.GetSelectable().GetName(pawn);
                 Color? parentColor = column.parentOption.GetSelectable().GetColor();
                 if (parentColor.HasValue)
                     titleText.color = parentColor.Value;
@@ -501,7 +618,7 @@ public class MoodCommandMenu : MonoBehaviour
     #endregion
 
     #region Make options
-    public void CreateAndBuildOptions(IEnumerable<(MoodSkill, MoodItemInstance)> skills)
+    public void CreateAndBuildOptions(MoodPawn pawn, IEnumerable<(MoodSkill, MoodItemInstance)> skills)
     {
         Dictionary<MoodSkillCategory, OptionColumn> dic = new Dictionary<MoodSkillCategory, OptionColumn>(8);
         List<Option> categoryLessSkills = new List<Option>(8);
@@ -540,18 +657,26 @@ public class MoodCommandMenu : MonoBehaviour
             main.options.Add(s);
         }
 
-        MakeInstances(main);
+        //Custom options
+        CustomCommand custom1 = new CustomCommand("Inventory", "Inventory", inventoryItemCategory, () => {
+            if(!inventoryMenu.IsActive()) 
+                inventoryMenu.RepopulateWithDifferences();
+            inventoryMenu.SetActive(true);
+        }, () => inventoryMenu.SetActive(false), Color.blue);
+        main.options.Add(new Option(main, custom1, null));
 
-        if (!current.IsExistingOption()) current.Set(main, 0);
+        MakeInstances(pawn, main);
+
+        if (!current.IsValidSelection()) current.Set(main, 0);
         if(current.Validate())
         {
-            StartCoroutine(SelectAndActivateTreeFeedbackRoutine(changeDuration));
+            StartCoroutine(SelectAndActivateTreeFeedbackRoutine(pawn, changeDuration));
         }
         
         current.SelectCurrent();
     }
 
-    private void MakeInstances(OptionColumn column)
+    private void MakeInstances(MoodPawn pawn, OptionColumn column)
     {
         if (column.options.Count <= 0) 
             return;
@@ -574,11 +699,12 @@ public class MoodCommandMenu : MonoBehaviour
             opt.instance.name = "<Command>" + (string.IsNullOrEmpty(opt.item?.itemData.name) ? "" : opt.item.itemData.name + "_") + opt.GetSelectable()?.name;
 #endif
 
-            opt.GetSelectable()?.DrawCommandOption(opt.instance);
+            opt.GetSelectable()?.DrawCommandOption(pawn, opt.instance);
             if (opt.children != null)
-                MakeInstances(opt.children);
+                MakeInstances(pawn, opt.children);
         }
     }
+
 
     private void SetChildrenColumnsActivated(Selection select)
     {
@@ -662,6 +788,19 @@ public class MoodCommandMenu : MonoBehaviour
                     yield return child;
             }
         }
+    }
+
+    #endregion
+
+    #region SecondaryMenus
+    public IEnumerable<LHH.Menu.IPrefabListMenu> GetOtherMenus()
+    {
+        yield return inventoryMenu;
+    }
+
+    public LHH.Menu.IPrefabListMenu GetFirstValidSecondaryMenu()
+    {
+        return GetOtherMenus().FirstOrDefault((x) => x != null && !x.Equals(null) && x.IsActive());
     }
 
     #endregion

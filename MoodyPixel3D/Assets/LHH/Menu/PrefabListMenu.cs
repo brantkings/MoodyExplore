@@ -7,9 +7,18 @@ namespace LHH.Menu
 {
     public interface IPrefabListMenu
     {
-        void MoveSelection(int movement);
+        void MoveSelection(int movement, bool feedbacks = true);
 
-        void SelectCurrent();
+        void SelectCurrent(bool feedbacks = true);
+
+        public bool IsActive();
+
+        public void SetActive(bool set);
+    }
+
+    public interface IPrefabListMenuDeselectCommand
+    {
+        void Deselect(bool feedbacks = true);
     }
 
     public interface IPrefabListMenuRepaintable<StateType> : IPrefabListMenu
@@ -32,6 +41,11 @@ namespace LHH.Menu
             {
                 currentInformation = info;
                 currentOptionView = view;
+            }
+
+            public override string ToString()
+            {
+                return $"{currentInformation} in {currentOptionView}";
             }
         }
 
@@ -68,6 +82,8 @@ namespace LHH.Menu
                         Reposition(_options[result], result, length, false);
                         Reposition(_options[index], index, length, false);
                     }
+                    //Check changes
+                    PopulateInstance(ref _options[index].currentOptionView, _options[index].currentInformation);
                 }
                 else //OK will need to create
                 {
@@ -93,7 +109,7 @@ namespace LHH.Menu
 
         }
 
-        public int _currentSelection;
+        protected int _currentSelection;
 
         public Option CurrentOption
         {
@@ -123,7 +139,7 @@ namespace LHH.Menu
 
         public abstract void Reposition(Option option, int index, int length, bool justCreated);
 
-        public void MoveSelection(int movement)
+        public void MoveSelection(int movement, bool feedbacks)
         {
             SetSelectedIfNotNull(CurrentOption, false);
             Debug.LogFormat("{0} + {1} = {2} (L:{3})", _currentSelection, movement, Mathf.FloorToInt(Mathf.Repeat(_currentSelection + movement, OptionLength)), OptionLength);
@@ -131,10 +147,10 @@ namespace LHH.Menu
             SetSelectedIfNotNull(CurrentOption, true);
         }
 
-        public void SelectCurrent()
+        public void SelectCurrent(bool feedbacks = true)
         {
             if(CurrentOption != null) 
-                Select(CurrentOption);
+                Select(CurrentOption, feedbacks);
         }
 
         private void SetSelectedIfNotNull(Option option, bool selected)
@@ -143,8 +159,12 @@ namespace LHH.Menu
         }
 
 
-        protected abstract void SetSelected(Option option, bool selected);
-        protected abstract void Select(Option option);
+        protected abstract void SetSelected(Option option, bool selected, bool feedbacks = true);
+        protected abstract void Select(Option option, bool feedbacks = true);
+
+        public abstract bool IsActive();
+
+        public abstract void SetActive(bool set);
 
 
     }

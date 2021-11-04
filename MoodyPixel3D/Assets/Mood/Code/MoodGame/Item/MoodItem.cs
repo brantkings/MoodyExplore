@@ -11,11 +11,18 @@ public abstract class MoodItem : ScriptableObject
     private string _itemDescription;
 
     [SerializeField]
-    private ItemInteractable pickupPrefab;
+    private Sprite _itemIcon;
+
+    [SerializeField]
+    private ItemProjectile _projectilePrefab;
+    [SerializeField]
+    private ItemInteractable _pickupPrefab;
     public MoodItemCategory category;
 
     [SerializeField]
     private MoodItemInstance.Properties instancePrototype = MoodItemInstance.Properties.Default;
+
+
 
     public string GetName()
     {
@@ -26,10 +33,20 @@ public abstract class MoodItem : ScriptableObject
     {
         return _itemDescription;
     }
+    
+    public Sprite GetIcon()
+    {
+        return _itemIcon;
+    }
 
     public ItemInteractable GetPickupPrefab()
     {
-        return pickupPrefab;
+        return _pickupPrefab;
+    }
+
+    public ItemProjectile GetProjectilePrefab()
+    {
+        return _projectilePrefab;
     }
 
     public virtual MoodItemInstance MakeNewInstance()
@@ -43,7 +60,7 @@ public abstract class MoodItem : ScriptableObject
 
     public abstract IEnumerable<MoodSkill> GetSkills();
 
-    public abstract string WriteItemStatus(in MoodItemInstance.Properties properties);
+    public abstract string WriteItemStatus(in MoodItemInstance.Properties properties, in bool equipped);
 
     /// <summary>
     /// For use on WriteItemStatus
@@ -61,6 +78,14 @@ public abstract class MoodItem : ScriptableObject
 
     public abstract void OnAdquire(MoodPawn pawn);
 
-    public abstract void OnUse(MoodPawn pawn);
+    public virtual bool IsFunctional(in MoodItemInstance.Properties properties)
+    {
+        return properties.quantity > 0;
+    }
+
+    public virtual void OnUse(MoodPawn pawn, MoodSkill skill, ref MoodItemInstance.Properties properties)
+    {
+        properties.quantity--;
+    }
 
 }

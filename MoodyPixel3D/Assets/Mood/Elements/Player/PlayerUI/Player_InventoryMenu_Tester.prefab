@@ -129,6 +129,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7999825383359705605}
     m_Modifications:
+    - target: {fileID: 6196029619098042985, guid: 713952cc6b3863e40b970d83537ca27a, type: 3}
+      propertyPath: tweenDuration
+      value: 0.13
+      objectReference: {fileID: 0}
     - target: {fileID: 6196029619098042990, guid: 713952cc6b3863e40b970d83537ca27a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

@@ -7,15 +7,22 @@ public interface IMoodSelectable
 {
     string name { get; }
 
-    string GetName();
+    string GetName(MoodPawn pawn);
 
     Color? GetColor();
 
-    void DrawCommandOption(MoodCommandOption option);
+    void DrawCommandOption(MoodPawn pawn, MoodCommandOption option);
 
     bool CanBeShown(MoodPawn pawn);
 
     bool CanBePressed(MoodPawn pawn, Vector3 where);
+}
+
+public interface IMoodSelectableCustomPress : IMoodSelectable
+{
+    void Press();
+
+    void Unpress();
 }
 
 public interface IMoodSkill
@@ -50,9 +57,21 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     protected static int PRIORITY_CANCELLABLE = 1;
     protected static int PRIORITY_NOT_CANCELLABLE = 2;
 
-    public delegate void MoodSkillEvent(MoodPawn pawn, Vector3 direction);
 
-    public event MoodSkillEvent OnExecute;
+    public enum ExecutionResult
+    {
+        Non_Applicable,
+        Success,
+        Failure
+    }
+
+
+    public delegate void MoodSkillEvent(MoodPawn pawn, Vector3 direction);
+    public delegate void MoodSkillExecutionEvent(MoodPawn pawn, Vector3 direction, ExecutionResult success);
+
+
+
+    public event MoodSkillExecutionEvent OnExecute;
     public event MoodSkillEvent OnPreview;
 
     [System.Serializable]
@@ -185,18 +204,18 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return IsFocusAvailable(pawn);
     }
 
-    public Color? GetColor()
+    public virtual Color? GetColor()
     {
         if (_category != null) return _category.GetColor();
         return _skillCommandColor.Get();
     }
 
-    public Texture2D GetIcon()
+    public virtual Texture2D GetIcon()
     {
         return _icon;
     }
 
-    public string GetName()
+    public virtual string GetName(MoodPawn pawn)
     {
         return _name;
     }
@@ -216,14 +235,14 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return pawn.HasAllStances(true, needs) && !pawn.HasAnyStances(false, restrictions);
     }
 
-    public virtual void WriteOptionText(MoodCommandOption option)
+    public virtual void WriteOptionText(MoodPawn pawn, MoodCommandOption option)
     {
-        option.SetText(GetName(), GetDescription(), 0f);
+        option.SetText(GetName(pawn), GetDescription(), 0f);
     }
 
-    public virtual void DrawCommandOption(MoodCommandOption option)
+    public virtual void DrawCommandOption(MoodPawn pawn, MoodCommandOption option)
     {
-        WriteOptionText(option);
+        WriteOptionText(pawn, option);
 
         option.SetFocusCost(GetFocusCost());
 
@@ -318,9 +337,9 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// <returns></returns>
     public virtual IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
-        float duration = ExecuteEffect(pawn, skillDirection);
+        (float duration, ExecutionResult executed) = ExecuteEffect(pawn, skillDirection);
         pawn.SetPlugoutPriority(startupPriority); //By default, it is the startup priority.
-        DispatchExecuteEvent(pawn, skillDirection);
+        DispatchExecuteEvent(pawn, skillDirection, executed);
         if (duration > 0f)
         {
             yield return new WaitForSeconds(duration);
@@ -363,10 +382,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         }
     }
 
-    protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection)
+    protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection, ExecutionResult success)
     {
-        OnExecute?.Invoke(pawn, skillDirection);
-        pawn.UsedSkill(this, skillDirection);
+        OnExecute?.Invoke(pawn, skillDirection, success);
+        pawn.UsedSkill(this, skillDirection, success);
     }
 
     public virtual IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
@@ -416,8 +435,31 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// </summary>
     /// <param name="pawn">The pawn that is executing the skill.</param>
     /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
-    /// <returns>The amount of time this should wait in real time.</returns>
-    protected abstract float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection);
+    /// <returns>The amount of time this should wait in real time and if the execution was considered a 'success' or not.</returns>
+
+    protected abstract (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection);
+
+    protected static ExecutionResult MergeExecutionResult(ExecutionResult a, ExecutionResult b, bool priorityIsSuccess = true)
+    {
+        if (a == ExecutionResult.Non_Applicable) return b;
+        else if (b == ExecutionResult.Non_Applicable) return a;
+
+        if(priorityIsSuccess)
+        {
+            if (a == ExecutionResult.Success || b == ExecutionResult.Success) return ExecutionResult.Success;
+            else return ExecutionResult.Failure;
+        }
+        else
+        {
+            if (a == ExecutionResult.Failure || b == ExecutionResult.Failure) return ExecutionResult.Failure;
+            else return ExecutionResult.Success;
+        }
+    }
+
+    protected static (float, ExecutionResult) MergeExecutionResult((float, ExecutionResult) a, (float, ExecutionResult) b)
+    {
+        return (a.Item1 + b.Item1, MergeExecutionResult(a.Item2, b.Item2, priorityIsSuccess: true));
+    }
 
     public virtual void SetShowDirection(MoodPawn pawn, Vector3 direction)
     {

@@ -20,7 +20,7 @@ public class MoodSkillCategory : ScriptableObject, IMoodSelectable
     [SerializeField]
     private LHH.Unity.MorphableProperty<Color> _skillCommandColor;
 
-    public string GetName()
+    public string GetName(MoodPawn pawn)
     {
         return _name;
     }
@@ -45,9 +45,9 @@ public class MoodSkillCategory : ScriptableObject, IMoodSelectable
         return _priority;
     }
 
-    public void DrawCommandOption(MoodCommandOption option)
+    public void DrawCommandOption(MoodPawn pawn, MoodCommandOption option)
     {
-        option.SetText(GetName(), GetDescription(), 0f);
+        option.SetText(GetName(pawn), GetDescription(), 0f);
         option.SetStancePreview(null);
         option.SetFocusCost(0);
     }

@@ -48,11 +48,11 @@ public class DelaySkill : MoodSkill
         base.Interrupt(pawn);
     }
 
-    protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
         foreach (var stance in toAdd) pawn.AddStance(stance);
         foreach (var flag in flags) pawn.AddFlag(flag);
-        return delay;
+        return (delay, ExecutionResult.Success);
     }
 
 

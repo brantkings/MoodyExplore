@@ -8,9 +8,9 @@ public abstract class StaminaCostMoodSkill : MoodSkill
     [SerializeField]
     private float _cost;
 
-    public override void WriteOptionText(MoodCommandOption option)
+    public override void WriteOptionText(MoodPawn pawn, MoodCommandOption option)
     {
-        option.SetText(GetName(), GetDescription(), GetStaminaCost());
+        option.SetText(GetName(pawn), GetDescription(), GetStaminaCost());
     }
 
     public virtual float GetStaminaCost()
@@ -28,9 +28,9 @@ public abstract class StaminaCostMoodSkill : MoodSkill
         return HasPawnEnoughStamina(pawn) && base.CanExecute(pawn, where);
     }
 
-    protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
         pawn.DepleteStamina(_cost, MoodPawn.StaminaChangeOrigin.Action);
-        return 0f;
+        return (0f, ExecutionResult.Non_Applicable);
     }
 }

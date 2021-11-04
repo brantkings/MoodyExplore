@@ -12,11 +12,27 @@ public class ItemInteractable : MoodInteractable
         AllQuantityAndNeverDepletes
     }
 
-    public MoodItem item;
+    public bool createDefaultOnAwake;
+    public MoodItemInstance instance;
 
     public int consumableQuantity = 1;
     public Consumes consumableStyle = Consumes.AllAtOnce;
     public GameObject objectToConsume;
+
+    private void Awake()
+    {
+        if (instance.itemData == null)
+        {
+            Debug.LogErrorFormat(this, "Error! No item data on {0}!", this);
+        }
+        if (createDefaultOnAwake) instance = instance.itemData?.MakeNewInstance();
+    }
+
+    public void CreateFrom(MoodItemInstance instance)
+    {
+        this.instance = instance;
+        createDefaultOnAwake = false;
+    }
 
     private GameObject GetConsumed()
     {
@@ -25,7 +41,7 @@ public class ItemInteractable : MoodInteractable
 
     public override void Interact(MoodInteractor interactor)
     {
-        MoodInventoryOld inventory = interactor.GetComponentInParent<MoodInventoryOld>();
+        IMoodInventory inventory = interactor.GetComponentInParent<IMoodInventory>();
         switch (consumableStyle)
         {
             case Consumes.OncePerInteract:
@@ -57,9 +73,9 @@ public class ItemInteractable : MoodInteractable
         }
     }
 
-    private void AddItem(MoodInventoryOld inventory)
+    private void AddItem(IMoodInventory inventory)
     {
-        inventory.AddUntypedItem(item);
+        inventory.AddItem(instance);
     }
 
     public override bool IsBeingInteracted()

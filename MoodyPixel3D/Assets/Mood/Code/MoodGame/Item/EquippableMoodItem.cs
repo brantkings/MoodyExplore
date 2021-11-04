@@ -28,7 +28,6 @@ public class EquippableMoodItem : MoodItem
         }
         else
         {
-            Instantiate(GetPickupPrefab(), pawn.ObjectTransform.position + Vector3.up * 5f, pawn.ObjectTransform.rotation, null);
             foreach (AttachItself a in pawn.animator.GetComponentsInChildren<AttachItself>())
             {
                 if (_instances.Contains(a))
@@ -44,9 +43,9 @@ public class EquippableMoodItem : MoodItem
     {
     }
 
-    public override void OnUse(MoodPawn pawn)
+    public override void OnUse(MoodPawn pawn, MoodSkill skill, ref MoodItemInstance.Properties properties)
     {
-       
+        base.OnUse(pawn, skill, ref properties);
     }
 
     public override IEnumerable<MoodSkill> GetSkills()
@@ -54,9 +53,10 @@ public class EquippableMoodItem : MoodItem
         return skillsToGrant;
     }
 
-    public override string WriteItemStatus(in MoodItemInstance.Properties properties)
+    public override string WriteItemStatus(in MoodItemInstance.Properties properties, in bool equipped)
     {
         string str = "";
+        if (equipped) str += "<color=green>Eqpd</color>";
         if (properties.quantity != 0) AddStatusText(ref str, "Dur:", properties.quantity);
         return str;
     }

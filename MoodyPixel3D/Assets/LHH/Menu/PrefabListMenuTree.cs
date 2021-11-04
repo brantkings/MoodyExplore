@@ -98,7 +98,7 @@ namespace LHH.Menu
             current.SelectCurrent();*/
         }
 
-        protected override void Select(Option option)
+        protected override void Select(Option option, bool feedbacks = true)
         {
             //TODO
         }

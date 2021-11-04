@@ -151,6 +151,8 @@ MonoBehaviour:
   columnParent: {fileID: 4382147014683152606}
   onChangeOption:
   - {fileID: 11400000, guid: c3fbc66af79785c4a871e7c14b60dbad, type: 2}
+  inventoryItemCategory: {fileID: 11400000, guid: be719bf8ca157714b9735198fd5a9b65, type: 2}
+  inventoryMenu: {fileID: 0}
   changeDuration: 0.35
   changeElasticOvershoot: 0.5
   changeElasticPeriod: 0.5

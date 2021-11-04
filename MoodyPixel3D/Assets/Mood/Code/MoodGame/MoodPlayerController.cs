@@ -481,21 +481,17 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void StartSkillRoutine(MoodSkill skill, MoodItemInstance item = null, Vector3 direction = default)
     {
-        if (item != null)
-        {
-            Pawn.UseItem(item, skill);
-        }
         if (skill != null)
         {
-            StartCoroutine(ExecuteSkill(skill, direction));
+            StartCoroutine(ExecuteSkill(skill, direction, item));
         }
     }
 
-    private IEnumerator ExecuteSkill(MoodSkill skill, Vector3 direction)
+    private IEnumerator ExecuteSkill(MoodSkill skill, Vector3 direction, MoodItemInstance item)
     {
         Debug.LogFormat("Starting command {0} {1}", skill.name, Time.time);
         OnStartCommand?.Invoke();
-        yield return _pawn.ExecuteSkill(skill, direction);
+        yield return _pawn.ExecuteSkill(skill, direction, item);
         OnStopCommand?.Invoke();
         Debug.LogFormat("Ending command {0} {1}", skill.name, Time.time);
     }

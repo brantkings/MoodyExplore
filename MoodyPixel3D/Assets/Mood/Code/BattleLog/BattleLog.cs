@@ -64,8 +64,26 @@ public class BattleLog : Singleton<BattleLog>
         }
     }
 
+    private string GetLogColor(LogType type)
+    {
+        switch (type)
+        {
+            case LogType.Battle:
+                return "#B98888";
+            case LogType.Item:
+                return "#66B966";
+            case LogType.ThoughtSystem:
+                return "#7777C9";
+            case LogType.Important:
+                return "#AAAAAA";
+            default:
+                return "#767676";
+        }
+    }
+
     private void Log(GameObject prefab, string log, LogType type)
     {
+        Debug.Log($"<color={GetLogColor(type)}>[{type}] {log}</color>", this);
         if(CanLog(log, type))
         {
             LogInstance newInst = GetNewInstance(prefab);

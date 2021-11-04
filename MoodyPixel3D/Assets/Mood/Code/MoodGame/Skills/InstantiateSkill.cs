@@ -1,35 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
-using LHH.Utils;
 using UnityEngine;
 using LHH.ScriptableObjects.Events;
 
-[CreateAssetMenu(fileName = "Skill_Instantiate_", menuName = "Mood/Skill/Instantiate", order = 0)]
-public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver
+public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver
 {
-    [Header("Instantiate")] 
-    public GameObject prefab;
     public bool setDirection = true;
 
     public float range = 50f;
 
     public bool resetDamageTeamAsPawnTeam;
-    
 
-    [Space] 
+
+    [Space]
     public TimeBeatManager.BeatQuantity preTime = 4;
     public TimeBeatManager.BeatQuantity postTime = 8;
     private RangeTarget.Properties _targetProp;
     public int priorityPreInstantiate = PRIORITY_NOT_CANCELLABLE;
     public int priorityAfterInstantiate = PRIORITY_CANCELLABLE;
 
-    
+
     [SerializeField]
     private MoodSwing threat;
     [SerializeField]
     private Vector3 threatOffset;
 
-    
+
     public ScriptableEvent[] onStartInstantiate;
     public ScriptableEvent[] onExecuteInstantiate;
     public ScriptableEvent[] onEndInstantiate;
@@ -72,19 +68,19 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
 
     public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
-        if(setDirection) pawn.SetHorizontalDirection(skillDirection);
+        if (setDirection) pawn.SetHorizontalDirection(skillDirection);
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PreAttack);
         pawn.SetPlugoutPriority(priorityPreInstantiate);
         onStartInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
-        if(threat != null) pawn.StartThreatening(skillDirection, threat.GetBuildData(pawn, threatOffset));
+        if (threat != null) pawn.StartThreatening(skillDirection, threat.GetBuildData(pawn, threatOffset));
         yield return new WaitForSeconds(preTime);
 
         ExecuteEffect(pawn, skillDirection);
-        DispatchExecuteEvent(pawn, skillDirection);
+        DispatchExecuteEvent(pawn, skillDirection, ExecutionResult.Success);
 
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PostAttack);
         pawn.SetPlugoutPriority(priorityAfterInstantiate);
-        if(threat != null) pawn.StopThreatening();
+        if (threat != null) pawn.StopThreatening();
         onExecuteInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
         yield return new WaitForSeconds(postTime);
         onEndInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
@@ -97,18 +93,26 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
         base.Interrupt(pawn);
     }
 
-    protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
-        GameObject inst = Instantiate(prefab, pawn.GetInstantiatePlace(), pawn.GetInstantiateRotation());
-        inst?.GetComponentInChildren<IMoodPawnSetter>()?.SetMoodPawnOwner(pawn);
-        if (resetDamageTeamAsPawnTeam)
+        GameObject inst = GetProjectile(pawn, skillDirection, pawn.GetInstantiatePlace(), pawn.GetInstantiateRotation());
+        if(inst != null)
         {
-            foreach (Damage damage in inst?.GetComponentsInChildren<Damage>())
+            inst.GetComponentInChildren<IMoodPawnSetter>()?.SetMoodPawnOwner(pawn);
+            if (resetDamageTeamAsPawnTeam)
             {
-                damage.SetSourceDamageTeam(pawn.DamageTeam);
+                foreach (Damage damage in inst.GetComponentsInChildren<Damage>())
+                {
+                    damage.SetSourceDamageTeam(pawn.DamageTeam);
+                }
             }
+
+            return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (0f, ExecutionResult.Success));
         }
-        return base.ExecuteEffect(pawn, skillDirection);
+        else
+        {
+            return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (0f, ExecutionResult.Failure));
+        }
     }
 
     RangeSphere.Properties RangeShow<RangeSphere.Properties>.IRangeShowPropertyGiver.GetRangeProperty()
@@ -129,4 +133,14 @@ public class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowProp
     {
         return WillHaveTargetResult.NonApplicable; //DIfficult to gauge if projectile will find opponent
     }
+
+    /// <summary>
+    /// Get the projectile for the skill. If it returns null, its ok, the pawn will not count items to be destroyed, etc.
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="skillDirection"></param>
+    /// <param name="pos"></param>
+    /// <param name="rot"></param>
+    /// <returns></returns>
+    protected abstract GameObject GetProjectile(MoodPawn from, Vector3 skillDirection, Vector3 pos, Quaternion rot);
 }

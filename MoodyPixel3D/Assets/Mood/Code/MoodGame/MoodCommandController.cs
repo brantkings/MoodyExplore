@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using System.Linq;
+using LHH.Menu;
 
 public class MoodCommandController : MonoBehaviour
 {
@@ -152,13 +153,12 @@ public class MoodCommandController : MonoBehaviour
 
     private void OnDisable()
     {
-
         _pawn.Inventory.OnInventoryChange -= OnInventoryChange;
     }
 
     private void Start()
     {
-        _menu.CreateAndBuildOptions(ListAllSkills());
+        _menu.CreateAndBuildOptions(_pawn, ListAllSkills());
     }
 
     private IEnumerable<(MoodSkill, MoodItemInstance)> ListAllSkills()
@@ -296,7 +296,7 @@ public class MoodCommandController : MonoBehaviour
 
     public MoodCommandMenu.SelectCategoryResult SelectCategory(MoodSkillCategory category, bool feedbacks)
     {
-        return _menu.SelectCategory(category, feedbacks);
+        return _menu.SelectCategory(_pawn, category, feedbacks);
     }
 
 
@@ -308,7 +308,7 @@ public class MoodCommandController : MonoBehaviour
 
     public void SelectCurrentOption(bool feedbacks = true)
     {
-        _menu.Select(feedbacks);
+        _menu.Select(_pawn, feedbacks);
         SetCurrentActiveObjects();
     }
 
@@ -321,9 +321,9 @@ public class MoodCommandController : MonoBehaviour
     public void Deselect(bool toRoot = false, bool feedbacks = true)
     {
         if (toRoot)
-            _menu.DeselectAll(feedbacks);
+            _menu.DeselectAll(_pawn, feedbacks);
         else
-            _menu.Deselect(feedbacks);
+            _menu.Deselect(_pawn, feedbacks);
         SetCurrentActiveObjects();
     }
 
@@ -336,6 +336,6 @@ public class MoodCommandController : MonoBehaviour
 
     private void OnInventoryChange()
     {
-        _menu.CreateAndBuildOptions(ListAllSkills());
+        _menu.CreateAndBuildOptions(_pawn, ListAllSkills());
     }
 }

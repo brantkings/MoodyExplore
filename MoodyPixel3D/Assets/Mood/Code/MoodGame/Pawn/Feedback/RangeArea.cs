@@ -67,7 +67,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
     public override void Hide(MoodPawn p)
     {
         meshRenderer.Get(gameObject).enabled = false;
-        Debug.LogWarningFormat(this, "Hey, {0} just hide {1}!", p?.name, this);
+        //Debug.LogWarningFormat(this, "Hey, {0} just hide {1}!", p?.name, this);
     }
 
     public void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 directionLength)

@@ -38,14 +38,14 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
         }
     }
 
-    protected override float ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
     {
-        float cost = 0f;
+        float timeCost = 0f;
 
         if(ChangeStances(pawn)) 
-            cost = stanceChangeTime;
+            timeCost = stanceChangeTime;
 
-        return base.ExecuteEffect(pawn, skillDirection) + cost;
+        return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (timeCost, ExecutionResult.Success));
     }
 
     public override IEnumerable<MoodStance> GetStancesThatWillBeAdded()

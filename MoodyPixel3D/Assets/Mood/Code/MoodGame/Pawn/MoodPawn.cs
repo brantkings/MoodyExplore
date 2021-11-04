@@ -39,6 +39,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnDamageEvent(MoodPawn pawn, DamageInfo info);
     public delegate void DelMoodPawnSkillEvent(MoodPawn pawn, MoodSkill skill, Vector3 direction);
+    public delegate void DelMoodPawnSkillExecutionEvent(MoodPawn pawn, MoodSkill skill, Vector3 direction, MoodSkill.ExecutionResult result);
     public delegate void DelMoodPawnItemEvent(MoodPawn pawn, MoodItemInstance item);
     public delegate void DelMoodPawnSwingEvent(MoodSwing.MoodSwingBuildData swing, Vector3 direction);
     public delegate void DelMoodPawnUndirectedSkillEvent(MoodPawn pawn, MoodSkill skill);
@@ -49,7 +50,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public event DelMoodPawnSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
-    public event DelMoodPawnSkillEvent OnUseSkill;
+    public event DelMoodPawnSkillExecutionEvent OnUseSkill;
     public event DelMoodPawnItemEvent OnUseItem;
     public event DelMoodPawnDamageEvent OnPawnDamaged;
     public event DelMoodPawnDamageEvent OnPawnDeath;
@@ -250,6 +251,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         _movementLock.OnLock += OnLockMovement;
         _movementLock.OnUnlock += OnUnlockMovement;
+        if(_inventory != null)
+        {
+            _inventory.OnEquipped += OnEquipped;
+            _inventory.OnUnequipped += OnUnequipped;
+        }
         mover.Walled.OnChanged += OnWalledChange;
 
         Threatenable.OnThreatAppear += OnThreatAppear;
@@ -266,6 +272,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         _movementLock.OnLock -= OnLockMovement;
         _movementLock.OnUnlock -= OnUnlockMovement;
+        if (_inventory != null)
+        {
+            _inventory.OnEquipped -= OnEquipped;
+            _inventory.OnUnequipped -= OnUnequipped;
+        }
         mover.Walled.OnChanged -= OnWalledChange;
         Threatenable.OnThreatAppear -= OnThreatAppear;
         Threatenable.OnThreatRelief -= OnThreatRelief;
@@ -386,18 +397,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
     #endregion
 
-    #region Items
-    public void UseItem(MoodItemInstance item, MoodSkill skill)
-    {
-        item.Use(this);
-        OnUseItem?.Invoke(this, item);
-    }
-    #endregion
-
     #region Skills
     private float _currentSkillBeginTimestamp;
     private float _currentSkillUseTimestamp;
     private MoodSkill _currentSkill;
+    private MoodItemInstance _currentSkillItem;
     private Coroutine _currentSkillRoutine;
     private int _currentPlugoutPriority;
     private Vector3? _currentSkillUsePosition;
@@ -415,23 +419,26 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _currentSkill != null && _currentSkillRoutine != null;
     }
 
-    public Coroutine ExecuteSkill(MoodSkill skill, Vector3 skillDirection)
+    public Coroutine ExecuteSkill(MoodSkill skill, Vector3 skillDirection, MoodItemInstance item = null)
     {
         if (IsExecutingSkill()) InterruptCurrentSkill();
-        _currentSkillRoutine = StartCoroutine(SkillRoutine(skill, skillDirection));
+        _currentSkillRoutine = StartCoroutine(SkillRoutine(skill, skillDirection, item));
         return _currentSkillRoutine;
     }
 
-    private IEnumerator SkillRoutine(MoodSkill skill, Vector3 skillDirection)
+
+    private IEnumerator SkillRoutine(MoodSkill skill, Vector3 skillDirection, MoodItemInstance item = null)
     {
         MarkUsingSkill(skill, skillDirection);
+        MarkUsingItem(item);
         if(pawnConfiguration?.stanceOnSkill != null) AddStance(pawnConfiguration.stanceOnSkill);
-        BattleLog.Log($"{GetName()} readies '{skill.GetName()}'.", BattleLog.LogType.Battle);
+        BattleLog.Log($"{GetName()} readies '{skill.GetName(this)}'.", BattleLog.LogType.Battle);
         yield return skill.ExecuteRoutine(this, skillDirection);
         if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
         _currentSkillRoutine = null;
         UnmarkUsingSkill(skill);
     }
+
 
     public void InterruptCurrentSkill()
     {
@@ -536,16 +543,23 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         else return _currentPlugoutPriority;
     }
 
+    public MoodItemInstance GetCurrentItem()
+    {
+        return _currentSkillItem;
+    }
+
     public MoodSkill GetCurrentSkill()
     {
         return _currentSkill;
     }
-    public void UsedSkill(MoodSkill skill, Vector3 direction)
+
+    public void UsedSkill(MoodSkill skill, Vector3 direction, MoodSkill.ExecutionResult success)
     {
         Debug.LogFormat("{0} executes {1}! ({2})", name, skill.name, Time.frameCount);
         _currentSkillUseTimestamp = Time.time;
         _currentSkillUsePosition = Position;
-        OnUseSkill?.Invoke(this, skill, direction);
+        if (_currentSkillItem != null) UsedItem(skill, ref _currentSkillItem);
+        OnUseSkill?.Invoke(this, skill, direction, success);
     }
 
     public bool CanUseSkill(MoodSkill skill)
@@ -1805,6 +1819,82 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         Debug.LogFormat("[LOCK] Action is {0}", _actionStunLock);
         Debug.LogFormat("[LOCK] Reaction is {0}", _reactionStunLock);
     }
+    #endregion
+
+    #region Item
+
+    public void MarkUsingItem(MoodItemInstance item)
+    {
+        _currentSkillItem = item;
+    }
+
+    public void UnmarkUsingItem(MoodItemInstance item)
+    {
+        _currentSkillItem = null;
+    }
+
+    public void UseItem(MoodItemInstance item, MoodSkill skill)
+    {
+        item.Use(this, skill);
+        OnUseItem?.Invoke(this, item);
+    }
+
+    public void RemoveItem(MoodItemInstance item)
+    {
+        Inventory.RemoveItem(item);
+    }
+
+    public bool HasEquipped(MoodItem item)
+    {
+        return _inventory.IsEquipped(item);
+    }
+
+    public bool HasEquipped(MoodItemInstance item)
+    {
+        return _inventory.IsEquipped(item);
+    }
+
+    public void Equip(MoodItemInstance item)
+    {
+        _inventory.SetItemEquipped(item, true);
+    }
+
+    public void Unequip(MoodItemInstance item)
+    {
+        _inventory.SetItemEquipped(item, false);
+    }
+
+    public void InstantSetEquipped(MoodItemInstance item, bool set)
+    {
+        _inventory.SetItemEquipped(item, set);
+    }
+
+    private void OnUnequipped(MoodItemInstance item)
+    {
+        item.SetEquipped(this, false);
+    }
+
+    private void OnEquipped(MoodItemInstance item)
+    {
+        item.SetEquipped(this, true);
+    }
+
+    private void UsedItem(MoodSkill skill, ref MoodItemInstance item)
+    {
+        if(item != null)
+        {
+            item.Use(this, skill, JustDestroyedItem);
+        }
+        item = null;
+    }
+
+    private void JustDestroyedItem(MoodItemInstance item)
+    {
+        BattleLog.Log($"{GetName()} destroyed {item.itemData.GetName()}.", BattleLog.LogType.Battle);
+        Unequip(item);
+        RemoveItem(item);
+    }
+
     #endregion
 
 
