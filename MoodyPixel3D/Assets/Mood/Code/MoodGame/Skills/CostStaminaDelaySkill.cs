@@ -11,6 +11,8 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
     public TimeBeatManager.BeatQuantity preDelay = 2;
     public TimeBeatManager.BeatQuantity executionDelay = 4;
     public TimeBeatManager.BeatQuantity postFeedbackDelay = 0;
+    public int plugoutPriorityBefore;
+    public int plugoutPriorityAfter;
     public MoodPawn.StunType[] stuns;
     public MoodEffectFlag[] flags;
     public ActivateableMoodStance[] toAdd;
@@ -25,11 +27,13 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
 
     public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
+        pawn.SetPlugoutPriority(plugoutPriorityBefore);
         yield return new WaitForSeconds(preFeedbackDelay);
         DoFeedback(pawn, true);
         SolveStun(pawn, true);
         yield return new WaitForSeconds(preDelay);
         yield return base.ExecuteRoutine(pawn, skillDirection);
+        pawn.SetPlugoutPriority(plugoutPriorityAfter);
         SolveStun(pawn, false);
         DoFeedback(pawn, false);
         yield return new WaitForSeconds(postFeedbackDelay);

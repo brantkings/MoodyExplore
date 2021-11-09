@@ -393,8 +393,12 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return info.shouldStaggerAnimation;
     }
 
+    public ShakeTweenData shakeOnDamage;
+
     public void HandleDamageInfo(DamageInfo info, Health health)
     {
+        ShakeTweenData shake = shakeOnDamage != null ? shakeOnDamage : pawnConfiguration.shakeOnDamage;
+        if (shake != null) shake.ShakeTween(GetShakeTransform(), info.GetFrameFreeze().GetTotalDuration()); //Shake with freeze frame
         OnPawnDamaged?.Invoke(this, info);
     }
 

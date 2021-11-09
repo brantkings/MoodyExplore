@@ -411,7 +411,7 @@ public class MoodCommandMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        foreach(var menu in GetOtherMenus())
+        foreach(var menu in GetSecondaryMenus())
         {
             if (!menu.Equals(null)) menu.SetActive(false);
         }
@@ -427,7 +427,7 @@ public class MoodCommandMenu : MonoBehaviour
 
     public void Select(MoodPawn pawn, bool feedbacks)
     {
-        var sMenu = GetFirstValidSecondaryMenu();
+        var sMenu = GetFirstActiveSecondaryMenu();
         if (sMenu != null)
         {
             sMenu.SelectCurrent(feedbacks);
@@ -451,7 +451,7 @@ public class MoodCommandMenu : MonoBehaviour
 
     public void Deselect(MoodPawn pawn, bool feedbacks)
     {
-        var sMenu = GetFirstValidSecondaryMenu();
+        var sMenu = GetFirstActiveSecondaryMenu();
         if (sMenu != null && sMenu is IPrefabListMenuDeselectCommand)
         {
             (sMenu as IPrefabListMenuDeselectCommand).Deselect(feedbacks);
@@ -479,7 +479,7 @@ public class MoodCommandMenu : MonoBehaviour
 
     public void ChangeSelection(int change, bool feedbacks)
     {
-        var sMenu = GetFirstValidSecondaryMenu();
+        var sMenu = GetFirstActiveSecondaryMenu();
         if (sMenu != null)
         {
             sMenu.MoveSelection(change, feedbacks);
@@ -555,12 +555,19 @@ public class MoodCommandMenu : MonoBehaviour
     }
     public SelectCategoryResult SelectCategory(MoodPawn pawn, MoodSkillCategory category, bool feedbacks)
     {
+        foreach(var sMenu in GetActiveSecondaryMenus())
+        {
+            Debug.LogFormat("[MENU] {0} is active", sMenu);
+            sMenu.SetActive(false);
+        }
+
         Option option = main.options.FirstOrDefault((x) => (x.GetSelectable() as MoodSkillCategory) == category);
         if(option != null)
         {
             if (current.IsOrIsChildOf(category)) return SelectCategoryResult.Unchanged;
             bool changed = current.Set(option.parent, option.parent.IndexOf(option));
             FeedbackTreeMovementTry(pawn, changed, feedbacks, SelectAndActivateTreeFeedbackRoutine);
+            CheckCurrentCustomPress(current);
             return SelectCategoryResult.Changed;
         }
         else return SelectCategoryResult.ParameterNotValid;
@@ -793,14 +800,19 @@ public class MoodCommandMenu : MonoBehaviour
     #endregion
 
     #region SecondaryMenus
-    public IEnumerable<LHH.Menu.IPrefabListMenu> GetOtherMenus()
+    public IEnumerable<LHH.Menu.IPrefabListMenu> GetSecondaryMenus()
     {
         yield return inventoryMenu;
     }
 
-    public LHH.Menu.IPrefabListMenu GetFirstValidSecondaryMenu()
+    public IEnumerable<LHH.Menu.IPrefabListMenu> GetActiveSecondaryMenus()
     {
-        return GetOtherMenus().FirstOrDefault((x) => x != null && !x.Equals(null) && x.IsActive());
+        return GetSecondaryMenus().Where((x) => x != null && !x.Equals(null) && x.IsActive());
+    }
+
+    public LHH.Menu.IPrefabListMenu GetFirstActiveSecondaryMenu()
+    {
+        return GetActiveSecondaryMenus().FirstOrDefault();
     }
 
     #endregion

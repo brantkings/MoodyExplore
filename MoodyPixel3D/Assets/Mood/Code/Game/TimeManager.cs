@@ -9,6 +9,8 @@ public class TimeManager : CreateableSingleton<TimeManager>
     [System.Serializable]
     public struct FrameFreezeData
     {
+        public int delayFrames;
+        public float delayDuration;
         public int freezeFrames;
         public float freezeDuration;
         public float tweenDuration;
@@ -17,7 +19,21 @@ public class TimeManager : CreateableSingleton<TimeManager>
 
         public override string ToString()
         {
-            return string.Format("[Framefreeze:{0} secs from {1}, {2}]", tweenDuration, minTimeScale, ease);
+            return string.Format("[Framefreeze:{0} deltaTime, {1} frs + {2} rtscnds, delay {3} frs + {4} rtscnds, tween {5} secs in {6}]", minTimeScale, freezeFrames, freezeDuration, 
+                delayFrames, delayDuration, tweenDuration, ease);
+        }
+
+        /// <summary>
+        /// This might be wrong because includes summing real time with not real time values. If the timescale changes, this will be an error for sure..
+        /// </summary>
+        /// <param name="plusDelay"></param>
+        /// <returns></returns>
+        public float GetTotalDuration(bool plusDelay = true)
+        {
+            float duration = 0f;
+            if (plusDelay) duration += delayFrames * 1f / Application.targetFrameRate + delayDuration;
+            duration += freezeFrames * 1f / Application.targetFrameRate + freezeDuration;
+            return duration;
         }
     }
 
@@ -50,15 +66,20 @@ public class TimeManager : CreateableSingleton<TimeManager>
 
     private void Update() 
     {
-        if(fmodTimescaleParameter != null) fmodTimescaleParameter.SetParameter(Time.timeScale);
+        float timeScaleNow = GetTimeScaleNow();
+        Time.timeScale = timeScaleNow;
+        if (fmodTimescaleParameter != null) fmodTimescaleParameter.SetParameter(timeScaleNow);
+    }
 
+    private float GetTimeScaleNow()
+    {
         float dynamicTimeScale;
         float minDynamicTimeScale;
         float maxDynamicTimeScale;
 
         dynamicTimeScale = GetCurrentDynamicTimeDeltaTarget(out minDynamicTimeScale, out maxDynamicTimeScale);
 
-        Time.timeScale = Mathf.Clamp(dynamicTimeScale * _staticTimeScale, Mathf.Min(_minStaticTimeScale, minDynamicTimeScale), Mathf.Max(_maxStaticTimeScale, maxDynamicTimeScale));
+        return Mathf.Clamp(dynamicTimeScale * _staticTimeScale, Mathf.Min(_minStaticTimeScale, minDynamicTimeScale), Mathf.Max(_maxStaticTimeScale, maxDynamicTimeScale));
     }
 
     private void OnDisable() 
@@ -66,17 +87,28 @@ public class TimeManager : CreateableSingleton<TimeManager>
         if(fmodTimescaleParameter != null) fmodTimescaleParameter.ResetParameterToNeutralValue();
     }
 
-    public void StopTime(FrameFreezeData data)
+    Coroutine freezeFrameRoutine = null;
+
+    public void FreezeFrames(in FrameFreezeData data)
     {
-        StartCoroutine(StopTimeRoutine(data));
+        if (freezeFrameRoutine != null) StopCoroutine(freezeFrameRoutine);
+        freezeFrameRoutine = StartCoroutine(StopTimeRoutine(data));
     }
 
     private IEnumerator StopTimeRoutine(FrameFreezeData data)
     {
+        float time = Time.unscaledTime;
+        Debug.LogWarningFormat("[TIMEMANAGER] Freezing frame with {0} ({1}, {2})", data, Time.unscaledTime, Time.unscaledTime - time);
+        for (int i = 0; i < data.delayFrames; i++) yield return new WaitForEndOfFrame();
+        yield return new WaitForSecondsRealtime(data.delayDuration);
         _currentTween.CompleteIfActive();
         _staticTimeScale = data.minTimeScale;
+        _minStaticTimeScale = data.minTimeScale;
+        _maxStaticTimeScale = data.minTimeScale;
+        Debug.LogFormat("[TIMEMANAGER] Time scale is now {0} -> {1} ({2}, {3})", _staticTimeScale, GetTimeScaleNow(), Time.unscaledTime, Time.unscaledTime - time);
         if (data.freezeFrames > 0) for (int i = 0; i < data.freezeFrames; i++) yield return new WaitForEndOfFrame();
         if (data.freezeDuration > 0f) yield return new WaitForSecondsRealtime(data.freezeDuration);
+        Debug.LogFormat("[TIMEMANAGER] Waited with time scale as {0} -> {1} ({2}, {3})", _staticTimeScale, GetTimeScaleNow(), Time.unscaledTime, Time.unscaledTime - time);
         if (data.tweenDuration > 0f)
         {
             _currentTween = TweenTime(GetCurrentStaticTimeDeltaTarget(out _minStaticTimeScale, out _maxStaticTimeScale), data.tweenDuration).SetEase(data.ease);
@@ -86,6 +118,7 @@ public class TimeManager : CreateableSingleton<TimeManager>
         {
             _staticTimeScale = GetCurrentStaticTimeDeltaTarget(out _minStaticTimeScale, out _maxStaticTimeScale);
         }
+        Debug.LogFormat("[TIMEMANAGER] Finally, time scale is now {0} -> {1} ({2}, {3})", _staticTimeScale, GetTimeScaleNow(), Time.unscaledTime, Time.unscaledTime - time);
     }
 
 
@@ -121,21 +154,22 @@ public class TimeManager : CreateableSingleton<TimeManager>
     {
         targetMin = 1f;
         targetMax = 1f;
-        if (targetTimeScale == null) return 1f;
         float targetProduct = 1f;
 
-        if(targetDynamicTimeScale != null)
+        if (targetDynamicTimeScale != null)
         {
-            foreach (ITimeDeltaGetter func in targetDynamicTimeScale.Values)
+            foreach (KeyValuePair<string, ITimeDeltaGetter> v in targetDynamicTimeScale)
             {
-                if (func.Equals(null)) continue;
-                targetMin = Mathf.Min(func.GetTimeDeltaNow(), targetMin);
-                targetMax = Mathf.Max(func.GetTimeDeltaNow(), targetMax);
-                targetProduct = targetProduct * func.GetTimeDeltaNow();
+                if (v.Value.Equals(null)) continue;
+                Debug.LogFormat("Getting from {0}, {1}", v.Key, v.Value);
+                targetMin = Mathf.Min(v.Value.GetTimeDeltaNow(), targetMin);
+                targetMax = Mathf.Max(v.Value.GetTimeDeltaNow(), targetMax);
+                targetProduct = targetProduct * v.Value.GetTimeDeltaNow();
             }
+            return Mathf.Clamp(targetProduct, targetMin, targetMax);
         }
+        else return 1f;
 
-        return Mathf.Clamp(targetProduct, targetMin, targetMax);
     }
 
     private float GetCurrentStaticTimeDeltaTarget(out float targetMin, out float targetMax)

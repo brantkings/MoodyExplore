@@ -26,7 +26,11 @@ public class ShakeTweenData : ScriptableEvent<Tween>
 
     public Tween ShakeTween(Transform t)
     {
+        return ShakeTween(t, duration);
+    }
+    public Tween ShakeTween(Transform t, float customDuration)
+    {
         if (t == null) return null;
-        return t.DOShakePosition(duration, force, vibrato, randomness, snapping, fadeOut).SetUpdate(isIndependentUpdate).SetEase(ease);
+        return t.DOShakePosition(customDuration, force, vibrato, randomness, snapping, fadeOut).SetUpdate(isIndependentUpdate).SetEase(ease);
     }
 }

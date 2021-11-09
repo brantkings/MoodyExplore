@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
+using DG.Tweening;
 
 public enum DamageTeam
 {
@@ -36,6 +37,16 @@ public struct DamageInfo
     public List<ThoughtInDamage> pain;
 
     public bool feedbacks;
+    public struct FreezeFrameData
+    {
+        public int freezeFrameDelay;
+        public float freezeFrameDelayRealTime;
+        public int freezeFrameAdd;
+        public float freezeFrameMult;
+        public float freezeFrameTweenDuration;
+        public Ease freezeFrameEase;
+    }
+    public FreezeFrameData freezeFrame;
 
     public float stunTime;
 
@@ -53,6 +64,15 @@ public struct DamageInfo
         shouldStaggerAnimation = true;
         feedbacks = true;
         pain = null;
+        freezeFrame = new FreezeFrameData()
+        {
+            freezeFrameDelay = 1,
+            freezeFrameDelayRealTime = 0.04f,
+            freezeFrameAdd = 5,
+            freezeFrameMult = 0.65f,
+            freezeFrameTweenDuration = 0.03f,
+            freezeFrameEase = Ease.OutCirc
+        };
         stunTime = 0f;
     }
 
@@ -73,13 +93,13 @@ public struct DamageInfo
         return this;
     }
 
-    public DamageInfo SetDirection(Vector3 direction)
+    public DamageInfo SetDirection(in Vector3 direction)
     {
         attackDirection = direction;
         return this;
     }
 
-    public DamageInfo SetForce(Vector3 knockback, float angleRotation, float duration)
+    public DamageInfo SetForce(in Vector3 knockback, float angleRotation, float duration)
     {
         distanceKnockback = knockback;
         rotationKnockbackAngle = angleRotation;
@@ -112,11 +132,31 @@ public struct DamageInfo
         return this;
     }
 
-    public DamageInfo AddPainThought(FlyingThoughtInstance f) 
+    public DamageInfo AddPainThought(in FlyingThoughtInstance f) 
     {
         if (pain == null) pain = new List<ThoughtInDamage>(2);
         pain.Add(new ThoughtInDamage() {flyingThoughtInstance = f});
         return this;
+    }
+
+    public DamageInfo AddFreezeFrameFeedback(in FreezeFrameData data)
+    {
+        this.freezeFrame = data;
+        return this;
+    }
+
+    public TimeManager.FrameFreezeData GetFrameFreeze()
+    {
+        return new TimeManager.FrameFreezeData()
+        {
+            delayDuration = freezeFrame.freezeFrameDelayRealTime,
+            delayFrames = freezeFrame.freezeFrameDelay,
+            freezeDuration = Mathf.FloorToInt(damage * freezeFrame.freezeFrameMult + freezeFrame.freezeFrameAdd) / 60f, //If you put in frames, freeze frames will have different feeling durations based on timedelta
+            freezeFrames = 0,
+            minTimeScale = 0f,
+            tweenDuration = freezeFrame.freezeFrameTweenDuration,
+            ease = freezeFrame.freezeFrameEase
+        };
     }
 
 
@@ -246,11 +286,15 @@ public class Health : MonoBehaviour {
             _lifeNow = Mathf.Clamp(Life - info.damage, 0, MaxLife);
             //Debug.LogErrorFormat("{0} is dead? {1} <= 0 so {2}", this, _lifeNow, _lifeNow <= 0);
             OnDamage?.Invoke(info, this);
+
+            TimeManager.Instance.FreezeFrames(info.GetFrameFreeze());
+
             if (Life <= 0)
             {
                 Die(info);
                 return DamageResult.KillingHit;
             }
+
 
             Debug.LogFormat("[DAMAGE] Now {0} is {1}/{2}", name, Life, MaxLife);
             return GetResult(Life, lifeBefore);

@@ -47,6 +47,8 @@ public class MoodPawnConfiguration : ScriptableObject
     [SerializeField]
     private MoodReaction[] reactionsLate;
 
+    public ShakeTweenData shakeOnDamage;
+
     public IEnumerable<MoodReaction> GetReactions()
     {
         if(parent != null)

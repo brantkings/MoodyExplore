@@ -28,3 +28,4 @@ MonoBehaviour:
   reactionsLate:
   - {fileID: 11400000, guid: b34d3702d1472864187b125628d4ddf9, type: 2}
   - {fileID: 11400000, guid: a9a48f84fb251ba4e9316c0f2ed0b579, type: 2}
+  shakeOnDamage: {fileID: 11400000, guid: e27be0d882f5a03449a4d0bd324bf8e2, type: 2}

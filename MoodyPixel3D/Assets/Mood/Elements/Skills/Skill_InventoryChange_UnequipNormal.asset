@@ -41,6 +41,8 @@ MonoBehaviour:
     beats: 4
   postFeedbackDelay:
     beats: 0
+  plugoutPriorityBefore: 4
+  plugoutPriorityAfter: 3
   stuns: 
   flags: []
   toAdd: []

@@ -106,8 +106,39 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
     private Vector3 _mouseWorldPosition;
     private Vector3 _rotatingTarget;
 
-    public float timeSlowOnThreat = 0.2f;
-    public float timeSlowOnCommand = 0.02f;
+
+    [System.Serializable]
+    public struct SlowdownData
+    {
+        public float movementTimeFactor;
+        public float movementThreatTimeFactor;
+        public float thinkingTimeFactor;
+        public float commandNotExecutingSkillTimeFactor;
+        public float commandExecutingSkillButCanExecuteTimeFactor;
+        public float commandBufferingSkillTimeFactor;
+        public float commandImpossibleTimeFactor;
+        public float commandRotatingTimeFactor;
+
+        public static SlowdownData Default
+        {
+            get
+            {
+                return new SlowdownData()
+                {
+                    movementTimeFactor = 1f,
+                    movementThreatTimeFactor = 0.25f,
+                    thinkingTimeFactor = 0f,
+                    commandNotExecutingSkillTimeFactor = 0.001f,
+                    commandExecutingSkillButCanExecuteTimeFactor = 0.25f,
+                    commandBufferingSkillTimeFactor = 1f,
+                    commandImpossibleTimeFactor = 1f,
+                    commandRotatingTimeFactor = 1f,
+                };
+            }
+        }
+    }
+    public SlowdownData slowdownData = SlowdownData.Default;
+    private float _targetTimeDelta = 1f;
 
 
     [System.Serializable]
@@ -686,7 +717,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
         //SolveCommandSlowDown(executeAction.Pressing, true);
         //SolveCommandSlowDown(false, true);
-        SolveSlowdown(currentMode, IsManuallyRotating(), _pawn.Threatenable.IsThreatened(), IsExecutingCommand(), HasAvailableSkills(), slowdownData);
+        SolveSlowdown(currentMode, IsManuallyRotating(), _pawn.Threatenable.IsThreatened(), IsExecutingCommand(), HasAvailableSkills(), IsBufferingSkill(), slowdownData);
     }
 
     private void SelectExecuteCurrentSkill(MoodSkill currentSkill, MoodItemInstance currentItem, MoodCommandOption currentOption, Vector3 currentDirection)
@@ -828,44 +859,15 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
     }
 
 
-    public struct SlowdownData
-    {
-        public float movementTimeFactor;
-        public float movementThreatTimeFactor;
-        public float commandNotExecutingSkillTimeFactor;
-        public float commandExecutingSkillTimeFactor;
-        public float commandImpossibleTimeFactor;
-        public float commandRotatingTimeFactor;
-
-        public static SlowdownData Default
-        {
-            get
-            {
-                return new SlowdownData()
-                {
-                    movementTimeFactor = 1f,
-                    movementThreatTimeFactor = 0.25f,
-                    commandNotExecutingSkillTimeFactor = 0.001f,
-                    commandExecutingSkillTimeFactor = 0.25f,
-                    commandImpossibleTimeFactor = 1f,
-                    commandRotatingTimeFactor = 1f,
-            };
-            }
-        }
-    }
-    public SlowdownData slowdownData = SlowdownData.Default;
-    private float _targetTimeDelta = 1f;
-
     public float GetTimeDeltaNow()
     {
-        Debug.LogFormat("Player target time delta is {0}", _targetTimeDelta);
         return _targetTimeDelta;
     }
 
 
-    private void SolveSlowdown(Mode currentMode, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, SlowdownData data)
+    private void SolveSlowdown(Mode currentMode, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool bufferingSkill, SlowdownData data)
     {
-        bool inCommand;
+        bool inCommand, isThinking = false;
         switch (currentMode)
         {
             case Mode.Movement:
@@ -876,6 +878,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
                 break;
             case Mode.Command_Focus:
                 inCommand = true;
+                isThinking = true;
                 break;
             case Mode.None:
                 inCommand = false;
@@ -885,21 +888,23 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
                 break;
         }
 
-        _targetTimeDelta = GetSlowdownTarget(inCommand, isRotating, isThreatened, isExecutingSkill, canExecuteSkill, data);
+        _targetTimeDelta = GetSlowdownTarget(inCommand, isThinking, isRotating, isThreatened, isExecutingSkill, canExecuteSkill, bufferingSkill, data);
         
     }
 
-    private float GetSlowdownTarget(bool inCommand, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, SlowdownData data)
+    private float GetSlowdownTarget(bool inCommand, bool isThinking, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool isBufferingSkill, SlowdownData data)
     {
-        if (inCommand)
+        if (isThinking) return data.thinkingTimeFactor;
+        else if (inCommand)
         {
             if (isRotating) return data.commandRotatingTimeFactor;
+            else if (isBufferingSkill) return data.commandBufferingSkillTimeFactor;
             else if (canExecuteSkill)
             {
                 if (isExecutingSkill)
                 {
-                    if (isThreatened) return Mathf.Min(data.movementThreatTimeFactor, data.commandExecutingSkillTimeFactor);
-                    else return data.commandExecutingSkillTimeFactor;
+                    if (isThreatened) return Mathf.Min(data.movementThreatTimeFactor, data.commandExecutingSkillButCanExecuteTimeFactor);
+                    else return data.commandExecutingSkillButCanExecuteTimeFactor;
                 }
                 else return data.commandNotExecutingSkillTimeFactor;
             }

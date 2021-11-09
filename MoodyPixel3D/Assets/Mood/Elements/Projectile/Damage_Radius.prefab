@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3183083291557665412}
   - component: {fileID: 2990738681846919160}
   - component: {fileID: 4731836417374942219}
-  m_Layer: 5
+  m_Layer: 14
   m_Name: Radius
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,6 +44,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -102,6 +103,7 @@ MonoBehaviour:
   easeOut: 3
   unscaledTimeDelta: 1
   afterFadeOut: 1
+  doOnEnable: 1
   maxFade: 1
 --- !u!114 &4731836417374942219
 MonoBehaviour:
@@ -127,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3242621915619592898}
   - component: {fileID: 7551367972259341735}
-  m_Layer: 5
+  m_Layer: 14
   m_Name: Damage_Radius
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,3 +171,6 @@ MonoBehaviour:
   maxRaycast: 4
   sphereRadius: 0.25
   graphic: {fileID: 3183083291557665412}
+  yOffset: 0.1
+  upAsNormal: 0
+  rotationAsParent: 0
