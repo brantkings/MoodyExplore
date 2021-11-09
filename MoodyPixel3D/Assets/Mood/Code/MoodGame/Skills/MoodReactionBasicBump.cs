@@ -10,6 +10,7 @@ public class MoodReactionBasicBump : MoodReaction, IMoodReaction<ReactionInfo>
     public float stunDurationMultiplier = 1f;
     public float dashMultiplier = 1f;
     public float dashAbsoluteAdd = 0f;
+    public bool bumpeable = false;
     public Ease dashEase = Ease.OutSine;
 
     [Space()]
@@ -24,7 +25,7 @@ public class MoodReactionBasicBump : MoodReaction, IMoodReaction<ReactionInfo>
     {
         pawn.AddStunLockTimer(MoodPawn.StunType.Action, name, info.duration * stunDurationMultiplier);
         pawn.SetDamageAnimationTween(info.direction.normalized * animationParameterMultiplier, info.duration * stunDurationMultiplier, 0f);
-        pawn.Dash(dashMultiplier * info.direction + dashAbsoluteAdd * info.direction.normalized, info.duration * dashMultiplier, dashEase);
+        pawn.Dash(dashMultiplier * info.direction + dashAbsoluteAdd * info.direction.normalized, info.duration * dashMultiplier, bumpeable, dashEase);
         if(interruptCurrentSkill) pawn.InterruptCurrentSkill();
     }
 }

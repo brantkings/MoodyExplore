@@ -13,6 +13,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     public float hopHeight;
     public float hopDurationInMultiplier;
     public float hopDurationOutMultiplier;
+    public bool movementIsBumpeable = true;
     [SerializeField]
     private bool setHorizontalDirection = true;
     [SerializeField]
@@ -56,7 +57,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
             SanitizeDirection(pawn.Direction, ref setDirection, setDirectionInRelationToMovement);
             pawn.SetHorizontalDirection(setDirection);
         }
-        pawn.Dash(distance, duration, ease);
+        pawn.Dash(distance, duration, movementIsBumpeable, ease);
         if (HasFeedback())
         {
             pawn.OnNextBeginMove += () => DoFeedback(pawn, skillDirection, true);

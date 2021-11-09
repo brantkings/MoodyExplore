@@ -240,6 +240,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
         [SerializeField] private SharedVector3 relativePosition;
         [SerializeField] private SharedFloat velocity;
+        [SerializeField] private SharedBool bumpeable = true;
         //[SerializeField] private SharedAnimationCurve curve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
         [SerializeField] private Ease ease = Ease.Linear;
         [SerializeField] private VelocityKind useVelocityAs;
@@ -283,7 +284,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             if (pawn.Value != null)
             {
                 _dashed = true;
-                pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), ease);
+                pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), bumpeable.Value,  ease);
                 return TaskStatus.Running;
             }
             else

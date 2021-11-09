@@ -76,6 +76,7 @@ MonoBehaviour:
   _flyingThought: {fileID: 0}
   preAttackDash:
     distance: 6
+    bumpeable: 1
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -87,6 +88,7 @@ MonoBehaviour:
     dashFeedbackDirection: 0
   postAttackDash:
     distance: -1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -98,6 +100,7 @@ MonoBehaviour:
     dashFeedbackDirection: 0
   whiffAttackDash:
     distance: 1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180

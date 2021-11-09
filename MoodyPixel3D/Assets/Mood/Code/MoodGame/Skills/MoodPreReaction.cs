@@ -31,6 +31,7 @@ public class MoodPreReaction : MoodReaction, IMoodReaction<ReactionInfo>, IMoodR
     public float multiplierKnockbackByOrigin = 1f;
     public float multiplierKnockbackByDamage = 0f;
     public bool doKnockback;
+    public bool knockbackIsBumpeable;
     public AnimationCurve knockbackCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
     [Space()]
@@ -118,7 +119,7 @@ public class MoodPreReaction : MoodReaction, IMoodReaction<ReactionInfo>, IMoodR
         float newKnockbackMagnitude = (absoluteKnockback + damageIntensity * multiplierKnockbackByDamage + knockbackMagnitude * multiplierKnockbackByOrigin);
         if (knockbackDuration != 0f) knockbackDuration = knockbackDuration * newKnockbackMagnitude / knockbackMagnitude;
         knockbackDistance = knockbackDistance.normalized * knockbackMagnitude;
-        if(doKnockback) pawn.Dash(knockbackDistance, knockbackDuration, knockbackCurve);
+        if(doKnockback) pawn.Dash(knockbackDistance, knockbackDuration, knockbackIsBumpeable, knockbackCurve);
     }
 
     private Vector3 GetPosition(GameObject o)

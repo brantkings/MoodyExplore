@@ -867,6 +867,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         internal Tween tween;
         public T initialPosition;
         public T endPosition;
+        public bool interruptable;
         public float Duration
         {
             get
@@ -1030,7 +1031,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         Debug.LogFormat("[PAWN] {0} changed Walled to {1}. It is dashing? {2} [{3} {4}]", name, change, IsDashing(), Time.frameCount, Time.fixedDeltaTime);
         if(change)
         {
-            if(IsDashing())
+            if(IsDashing() && GetCurrentDashData().interruptable)
             {
                 Vector3 dashDirection = GetCurrentDashData().endPosition - GetCurrentDashData().initialPosition;
                 Bump(dashDirection);
@@ -1203,20 +1204,20 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         //Direction = _currentDirection;
     }
 
-    public void Dash(Vector3 movement, float duration, AnimationCurve curve)
+    public void Dash(Vector3 movement, float duration, bool bumpeable, AnimationCurve curve)
     {
-        MakeCurrentDash(movement, duration)?.SetEase(curve);
+        MakeCurrentDash(movement, duration, bumpeable)?.SetEase(curve);
     }
 
-    public void Dash(Vector3 movement, float duration, Ease ease)
+    public void Dash(Vector3 movement, float duration, bool bumpeable, Ease ease)
     {
-        MakeCurrentDash(movement, duration)?.SetEase(ease);
+        MakeCurrentDash(movement, duration, bumpeable)?.SetEase(ease);
     }
 
-    private Tween MakeCurrentDash(Vector3 movement, float duration)
+    private Tween MakeCurrentDash(Vector3 movement, float duration, bool bumpeable)
     {
         CancelCurrentDash();
-        if (Vector3.Angle(mover.WalledNormal, movement) > 90f)
+        if (bumpeable && Vector3.Angle(mover.WalledNormal, movement) > 90f)
         {
             SetVelocity(Vector3.zero);
             Bump(movement);
@@ -1228,7 +1229,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             {
                 tween = mover.TweenMoverPosition(movement, duration, 0, "dash")?.OnKill(CallEndDash).OnStart(CallBeginDash).OnComplete(CallCompleteDash),
                 initialPosition = Position,
-                endPosition = Position + movement
+                endPosition = Position + movement,
+                interruptable = bumpeable
             };
             //Debug.LogFormat("[PAWN] {0} is now gonna Dash! [{1} {2}]", name, Time.frameCount, Time.fixedDeltaTime);
 

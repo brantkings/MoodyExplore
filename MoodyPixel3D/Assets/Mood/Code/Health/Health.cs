@@ -68,8 +68,8 @@ public struct DamageInfo
         {
             freezeFrameDelay = 1,
             freezeFrameDelayRealTime = 0.04f,
-            freezeFrameAdd = 5,
-            freezeFrameMult = 0.65f,
+            freezeFrameAdd = 8,
+            freezeFrameMult = 0.45f,
             freezeFrameTweenDuration = 0.03f,
             freezeFrameEase = Ease.OutCirc
         };
