@@ -130,7 +130,7 @@ public class TimeManager : CreateableSingleton<TimeManager>
             {
                 if (func.Equals(null)) continue;
                 targetMin = Mathf.Min(func.GetTimeDeltaNow(), targetMin);
-                targetMax = Mathf.Min(func.GetTimeDeltaNow(), targetMax);
+                targetMax = Mathf.Max(func.GetTimeDeltaNow(), targetMax);
                 targetProduct = targetProduct * func.GetTimeDeltaNow();
             }
         }

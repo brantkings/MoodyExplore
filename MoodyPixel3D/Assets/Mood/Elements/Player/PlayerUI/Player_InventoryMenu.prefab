@@ -33,7 +33,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -40, y: -44}
+  m_SizeDelta: {x: -64, y: -100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6196029618245904010
 GameObject:
@@ -269,7 +269,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   optionPrefab: {fileID: 3157234300933892499, guid: 76258219190c03740b620d75b5bac290, type: 3}
-  _currentSelection: 0
   contentWalker: {fileID: 6196029619771499521}
   possibleView: {fileID: 6196029617997895836}
   bagParent: {fileID: 6196029619771499521}

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789a2b54b8f66e84881017eb4efe8c64, type: 3}
   m_Name: PAWNSTANCES_DefaultConfiguration
   m_EditorClassIdentifier: 
+  parent: {fileID: 0}
   onStaminaDownByAction: {fileID: 0}
   onStaminaDownByReaction: {fileID: 11400000, guid: 9364ad8f2b47d364cbe5240b079a0bae, type: 2}
   onDamage: {fileID: 11400000, guid: a09fc5f2f5ec6a1418631f5a43561720, type: 2}
@@ -21,6 +22,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 42ca98c7db1af9642bc51de125c5f638, type: 2}
   conditionalStances:
   - {fileID: 11400000, guid: 1e3d1abdb2c9721448fc05cb2e5d17cb, type: 2}
+  _equipMove: {fileID: 11400000, guid: d47e06b2002704e4da0319e95acd3a56, type: 2}
+  _unequipMove: {fileID: 11400000, guid: 83a384dd4a6ea4f47b12bfb64c70a8e3, type: 2}
   reactions: []
   reactionsLate:
   - {fileID: 11400000, guid: b34d3702d1472864187b125628d4ddf9, type: 2}

@@ -14,6 +14,8 @@ public interface IMoodInventory
 
 
     IEnumerable<MoodItemInstance> GetAllItems();
+
+    IEnumerable<MoodItemInstance> GetEquippedItems();
     int GetAllItemsLength();
     IEnumerable<(MoodSkill, MoodItemInstance)> GetAllUsableSkills();
 
@@ -22,6 +24,8 @@ public interface IMoodInventory
     bool IsEquipped(MoodItemInstance item);
 
     bool IsEquipped(MoodItem item);
+
+    bool IsCategoryEquipped(MoodItemCategory category);
 
     bool HasItemInBag(MoodItemInstance item);
 

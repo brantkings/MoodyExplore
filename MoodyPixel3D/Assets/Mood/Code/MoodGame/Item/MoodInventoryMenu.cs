@@ -4,6 +4,7 @@ using UnityEngine;
 using LHH.Menu;
 using LHH.Utils;
 using DG.Tweening;
+using System.Linq;
 
 public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemInstance>
 {
@@ -110,16 +111,65 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
         if(feedbacks) option.currentOptionView.anim.SetTrigger("Select");
         Debug.LogFormat(option.currentOptionView, "Just selected {0}", option);
 
-        //TODO what happens when selected
-        if(!_pawn.HasEquipped(option.currentInformation))
+        StartCoroutine(ItemSelectRoutine(_pawn.EquipSkill, _pawn.UnequipSkill, option.currentInformation));
+        
+    }
+
+    private IEnumerator ItemSelectRoutine(MoodSkill equipSkill, MoodSkill unequipSkill, MoodItemInstance item)
+    {
+        if (!_pawn.HasEquipped(item))
         {
-            _pawn.Equip(option.currentInformation);
+            if(_pawn.HasAnotherItemEquippedInSlot(item))
+            {
+                if (unequipSkill != null)
+                {
+                    yield return UseSkillWithItem(unequipSkill, _pawn.GetCurrentItemEquippedInSlot(item).First());
+                }
+                else
+                {
+                    _pawn.Unequip(item);
+                }
+            }
+
+            if (equipSkill != null)
+            {
+                yield return UseSkillWithItem(equipSkill, item);
+            }
+            else
+            {
+                _pawn.Equip(item);
+            }
         }
         else
         {
-            _pawn.Unequip(option.currentInformation);
+            if (unequipSkill != null)
+            {
+                yield return UseSkillWithItem(unequipSkill, item);
+            }
+            else
+            {
+                _pawn.Unequip(item);
+            }
         }
-        
+    }
+
+    private IEnumerator UnequipRoutine(MoodSkill skill, MoodItemInstance item)
+    {
+        if (skill != null)
+        {
+            yield return UseSkillWithItem(skill, item);
+        }
+        else
+        {
+            _pawn.Unequip(item);
+        }
+    }
+
+
+    private IEnumerator UseSkillWithItem(MoodSkill skill, MoodItemInstance item)
+    {
+        if (_pawn.CanUseSkill(skill))
+           yield return _pawn.ExecuteSkill(skill, Vector3.zero, item);
     }
 
     protected override void SetSelected(Option option, bool selected, bool feedbacks = true)

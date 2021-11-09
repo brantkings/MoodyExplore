@@ -7,13 +7,16 @@ using UnityEngine;
 public class CostStaminaDelaySkill : StaminaCostMoodSkill
 {
     [Header("Delay")]
-    public float delay;
+    public TimeBeatManager.BeatQuantity preFeedbackDelay = 0;
+    public TimeBeatManager.BeatQuantity preDelay = 2;
+    public TimeBeatManager.BeatQuantity executionDelay = 4;
+    public TimeBeatManager.BeatQuantity postFeedbackDelay = 0;
     public MoodPawn.StunType[] stuns;
     public MoodEffectFlag[] flags;
+    public ActivateableMoodStance[] toAdd;
 
     [Header("Feedback delay")]
     public SoundEffect sfx;
-    public ActivateableMoodStance[] toAdd;
     [SerializeField]
     private AnimatorID triggerAnim;
     [SerializeField]
@@ -22,11 +25,14 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
 
     public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
+        yield return new WaitForSeconds(preFeedbackDelay);
         DoFeedback(pawn, true);
         SolveStun(pawn, true);
+        yield return new WaitForSeconds(preDelay);
         yield return base.ExecuteRoutine(pawn, skillDirection);
         SolveStun(pawn, false);
         DoFeedback(pawn, false);
+        yield return new WaitForSeconds(postFeedbackDelay);
     }
 
     private void SolveStun(MoodPawn pawn, bool set)
@@ -52,7 +58,7 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
     {
         foreach (var stance in toAdd) pawn.AddStance(stance);
         foreach (var flag in flags) pawn.AddFlag(flag);
-        return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (delay, ExecutionResult.Success));
+        return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (preFeedbackDelay, ExecutionResult.Success));
     }
 
 
@@ -74,5 +80,11 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
     public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
     {
         return WillHaveTargetResult.NonApplicable;
+    }
+
+    public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
+    {
+        yield return preFeedbackDelay.GetTime() + preDelay.GetTime();
+        yield return executionDelay.GetTime() + postFeedbackDelay.GetTime();
     }
 }

@@ -44,6 +44,11 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
         return bag;
     }
 
+    public IEnumerable<MoodItemInstance> GetEquippedItems()
+    {
+        return equipped.Values;
+    }
+
     public int GetAllItemsLength()
     {
         return bag.Count;
@@ -139,4 +144,10 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
         if (removed) OnInventoryChange?.Invoke();
         return removed;
     }
+
+    public bool IsCategoryEquipped(MoodItemCategory category)
+    {
+        return equipped.ContainsKey(category) && equipped[category] != null;
+    }
+
 }

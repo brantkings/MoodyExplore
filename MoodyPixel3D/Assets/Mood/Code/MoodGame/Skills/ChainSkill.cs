@@ -32,7 +32,6 @@ public class ChainSkill : StaminaCostMoodSkill
         MoodSkill interrupted = null;
         onInterruptSkill = (p, x) =>
         {
-            //Debug.LogErrorFormat("Interrupted! {0} and {1}", this, x);
             interrupted = x;
         };
         pawn.OnInterruptSkill += onInterruptSkill;

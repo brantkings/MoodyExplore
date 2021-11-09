@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5df6dbeff9f80a489947d4c4535840a, type: 3}
-  m_Name: Skill_EN_SpendStamina_1
+  m_Script: {fileID: 11500000, guid: 4608f68a920cff1449a5255117091205, type: 3}
+  m_Name: Skill_InventoryChange_EquipNormal
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Crystal Shot
+  _name: Equipping
   _description: 
   _category: {fileID: 0}
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
-    _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
+    _getter: {fileID: 0}
   onlyNeutralStance: 0
   needs: []
   consumeNeededStances: 0
@@ -32,11 +32,11 @@ MonoBehaviour:
   lockMovement: 0
   _shortcut: 0
   _debug: 0
-  _cost: 1
+  _cost: 0
   preFeedbackDelay:
     beats: 0
   preDelay:
-    beats: 0
+    beats: 3
   executionDelay:
     beats: 4
   postFeedbackDelay:
@@ -49,3 +49,5 @@ MonoBehaviour:
     id: 
   boolWhileInSkill:
     id: 
+  action: 0
+  arbitraryItem: {fileID: 0}

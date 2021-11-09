@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemName: Rock
   _itemDescription: 
-  pickupPrefab: {fileID: 4061234158785931220, guid: 96cabec6d8f72384fad74f2a1d6be4d5, type: 3}
+  _itemIcon: {fileID: 0}
+  _projectilePrefab: {fileID: 0}
+  _pickupPrefab: {fileID: 0}
   category: {fileID: 0}
+  instancePrototype:
+    quantity: 6
   consumableSkills:
   - {fileID: 11400000, guid: 368c9d3d1b991bc4da593ef454c4c4a2, type: 2}

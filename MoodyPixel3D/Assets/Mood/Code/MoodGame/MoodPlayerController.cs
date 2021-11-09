@@ -12,7 +12,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using LHH.ScriptableObjects.Events;
 
-public class MoodPlayerController : Singleton<MoodPlayerController>
+public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager.ITimeDeltaGetter
 {
     public struct EventfulParameter<T>
     {
@@ -147,8 +147,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         _pawn.Threatenable.OnThreatRelief += ChangeThreat;
         _pawn.OnInterruptSkill += OnInterruptSkill;
         _pawn.OnPawnDamaged += OnDamage;
-        OnStartCommand += SolveThreatSlowDown;
-        OnStopCommand += SolveThreatSlowDown;
+        TimeManager.Instance.AddDynamicDeltaTarget("playerC", this);
     }
 
 
@@ -158,8 +157,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
         _pawn.Threatenable.OnThreatRelief -= ChangeThreat;
         _pawn.OnInterruptSkill -= OnInterruptSkill;
         _pawn.OnPawnDamaged -= OnDamage;
-        OnStartCommand -= SolveThreatSlowDown;
-        OnStopCommand -= SolveThreatSlowDown;
+        TimeManager.Instance.RemoveDynamicTimeDeltaTarget("playerC");
     }
 
     public MoodPawn Pawn => _pawn;
@@ -687,7 +685,8 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
 
         //SolveCommandSlowDown(executeAction.Pressing, true);
-        SolveCommandSlowDown(false, true);
+        //SolveCommandSlowDown(false, true);
+        SolveSlowdown(currentMode, IsManuallyRotating(), _pawn.Threatenable.IsThreatened(), IsExecutingCommand(), HasAvailableSkills(), slowdownData);
     }
 
     private void SelectExecuteCurrentSkill(MoodSkill currentSkill, MoodItemInstance currentItem, MoodCommandOption currentOption, Vector3 currentDirection)
@@ -825,47 +824,93 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
 
     private void ChangeThreat(MoodThreatenable moodPawn)
     {
-        SolveThreatSlowDown();
+       
     }
 
-    private void SolveSlowdown(float timeSlow, string slowdownID, ref EventfulParameter<bool> boolean, bool updateValue)
+
+    public struct SlowdownData
     {
-        boolean.Update(updateValue, (slowed) =>
+        public float movementTimeFactor;
+        public float movementThreatTimeFactor;
+        public float commandNotExecutingSkillTimeFactor;
+        public float commandExecutingSkillTimeFactor;
+        public float commandImpossibleTimeFactor;
+        public float commandRotatingTimeFactor;
+
+        public static SlowdownData Default
         {
-            Debug.LogFormat("{2} ({3}) slowdown {0} to {1}", timeSlow, slowdownID, slowed? "Adding" : "Removing", slowed);
-            if (slowed) TimeManager.Instance.ChangeTimeDelta(timeSlow, slowdownID);
-            else TimeManager.Instance.RemoveTimeDeltaChange(slowdownID);
-        });
+            get
+            {
+                return new SlowdownData()
+                {
+                    movementTimeFactor = 1f,
+                    movementThreatTimeFactor = 0.25f,
+                    commandNotExecutingSkillTimeFactor = 0.001f,
+                    commandExecutingSkillTimeFactor = 0.25f,
+                    commandImpossibleTimeFactor = 1f,
+                    commandRotatingTimeFactor = 1f,
+            };
+            }
+        }
     }
-    private bool CouldSlowdown()
+    public SlowdownData slowdownData = SlowdownData.Default;
+    private float _targetTimeDelta = 1f;
+
+    public float GetTimeDeltaNow()
     {
-        return !IsManuallyRotating() && !IsBufferingSkill() && !IsStunned();
+        Debug.LogFormat("Player target time delta is {0}", _targetTimeDelta);
+        return _targetTimeDelta;
     }
 
-    private bool ShouldThreatSlowdown()
+
+    private void SolveSlowdown(Mode currentMode, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, SlowdownData data)
     {
-        return _pawn.Threatenable.IsThreatened() && !IsExecutingCommand() && CouldSlowdown();
-    }
-    private EventfulParameter<bool> _threatSlowedDown;
-    private void SolveThreatSlowDown()
-    {
-        SolveSlowdown(timeSlowOnThreat, "PlayerThreat", ref _threatSlowedDown, ShouldThreatSlowdown());
+        bool inCommand;
+        switch (currentMode)
+        {
+            case Mode.Movement:
+                inCommand = false;
+                break;
+            case Mode.Command_Skill:
+                inCommand = true;
+                break;
+            case Mode.Command_Focus:
+                inCommand = true;
+                break;
+            case Mode.None:
+                inCommand = false;
+                break;
+            default:
+                inCommand = false;
+                break;
+        }
+
+        _targetTimeDelta = GetSlowdownTarget(inCommand, isRotating, isThreatened, isExecutingSkill, canExecuteSkill, data);
+        
     }
 
-    private bool ShouldCommandSlowdown(bool pressingCommand, bool highlightingImpossibleCommand)
+    private float GetSlowdownTarget(bool inCommand, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, SlowdownData data)
     {
-        return IsCommandOpen() && HasAvailableSkills() && !(pressingCommand && highlightingImpossibleCommand) && CouldSlowdown();
-    }
+        if (inCommand)
+        {
+            if (isRotating) return data.commandRotatingTimeFactor;
+            else if (canExecuteSkill)
+            {
+                if (isExecutingSkill)
+                {
+                    if (isThreatened) return Mathf.Min(data.movementThreatTimeFactor, data.commandExecutingSkillTimeFactor);
+                    else return data.commandExecutingSkillTimeFactor;
+                }
+                else return data.commandNotExecutingSkillTimeFactor;
+            }
+            else return data.commandImpossibleTimeFactor;
+        }
+        else
+        {
+            if (isThreatened) return data.movementThreatTimeFactor;
+            else return data.movementTimeFactor;
+        }
 
-    private bool ShouldThoughtSystemSlowDown()
-    {
-        return GetCurrentMode() == Mode.Command_Focus;
-    }
-
-    private EventfulParameter<bool> _commandSlowedDown;
-    private void SolveCommandSlowDown(bool pressingCommand, bool highlightingImpossibleCommand)
-    {
-        SolveSlowdown(timeSlowOnCommand, "PlayerCommand", ref _commandSlowedDown, ShouldCommandSlowdown(pressingCommand, highlightingImpossibleCommand) || ShouldThoughtSystemSlowDown());
     }
 
 
@@ -982,4 +1027,5 @@ public class MoodPlayerController : Singleton<MoodPlayerController>
     {
         return _mainCamera.transform.TransformDirection(vec);
     }
+
 }

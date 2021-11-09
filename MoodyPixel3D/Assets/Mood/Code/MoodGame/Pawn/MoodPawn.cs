@@ -87,7 +87,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
 
     [SerializeField]
-    private MoodPawnStanceConfiguration pawnConfiguration;
+    private MoodPawnConfiguration pawnConfiguration;
     [SerializeField]
     private MoodPreReaction[] inherentReactions;
     [SerializeField]
@@ -330,6 +330,26 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if (pawnName != null) return pawnName;
         else return pawnNameOverrided;
     }
+    #endregion
+
+    #region Pawn Configuration
+
+    public MoodSkill EquipSkill
+    {
+        get
+        {
+            return pawnConfiguration.EquipMove;
+        }
+    }
+
+    public MoodSkill UnequipSkill
+    {
+        get
+        {
+            return pawnConfiguration.UnequipMove;
+        }
+    }
+
     #endregion
 
     #region Feedback
@@ -1839,34 +1859,75 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         OnUseItem?.Invoke(this, item);
     }
 
+    public void AddItem(MoodItemInstance item)
+    {
+        if(!Inventory.Equals(null))
+            Inventory.AddItem(item);
+    }
+
     public void RemoveItem(MoodItemInstance item)
     {
-        Inventory.RemoveItem(item);
+        if (!Inventory.Equals(null))
+            Inventory.RemoveItem(item);
+    }
+
+    public bool HasAnotherItemEquippedInSlot(MoodItem item)
+    {
+        if (!Inventory.Equals(null))
+            return Inventory.IsCategoryEquipped(item.category);
+        else return false;
+    }
+
+    public bool HasAnotherItemEquippedInSlot(MoodItemInstance item)
+    {
+        return HasAnotherItemEquippedInSlot(item.itemData);
+    }
+
+    public IEnumerable<MoodItemInstance> GetCurrentItemEquippedInSlot(MoodItemInstance item)
+    {
+        return GetCurrentItemEquippedInSlot(item.itemData);
+    }
+
+    public IEnumerable<MoodItemInstance> GetCurrentItemEquippedInSlot(MoodItem item)
+    {
+        return GetCurrentItemEquippedInSlot(item.category);
+    }
+
+    public IEnumerable<MoodItemInstance> GetCurrentItemEquippedInSlot(MoodItemCategory category)
+    {
+        return Inventory.GetEquippedItems().Where((x) => x.itemData.category == category);
     }
 
     public bool HasEquipped(MoodItem item)
     {
-        return _inventory.IsEquipped(item);
+        if (!Inventory.Equals(null))
+            return _inventory.IsEquipped(item);
+        else return false;
     }
 
     public bool HasEquipped(MoodItemInstance item)
     {
-        return _inventory.IsEquipped(item);
+        if (!Inventory.Equals(null))
+            return Inventory.IsEquipped(item);
+        else return false;
     }
 
     public void Equip(MoodItemInstance item)
     {
-        _inventory.SetItemEquipped(item, true);
+        if (!Inventory.Equals(null))
+            Inventory.SetItemEquipped(item, true);
     }
 
     public void Unequip(MoodItemInstance item)
     {
-        _inventory.SetItemEquipped(item, false);
+        if (!Inventory.Equals(null))
+            Inventory.SetItemEquipped(item, false);
     }
 
     public void InstantSetEquipped(MoodItemInstance item, bool set)
     {
-        _inventory.SetItemEquipped(item, set);
+        if (!Inventory.Equals(null))
+            Inventory.SetItemEquipped(item, set);
     }
 
     private void OnUnequipped(MoodItemInstance item)

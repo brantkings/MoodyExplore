@@ -841,7 +841,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3492613771632298877, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_VersionIndex
-      value: 445
+      value: 448
       objectReference: {fileID: 0}
     - target: {fileID: 3492613771632298877, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_MeshFormatVersion
@@ -997,7 +997,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5390907015469078228, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.7783784
+      value: 1.777448
       objectReference: {fileID: 0}
     - target: {fileID: 5434935755319723075, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1197,7 +1197,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5938188665409695491, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.7783784
+      value: 1.777448
       objectReference: {fileID: 0}
     - target: {fileID: 5938188665409695516, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1289,7 +1289,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5938188666411864144, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_VersionIndex
-      value: 451
+      value: 454
       objectReference: {fileID: 0}
     - target: {fileID: 5938188666411864144, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_MeshFormatVersion
@@ -1513,7 +1513,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7531457977663148638, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.7783784
+      value: 1.777448
       objectReference: {fileID: 0}
     - target: {fileID: 7550764320256020881, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_SizeDelta.x
