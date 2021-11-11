@@ -33,6 +33,7 @@ public class TimeManager : CreateableSingleton<TimeManager>
             float duration = 0f;
             if (plusDelay) duration += delayFrames * 1f / Application.targetFrameRate + delayDuration;
             duration += freezeFrames * 1f / Application.targetFrameRate + freezeDuration;
+            duration += tweenDuration;
             return duration;
         }
     }

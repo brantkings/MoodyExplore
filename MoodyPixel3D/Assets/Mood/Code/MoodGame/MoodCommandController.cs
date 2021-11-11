@@ -282,9 +282,9 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
-    public IEnumerable<(MoodSkill, MoodItemInstance)> GetAllMoodSkills()
+    public IEnumerable<(MoodSkill, MoodItemInstance)> GetAllMoodSkills(bool includeInactive = false)
     {
-        foreach (MoodCommandMenu.Option opt in _menu.GetAllOptions())
+        foreach (MoodCommandMenu.Option opt in _menu.GetAllOptions(includeInactive))
         {
             IMoodSelectable select = opt.GetSelectable();
             if(select is MoodSkill)

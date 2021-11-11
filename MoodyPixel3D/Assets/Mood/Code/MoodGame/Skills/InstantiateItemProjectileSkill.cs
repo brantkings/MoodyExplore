@@ -2,12 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Skill_Instantiate_Item", menuName = "Mood/Skill/Instantiate", order = 0)]
+[CreateAssetMenu(fileName = "Skill_Instantiate_Item", menuName = "Mood/Skill/Inventory/Throw Item", order = 0)]
 public class InstantiateItemProjectileSkill : InstantiateSkill
 {
     public override string GetName(MoodPawn pawn)
     {
-        return base.GetName(pawn) + " " + pawn.GetCurrentItem().itemData.GetName();
+        MoodItemInstance item = pawn.GetCurrentItem();
+        if(item != null)
+        {
+            return base.GetName(pawn) + " " + item.itemData.GetName();
+        }
+        else
+        {
+            return base.GetName(pawn) + " " + "item";
+        }
     }
 
 
@@ -16,7 +24,7 @@ public class InstantiateItemProjectileSkill : InstantiateSkill
         MoodItemInstance item = from.GetCurrentItem();
         from.RemoveItem(item);
         ItemProjectile proj = Instantiate(item.itemData.GetProjectilePrefab(), pos, rot);
-        proj.instance = item;
+        proj.Hold(item);
         return proj.gameObject;
     }
 }

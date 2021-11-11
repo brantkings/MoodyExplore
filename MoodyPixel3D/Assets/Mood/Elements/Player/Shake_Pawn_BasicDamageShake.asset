@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4aaaba51cb3a93449518932794eab26, type: 3}
-  m_Name: Shake_Pawn_BasicShake
+  m_Name: Shake_Pawn_BasicDamageShake
   m_EditorClassIdentifier: 
   tagToTest: MainCamera
-  force: {x: 0.08, y: 0.01, z: 0.08}
+  force: {x: 0.12, y: 0.02, z: -0.12}
   vibrato: 700
   randomness: 180
   snapping: 0

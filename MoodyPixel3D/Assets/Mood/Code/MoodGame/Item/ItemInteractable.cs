@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemInteractable : MoodInteractable
+public class ItemInteractable : MoodInteractable, IItemHolder
 {
     public enum Consumes
     {
@@ -19,7 +19,7 @@ public class ItemInteractable : MoodInteractable
     public Consumes consumableStyle = Consumes.AllAtOnce;
     public GameObject objectToConsume;
 
-    private void Awake()
+    private void Start()
     {
         if (instance.itemData == null)
         {
@@ -81,5 +81,20 @@ public class ItemInteractable : MoodInteractable
     public override bool IsBeingInteracted()
     {
         return false;
+    }
+
+    public MoodItemInstance GetItem()
+    {
+        return instance;
+    }
+
+    public void Hold(MoodItemInstance instance)
+    {
+        this.instance = instance;
+    }
+
+    public void Release(MoodItemInstance instance)
+    {
+        if (this.instance == instance) this.instance = null;
     }
 }

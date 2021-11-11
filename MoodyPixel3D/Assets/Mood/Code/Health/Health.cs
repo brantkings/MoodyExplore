@@ -43,7 +43,7 @@ public struct DamageInfo
         public float freezeFrameDelayRealTime;
         public int freezeFrameAdd;
         public float freezeFrameMult;
-        public float freezeFrameTweenDuration;
+        public float freezeFrameTweenDurationRatio;
         public Ease freezeFrameEase;
     }
     public FreezeFrameData freezeFrame;
@@ -69,8 +69,8 @@ public struct DamageInfo
             freezeFrameDelay = 1,
             freezeFrameDelayRealTime = 0.04f,
             freezeFrameAdd = 8,
-            freezeFrameMult = 0.45f,
-            freezeFrameTweenDuration = 0.03f,
+            freezeFrameMult = 0.42f,
+            freezeFrameTweenDurationRatio = 0.72f,
             freezeFrameEase = Ease.OutCirc
         };
         stunTime = 0f;
@@ -147,14 +147,15 @@ public struct DamageInfo
 
     public TimeManager.FrameFreezeData GetFrameFreeze()
     {
+        float totalDuration = Mathf.FloorToInt(damage * freezeFrame.freezeFrameMult + freezeFrame.freezeFrameAdd) / 60f;
         return new TimeManager.FrameFreezeData()
         {
             delayDuration = freezeFrame.freezeFrameDelayRealTime,
             delayFrames = freezeFrame.freezeFrameDelay,
-            freezeDuration = Mathf.FloorToInt(damage * freezeFrame.freezeFrameMult + freezeFrame.freezeFrameAdd) / 60f, //If you put in frames, freeze frames will have different feeling durations based on timedelta
+            freezeDuration = totalDuration * (1f - freezeFrame.freezeFrameTweenDurationRatio), //If you put in frames, freeze frames will have different feeling durations based on timedelta
             freezeFrames = 0,
             minTimeScale = 0f,
-            tweenDuration = freezeFrame.freezeFrameTweenDuration,
+            tweenDuration = totalDuration * freezeFrame.freezeFrameTweenDurationRatio,
             ease = freezeFrame.freezeFrameEase
         };
     }

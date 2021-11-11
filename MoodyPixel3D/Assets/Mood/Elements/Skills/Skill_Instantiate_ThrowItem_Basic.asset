@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a94ed5314363ce4ba5cfc3a65e6992f, type: 3}
+  m_Name: Skill_Instantiate_ThrowItem_Basic
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _name: Throw
+  _description: 
+  _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 0}
+  onlyNeutralStance: 0
+  needs: []
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions: []
+  _possibleAngles: []
+  startupPriority: 2
+  heightCheckers: []
+  _freeFocusCost: 0
+  _lockCamera: 1
+  lockMovement: 0
+  _shortcut: 0
+  _debug: 0
+  _cost: 1
+  setDirection: 1
+  range: 50
+  resetDamageTeamAsPawnTeam: 0
+  preTime:
+    beats: 4
+  postTime:
+    beats: 8
+  priorityPreInstantiate: 2
+  priorityAfterInstantiate: 1
+  threat: {fileID: 0}
+  threatOffset: {x: 0, y: 0, z: 0}
+  forceOnThrow:
+    force: {x: 0, y: 0, z: 20}
+    forceMode: 2
+    absoluteValue: 0
+  onStartInstantiate: []
+  onExecuteInstantiate: []
+  onEndInstantiate: []

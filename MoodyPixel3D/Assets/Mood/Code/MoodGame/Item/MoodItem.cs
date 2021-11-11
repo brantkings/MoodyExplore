@@ -60,7 +60,7 @@ public abstract class MoodItem : ScriptableObject
 
     public abstract IEnumerable<MoodSkill> GetSkills();
 
-    public abstract string WriteItemStatus(in MoodItemInstance.Properties properties, in bool equipped);
+    public abstract string GetItemStatusDescription(in MoodItemInstance.Properties properties, in bool equipped);
 
     /// <summary>
     /// For use on WriteItemStatus

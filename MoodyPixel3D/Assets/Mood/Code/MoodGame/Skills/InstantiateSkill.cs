@@ -5,11 +5,43 @@ using LHH.ScriptableObjects.Events;
 
 public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver
 {
+    [Header("Instantiate")]
     public bool setDirection = true;
 
     public float range = 50f;
 
     public bool resetDamageTeamAsPawnTeam;
+
+    [System.Serializable]
+    public struct ForceData
+    {
+        public Vector3 force;
+        public ForceMode forceMode;
+        public bool absoluteValue;
+
+        public bool IsValid()
+        {
+            return force.sqrMagnitude > 0f;
+        }
+
+        public Vector3 GetForce(Transform origin)
+        {
+            return absoluteValue ? force : origin.rotation * force;
+        }
+
+        public static ForceData Default
+        {
+            get
+            {
+                return new ForceData()
+                {
+                    force = Vector3.zero,
+                    forceMode = ForceMode.VelocityChange,
+                    absoluteValue = false,
+                };
+            }
+        }
+    }
 
 
     [Space]
@@ -24,6 +56,8 @@ public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRang
     private MoodSwing threat;
     [SerializeField]
     private Vector3 threatOffset;
+    [SerializeField]
+    private ForceData forceOnThrow = ForceData.Default;
 
 
     public ScriptableEvent[] onStartInstantiate;
@@ -105,6 +139,12 @@ public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRang
                 {
                     damage.SetSourceDamageTeam(pawn.DamageTeam);
                 }
+            }
+
+            if (forceOnThrow.IsValid())
+            {
+                Rigidbody instBody = inst.GetComponentInParent<Rigidbody>();
+                if (instBody != null) instBody.AddForce(forceOnThrow.GetForce(pawn.ObjectTransform), forceOnThrow.forceMode);
             }
 
             return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (0f, ExecutionResult.Success));

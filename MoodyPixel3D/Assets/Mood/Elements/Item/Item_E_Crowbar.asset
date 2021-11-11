@@ -15,7 +15,8 @@ MonoBehaviour:
   _itemName: Crowbar
   _itemDescription: 
   _itemIcon: {fileID: 21300000, guid: 4e539afaae83a6743849949fba7dc6f8, type: 3}
-  pickupPrefab: {fileID: 4693325823449663037, guid: e5ae8ab5d796d364bb8ef33d871059c1, type: 3}
+  _projectilePrefab: {fileID: 4187409339808650628, guid: c33f92845a5666a4ab1508f5c0255f40, type: 3}
+  _pickupPrefab: {fileID: 4693325823449663037, guid: e5ae8ab5d796d364bb8ef33d871059c1, type: 3}
   category: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
   instancePrototype:
     quantity: 8
@@ -25,5 +26,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1eb1e7880582b29498047c9a57a8a5b0, type: 2}
   - {fileID: 11400000, guid: 4e5fe8e374280f949a2d8293fd2d0438, type: 2}
   - {fileID: 11400000, guid: d4607fed9f5eee8429892e4664fc5ba9, type: 2}
+  - {fileID: 11400000, guid: e75d9f22f7b57cf4a9033f6471deedf6, type: 2}
   equippedItem: {fileID: -6520346370307874918, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
   equippedItemOffset: {x: 0, y: 0, z: 0}

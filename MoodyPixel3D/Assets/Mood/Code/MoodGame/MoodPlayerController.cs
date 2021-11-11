@@ -760,14 +760,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
     public bool HasAvailableSkills()
     {
-        foreach (var skill in command.GetAllMoodSkills())
-        {
-            if (skill.Item1.CanExecute(_pawn, Vector3.zero))
-            {
-                return true;
-            }
-        }
-        return false;
+        return command.GetAllMoodSkills(true).Any((x) => x.Item1.CanExecute(_pawn, Vector3.zero));
     }
 
     public Mode GetCurrentMode()
@@ -865,6 +858,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
     }
 
 
+    private float _oldSlowDown;
     private void SolveSlowdown(Mode currentMode, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool bufferingSkill, SlowdownData data)
     {
         bool inCommand, isThinking = false;
@@ -889,8 +883,12 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
         }
 
         _targetTimeDelta = GetSlowdownTarget(inCommand, isThinking, isRotating, isThreatened, isExecutingSkill, canExecuteSkill, bufferingSkill, data);
+        //if(_oldSlowDown != _targetTimeDelta)
+            //Debug.LogErrorFormat($"Solve slowdown change {_oldSlowDown} to {_targetTimeDelta} ({currentMode}, {isRotating}, {isExecutingSkill}, {canExecuteSkill}, {bufferingSkill})");
+        _oldSlowDown = _targetTimeDelta;
         
     }
+
 
     private float GetSlowdownTarget(bool inCommand, bool isThinking, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool isBufferingSkill, SlowdownData data)
     {
@@ -903,7 +901,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
             {
                 if (isExecutingSkill)
                 {
-                    if (isThreatened) return Mathf.Min(data.movementThreatTimeFactor, data.commandExecutingSkillButCanExecuteTimeFactor);
+                    if (isThreatened) return Mathf.Min(data.commandExecutingSkillButCanExecuteTimeFactor * data.movementThreatTimeFactor, data.commandNotExecutingSkillTimeFactor);
                     else return data.commandExecutingSkillButCanExecuteTimeFactor;
                 }
                 else return data.commandNotExecutingSkillTimeFactor;

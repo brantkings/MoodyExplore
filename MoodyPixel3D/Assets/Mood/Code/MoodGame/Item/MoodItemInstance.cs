@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IItemHolder
+{
+    public void Hold(MoodItemInstance instance);
+    public void Release(MoodItemInstance instance);
+
+    public MoodItemInstance GetItem();
+}
+
 [System.Serializable]
 public class MoodItemInstance
 {
@@ -34,6 +42,11 @@ public class MoodItemInstance
         {
             return $"({quantity})";
         }
+    }
+
+    public bool IsValid()
+    {
+        return itemData != null;
     }
 
     public static void Destroy(ref MoodItemInstance other)

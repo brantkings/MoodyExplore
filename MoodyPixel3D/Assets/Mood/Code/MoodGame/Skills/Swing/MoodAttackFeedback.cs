@@ -47,6 +47,8 @@ public class MoodAttackFeedback : MonoBehaviour
 
     private void OnEnable()
     {
+        _count = 0f;
+
         pawn.OnBeforeSwinging += OnBeforeSwinging;
         if(pawn.Inventory != null) pawn.Inventory.OnInventoryChange += OnInventoryChange;
     }
@@ -184,15 +186,23 @@ public class MoodAttackFeedback : MonoBehaviour
         meshRend.material = slash.GetMaterial();
     }
 
+    float _count;
+
+
+
     private void Update()
     {
+
+        //Draw the arc
         if(vertexData.Count > 0)
         {
             for (int i = 0, len = vertexData.Count; i < len; i++)
             {
                 if (i % 2 == 1)
                 {
-                    vertexData[i] = Vector3.Lerp(vertexData[i], vertexData[i - 1], 0.25f);
+                    Vector3 dist = vertexData[i - 1] - vertexData[i];
+                    //vertexData[i] += Time.deltaTime * dist / attackDuration;
+                    vertexData[i] = Vector3.Lerp(vertexData[i], vertexData[i - 1], Mathf.Min(4f * Time.deltaTime / attackDuration, 1f));
                 }
                 else continue;
             }

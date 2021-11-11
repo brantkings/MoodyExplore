@@ -88,7 +88,7 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
     {
         instance.name = "Option_" + origin.itemData.name;
         if (instance.itemName != null) instance.itemName.text = origin.itemData.GetName();
-        if (instance.itemSecondary != null) instance.itemSecondary.text = origin.itemData.WriteItemStatus(origin.properties, _pawn.HasEquipped(origin));
+        if (instance.itemSecondary != null) instance.itemSecondary.text = origin.itemData.GetItemStatusDescription(origin.properties, _pawn.HasEquipped(origin));
         if (instance.itemIcon != null)
         {
             instance.itemIcon.sprite = origin.itemData.GetIcon();

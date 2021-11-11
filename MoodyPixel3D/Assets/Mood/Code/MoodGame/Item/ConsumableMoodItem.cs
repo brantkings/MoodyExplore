@@ -23,7 +23,7 @@ public class ConsumableMoodItem : MoodItem
         return consumableSkills;
     }
 
-    public override string WriteItemStatus(in MoodItemInstance.Properties properties, in bool equipped)
+    public override string GetItemStatusDescription(in MoodItemInstance.Properties properties, in bool equipped)
     {
         string str = "";
         if (equipped) str += "<color=green>Eqpd</color>\n";
