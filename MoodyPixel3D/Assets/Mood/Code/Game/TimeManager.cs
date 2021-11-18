@@ -162,7 +162,6 @@ public class TimeManager : CreateableSingleton<TimeManager>
             foreach (KeyValuePair<string, ITimeDeltaGetter> v in targetDynamicTimeScale)
             {
                 if (v.Value.Equals(null)) continue;
-                Debug.LogFormat("Getting from {0}, {1}", v.Key, v.Value);
                 targetMin = Mathf.Min(v.Value.GetTimeDeltaNow(), targetMin);
                 targetMax = Mathf.Max(v.Value.GetTimeDeltaNow(), targetMax);
                 targetProduct = targetProduct * v.Value.GetTimeDeltaNow();

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skill_Instantiate_ThrowItem_Basic
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Throw
+  _name: Throw Weapon
   _description: 
   _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
   _skillCommandColor:
@@ -25,8 +25,9 @@ MonoBehaviour:
   toConsume: []
   restrictions: []
   _possibleAngles: []
-  startupPriority: 2
   heightCheckers: []
+  _startupPriority: 0
+  _itemQuantityCost: 0
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0

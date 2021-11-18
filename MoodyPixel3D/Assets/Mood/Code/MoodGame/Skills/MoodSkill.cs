@@ -153,13 +153,12 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     private MoodStance[] restrictions;
     [SerializeField]
     private DirectionFixer[] _possibleAngles;
-    [SerializeField]
-    private int startupPriority;
     [SerializeField] private NumberUtils.NumberComparer<float>[] heightCheckers;
 
     [Space()]
-    [SerializeField]
-    private int _freeFocusCost;
+    [SerializeField] private int _startupPriority;
+    [SerializeField] private int _itemQuantityCost;
+    [SerializeField] private int _freeFocusCost;
 
     [Space()]
     [SerializeField]
@@ -338,7 +337,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public virtual IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
     {
         (float duration, ExecutionResult executed) = ExecuteEffect(pawn, skillDirection);
-        pawn.SetPlugoutPriority(startupPriority); //By default, it is the startup priority.
+        pawn.SetPlugoutPriority(_startupPriority); //By default, it is the startup priority.
         DispatchExecuteEvent(pawn, skillDirection, executed);
         if (duration > 0f)
         {
@@ -473,7 +472,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     public virtual int GetPluginPriority(MoodPawn pawn)
     {
-        return startupPriority;
+        return _startupPriority;
     }
 
     public virtual bool NeedsCameraUpwards()
@@ -484,6 +483,11 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     public int GetFocusCost()
     {
         return _freeFocusCost;
+    }
+
+    public int GetItemCost()
+    {
+        return _itemQuantityCost;
     }
     
     //Property for visual show

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93f751acdb8a80241b90e800997de133, type: 3}
-  m_Name: Skill_EN_Fake_NotPerceivedSkill
+  m_Name: Skill_FAKE_NotPerceivedSkill
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: ????

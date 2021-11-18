@@ -29,8 +29,9 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 45
     mirrored: 0
-  startupPriority: 2
   heightCheckers: []
+  _startupPriority: 2
+  _itemQuantityCost: 1
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
@@ -74,6 +75,7 @@ MonoBehaviour:
   _flyingThought: {fileID: 0}
   preAttackDash:
     distance: 2
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -87,6 +89,7 @@ MonoBehaviour:
     dashFeedbackDirection: 1
   postAttackDash:
     distance: -1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -99,6 +102,7 @@ MonoBehaviour:
     dashFeedbackDirection: 0
   whiffAttackDash:
     distance: 1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180

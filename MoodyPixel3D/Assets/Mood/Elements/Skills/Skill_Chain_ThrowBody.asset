@@ -28,8 +28,9 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 90
     mirrored: 0
-  startupPriority: 0
   heightCheckers: []
+  _startupPriority: 2
+  _itemQuantityCost: 0
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0

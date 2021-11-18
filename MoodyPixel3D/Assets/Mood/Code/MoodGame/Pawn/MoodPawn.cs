@@ -579,10 +579,10 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void UsedSkill(MoodSkill skill, Vector3 direction, MoodSkill.ExecutionResult success)
     {
-        Debug.LogFormat("{0} executes {1}! ({2})", name, skill.name, Time.frameCount);
+        Debug.LogFormat("{0} executes {1} with {2}! ({3})", name, skill.name, _currentSkillItem, Time.frameCount);
         _currentSkillUseTimestamp = Time.time;
         _currentSkillUsePosition = Position;
-        if (_currentSkillItem != null) UsedItem(skill, ref _currentSkillItem);
+        if (success == MoodSkill.ExecutionResult.Success && _currentSkillItem != null) UsedItem(skill, ref _currentSkillItem);
         OnUseSkill?.Invoke(this, skill, direction, success);
     }
 
@@ -1859,12 +1859,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _currentSkillItem = null;
     }
 
-    public void UseItem(MoodItemInstance item, MoodSkill skill)
-    {
-        item.Use(this, skill);
-        OnUseItem?.Invoke(this, item);
-    }
-
     public void AddItem(MoodItemInstance item)
     {
         if(!Inventory.Equals(null))
@@ -1915,6 +1909,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if (!Inventory.Equals(null))
             return Inventory.IsEquipped(item);
+        else return false;
+    }
+
+    public bool CanEquip(MoodItemInstance item)
+    {
+        if (!Inventory.Equals(null))
+            return Inventory.CanEquip(item);
         else return false;
     }
 

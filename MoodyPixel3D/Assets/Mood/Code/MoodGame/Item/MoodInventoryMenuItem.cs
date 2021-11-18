@@ -9,4 +9,14 @@ public class MoodInventoryMenuItem : MonoBehaviour
     public Text itemName;
     public Text itemSecondary;
     public Image itemIcon;
+
+    public void FeedbackUse()
+    {
+
+    }
+
+    public void FeedbackNegativeUse()
+    {
+          
+    }
 }

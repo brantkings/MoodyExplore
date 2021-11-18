@@ -111,25 +111,41 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
         if(feedbacks) option.currentOptionView.anim.SetTrigger("Select");
         Debug.LogFormat(option.currentOptionView, "Just selected {0}", option);
 
-        StartCoroutine(ItemSelectRoutine(_pawn.EquipSkill, _pawn.UnequipSkill, option.currentInformation));
+        StartCoroutine(ItemSelectRoutine(_pawn.EquipSkill, _pawn.UnequipSkill, option.currentInformation, option.currentOptionView));
         
     }
 
-    private IEnumerator ItemSelectRoutine(MoodSkill equipSkill, MoodSkill unequipSkill, MoodItemInstance item)
+    private IEnumerator ItemSelectRoutine(MoodSkill equipSkill, MoodSkill unequipSkill, MoodItemInstance item, MoodInventoryMenuItem option)
     {
         if (!_pawn.HasEquipped(item))
         {
-            if(_pawn.HasAnotherItemEquippedInSlot(item))
+            if(!_pawn.CanEquip(item))
             {
-                if (unequipSkill != null)
+                MoodItemInstance toSwap = _pawn.Inventory.GetObstacleItem(item.itemData.category);
+                if(toSwap != null)
                 {
-                    yield return UseSkillWithItem(unequipSkill, _pawn.GetCurrentItemEquippedInSlot(item).First());
+                    option.FeedbackUse();
+
+                    if (unequipSkill != null)
+                    {
+                        yield return UseSkillWithItem(unequipSkill, toSwap);
+                    }
+                    else
+                    {
+                        _pawn.Unequip(toSwap);
+                    }
                 }
-                else
+                else //If has not equipped, cannot equip and do not have obstacle item, it can't be used.
                 {
-                    _pawn.Unequip(item);
+                    option.FeedbackNegativeUse();
+                    yield break;
                 }
             }
+            else
+            {
+                option.FeedbackUse();
+            }
+            
 
             if (equipSkill != null)
             {
@@ -142,6 +158,8 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
         }
         else
         {
+            option.FeedbackUse();
+
             if (unequipSkill != null)
             {
                 yield return UseSkillWithItem(unequipSkill, item);

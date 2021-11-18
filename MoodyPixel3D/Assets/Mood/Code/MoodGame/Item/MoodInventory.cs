@@ -5,9 +5,49 @@ using System.Linq;
 
 public class MoodInventory : MonoBehaviour, IMoodInventory
 {
-    public MoodItem[] _initialItems;
+    [System.Serializable]
+    private struct InitialItemState
+    {
+        public enum InstanceType
+        {
+            DefaultFromItem,
+            Arbirtrary,
+        }
 
-    public Dictionary<MoodItemCategory, MoodItemInstance> equipped;
+        public MoodItem type;
+        public InstanceType instanceToUse;
+        public bool equipped;
+        public MoodItemInstance arbitraryInstance;
+
+        public MoodItemInstance GetInstance()
+        {
+            switch (instanceToUse)
+            {
+                case InstanceType.Arbirtrary:
+                    return arbitraryInstance;
+                default:
+                    return type.MakeNewInstance();
+            }
+        }
+    }
+
+    [System.Serializable]
+    private class SlotData
+    {
+        public MoodItemCategory slotType;
+        public int maxAmountOfItems = 1;
+        public bool IsSwappable()
+        {
+            return maxAmountOfItems == 1;
+        }
+    }
+
+    [SerializeField] private InitialItemState[] _initialItems;
+    [SerializeField] private SlotData[] _initialSlotData;
+    [SerializeField] private SlotData _defaultSlotData;
+
+    private Dictionary<MoodItemCategory, SlotData> _slotData;
+    [SerializeField] private Dictionary<MoodItemCategory, HashSet<MoodItemInstance>> _equipped;
     public List<MoodItemInstance> bag;
     public int maxItemCount = 12;
     [SerializeField]
@@ -20,15 +60,25 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
     private void Awake()
     {
         maxItemCountEver = Mathf.Max(maxItemCount, maxItemCountEver);
-        equipped = new Dictionary<MoodItemCategory, MoodItemInstance>(maxItemCountEver);
+        MakeSlotData();
+        _equipped = new Dictionary<MoodItemCategory, HashSet<MoodItemInstance>>(maxItemCountEver);
         bag = new List<MoodItemInstance>(maxItemCountEver);
+
+    }
+
+    private void MakeSlotData()
+    {
+        _slotData = new Dictionary<MoodItemCategory, SlotData>(_initialSlotData.Length);
+        foreach (var data in _initialSlotData) _slotData.Add(data.slotType, data);
     }
 
     private void Start()
     {
-        foreach(MoodItem item in _initialItems)
+        foreach (var item in _initialItems)
         {
-            GetItem(item.MakeNewInstance(), false);
+            MoodItemInstance instance = item.GetInstance();
+            GetItem(instance, false);
+            if (item.equipped) EquipItem(instance);
         }
         OnInventoryChange?.Invoke();
     }
@@ -46,8 +96,17 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public IEnumerable<MoodItemInstance> GetEquippedItems()
     {
-        return equipped.Values;
+        return _equipped.Values?.SelectMany((x)=> x);
     }
+
+    public IEnumerable<MoodItemInstance> GetEquippedItems(MoodItemCategory category)
+    {
+        if (_equipped.ContainsKey(category))
+            return _equipped[category];
+        else
+            return Enumerable.Empty<MoodItemInstance>();
+    }
+
 
     public int GetAllItemsLength()
     {
@@ -56,64 +115,57 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public IEnumerable<(MoodSkill, MoodItemInstance)> GetAllUsableSkills()
     {
-        foreach(var item in equipped)
+        foreach(MoodItemInstance inst in GetEquippedItems())
         {
-            if(item.Value != null)
+            foreach(MoodSkill skill in inst.itemData.GetSkills())
             {
-                foreach (var skill in item.Value.itemData.GetSkills())
-                    yield return (skill, item.Value);
+                yield return (skill, inst);
             }
         }
     }
 
-    public void SetItemEquipped(MoodItemInstance item, bool setEquipped)
+    /// <summary>
+    /// Set item equipped or not. Return if it worked successfully
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="setEquipped"></param>
+    /// <returns>If the operation worked</returns>
+    public bool SetItemEquipped(MoodItemInstance item, bool setEquipped)
     {
-        if (setEquipped) EquipItem(item);
-        else UnequipItem(item);
+        if (setEquipped) return EquipItem(item);
+        else return UnequipItem(item);
     }
 
-    private void EquipItem(MoodItemInstance item)
+    private bool EquipItem(MoodItemInstance item)
     {
-        if (equipped.ContainsKey(item.itemData.category))
+        if (AddItemToEquippedSet(item))
         {
-            if(equipped[item.itemData.category] != item)
-            {
-                if(equipped[item.itemData.category] != null)
-                {
-                    UnequipItem(equipped[item.itemData.category]);
-                }
-                equipped[item.itemData.category] = item;
-                OnEquipped?.Invoke(item);
-            }
-        }
-        else
-        {
-            equipped.Add(item.itemData.category, item);
             OnEquipped?.Invoke(item);
+            OnInventoryChange?.Invoke();
+            return true;
         }
-        OnInventoryChange?.Invoke();
+        return false;
     }
 
-    private void UnequipItem(MoodItemInstance item)
+    private bool UnequipItem(MoodItemInstance item)
     {
-        if (IsEquipped(item))
+        if(RemoveItemFromEquippedSet(item))
         {
-            equipped[item.itemData.category] = null;
             OnUnequipped?.Invoke(item);
+            OnInventoryChange?.Invoke();
+            return true;
         }
-        Debug.LogFormat("Unequipped {0}", item);
-        OnInventoryChange?.Invoke();
-    }
-
-    public bool IsEquipped(MoodItemInstance item)
-    {
-        Debug.LogFormat("Contains value {0}? {1}", item, equipped.ContainsValue(item));
-        return equipped.ContainsValue(item);
+        return false;
     }
 
     public bool IsEquipped(MoodItem item)
     {
-        return equipped.Select((x) => x.Value.itemData).Any((x) => x == item);
+        return GetEquippedItems(item.category).Any((x) => x.itemData == item);
+    }
+
+    public bool CanEquip(MoodItemInstance item)
+    {
+        return !IsEquipped(item.itemData) && GetSlotData(item.itemData.category).maxAmountOfItems > AmountCategoryEquipped(item.itemData.category);
     }
 
     public bool HasItemInBag(MoodItemInstance item)
@@ -121,9 +173,23 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
         return bag.Any((x) => x == item);
     }
 
+    public MoodItemInstance GetObstacleItem(MoodItemCategory category)
+    {
+        if(GetSlotData(category).IsSwappable())
+        {
+            return GetEquippedItems(category).First();
+        }
+        return null;
+    }
+
     public bool HasItemInBag(MoodItem item)
     {
         return bag.Select((x) => x.itemData).Any((x) => x == item);
+    }
+
+    public bool IsEquipped(MoodItemInstance item)
+    {
+        return GetEquippedItems(item.itemData.category).Any((x) => x == item);
     }
 
     public bool AddItem(MoodItemInstance item)
@@ -147,7 +213,49 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public bool IsCategoryEquipped(MoodItemCategory category)
     {
-        return equipped.ContainsKey(category) && equipped[category] != null;
+        return AmountCategoryEquipped(category) > 0;
     }
+
+    public int AmountCategoryEquipped(MoodItemCategory category)
+    {
+        if (_equipped.ContainsKey(category) && _equipped[category] != null)
+        {
+            return _equipped[category].Count;
+        }
+        else return 0;
+    }
+
+
+    #region Manipulate sets
+
+    private SlotData GetSlotData(MoodItemCategory category)
+    {
+        if (category == null) return _defaultSlotData;
+        else if (_slotData.ContainsKey(category)) return _slotData[category];
+        else return _defaultSlotData;
+    }
+
+    private bool AddItemToEquippedSet(MoodItemInstance item)
+    {
+        MoodItemCategory cat = item.itemData.category;
+        if (!_equipped.ContainsKey(cat))
+        {
+            _equipped.Add(item.itemData.category, new HashSet<MoodItemInstance>());
+        }
+
+        Debug.LogFormat("[INVENTORY] Trying to equip item {0}. Has {1} items in this {2}. Can equip {3}.", item, _equipped[cat].Count, cat, GetSlotData(cat).maxAmountOfItems);
+        if (_equipped[cat].Count >= GetSlotData(cat).maxAmountOfItems) return false;
+        else return _equipped[cat].Add(item);
+    }
+
+    private bool RemoveItemFromEquippedSet(MoodItemInstance item)
+    {
+        MoodItemCategory cat = item.itemData.category;
+        if (!_equipped.ContainsKey(cat)) return false;
+        return _equipped[cat].Remove(item);
+    }
+
+
+    #endregion
 
 }

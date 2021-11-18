@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c384c8ec3ce60a84a911da6e1dd5531f, type: 3}
-  m_Name: EquipCategory_Weapon
+  m_Name: ItemCategory_UsableItem
   m_EditorClassIdentifier: 

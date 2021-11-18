@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Spear_Attack_DashAttack
+  m_Name: Skill_Attack_Spear_BasicAttack
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Dash Thrust
+  _name: Thrust
   _description: Attack that dashes forward.
   _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
   _skillCommandColor:
@@ -29,15 +29,16 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 45
     mirrored: 0
-  startupPriority: 2
   heightCheckers: []
+  _startupPriority: 2
+  _itemQuantityCost: 1
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
   _shortcut: 120
   _debug: 0
-  _cost: 2
-  damage: 30
+  _cost: 1
+  damage: 20
   stunTime:
     beats: 4
   swingData: {fileID: 11400000, guid: a58c59fd1c0803e45ad651c58451b04b, type: 2}
@@ -73,7 +74,8 @@ MonoBehaviour:
     _getter: {fileID: 0}
   _flyingThought: {fileID: 0}
   preAttackDash:
-    distance: 4
+    distance: 0
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -86,7 +88,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
     dashFeedbackDirection: 1
   postAttackDash:
-    distance: 1
+    distance: -4
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
@@ -98,7 +101,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
   whiffAttackDash:
-    distance: 4
+    distance: 1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180

@@ -85,7 +85,7 @@ public abstract class MoodItem : ScriptableObject
 
     public virtual void OnUse(MoodPawn pawn, MoodSkill skill, ref MoodItemInstance.Properties properties)
     {
-        properties.quantity--;
+        properties.quantity -= skill.GetItemCost();
     }
 
 }

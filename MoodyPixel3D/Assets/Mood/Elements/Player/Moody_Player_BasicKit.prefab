@@ -1191,10 +1191,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5938188665409695491, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
-      propertyPath: m_Lens.m_SensorSize.x
-      value: 1.777448
-      objectReference: {fileID: 0}
     - target: {fileID: 5938188665409695516, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_LocalPosition.x
       value: 31.364742
@@ -1384,8 +1380,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6756749225256901438, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
-      propertyPath: m_ChildCameras.Array.size
-      value: 3
+      propertyPath: m_ChildCameras.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6756749225256901438, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
+      propertyPath: m_ChildCameras.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6756749225256901438, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
+      propertyPath: m_ChildCameras.Array.data[2]
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6756749225256901438, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_Instructions.Array.data[3].m_FullHash

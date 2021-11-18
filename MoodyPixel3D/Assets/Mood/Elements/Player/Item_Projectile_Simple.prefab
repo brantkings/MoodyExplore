@@ -97,6 +97,7 @@ MonoBehaviour:
     properties:
       quantity: 0
     equippedTo: {fileID: 0}
+  itemQuanitityCost: 1
 --- !u!1 &5971823621088825232
 GameObject:
   m_ObjectHideFlags: 0

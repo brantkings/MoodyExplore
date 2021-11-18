@@ -29,10 +29,11 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 15
     mirrored: 0
-  startupPriority: 1
   heightCheckers:
   - number: 0.75
     comparer: 5
+  _startupPriority: 2
+  _itemQuantityCost: 0
   _freeFocusCost: 0
   _lockCamera: 0
   lockMovement: 1
@@ -44,6 +45,7 @@ MonoBehaviour:
   hopHeight: 0
   hopDurationInMultiplier: 0
   hopDurationOutMultiplier: 0
+  movementIsBumpeable: 1
   setHorizontalDirection: 1
   setDirectionInRelationToMovement: []
   velocityAdd: 8

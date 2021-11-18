@@ -5,10 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Skill_Instantiate_Item", menuName = "Mood/Skill/Inventory/Throw Item", order = 0)]
 public class InstantiateItemProjectileSkill : InstantiateSkill
 {
+    [Header("Instantiate Item Projectile")]
+    public bool addItemNameToSkillName = true;
+
     public override string GetName(MoodPawn pawn)
     {
         MoodItemInstance item = pawn.GetCurrentItem();
-        if(item != null)
+        if(item != null && addItemNameToSkillName)
         {
             return base.GetName(pawn) + " " + item.itemData.GetName();
         }

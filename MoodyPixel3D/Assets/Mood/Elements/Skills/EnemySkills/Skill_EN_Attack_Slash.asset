@@ -25,8 +25,9 @@ MonoBehaviour:
   toConsume: []
   restrictions: []
   _possibleAngles: []
-  startupPriority: 1
   heightCheckers: []
+  _startupPriority: 2
+  _itemQuantityCost: 0
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
@@ -70,42 +71,47 @@ MonoBehaviour:
   _flyingThought: {fileID: 11400000, guid: 7f99456c53f2d754db75657ec9e843da, type: 2}
   preAttackDash:
     distance: 3
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
     - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
     dashFeedbackDirection: 1
   postAttackDash:
     distance: -1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
   whiffAttackDash:
     distance: 1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 22
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
-  onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
-  onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
-  onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
-  onDamage:
-  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
-  onGuardedDamage:
-  - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
+  previewPositioning: 3
+  preDashDelay:
+    beats: 0
   preTime:
     beats: 5
   animationTime:
@@ -113,4 +119,12 @@ MonoBehaviour:
   postTime:
     beats: 4
   showPreview: 0
+  animationIntStepString: Attack_Right
+  onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
+  onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
+  onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}
+  onDamage:
+  - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
+  onGuardedDamage:
+  - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
   addedStancesWithAttack: []

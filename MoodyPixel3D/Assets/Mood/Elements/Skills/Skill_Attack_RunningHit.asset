@@ -32,10 +32,11 @@ MonoBehaviour:
   - angleFromForward: 0
     coneAngle: 45
     mirrored: 0
-  startupPriority: 1
   heightCheckers:
   - number: 0
     comparer: 0
+  _startupPriority: 3
+  _itemQuantityCost: 1
   _freeFocusCost: 0
   _lockCamera: 1
   lockMovement: 0
@@ -79,32 +80,41 @@ MonoBehaviour:
   _flyingThought: {fileID: 0}
   preAttackDash:
     distance: 1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
     - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
     dashFeedbackDirection: 1
   postAttackDash:
     distance: 1
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
   whiffAttackDash:
     distance: 4
+    bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
+    hopHeight: 0
+    hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0

@@ -17,7 +17,7 @@ MonoBehaviour:
   _itemIcon: {fileID: 0}
   _projectilePrefab: {fileID: 0}
   _pickupPrefab: {fileID: 0}
-  category: {fileID: 0}
+  category: {fileID: 11400000, guid: 89685ab5cbde19149aff6873e643ac62, type: 2}
   instancePrototype:
     quantity: 6
   consumableSkills:
