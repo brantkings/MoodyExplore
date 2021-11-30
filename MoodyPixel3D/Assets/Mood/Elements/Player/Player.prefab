@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 5, z: 5}
+  m_FollowOffset: {x: 0, y: 28, z: 19}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -1277,7 +1277,7 @@ MonoBehaviour:
   m_ZDamping: 0
   m_AngularDampingMode: 0
   m_PitchDamping: 0
-  m_YawDamping: 0.1
+  m_YawDamping: 0.02
   m_RollDamping: 0
   m_AngularDamping: 0
   m_Heading:
@@ -1834,8 +1834,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4813272952109751330}
-  m_LocalRotation: {x: 0.0005912094, y: 0.984241, z: -0.17680076, w: 0.0032912334}
-  m_LocalPosition: {x: 0, y: 5, z: 5}
+  m_LocalRotation: {x: 0.00037529375, y: 0.8953026, z: -0.44545776, w: 0.00075428357}
+  m_LocalPosition: {x: 0, y: 28, z: 19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5063391411731368733}
@@ -1871,7 +1871,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.777448, y: 1}
+    m_SensorSize: {x: 2.132, y: 1}
   m_Transitions:
     m_BlendHint: 2
     m_InheritPosition: 0
@@ -2037,19 +2037,19 @@ MonoBehaviour:
   maxAlpha: 1
   unscaled: 1
   deactivateAfter: 0
-  defaultDuration: 0.5
+  defaultDuration: 0.15
   alphaCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: 1.7727271
+      outSlope: 1.7727271
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.09166667
     - serializedVersion: 3
       time: 1
       value: 1
@@ -2062,7 +2062,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  useInvertedCurve: 0
+  useInvertedCurve: 1
   invertedCurve:
     serializedVersion: 2
     m_Curve: []
@@ -2678,7 +2678,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.777448, y: 1}
+    m_SensorSize: {x: 2.132, y: 1}
   m_Transitions:
     m_BlendHint: 2
     m_InheritPosition: 0
@@ -2990,13 +2990,13 @@ MonoBehaviour:
   - mode: 0
     animatorIntegerID: Mode
     animatorIntegerValue: 0
-    hasInputDirectionFeedback: 1
+    hasInputDirectionFeedback: 0
     onChangeTo:
     - {fileID: 11400000, guid: 6b44285a00ddd65459610607cac32c3a, type: 2}
   - mode: 1
     animatorIntegerID: Mode
     animatorIntegerValue: 1
-    hasInputDirectionFeedback: 0
+    hasInputDirectionFeedback: 1
     onChangeTo:
     - {fileID: 11400000, guid: a3627f454f7a3154cb9893cbf695aae6, type: 2}
   - mode: 2
@@ -3206,15 +3206,23 @@ MonoBehaviour:
       properties:
         quantity: 0
       equippedTo: {fileID: 0}
+  - type: {fileID: 11400000, guid: ceb20c46e491f904f9cf9f94969fe791, type: 2}
+    instanceToUse: 0
+    equipped: 0
+    arbitraryInstance:
+      itemData: {fileID: 0}
+      properties:
+        quantity: 0
+      equippedTo: {fileID: 0}
   _initialSlotData:
   - slotType: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
     maxAmountOfItems: 1
   - slotType: {fileID: 11400000, guid: 89685ab5cbde19149aff6873e643ac62, type: 2}
-    maxAmountOfItems: 3
+    maxAmountOfItems: 4
   _defaultSlotData:
     slotType: {fileID: 0}
     maxAmountOfItems: 1
-  bag: []
+  _bag: []
   maxItemCount: 12
   maxItemCountEver: 12
 --- !u!1 &5938188666182314998
@@ -5686,7 +5694,7 @@ MonoBehaviour:
   m_ZDamping: 0
   m_AngularDampingMode: 0
   m_PitchDamping: 0
-  m_YawDamping: 0.2
+  m_YawDamping: 0.1
   m_RollDamping: 0
   m_AngularDamping: 0
   m_Heading:
@@ -5931,7 +5939,7 @@ MonoBehaviour:
   m_LockStageInInspector: 
   m_StreamingVersion: 20170927
   m_Priority: 10
-  m_StandbyUpdate: 0
+  m_StandbyUpdate: 2
   m_LookAt: {fileID: 3318287406932493139}
   m_Follow: {fileID: 3318287406932493139}
   m_AnimatedTarget: {fileID: 1606098491931263108}
@@ -5949,14 +5957,14 @@ MonoBehaviour:
   - m_FullHash: -1365118772
     m_VirtualCamera: {fileID: 5390907015469078228}
     m_ActivateAfter: 0
-    m_MinDuration: 0
+    m_MinDuration: 0.05
   - m_FullHash: 642591343
     m_VirtualCamera: {fileID: 7531457977663148638}
     m_ActivateAfter: 0
     m_MinDuration: 0
   m_DefaultBlend:
     m_Style: 3
-    m_Time: 0.35
+    m_Time: 0.1
     m_CustomCurve:
       serializedVersion: 2
       m_Curve: []
@@ -6618,7 +6626,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7054111352717382884}
-  m_LocalRotation: {x: -0.15596938, y: 0.8057055, z: -0.5171762, w: -0.24298373}
+  m_LocalRotation: {x: -0.15596932, y: 0.80570555, z: -0.51717615, w: -0.24298365}
   m_LocalPosition: {x: 8.845981, y: 40, z: 13.332239}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6655,7 +6663,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.777448, y: 1}
+    m_SensorSize: {x: 2.132, y: 1}
   m_Transitions:
     m_BlendHint: 3
     m_InheritPosition: 1

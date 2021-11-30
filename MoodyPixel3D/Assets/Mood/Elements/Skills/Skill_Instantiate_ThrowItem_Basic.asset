@@ -19,6 +19,9 @@ MonoBehaviour:
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 0}
+  conditionsToUse:
+  - {fileID: 11400000, guid: 95b2911e6c902cc4c9f9a6b59cb63c4b, type: 2}
+  joinConditionsType: 0
   onlyNeutralStance: 0
   needs: []
   consumeNeededStances: 0
@@ -52,3 +55,4 @@ MonoBehaviour:
   onStartInstantiate: []
   onExecuteInstantiate: []
   onEndInstantiate: []
+  addItemNameToSkillName: 0

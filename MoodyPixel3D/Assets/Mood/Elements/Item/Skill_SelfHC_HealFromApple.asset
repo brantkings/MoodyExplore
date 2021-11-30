@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 729d15067af54634d9a936837189896f, type: 3}
+  m_Name: Skill_SelfHC_HealFromApple
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 0}
+  _name: "Eat Acaraj\xE9"
+  _description: 
+  _category: {fileID: 11400000, guid: e0a9f87f936277d4b9c4521b02d92d15, type: 2}
+  _skillCommandColor:
+    _directProperty: {r: 0, g: 0, b: 0, a: 0}
+    _getter: {fileID: 0}
+  onlyNeutralStance: 0
+  needs: []
+  consumeNeededStances: 0
+  toConsume: []
+  restrictions: []
+  _possibleAngles: []
+  heightCheckers: []
+  _startupPriority: 0
+  _itemQuantityCost: 1
+  _freeFocusCost: 0
+  _lockCamera: 1
+  lockMovement: 0
+  _shortcut: 0
+  _debug: 0
+  _cost: 0
+  preFeedbackDelay:
+    beats: 0
+  preDelay:
+    beats: 2
+  executionDelay:
+    beats: 1
+  postFeedbackDelay:
+    beats: 2
+  plugoutPriorityBefore: 6
+  plugoutPriorityAfter: 2
+  stuns: 
+  flags: []
+  toAdd: []
+  sfx: {fileID: 0}
+  triggerAnim:
+    id: 
+  boolWhileInSkill:
+    id: 
+  damage: -10
+  stunTime: 0

@@ -17,7 +17,7 @@ public class InstantiateItemProjectileSkill : InstantiateSkill
         }
         else
         {
-            return base.GetName(pawn) + " " + "item";
+            return base.GetName(pawn);
         }
     }
 

@@ -19,6 +19,9 @@ MonoBehaviour:
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.3254717, b: 0.3254717, a: 1}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
+  conditionsToUse:
+  - {fileID: 11400000, guid: 95b2911e6c902cc4c9f9a6b59cb63c4b, type: 2}
+  joinConditionsType: 0
   onlyNeutralStance: 0
   needs:
   - {fileID: 11400000, guid: 1e3d1abdb2c9721448fc05cb2e5d17cb, type: 2}
@@ -118,7 +121,7 @@ MonoBehaviour:
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
-  previewPositioning: 3
+  previewPositioning: 2
   preDashDelay:
     beats: 0
   preTime:

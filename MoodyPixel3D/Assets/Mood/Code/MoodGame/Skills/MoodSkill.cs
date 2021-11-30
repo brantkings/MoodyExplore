@@ -141,6 +141,8 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
 
     [Space()]
+    [SerializeField] private MoodPawnCondition[] conditionsToUse;
+    [SerializeField] private MoodPawnConditionUtils.JoinType joinConditionsType = MoodPawnConditionUtils.JoinType.All;
     [SerializeField]
     private bool onlyNeutralStance;
     [SerializeField]
@@ -288,18 +290,23 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         return true;
     }
 
+    private bool IsConditionsOK(MoodPawn pawn)
+    {
+        return MoodPawnConditionUtils.ConditionIsOk(conditionsToUse, pawn, joinConditionsType);
+    }
+
     public virtual bool CanExecute(MoodPawn pawn, Vector3 where)
     {
         if(Debugging)
         {
             Debug.LogErrorFormat("{0} can do {1}? stance?{2} && focus?{3} && neutral?{4} && pawn?{5} && height{6}", pawn.name, name, IsValidStanceSetup(pawn), IsFocusAvailable(pawn), IsNeutralOK(pawn), pawn.CanUseSkill(this), IsHeightOK(pawn));
         }
-        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && IsHeightOK(pawn) && IsNeutralOK(pawn) && pawn.CanUseSkill(this);
+        return IsValidStanceSetup(pawn) && IsFocusAvailable(pawn) && IsHeightOK(pawn) && IsNeutralOK(pawn) && pawn.CanUseSkill(this) && IsConditionsOK(pawn);
     }
 
     public virtual bool CanBeShown(MoodPawn pawn)
     {
-        return IsValidStanceSetup(pawn);
+        return IsValidStanceSetup(pawn) && IsConditionsOK(pawn);
     }
 
     /// <summary>

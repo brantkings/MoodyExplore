@@ -23,4 +23,9 @@ public static class TweenUtils
     {
         return tween != null && tween.IsActive();
     }
+
+    public static bool IsActiveOrGoingToActivate(this Tween tween)
+    {
+        return tween != null && (tween.IsInitialized() || tween.IsPlaying()) && !tween.IsComplete();
+    }
 }

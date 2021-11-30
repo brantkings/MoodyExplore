@@ -146,8 +146,9 @@ namespace LHH.Switchable
         {
             if (_currentRoutine != null)
             {
-                Debug.LogWarningFormat(this, "[SWITCHABLE] Coroutine is not null on {0}", this);
-                StopCoroutine(_currentRoutine);
+                //Debug.LogWarningFormat(this, "[SWITCHABLE] Coroutine is not null on {0}", this);
+                //StopCoroutine(_currentRoutine);
+                StopAllCoroutines();
             }
             _currentRoutine = StartCoroutine(SetRoutine(on, forceEvents, immediate, this));
         }

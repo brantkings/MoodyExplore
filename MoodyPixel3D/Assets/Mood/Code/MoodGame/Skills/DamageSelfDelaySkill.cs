@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Skill_SelfHC_", menuName = "Mood/Skill/Self Health Change", order = 0)]
 public class DamageSelfDelaySkill : CostStaminaDelaySkill
 {
+    [Header("Health change")]
     public int damage = DamageInfo.BASE_SINGLE_UNIT_DAMAGE;
     public float stunTime = 0f;
 

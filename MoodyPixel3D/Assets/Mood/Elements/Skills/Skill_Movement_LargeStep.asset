@@ -19,6 +19,9 @@ MonoBehaviour:
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: 9a075322f5390804d902ef43c4bd550e, type: 2}
+  conditionsToUse:
+  - {fileID: 11400000, guid: e8e7ecff2f25278479e649d0708d1d8a, type: 2}
+  joinConditionsType: 0
   onlyNeutralStance: 0
   needs: []
   consumeNeededStances: 0

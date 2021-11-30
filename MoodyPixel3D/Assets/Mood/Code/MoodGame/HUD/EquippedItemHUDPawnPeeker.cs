@@ -18,6 +18,8 @@ public class EquippedItemHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     public UnityEngine.Events.UnityEvent onUseItem;
 
+    public MoodItemCategory itemCategory;
+
     private void Awake()
     {
         HideItem();

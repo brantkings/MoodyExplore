@@ -48,7 +48,7 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     private Dictionary<MoodItemCategory, SlotData> _slotData;
     [SerializeField] private Dictionary<MoodItemCategory, HashSet<MoodItemInstance>> _equipped;
-    public List<MoodItemInstance> bag;
+    [SerializeField] [ReadOnly] private List<MoodItemInstance> _bag;
     public int maxItemCount = 12;
     [SerializeField]
     private int maxItemCountEver = 12;
@@ -62,7 +62,7 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
         maxItemCountEver = Mathf.Max(maxItemCount, maxItemCountEver);
         MakeSlotData();
         _equipped = new Dictionary<MoodItemCategory, HashSet<MoodItemInstance>>(maxItemCountEver);
-        bag = new List<MoodItemInstance>(maxItemCountEver);
+        _bag = new List<MoodItemInstance>(maxItemCountEver);
 
     }
 
@@ -85,13 +85,13 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public void GetItem(MoodItemInstance item, bool feedback = true)
     {
-        bag.Add(item);
+        _bag.Add(item);
         if (feedback) OnInventoryChange?.Invoke();
     }
 
     public IEnumerable<MoodItemInstance> GetAllItems()
     {
-        return bag;
+        return _bag;
     }
 
     public IEnumerable<MoodItemInstance> GetEquippedItems()
@@ -110,7 +110,7 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public int GetAllItemsLength()
     {
-        return bag.Count;
+        return _bag.Count;
     }
 
     public IEnumerable<(MoodSkill, MoodItemInstance)> GetAllUsableSkills()
@@ -170,7 +170,7 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public bool HasItemInBag(MoodItemInstance item)
     {
-        return bag.Any((x) => x == item);
+        return _bag.Any((x) => x == item);
     }
 
     public MoodItemInstance GetObstacleItem(MoodItemCategory category)
@@ -184,7 +184,7 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public bool HasItemInBag(MoodItem item)
     {
-        return bag.Select((x) => x.itemData).Any((x) => x == item);
+        return _bag.Select((x) => x.itemData).Any((x) => x == item);
     }
 
     public bool IsEquipped(MoodItemInstance item)
@@ -194,11 +194,11 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
 
     public bool AddItem(MoodItemInstance item)
     {
-        if(bag.Count >= maxItemCount)
+        if(_bag.Count >= maxItemCount)
         {
             return false;
         }
-        bag.Add(item);
+        _bag.Add(item);
         OnInventoryChange?.Invoke();
         return true;
     }
@@ -206,7 +206,7 @@ public class MoodInventory : MonoBehaviour, IMoodInventory
     public bool RemoveItem(MoodItemInstance item)
     {
         if (IsEquipped(item)) UnequipItem(item);
-        bool removed = bag.Remove(item);
+        bool removed = _bag.Remove(item);
         if (removed) OnInventoryChange?.Invoke();
         return removed;
     }

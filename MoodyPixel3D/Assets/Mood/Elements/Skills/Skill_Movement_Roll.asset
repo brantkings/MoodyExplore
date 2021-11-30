@@ -19,6 +19,8 @@ MonoBehaviour:
   _skillCommandColor:
     _directProperty: {r: 0, g: 0, b: 0, a: 0}
     _getter: {fileID: 11400000, guid: 9a075322f5390804d902ef43c4bd550e, type: 2}
+  conditionsToUse: []
+  joinConditionsType: 0
   onlyNeutralStance: 0
   needs:
   - {fileID: 11400000, guid: 9817d25c84411424ab8478112e231846, type: 2}
@@ -30,7 +32,7 @@ MonoBehaviour:
     coneAngle: 15
     mirrored: 0
   heightCheckers:
-  - number: 0.75
+  - number: 1
     comparer: 5
   _startupPriority: 2
   _itemQuantityCost: 0

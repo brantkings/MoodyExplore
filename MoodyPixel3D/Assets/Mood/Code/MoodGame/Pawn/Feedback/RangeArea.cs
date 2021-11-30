@@ -32,6 +32,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
 
     SkillDirectionSanitizer currentPositionSanitized;
     Properties.Positioning whereToPosition;
+    private Vector3? directionAtPreview;
 
     private void Start()
     {
@@ -73,7 +74,7 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
     public void SetDirection(MoodPawn pawn, MoodSkill skill, Vector3 directionLength)
     {
         Vector3 sanitizedDirection = currentPositionSanitized.Sanitize(directionLength, pawn.Direction);
-        transform.forward = directionLength;
+        //transform.forward = directionLength;
         string debugType;
         if (pawn.UsedCurrentSkill() || skill != pawn.GetCurrentSkill()) //If it is not using a skill then it is previewing
         {
@@ -81,6 +82,8 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
             transform.position = pawn.Position;
             transform.localPosition += transform.parent.InverseTransformVector(sanitizedDirection); 
             transform.forward = directionLength;
+
+            directionAtPreview = sanitizedDirection;
         }
         else //Then use its own position
         {
@@ -111,6 +114,8 @@ public class RangeArea : RangeShow<RangeArea.Properties>, IRangeShowDirected
                 case Properties.Positioning.OriginalPosition:
                     debugType = "OriginalPosition";
                     transform.position = pawn.GetSkillPreviewOriginPosition();
+                    if(directionAtPreview.HasValue)
+                        transform.localPosition += transform.parent.InverseTransformVector(directionAtPreview.Value);
                     break;
                 default:
                     debugType = "DefaultedToPosition";

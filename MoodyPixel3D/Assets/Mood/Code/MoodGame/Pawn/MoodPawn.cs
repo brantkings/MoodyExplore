@@ -52,6 +52,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillExecutionEvent OnUseSkill;
     public event DelMoodPawnItemEvent OnUseItem;
+    public event DelMoodPawnItemEvent OnDestroyItem;
     public event DelMoodPawnDamageEvent OnPawnDamaged;
     public event DelMoodPawnDamageEvent OnPawnDeath;
     public event DelMoodPawnUndirectedSkillEvent OnEndSkill;
@@ -1952,6 +1953,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(item != null)
         {
             item.Use(this, skill, JustDestroyedItem);
+            OnUseItem?.Invoke(this, item);
         }
         item = null;
     }
@@ -1959,6 +1961,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private void JustDestroyedItem(MoodItemInstance item)
     {
         BattleLog.Log($"{GetName()} destroyed {item.itemData.GetName()}.", BattleLog.LogType.Battle);
+        OnDestroyItem?.Invoke(this, item);
         Unequip(item);
         RemoveItem(item);
     }

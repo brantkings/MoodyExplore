@@ -144,6 +144,11 @@ public class MoodCommandMenu : MonoBehaviour
         {
             return GetSelectable() == selectable;
         }
+
+        public override string ToString()
+        {
+            return $"[Option:{selectable} with {item}]";
+        }
     }
 
     internal class OptionColumn : IEnumerable<Option>
@@ -194,6 +199,16 @@ public class MoodCommandMenu : MonoBehaviour
         public bool IsValid()
         {
             return instance != null;
+        }
+
+        public override string ToString()
+        {
+            return $"'{instance.name}({category}), {options.Count} options. Child of {parentOption}'";
+        }
+
+        public float GetXPosition()
+        {
+            return -instance.localPosition.x;
         }
     }
 
@@ -391,6 +406,11 @@ public class MoodCommandMenu : MonoBehaviour
             }
             return false;
         }
+
+        public override string ToString()
+        {
+            return $"{index} of {current}";
+        }
     }
 
     #endregion
@@ -420,7 +440,7 @@ public class MoodCommandMenu : MonoBehaviour
         current.Set(main, 0);
         SetChildrenColumnsActivated(current);
         CheckCurrentCustomPress(current);
-        StartCoroutine(JustSelectFeedbackRoutine(commandPawn, 0f));
+        StartCoroutine(JustSelectTreeFeedbackRoutine(commandPawn, 0f));
     }
 
     #region Interface to outside
@@ -445,7 +465,7 @@ public class MoodCommandMenu : MonoBehaviour
             FeedbackCurrentOption(feedbacks);
         }
         bool moved = current.Enter();
-        FeedbackTreeMovementTry(pawn, moved, feedbacks, JustSelectFeedbackRoutine);
+        FeedbackTreeMovementTry(pawn, moved, feedbacks, JustSelectTreeFeedbackRoutine);
     }
 
 
@@ -574,31 +594,46 @@ public class MoodCommandMenu : MonoBehaviour
     }
 
     #region Tween
-    private IEnumerator JustSelectFeedbackRoutine(MoodPawn pawn, float duration)
+    private IEnumerator JustSelectTreeFeedbackRoutine(MoodPawn pawn, float duration)
     {
+        _gonnaColumnTween = true;
         yield return null;
-        yield return GotoColumn(pawn, current.GetCurrentColumn(), duration);
+        _gonnaColumnTween = false;
+        yield return GotoColumn(pawn, current.GetCurrentColumn(), duration).OnKill(NullifyColumnTweenReference);
     }
 
     private IEnumerator SelectAndActivateTreeFeedbackRoutine(MoodPawn pawn, float duration)
     {
+        _gonnaColumnTween = true;
         yield return null;
-        yield return GotoColumn(pawn, current.GetCurrentColumn(), duration).OnKill(()=>SetChildrenColumnsActivated(current));
+        _gonnaColumnTween = false;
+        yield return GotoColumn(pawn, current.GetCurrentColumn(), duration).OnKill(()=> { SetChildrenColumnsActivated(current); NullifyColumnTweenReference(); });
     }
 
-    private Tween _columnTween;
+    private Tween _columnTween = null;
+    private bool _gonnaColumnTween = false;
+
+    private bool IsColumnTweenActive()
+    {
+        return _columnTween.IsNotNullAndActive() || _gonnaColumnTween;
+    }
+
+    private void NullifyColumnTweenReference()
+    {
+        _columnTween = null;
+    }
 
     private Tween TrembleMovement(float force, float duration)
     {
         _columnTween.CompleteIfActive(true);
-        _columnTween = columnParent.transform.DOShakePosition(duration, Vector3.right * force, 60, 90).SetUpdate(true).SetEase(Ease.OutCirc);
+        _columnTween = columnParent.transform.DOShakePosition(duration, Vector3.right * force, 60, 90).SetUpdate(true).SetEase(Ease.OutCirc).OnKill(NullifyColumnTweenReference);
         return _columnTween;
     }
 
     private Tween GotoColumn(MoodPawn pawn, OptionColumn column, float duration)
     {
         _columnTween.CompleteIfActive(true);
-        _columnTween = columnParent.transform.DOLocalMoveX(-column.instance.localPosition.x, duration).SetUpdate(true).SetEase(Ease.OutElastic, changeElasticOvershoot, changeElasticPeriod);
+        _columnTween = columnParent.transform.DOLocalMoveX(column.GetXPosition(), duration).SetUpdate(true).SetEase(Ease.OutElastic, changeElasticOvershoot, changeElasticPeriod);
         if(titleText != null)
         {
             if(column.parentOption != null)
@@ -619,6 +654,34 @@ public class MoodCommandMenu : MonoBehaviour
             }
         }
         return _columnTween;
+    }
+
+    /// <summary>
+    /// Compare current column with the selection column. If current is bigger, returns 1, if current is lower, returns -1. If its equal returns 0;
+    /// </summary>
+    /// <returns></returns>
+    private int CompareColumnPositionToCurrentColumn()
+    {
+        float now = GetCurrentColumnPosition();
+        float want = GetWantedColumnPosition();
+        if (now > want) return 1;
+        if (now < want) return -1;
+        return 0;
+    }
+
+
+    private float GetCurrentColumnPosition()
+    {
+        if (IsColumnTweenActive())
+        {
+            return GetWantedColumnPosition();
+        }
+        else return columnParent.transform.localPosition.x;
+    }
+
+    private float GetWantedColumnPosition()
+    {
+        return current.GetCurrentColumn().GetXPosition();
     }
     #endregion
 
@@ -769,6 +832,48 @@ public class MoodCommandMenu : MonoBehaviour
         opt.instance.SetPossible(canExecute, opt.GetSelectable());
     }
 
+    #endregion
+
+    #region Assurances
+    public void AssureSelectedIsVisible(MoodPawn pawn)
+    {
+        if (GetFirstActiveSecondaryMenu() != null) return;
+
+        //Debug.LogErrorFormat("[MENU]Trying to check if menu is OK {0}", current);
+        while (!current.IsValidSelection() || !current.IsCurrentValid())
+        {
+            Debug.LogErrorFormat("Menu is not OK, {0}", current);
+
+            if(!current.IsValidSelection())
+            {
+                current.Move(1);
+                Debug.LogErrorFormat("Tried to move 1, {0}", current);
+            }
+
+            if(!current.IsCurrentValid())
+            {
+                current.Exit();
+                Debug.LogErrorFormat("Tried exiting, {0}", current);
+            }
+        }
+
+        AssureSelectedColumnIsVisible(pawn);
+    }
+
+    private void AssureSelectedColumnIsVisible(MoodPawn pawn)
+    {
+        int match = CompareColumnPositionToCurrentColumn();
+        if(match<0)
+        {
+            Debug.LogErrorFormat("Column was wrong less {0}, active:{1} posNow:{2} posWant:{3}", match, _columnTween != null, GetCurrentColumnPosition(), GetWantedColumnPosition());
+            StartCoroutine(JustSelectTreeFeedbackRoutine(pawn, changeDuration));
+        }
+        else if(match > 0)
+        {
+            Debug.LogErrorFormat("Column was wrong more {0}, active:{1} posNow:{2} posWant:{3}", match, _columnTween != null, GetCurrentColumnPosition(), GetWantedColumnPosition());
+            StartCoroutine(SelectAndActivateTreeFeedbackRoutine(pawn, changeDuration));
+        }
+    }
     #endregion
 
 

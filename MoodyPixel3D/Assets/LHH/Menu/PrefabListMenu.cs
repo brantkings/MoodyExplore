@@ -54,6 +54,7 @@ namespace LHH.Menu
         private Option CreateNewOption(OptionInfoType type)
         {
             OptionViewType view = GetNewInstance();
+            Debug.LogFormat("[PREFABLISTMENU] CREATE {0}, Total {1}(view:{2} - type:{3})", this,  _options.Count, view, type);
             PopulateInstance(ref view, type);
             Option opt = new Option(view, type);
             return opt;
@@ -67,6 +68,13 @@ namespace LHH.Menu
             int length = GetOptionsPopulationLength();
             foreach (OptionInfoType type in GetOptionsPopulation())
             {
+                if(type == null)
+                {
+                    Debug.LogErrorFormat(this, "{0} from {1} is null!", type, this);
+
+                    continue;
+                }
+
                 int result = _options.FindIndex(0, (x) => x.currentInformation == type);
                 if(result >= 0) //Found any
                 {
@@ -83,6 +91,7 @@ namespace LHH.Menu
                         Reposition(_options[index], index, length, false);
                     }
                     //Check changes
+                    Debug.LogFormat("[PREFABLISTMENU] {0} {1} - {2}, Total {3}({4} - {5})", this, index, result, _options.Count, _options.ElementAtOrDefault(index), _options.ElementAtOrDefault(result));
                     PopulateInstance(ref _options[index].currentOptionView, _options[index].currentInformation);
                 }
                 else //OK will need to create

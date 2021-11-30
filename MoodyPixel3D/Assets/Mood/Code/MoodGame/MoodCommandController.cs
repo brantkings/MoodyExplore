@@ -273,7 +273,7 @@ public class MoodCommandController : MonoBehaviour
     public void UpdateCommandView(MoodPawn pawn, MoodSkill currentSkill, Vector3 sanitizedDirection, bool assureSelected)
     {
         _menu.PaintOptions(pawn, sanitizedDirection);
-        if(assureSelected) //AssureSelectedOptionIsVisible();
+        if(assureSelected) AssureSelectedOptionIsVisible();
 
         if(currentSkill != null)
         {
@@ -297,6 +297,11 @@ public class MoodCommandController : MonoBehaviour
     public MoodCommandMenu.SelectCategoryResult SelectCategory(MoodSkillCategory category, bool feedbacks)
     {
         return _menu.SelectCategory(_pawn, category, feedbacks);
+    }
+
+    private void AssureSelectedOptionIsVisible()
+    {
+        _menu.AssureSelectedIsVisible(_pawn);
     }
 
 
@@ -337,5 +342,7 @@ public class MoodCommandController : MonoBehaviour
     private void OnInventoryChange()
     {
         _menu.CreateAndBuildOptions(_pawn, ListAllSkills());
+        AssureSelectedOptionIsVisible();
+        ShowCurrentSelected();
     }
 }
