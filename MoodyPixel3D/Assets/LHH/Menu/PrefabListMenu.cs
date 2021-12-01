@@ -175,6 +175,11 @@ namespace LHH.Menu
 
         public abstract void SetActive(bool set);
 
+        protected OptionViewType GetCorrectOptionFor(OptionInfoType type)
+        {
+            return _options.FirstOrDefault((x) => x.currentInformation == type)?.currentOptionView;
+        }
+
 
     }
 }

@@ -10,13 +10,28 @@ public class MoodInventoryMenuItem : MonoBehaviour
     public Text itemSecondary;
     public Image itemIcon;
 
+    [Space()]
+    public string triggerUse = "Select";
+    public string boolUsing = "Using";
+
+
+    private void OnDisable()
+    {
+        FeedbackUsingItem(false);
+    }
+
     public void FeedbackUse()
     {
-
+        anim.SetTrigger(triggerUse);
     }
 
     public void FeedbackNegativeUse()
     {
           
+    }
+
+    public void FeedbackUsingItem(bool set)
+    {
+        anim.SetBool(boolUsing, set);
     }
 }

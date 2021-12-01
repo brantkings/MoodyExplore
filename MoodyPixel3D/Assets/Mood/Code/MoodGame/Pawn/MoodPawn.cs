@@ -51,6 +51,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public event DelMoodPawnSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
     public event DelMoodPawnSkillExecutionEvent OnUseSkill;
+    public event DelMoodPawnItemEvent OnStartUsingItem;
+    public event DelMoodPawnItemEvent OnEndUsingItem;
     public event DelMoodPawnItemEvent OnUseItem;
     public event DelMoodPawnItemEvent OnDestroyItem;
     public event DelMoodPawnDamageEvent OnPawnDamaged;
@@ -462,6 +464,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
         _currentSkillRoutine = null;
         UnmarkUsingSkill(skill);
+        UnmarkUsingItem();
     }
 
 
@@ -485,6 +488,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             _currentSkillRoutine = null;
             skill.Interrupt(this);
             UnmarkUsingSkill(skill);
+            UnmarkUsingItem();
             OnInterruptSkill?.Invoke(this, skill);
         }
 #if UNITY_EDITOR
@@ -583,7 +587,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         Debug.LogFormat("{0} executes {1} with {2}! ({3})", name, skill.name, _currentSkillItem, Time.frameCount);
         _currentSkillUseTimestamp = Time.time;
         _currentSkillUsePosition = Position;
-        if (success == MoodSkill.ExecutionResult.Success && _currentSkillItem != null) UsedItem(skill, ref _currentSkillItem);
+        if (success == MoodSkill.ExecutionResult.Success && _currentSkillItem != null) UsedItem(skill, _currentSkillItem);
         OnUseSkill?.Invoke(this, skill, direction, success);
     }
 
@@ -1852,12 +1856,23 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void MarkUsingItem(MoodItemInstance item)
     {
+        UnmarkUsingItem();
         _currentSkillItem = item;
+        OnStartUsingItem?.Invoke(this, item);
+    }
+
+    public void UnmarkUsingItem()
+    {
+        if (_currentSkillItem != null)
+        {
+            OnEndUsingItem?.Invoke(this, _currentSkillItem);
+            _currentSkillItem = null;
+        }
     }
 
     public void UnmarkUsingItem(MoodItemInstance item)
     {
-        _currentSkillItem = null;
+        if (_currentSkillItem == item) UnmarkUsingItem();
     }
 
     public void AddItem(MoodItemInstance item)
@@ -1948,14 +1963,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         item.SetEquipped(this, true);
     }
 
-    private void UsedItem(MoodSkill skill, ref MoodItemInstance item)
+    private void UsedItem(MoodSkill skill, MoodItemInstance item)
     {
         if(item != null)
         {
             item.Use(this, skill, JustDestroyedItem);
             OnUseItem?.Invoke(this, item);
         }
-        item = null;
+        UnmarkUsingItem(item);
     }
 
     private void JustDestroyedItem(MoodItemInstance item)

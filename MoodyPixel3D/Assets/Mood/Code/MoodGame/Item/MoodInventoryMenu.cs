@@ -43,11 +43,17 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
     private void OnEnable()
     {
         _inventory.OnInventoryChange += OnInventoryChange;
+        _pawn.OnStartUsingItem += OnStartUsingItem;
+        _pawn.OnEndUsingItem += OnEndUsingItem;
     }
+
+
 
     private void OnDisable()
     {
         _inventory.OnInventoryChange -= OnInventoryChange;
+        _pawn.OnStartUsingItem -= OnStartUsingItem;
+        _pawn.OnEndUsingItem -= OnEndUsingItem;
     }
 
     private IEnumerator Start()
@@ -73,6 +79,16 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
     {
         RepopulateWithDifferences();
     }
+    private void OnStartUsingItem(MoodPawn pawn, MoodItemInstance item)
+    {
+        Debug.LogFormat("[ITEM MENU] Starting item {0}", item);
+        GetCorrectOptionFor(item)?.FeedbackUsingItem(true);
+    }
+    private void OnEndUsingItem(MoodPawn pawn, MoodItemInstance item)
+    {
+        Debug.LogFormat("[ITEM MENU] Ending item {0}", item);
+        GetCorrectOptionFor(item)?.FeedbackUsingItem(false);
+    }
 
     public override IEnumerable<MoodItemInstance> GetOptionsPopulation()
     {
@@ -86,7 +102,7 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
 
     public override void PopulateInstance(ref MoodInventoryMenuItem instance, MoodItemInstance origin)
     {
-        instance.name = "Option_" + origin.itemData.name;
+        instance.name = "Option_" + origin.itemData.name; 
         if (instance.itemName != null) instance.itemName.text = origin.itemData.GetName();
         if (instance.itemSecondary != null) instance.itemSecondary.text = origin.itemData.GetItemStatusDescription(origin.properties, _pawn.HasEquipped(origin));
         if (instance.itemIcon != null)
@@ -98,7 +114,6 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
 
     public override void Reposition(Option option, int index, int length, bool justCreated)
     {
-        Debug.LogFormat(option.currentOptionView, "Repositioning {0} {1}", option.currentInformation, justCreated);
         if(justCreated)
         {
             option.currentOptionView.transform.SetParent(bagParent, false);
@@ -108,8 +123,7 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
 
     protected override void Select(Option option, bool feedbacks = true)
     {
-        if(feedbacks) option.currentOptionView.anim.SetTrigger("Select");
-        Debug.LogFormat(option.currentOptionView, "Just selected {0}", option);
+        if (feedbacks) option.currentOptionView.FeedbackUse();
 
         StartCoroutine(ItemSelectRoutine(_pawn.EquipSkill, _pawn.UnequipSkill, option.currentInformation, option.currentOptionView));
         
@@ -231,5 +245,4 @@ public class MoodInventoryMenu : PrefabListMenu<MoodInventoryMenuItem, MoodItemI
     {
         return $"{t.name}->anchorPosition: {t.anchoredPosition}, offsetMax:{t.offsetMax}, offsetMin:{t.offsetMin}, rect: {t.rect} (rectMinMaxY: {t.rect.min} {t.rect.max}).";
     }
-
 }
