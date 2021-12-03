@@ -102,19 +102,28 @@ MonoBehaviour:
     value: 1
   height:
     overrideState: 1
-    value: 512
+    value: 896
   mode:
     overrideState: 1
-    value: 1
+    value: 0
   shader:
     overrideState: 0
     value: {fileID: 4800000, guid: 4cff50fc794c72943beb995891c12ab7, type: 3}
   textureIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: 81b3412eb6da5974f84c793081445898, type: 2}
+    value: {fileID: 11700000, guid: dda6d1966e448fa49bcbdb306881e0a0, type: 2}
+  textureIlluminatedEffect:
+    overrideState: 0
+    value: {fileID: 0}
   textureNotIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: 81b3412eb6da5974f84c793081445898, type: 2}
+    value: {fileID: 11700000, guid: dda6d1966e448fa49bcbdb306881e0a0, type: 2}
+  textureNotIlluminatedEffect:
+    overrideState: 0
+    value: {fileID: 0}
+  textureSize:
+    overrideState: 0
+    value: 0
   changeBefore:
     overrideState: 0
     value: 0

@@ -116,6 +116,8 @@ public class ThoughtSystemController : MonoBehaviour, IFocusPointController
         StartFocusPoints();
 
         RecaptureBoardObjects();
+
+        TweenToRectTransform(minRect, 0f, ease);
     }
 
     private void RecaptureBoardObjects()

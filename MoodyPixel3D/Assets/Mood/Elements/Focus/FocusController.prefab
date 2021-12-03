@@ -62,12 +62,12 @@ MonoBehaviour:
   easeFocus: 22
   pointerAnchoredVelocity: 0.35
   startTestThoughts:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 4ba7aa550a4bb744eb4a8fb5395b58eb, type: 2}
+  - {fileID: 11400000, guid: bdb0fa10ae6bedb4d8d6abb82a9c8057, type: 2}
   - {fileID: 11400000, guid: bdb0fa10ae6bedb4d8d6abb82a9c8057, type: 2}
   - {fileID: 11400000, guid: 03639f7e65a434d45a3cae5047077f38, type: 2}
   - {fileID: 11400000, guid: 03639f7e65a434d45a3cae5047077f38, type: 2}
-  _maxFocusPoints: 3
+  _maxFocusPoints: 4
 --- !u!114 &1699490886777328943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,10 +81,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   applyLevelToSubSensors: 0
-  _group:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &2745698016731510803
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,6 +205,10 @@ PrefabInstance:
     - target: {fileID: 413384817013265850, guid: 1f892ff1c140ed447af53fb1470cb1da, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2257545613531966144, guid: 1f892ff1c140ed447af53fb1470cb1da, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2402729516739468652, guid: 1f892ff1c140ed447af53fb1470cb1da, type: 3}
       propertyPath: m_SizeDelta.x

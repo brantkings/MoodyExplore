@@ -14,13 +14,23 @@ public class MoodDoor : MonoBehaviour
     public event DelDoorEvent OnStartAnimationClose;
     public event DelDoorEvent OnEndOpen;
 
+    public struct DoorIdentification
+    {
+        public string id;
+    }
+
     [Header("Door properties")]
+    public UnityEngine.SceneManagement.Scene otherScene;
+    
     public LayerMask groundMask;
     public float distanceFromDoor = 1f;
     public float initialSlideDuration = 0.1f;
     public float walkAnimationDuration = 1f;
     public float doorAnimationDuration = 0.25f;
     public LHH.Switchable.Switchable openedSwitchable;
+    public bool waitForSwitchable;
+    public float extraWaitForOpen = 0.25f;
+    public float extraWaitForClose = 0.25f;
     public TransformGetter eventTransform;
     public ScriptableEvent[] onTouchDoor;
     public ScriptableEvent[] onAnimDoorOpen;
@@ -53,6 +63,18 @@ public class MoodDoor : MonoBehaviour
         positionB = transform.position - transform.forward * distanceFromDoor;
     }
 
+    public MoodLevelRoom GetRoom(Vector3 pos)
+    {
+        Ray ray = new Ray(pos + Vector3.up * 3f, Vector3.down);
+        if (Physics.Raycast(ray, out RaycastHit hit, 10f, groundMask.value, QueryTriggerInteraction.Ignore))
+        {
+            Debug.LogFormat("Got {0}!", hit.collider.GetComponentInParent<MoodLevelRoom>());
+            return hit.collider.GetComponentInParent<MoodLevelRoom>();
+        }
+        Debug.LogFormat("Got nothing!");
+        return null;
+    }
+
 
     public IEnumerator OpenDoorRoutine(MoodPawn opener)
     {
@@ -64,9 +86,9 @@ public class MoodDoor : MonoBehaviour
         Lock(opener);
         onTouchDoor.Invoke(eventTransform.Get(transform));
 
-        Level.GetRoom(positionEntry)?.Deactivate();
+        GetRoom(positionEntry)?.Deactivate();
         yield return MoveTo(opener, positionEntry, positionExit - positionEntry, initialSlideDuration, 0.5f);
-        Level.GetRoom(positionExit)?.Activate();
+        GetRoom(positionExit)?.Activate();
 
         OnStartAnimationOpen?.Invoke(opener);
         onAnimDoorOpen.Invoke(eventTransform.Get(transform));
@@ -124,14 +146,28 @@ public class MoodDoor : MonoBehaviour
 
     private IEnumerator AnimateOpenDoor()
     {
-        openedSwitchable.Set(true);
-        yield return new WaitForSeconds(0.25f);
+        if(openedSwitchable != null)
+        {
+            if(waitForSwitchable)
+            {
+                yield return openedSwitchable.Set(true);
+            }
+            openedSwitchable.Set(true);
+        }
+        yield return new WaitForSeconds(extraWaitForOpen);
     }
 
     private IEnumerator AnimateCloseDoor()
     {
-        openedSwitchable.Set(false);
-        yield return new WaitForSeconds(0.25f);
+        if(openedSwitchable != null)
+        {
+            if (waitForSwitchable)
+            {
+                yield return openedSwitchable.Set(false);
+            }
+            openedSwitchable.Set(false);
+        }
+        yield return new WaitForSeconds(extraWaitForClose);
     }
 
 }

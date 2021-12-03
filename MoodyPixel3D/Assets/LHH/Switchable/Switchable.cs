@@ -132,17 +132,17 @@ namespace LHH.Switchable
 #endif
         }
 
-        public void Set(bool on)
+        public Coroutine Set(bool on)
         {
-            Set(on, false, false);
+            return Set(on, false, false);
         }
 
-        public void SetImmediate(bool on)
+        public Coroutine SetImmediate(bool on)
         {
-            Set(on, false, true);
+            return Set(on, false, true);
         }
 
-        public void Set(bool on, bool forceEvents, bool immediate)
+        public Coroutine Set(bool on, bool forceEvents, bool immediate)
         {
             if (_currentRoutine != null)
             {
@@ -151,6 +151,7 @@ namespace LHH.Switchable
                 StopAllCoroutines();
             }
             _currentRoutine = StartCoroutine(SetRoutine(on, forceEvents, immediate, this));
+            return _currentRoutine;
         }
 
         private IEnumerator SetRoutine(bool on, bool forceEvents, bool immediate, MonoBehaviour coroutineMaster)
