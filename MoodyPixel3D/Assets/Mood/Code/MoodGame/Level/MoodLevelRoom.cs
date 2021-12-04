@@ -50,9 +50,16 @@ public class MoodLevelRoom : MonoBehaviour
     private void Awake()
     {
         _fadePropertyID = Shader.PropertyToID(fadeProperty);
+
+        StartCoroutine(SetRoomActivateRoutine(false, true));
     }
 
-    public IEnumerator SetRoomActive(bool active, bool immediate)
+    public void SetRoomActive(bool active, bool immediate = false)
+    {
+        StartCoroutine(SetRoomActivateRoutine(active, immediate));
+    }
+
+    public IEnumerator SetRoomActivateRoutine(bool active, bool immediate)
     {
         Debug.LogFormat("Setting room '{0}' {1}. Status now is {2}", this.name, active, _status);
 
@@ -143,19 +150,19 @@ public class MoodLevelRoom : MonoBehaviour
     public void Deactivate()
     {
         StopAllCoroutines();
-        StartCoroutine(SetRoomActive(false, false));
+        StartCoroutine(SetRoomActivateRoutine(false, false));
     }
 
     [LHH.Unity.Button]
     public void Activate()
     {
         StopAllCoroutines();
-        StartCoroutine(SetRoomActive(true, false));
+        StartCoroutine(SetRoomActivateRoutine(true, false));
     }
     public void StartActivationRoutine(bool active, bool immediate)
     {
         StopAllCoroutines();
-        StartCoroutine(SetRoomActive(active, immediate));
+        StartCoroutine(SetRoomActivateRoutine(active, immediate));
     }
 
 }

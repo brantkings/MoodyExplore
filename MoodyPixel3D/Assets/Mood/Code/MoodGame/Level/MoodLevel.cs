@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Obsolete("Mood level room works by itself, because it needs to sit alone in a Unity Scene where other rooms in the same level are in other scenes. So don't use this, just use room by itself.")]
 public class MoodLevel : MonoBehaviour
 {
     public LayerMask groundMask;
