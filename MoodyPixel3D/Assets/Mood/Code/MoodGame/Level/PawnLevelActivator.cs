@@ -20,7 +20,7 @@ public class PawnLevelActivator : AddonBehaviour<MoodPawn>
     {
         MoodLevelRoom newLevel = newPlat.GetComponentInParent<MoodLevelRoom>();
 
-        if (newLevel != null)
+        if (newLevel != null && newLevel != _currentLevel)
         {
             if(_currentLevel != null)
             {
@@ -29,7 +29,7 @@ public class PawnLevelActivator : AddonBehaviour<MoodPawn>
 
             if(!newLevel.IsActivated())
             {
-                newLevel.SetRoomActive(true, false);
+                newLevel.SetRoomActive(true, immediate: _currentLevel == null);
             }
 
             _currentLevel = newLevel;
