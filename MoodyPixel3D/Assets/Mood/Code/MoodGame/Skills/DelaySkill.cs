@@ -6,7 +6,7 @@ using UnityEngine;
 public class DelaySkill : MoodSkill
 {
     [Header("Delay")]
-    public TimeBeatManager.BeatQuantity delay;
+    public MoodUnitManager.TimeBeats delay;
     public MoodPawn.StunType[] stuns;
     public MoodEffectFlag[] flags;
 

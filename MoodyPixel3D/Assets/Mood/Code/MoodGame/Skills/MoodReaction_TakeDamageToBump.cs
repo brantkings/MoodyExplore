@@ -10,7 +10,7 @@ public class MoodReaction_TakeDamageToBump : MoodReaction, IMoodReaction<Reactio
     public int damage = DamageInfo.BASE_SINGLE_UNIT_DAMAGE;
     public bool stagger = true;
     public bool ignorePhaseThrough = true;
-    public TimeBeatManager.BeatQuantity stunTime = 8;
+    public MoodUnitManager.TimeBeats stunTime = 8;
     public bool reactable;
 
     public RelativeVector3 knockbackDirectionFromPawnDirection;

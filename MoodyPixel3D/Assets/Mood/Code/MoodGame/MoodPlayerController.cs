@@ -782,7 +782,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
     private float GetMaxVelocity()
     {
-        return _currentMovementMode.maxDistancePerBeat / TimeBeatManager.GetBeatLength();
+        return _currentMovementMode.maxDistancePerBeat / MoodUnitManager.GetTimeBeatLength();
     }
 
     private void FocusCommand(DirectionalState direction, AxisState addCommand)

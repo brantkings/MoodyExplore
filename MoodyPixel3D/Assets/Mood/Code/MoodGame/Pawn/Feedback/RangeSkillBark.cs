@@ -104,8 +104,8 @@ public class RangeSkillBark : RangeShow
 
     private void DivideTime(float totalTime, float marksPerBeat = 1f)
     {
-        float beats = TimeBeatManager.GetNumberOfBeats(totalTime) / marksPerBeat;
-        float beatXDistance = TimeBeatManager.GetBeatLength() * marksPerBeat / totalTime;
+        float beats = MoodUnitManager.GetNumberOfBeats(totalTime) / marksPerBeat;
+        float beatXDistance = MoodUnitManager.GetTimeBeatLength() * marksPerBeat / totalTime;
         float beatXNow = 0f;
         int numberOfBeats = 0;
         IEnumerator<RectTransform> rects = CreateTimePointers();
@@ -176,7 +176,7 @@ public class RangeSkillBark : RangeShow
             while (pawn.GetCurrentSkill() == skill) 
             {
                 float timeSinceSkill = pawn.GetTimeElapsedSinceBeganCurrentSkill();
-                int currentBeat = Mathf.FloorToInt(TimeBeatManager.GetNumberOfBeats(timeSinceSkill)) + 1;
+                int currentBeat = Mathf.FloorToInt(MoodUnitManager.GetNumberOfBeats(timeSinceSkill)) + 1;
                 float totalTime, progressPercentage; Color? progressColor;
                 if (continuous)
                 {
@@ -184,7 +184,7 @@ public class RangeSkillBark : RangeShow
                 }
                 else
                 {
-                    skill.GetProgress(pawn, directionUsed, TimeBeatManager.GetTime(currentBeat), out totalTime, out progressPercentage, out progressColor);
+                    skill.GetProgress(pawn, directionUsed, MoodUnitManager.GetTime(currentBeat), out totalTime, out progressPercentage, out progressColor);
                 }
                 if(totalTime != totalTimeNow)
                 {
@@ -202,10 +202,10 @@ public class RangeSkillBark : RangeShow
                 {
                     progressObject.DOAnchorPos(
                         new Vector2(mainObject.rect.width * progressPercentage, progressObject.anchoredPosition.y),
-                        TimeBeatManager.GetBeatLength() * (1f - beatMultiplierDelayEase))
+                        MoodUnitManager.GetTimeBeatLength() * (1f - beatMultiplierDelayEase))
                         .SetEase(nonContinuousEase)
                         .SetId(this)
-                        .SetDelay(TimeBeatManager.GetBeatLength() * beatMultiplierDelayEase).OnKill(() =>
+                        .SetDelay(MoodUnitManager.GetTimeBeatLength() * beatMultiplierDelayEase).OnKill(() =>
                         {
                             //Debug.LogFormat("now{0} before{1} {2}", progressPercentage, progressPercentageBefore, skill);
                             if (progressPercentage == 1f) JustExecutedBark();

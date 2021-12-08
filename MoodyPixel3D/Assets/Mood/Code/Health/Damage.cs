@@ -29,7 +29,7 @@ public class Damage : MonoBehaviour
     private int _amount = 10;
 
     [SerializeField]
-    private TimeBeatManager.BeatQuantity _stunTime = 4;
+    private MoodUnitManager.TimeBeats _stunTime = 4;
 
     [SerializeField]
     private bool _ignorePhaseThrough;

@@ -45,8 +45,8 @@ public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRang
 
 
     [Space]
-    public TimeBeatManager.BeatQuantity preTime = 4;
-    public TimeBeatManager.BeatQuantity postTime = 8;
+    public MoodUnitManager.TimeBeats preTime = 4;
+    public MoodUnitManager.TimeBeats postTime = 8;
     private RangeTarget.Properties _targetProp;
     public int priorityPreInstantiate = PRIORITY_NOT_CANCELLABLE;
     public int priorityAfterInstantiate = PRIORITY_CANCELLABLE;

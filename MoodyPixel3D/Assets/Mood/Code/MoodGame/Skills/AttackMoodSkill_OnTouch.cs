@@ -9,7 +9,7 @@ namespace Code.MoodGame.Skills
     {
         [Header("Ou Touch modifier")]
 
-        public TimeBeatManager.BeatQuantity timeUntilStartsTesting;
+        public MoodUnitManager.TimeBeats timeUntilStartsTesting;
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
             if (!SanityCheck(pawn, skillDirection)) yield break;
@@ -34,7 +34,7 @@ namespace Code.MoodGame.Skills
             };
             while (preAttackDashDuration > 0f && !shouldBreak)
             {
-                if(count > timeUntilStartsTesting.GetTime())
+                if(count > timeUntilStartsTesting.GetLength())
                 {
                     pawn.OnNextEndMove += onDash;
                     bool? valid = buildData.TryHitGetFirst(pawn.Position, pawn.GetRotation(), targetLayer)?.IsValid();

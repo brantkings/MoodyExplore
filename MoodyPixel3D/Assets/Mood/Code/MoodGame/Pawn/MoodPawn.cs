@@ -137,7 +137,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [UnityEngine.Serialization.FormerlySerializedAs("movementDataOverride")]
     public MoodPawnMovementData movementData;
     public float height = 2f;
-    public float pawnRadius = 0.5f;
+    [SerializeField] private float _pawnRadius = 0.5f;
 
     public float extraRangeBase = 0f;
     public bool cantMoveWhileThreatened = true;
@@ -147,13 +147,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     [System.Serializable]
     public struct MovementData
     {
-        [Tooltip("The time it takes for the acceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToMaxVelocity;
-        [Tooltip("The time it takes for the desacceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToZeroVelocity;
+        [Tooltip("The time it takes for the acceleration of the pawn.")] public MoodUnitManager.TimeBeats timeToMaxVelocity;
+        [Tooltip("The time it takes for the desacceleration of the pawn.")] public MoodUnitManager.TimeBeats timeToZeroVelocity;
         [Tooltip("The distance when it snaps to target speed.")] public float snapToTargetSpeedDelta;
         [Tooltip("What it considers rotated or not rotated.")] public float angleToBeAbleToAccelerate;
         [Tooltip("The direct velocity the pawn goes exactly the direction it wants to when not rotated.")] public float turningDirectMaxSpeed;
         [Tooltip("When not rotated, the ratio it goes to it's the direct velocity or it's own forward. On 1f, the pawn moves like a car.")] [Range(0f, 1f)] public float turningForwardVelocityRatio;
-        [Tooltip("The time it takes to rotate 360 degrees.")] public TimeBeatManager.BeatQuantity turningTimeTo360;
+        [Tooltip("The time it takes to rotate 360 degrees.")] public MoodUnitManager.TimeBeats turningTimeTo360;
 
         public static MovementData Default
         {
@@ -200,8 +200,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private float _stamina;
     public bool infiniteStamina;
     public bool recoverStaminaWhileUsingSkill;
-    public TimeBeatManager.BeatQuantity staminaRecoveryIdlePerSecond = 8;
-    public TimeBeatManager.BeatQuantity staminaRecoveryMovingPerSecond = 8;
+    public MoodUnitManager.TimeBeats staminaRecoveryIdlePerSecond = 8;
+    public MoodUnitManager.TimeBeats staminaRecoveryMovingPerSecond = 8;
     private Vector3 _damageAnimation;
 
 
@@ -283,6 +283,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         get
         {
             return _health;
+        }
+    }
+
+    public float Radius
+    {
+        get
+        {
+            return _pawnRadius;
         }
     }
 
@@ -985,7 +993,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             //Maybe it is rotating while stopped
             if(inputDirection.sqrMagnitude >= 0.1f)
             {
-                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedTime());
+                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedLength());
             }
         }
         else
@@ -993,7 +1001,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
             Vector3 inputVelocityNormalized = inputVelocity.normalized;
                 
-            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedTime());
+            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedLength());
 
             if (Vector3.Angle(inputVelocity, direction) < movementData.Data.angleToBeAbleToAccelerate) //Already looking in the direction
             {
@@ -1832,11 +1840,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         Vector3 distPoint1 = point1 + distanceShoot;
         Vector3 distPoint2 = point2 + distanceShoot;
         Debug.DrawLine(distPoint1, distPoint2, Color.magenta, 0.02f);
-        DebugUtils.DrawNormalStar(distPoint1, pawnRadius, Quaternion.identity, Color.magenta, 0.02f);
-        DebugUtils.DrawNormalStar(distPoint2, pawnRadius, Quaternion.identity, Color.magenta, 0.02f);
+        DebugUtils.DrawNormalStar(distPoint1, _pawnRadius, Quaternion.identity, Color.magenta, 0.02f);
+        DebugUtils.DrawNormalStar(distPoint2, _pawnRadius, Quaternion.identity, Color.magenta, 0.02f);
 #endif
         
-        if (Physics.CapsuleCast(point1, point2, pawnRadius, direction.normalized, out RaycastHit hit, range,
+        if (Physics.CapsuleCast(point1, point2, _pawnRadius, direction.normalized, out RaycastHit hit, range,
             MoodGameManager.Instance.GetPawnBodyLayer()))
         {
             return hit.transform;

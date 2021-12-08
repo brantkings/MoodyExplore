@@ -19,7 +19,7 @@ public class SameRadiusAsParentPawn : LHH.Unity.AddonParentBehaviour<MoodPawn>
         }
         else
         {
-            SetRadius(defaultRadius);
+            SetRadius(Addon.Radius);
         }
     }
 

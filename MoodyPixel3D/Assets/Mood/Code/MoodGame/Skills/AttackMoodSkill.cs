@@ -11,7 +11,7 @@ namespace Code.MoodGame.Skills
     {
         [Header("Attack")]
         public int damage = 10;
-        public TimeBeatManager.BeatQuantity stunTime = 4;
+        public MoodUnitManager.TimeBeats stunTime = 4;
         public MoodSwing swingData;
         public Vector3 swingDataPositionOffset;
         public LayerMask targetLayer;
@@ -94,10 +94,10 @@ namespace Code.MoodGame.Skills
         public RangeArea.Properties.Positioning previewPositioning = RangeArea.Properties.Positioning.OriginalPositionPlusDirection;
 
         [Space]
-        public TimeBeatManager.BeatQuantity preDashDelay = 0;
-        public TimeBeatManager.BeatQuantity preTime = 4;
-        public TimeBeatManager.BeatQuantity animationTime = 1;
-        public TimeBeatManager.BeatQuantity postTime = 3;
+        public MoodUnitManager.TimeBeats preDashDelay = 0;
+        public MoodUnitManager.TimeBeats preTime = 4;
+        public MoodUnitManager.TimeBeats animationTime = 1;
+        public MoodUnitManager.TimeBeats postTime = 3;
         public bool showPreview;
         private RangeTarget.Properties _targetProp;
 

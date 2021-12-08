@@ -7,10 +7,10 @@ using UnityEngine;
 public class CostStaminaDelaySkill : StaminaCostMoodSkill
 {
     [Header("Delay")]
-    public TimeBeatManager.BeatQuantity preFeedbackDelay = 0;
-    public TimeBeatManager.BeatQuantity preDelay = 2;
-    public TimeBeatManager.BeatQuantity executionDelay = 4;
-    public TimeBeatManager.BeatQuantity postFeedbackDelay = 0;
+    public MoodUnitManager.TimeBeats preFeedbackDelay = 0;
+    public MoodUnitManager.TimeBeats preDelay = 2;
+    public MoodUnitManager.TimeBeats executionDelay = 4;
+    public MoodUnitManager.TimeBeats postFeedbackDelay = 0;
     public int plugoutPriorityBefore;
     public int plugoutPriorityAfter;
     public MoodPawn.StunType[] stuns;
@@ -88,7 +88,7 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
 
     public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
     {
-        yield return preFeedbackDelay.GetTime() + preDelay.GetTime();
-        yield return executionDelay.GetTime() + postFeedbackDelay.GetTime();
+        yield return preFeedbackDelay.GetLength() + preDelay.GetLength();
+        yield return executionDelay.GetLength() + postFeedbackDelay.GetLength();
     }
 }
