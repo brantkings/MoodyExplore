@@ -197,7 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   source: 2
   direction: 1
-  _amount: 10
+  _amount: 20
   _stunTime:
     beats: 4
   _ignorePhaseThrough: 0

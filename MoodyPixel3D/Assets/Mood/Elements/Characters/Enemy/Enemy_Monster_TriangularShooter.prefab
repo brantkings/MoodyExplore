@@ -132,9 +132,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
+      propertyPath: movementDataOverride
+      value: 
+      objectReference: {fileID: 11400000, guid: 6843d69b5788d1d41ac54eb6f27826c1, type: 2}
     - target: {fileID: 5637358447622213147, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: m_Name
-      value: Enemy_Monster_FactoryDistance
+      value: Enemy_Monster_TriangularShooter
       objectReference: {fileID: 0}
     - target: {fileID: 5637358447622213147, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: m_IsActive

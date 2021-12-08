@@ -6,6 +6,7 @@ using Code.Animation.Humanoid;
 using UnityEngine;
 using DG.Tweening;
 using JetBrains.Annotations;
+using LHH.ScriptableObjects;
 using LHH.Utils;
 using LHH.LeveledBehaviours.Sensors;
 using LHH.Structures;
@@ -133,13 +134,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
 
     [Header("Movement")]
-    [Tooltip("The time it takes for the acceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToMaxVelocity = 1;
-    [Tooltip("The time it takes for the desacceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToZeroVelocity = 2;
-    [Tooltip("The distance when it snaps to target speed.")] public float snapToTargetSpeedDelta = 0.1f;
-    [Tooltip("What it considers rotated or not rotated.")] public float angleToBeAbleToAccelerate = 90f;
-    [Tooltip("The direct velocity the pawn goes exactly the direction it wants to when not rotated.")] public float turningDirectMaxSpeed = 1f;
-    [Tooltip("When not rotated, the ratio it goes to it's the direct velocity or it's own forward. On 1f, the pawn moves like a car.")] [Range(0f,1f)] public float turningForwardVelocityRatio = 0f;
-    [Tooltip("The time it takes to rotate 360 degrees.")] public TimeBeatManager.BeatQuantity turningTimeTo360 = 4;
+    [UnityEngine.Serialization.FormerlySerializedAs("movementDataOverride")]
+    public MoodPawnMovementData movementData;
     public float height = 2f;
     public float pawnRadius = 0.5f;
 
@@ -147,6 +143,56 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public bool cantMoveWhileThreatened = true;
     public bool cantMoveWhileExecutingSkill = false;
     public bool cantRotateWhileExecutingSkill = false;
+    
+    [System.Serializable]
+    public struct MovementData
+    {
+        [Tooltip("The time it takes for the acceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToMaxVelocity;
+        [Tooltip("The time it takes for the desacceleration of the pawn.")] public TimeBeatManager.BeatQuantity timeToZeroVelocity;
+        [Tooltip("The distance when it snaps to target speed.")] public float snapToTargetSpeedDelta;
+        [Tooltip("What it considers rotated or not rotated.")] public float angleToBeAbleToAccelerate;
+        [Tooltip("The direct velocity the pawn goes exactly the direction it wants to when not rotated.")] public float turningDirectMaxSpeed;
+        [Tooltip("When not rotated, the ratio it goes to it's the direct velocity or it's own forward. On 1f, the pawn moves like a car.")] [Range(0f, 1f)] public float turningForwardVelocityRatio;
+        [Tooltip("The time it takes to rotate 360 degrees.")] public TimeBeatManager.BeatQuantity turningTimeTo360;
+
+        public static MovementData Default
+        {
+            get
+            {
+                return new MovementData()
+                {
+                    timeToMaxVelocity = 1,
+                    timeToZeroVelocity = 2,
+                    snapToTargetSpeedDelta = 0.25f,
+                    angleToBeAbleToAccelerate = 55f,
+                    turningDirectMaxSpeed = 2f,
+                    turningForwardVelocityRatio = 0.5f,
+                    turningTimeTo360 = 8,
+                };
+            }
+        }
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("Make movement data from this")]
+    private void MakeMovementDataFrom()
+    {
+        MoodPawnMovementData scriptableObject = ScriptableObject.CreateInstance<MoodPawnMovementData>();
+        scriptableObject.name = "MovementData_" + this.name;
+        UnityEditor.AssetDatabase.CreateAsset(scriptableObject, "Assets/" + scriptableObject.name + ".asset");
+        UnityEditor.AssetDatabase.SaveAssets();
+        MovementData data = new MovementData();
+        data.timeToMaxVelocity = movementData.Data.timeToMaxVelocity;
+        data.timeToZeroVelocity = movementData.Data.timeToZeroVelocity;
+        data.snapToTargetSpeedDelta = movementData.Data.snapToTargetSpeedDelta;
+        data.angleToBeAbleToAccelerate = movementData.Data.angleToBeAbleToAccelerate;
+        data.turningDirectMaxSpeed = movementData.Data.turningDirectMaxSpeed;
+        data.turningForwardVelocityRatio = movementData.Data.turningForwardVelocityRatio;
+        data.turningTimeTo360 = movementData.Data.turningTimeTo360;
+        scriptableObject.Data = data;
+        this.movementData = scriptableObject;
+    }
+#endif
 
     [Header("Stamina")]
     [UnityEngine.Serialization.FormerlySerializedAs("_maxStamina")]
@@ -897,28 +943,27 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Tween _currentFakeHeightHop;
     private Tween _currentHop;
 
-
-    public struct MovementData
+    public struct TweenData
     {
         public float duration;
         public Ease ease;
 
-        public MovementData(float duration)
+        public TweenData(float duration)
         {
             this.duration = duration;
             this.ease = Ease.InOutCirc;
         }
 
-        public static implicit operator float(MovementData d)
+        public static implicit operator float(TweenData d)
         {
             return d.duration;
         }
-        public static implicit operator MovementData(float d)
+        public static implicit operator TweenData(float d)
         {
-            return new MovementData(d);
+            return new TweenData(d);
         }
 
-        public MovementData SetEase(Ease ease)
+        public TweenData SetEase(Ease ease)
         {
             this.ease = ease;
             return this;
@@ -935,12 +980,12 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if(inputVelocity.sqrMagnitude < 0.1f) //Wants to stop
         {
-            UpdateMovementVector(ref speed, 0f, timeToZeroVelocity);
+            UpdateMovementVector(ref speed, 0f, movementData.Data.timeToZeroVelocity);
 
             //Maybe it is rotating while stopped
             if(inputDirection.sqrMagnitude >= 0.1f)
             {
-                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f * turningTimeTo360.GetInversedTime());
+                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedTime());
             }
         }
         else
@@ -948,29 +993,29 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
             Vector3 inputVelocityNormalized = inputVelocity.normalized;
                 
-            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f * turningTimeTo360.GetInversedTime());
+            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedTime());
 
-            if (Vector3.Angle(inputVelocity, direction) < angleToBeAbleToAccelerate) //Already looking in the direction
+            if (Vector3.Angle(inputVelocity, direction) < movementData.Data.angleToBeAbleToAccelerate) //Already looking in the direction
             {
-                UpdateMovementVector(ref speed, inputVelocity, timeToMaxVelocity);
+                UpdateMovementVector(ref speed, inputVelocity, movementData.Data.timeToMaxVelocity);
             }
             else //Has to turn first
             {
-                float maxVelocityTurning = turningDirectMaxSpeed;
+                float maxVelocityTurning = movementData.Data.turningDirectMaxSpeed;
                 float maxVelocityTurningSqrd = maxVelocityTurning * maxVelocityTurning;
                 float smoothTimeTurning;
                 if(speed.sqrMagnitude > maxVelocityTurningSqrd)
                 {
-                    smoothTimeTurning = timeToMaxVelocity;
+                    smoothTimeTurning = movementData.Data.timeToMaxVelocity;
                 }
                 else
                 {
-                    smoothTimeTurning = timeToZeroVelocity;
+                    smoothTimeTurning = movementData.Data.timeToZeroVelocity;
                 }
 
                 Vector3 turningDirectVelocity = inputVelocityNormalized * maxVelocityTurning;
                 Vector3 forwardMaxVelocity = Direction.normalized * inputVelocity.magnitude;
-                Vector3 totalVelocity = Vector3.Lerp(turningDirectVelocity, forwardMaxVelocity, turningForwardVelocityRatio);
+                Vector3 totalVelocity = Vector3.Lerp(turningDirectVelocity, forwardMaxVelocity, movementData.Data.turningForwardVelocityRatio);
                 UpdateMovementVector(ref speed, totalVelocity, smoothTimeTurning);
             }
         }
@@ -1000,7 +1045,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             return;
         }
         movement = Vector3.SmoothDamp(movement, destination, ref _movementDelta, smoothTime);
-        if ((movement - destination).sqrMagnitude < (snapToTargetSpeedDelta * snapToTargetSpeedDelta)) movement = destination;
+        if ((movement - destination).sqrMagnitude < (movementData.Data.snapToTargetSpeedDelta * movementData.Data.snapToTargetSpeedDelta)) movement = destination;
     }
 
     private bool CanMove()
@@ -1134,7 +1179,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return seq;
     }
 
-    public Tween Hop(float height, MovementData durationIn, MovementData durationOut)
+    public Tween Hop(float height, TweenData durationIn, TweenData durationOut)
     {
         _currentHop.KillIfActive();
         Sequence seq = DOTween.Sequence();

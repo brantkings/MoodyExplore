@@ -240,6 +240,10 @@ PrefabInstance:
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5637358447622213141, guid: 8bbb5f8beea13d84fbde5e7bf3aed967, type: 3}
+      propertyPath: movementDataOverride
+      value: 
+      objectReference: {fileID: 11400000, guid: 494d6c99b29170b41a1357d18bdec193, type: 2}
+    - target: {fileID: 5637358447622213141, guid: 8bbb5f8beea13d84fbde5e7bf3aed967, type: 3}
       propertyPath: staminaRecoveryMoving
       value: 0.2
       objectReference: {fileID: 0}

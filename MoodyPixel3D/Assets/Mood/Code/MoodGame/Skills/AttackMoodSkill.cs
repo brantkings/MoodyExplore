@@ -239,7 +239,7 @@ namespace Code.MoodGame.Skills
             if(dashData.HasDash())
             {
                 pawn.Dash(dashData.GetDashDistance(pawn.Direction, skillDirection), duration, dashData.bumpeable, dashData.ease);
-                if (dashData.hopHeight != 0f) pawn.Hop(dashData.hopHeight, new MoodPawn.MovementData(duration * dashData.hopDurationRange).SetEase(DG.Tweening.Ease.OutCirc), new MoodPawn.MovementData(duration * (1f - dashData.hopDurationRange)).SetEase(DG.Tweening.Ease.InCirc));
+                if (dashData.hopHeight != 0f) pawn.Hop(dashData.hopHeight, new MoodPawn.TweenData(duration * dashData.hopDurationRange).SetEase(DG.Tweening.Ease.OutCirc), new MoodPawn.TweenData(duration * (1f - dashData.hopDurationRange)).SetEase(DG.Tweening.Ease.InCirc));
                 dashData.Feedback(pawn.ObjectTransform, pawn, skillDirection);
             }
         }

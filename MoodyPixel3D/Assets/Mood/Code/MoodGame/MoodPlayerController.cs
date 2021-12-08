@@ -54,10 +54,36 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
     private FocusController _focus;
     [SerializeField]
     private ThoughtSystemController _thought;
-    public float maxDistancePerBeat = 1f;
     [SerializeField]
     private RangeSphere sphere;
     private Camera _mainCamera;
+
+    [System.Serializable]
+    internal struct InputCondition
+    {
+        [SerializeField] internal KeyCode holding;
+
+        public bool IsConditionOK()
+        {
+            return Input.GetKey(holding);
+        }
+    }
+
+    [System.Serializable]
+    private class MovementMode
+    {
+        [SerializeField] internal MoodPawnMovementData data;
+        [SerializeField] internal InputCondition condition;
+        [SerializeField] internal float maxDistancePerBeat = 1f;
+
+        public void ApplyModeTo(MoodPawn p)
+        {
+            p.movementData = data;
+        }
+    }
+    [SerializeField] private MovementMode[] extraMovementModes;
+    [SerializeField] private MovementMode defaultMovementMode;
+    private MovementMode _currentMovementMode;
 
 
 
@@ -705,6 +731,16 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
                     }
                 }
 
+                //Change movement modes
+                var mode = extraMovementModes.FirstOrDefault((x) => x.condition.IsConditionOK());
+                if (mode == null) mode = defaultMovementMode;
+
+                if(_currentMovementMode != mode)
+                {
+                    _currentMovementMode = mode;
+                    _currentMovementMode.ApplyModeTo(Pawn);
+                }
+
                 _pawn.SetLookAt(GetLookAtVector(Vector3.ProjectOnPlane(_mainCamera.transform.forward, Vector3.up)));
                 _pawn.SetVelocity(Vector3.ProjectOnPlane(ToWorldPosition(moveAxis.GetMoveAxis() * GetMaxVelocity()), Vector3.up));
                 _pawn.RotateTowards(_rotatingTarget);
@@ -746,7 +782,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
     private float GetMaxVelocity()
     {
-        return maxDistancePerBeat / TimeBeatManager.GetBeatLength();
+        return _currentMovementMode.maxDistancePerBeat / TimeBeatManager.GetBeatLength();
     }
 
     private void FocusCommand(DirectionalState direction, AxisState addCommand)
