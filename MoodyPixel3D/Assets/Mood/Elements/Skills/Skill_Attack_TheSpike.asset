@@ -78,6 +78,8 @@ MonoBehaviour:
     _getter: {fileID: 0}
   _flyingThought: {fileID: 0}
   preAttackDash:
+    dist:
+      beats: 0
     distance: 0
     bumpeable: 0
     angle:
@@ -92,6 +94,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
     dashFeedbackDirection: 1
   postAttackDash:
+    dist:
+      beats: 0
     distance: 0
     bumpeable: 0
     angle:
@@ -105,6 +109,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
     dashFeedbackDirection: 0
   whiffAttackDash:
+    dist:
+      beats: 0
     distance: 0
     bumpeable: 0
     angle:

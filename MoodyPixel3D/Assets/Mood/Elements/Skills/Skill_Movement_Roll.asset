@@ -42,6 +42,10 @@ MonoBehaviour:
   _shortcut: 0
   _debug: 0
   _cost: 1
+  minDist:
+    beats: 6
+  maxDist:
+    beats: 6
   minDistance: 6
   maxDistance: 6
   hopHeight: 0

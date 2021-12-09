@@ -61,4 +61,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5950d873802893d41b2e62b9e19a7e3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  beatLength: 0.16
+  beatTimeLength: 0.16
+  beatDistanceLength: 0.5

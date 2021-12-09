@@ -9,6 +9,7 @@ namespace Code.MoodGame.Skills
     [CreateAssetMenu(fileName = "Skill_Attack_", menuName = "Mood/Skill/Attack", order = 0)]
     public class AttackMoodSkill : StaminaCostMoodSkill, RangeSphere.IRangeShowPropertyGiver, RangeTarget.IRangeShowPropertyGiver, RangeArea.IRangeShowPropertyGiver, RangeArea.IRangeShowLivePropertyGiver, RangeArrow.IRangeShowPropertyGiver
     {
+
         [Header("Attack")]
         public int damage = 10;
         public MoodUnitManager.TimeBeats stunTime = 4;
@@ -26,6 +27,8 @@ namespace Code.MoodGame.Skills
         [System.Serializable]
         protected struct DashStruct
         {
+            [UnityEngine.Serialization.FormerlySerializedAs("dist")]
+            public MoodUnitManager.DistanceBeats dist;
             public float distance;
             public bool bumpeable;
             public DirectionFixer angle;
@@ -73,12 +76,12 @@ namespace Code.MoodGame.Skills
 
             public Vector3 GetDashDistance(Vector3 pawnDirection, Vector3 skillDirection)
             {
-                return angle.Sanitize(skillDirection, pawnDirection).normalized * distance;
+                return angle.Sanitize(skillDirection, pawnDirection).normalized * dist;
             }
 
             public bool HasDash()
             {
-                return distance != 0f;
+                return dist != 0f;
             }
         }
 
@@ -324,7 +327,7 @@ namespace Code.MoodGame.Skills
         {
             return new RangeSphere.Properties()
             {
-                radius = GetRange() + preAttackDash.distance
+                radius = GetRange() + preAttackDash.dist
             };
         }
 
@@ -371,7 +374,7 @@ namespace Code.MoodGame.Skills
 
         private RangeShow.SkillDirectionSanitizer GetSanitizerForFirstDash()
         {
-            return new RangeShow.SkillDirectionSanitizer(preAttackDash.distance, preAttackDash.distance, preAttackDash.angle);
+            return new RangeShow.SkillDirectionSanitizer(preAttackDash.dist, preAttackDash.dist, preAttackDash.angle);
         }
 
         public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
@@ -383,7 +386,7 @@ namespace Code.MoodGame.Skills
         public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
         {
             SanitizeDirection(pawn.Direction, ref skillDirection);
-            MoodSwing.MoodSwingResult? result = swingData.GetBuildData(pawn, swingDataPositionOffset).TryHitGetFirst(pawn.Position + skillDirection.normalized * preAttackDash.distance, Quaternion.LookRotation(skillDirection), targetLayer);
+            MoodSwing.MoodSwingResult? result = swingData.GetBuildData(pawn, swingDataPositionOffset).TryHitGetFirst(pawn.Position + skillDirection.normalized * preAttackDash.dist, Quaternion.LookRotation(skillDirection), targetLayer);
             if (result.HasValue)
             {
                 if (result.Value.IsValid()) return WillHaveTargetResult.WillHaveTarget;

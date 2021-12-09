@@ -10,6 +10,7 @@ public class MoodAttackFeedback : MonoBehaviour
     const int MAX_QUAD = 16;
 
     public float attackDuration = 0.16f;
+    public float attackHeight = 1f;
 
     MoodPawn pawn;
     Mesh mesh;
@@ -136,8 +137,8 @@ public class MoodAttackFeedback : MonoBehaviour
 
     private void ModifyHeight(ref Vector3 top, ref Vector3 bot, int index, int length)
     {
-        top += Vector3.up * 2f;// Mathf.Lerp(iniYTop, endYTop, currentYLerp);
-        bot += Vector3.up * 2f;// Mathf.Lerp(iniYBot, endYBot, currentYLerp);
+        top += Vector3.up * attackHeight;// Mathf.Lerp(iniYTop, endYTop, currentYLerp);
+        bot += Vector3.up * attackHeight;// Mathf.Lerp(iniYBot, endYBot, currentYLerp);
         //currentYLerp += deltaLerp;
     }
 

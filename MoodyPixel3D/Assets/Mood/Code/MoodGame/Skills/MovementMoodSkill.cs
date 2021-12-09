@@ -7,9 +7,10 @@ using LHH.ScriptableObjects.Events;
 [CreateAssetMenu(fileName = "Skill_Movement_", menuName = "Mood/Skill/Movement", order = 0)]
 public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowPropertyGiver
 {
+
     [Header("Movement")]
-    public float minDistance;
-    public float maxDistance;
+    [UnityEngine.Serialization.FormerlySerializedAs("minDist")] public MoodUnitManager.DistanceBeats minDistance;
+    [UnityEngine.Serialization.FormerlySerializedAs("maxDist")] public MoodUnitManager.DistanceBeats maxDistance;
     public float hopHeight;
     public float hopDurationInMultiplier;
     public float hopDurationOutMultiplier;

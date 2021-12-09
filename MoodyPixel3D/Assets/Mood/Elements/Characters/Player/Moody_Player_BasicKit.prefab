@@ -847,10 +847,6 @@ PrefabInstance:
       propertyPath: m_MeshFormatVersion
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 3589087819999240830, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -20.00055
-      objectReference: {fileID: 0}
     - target: {fileID: 3611560924295641276, guid: 2b2076f85650e1b44801bb0d8a274959, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

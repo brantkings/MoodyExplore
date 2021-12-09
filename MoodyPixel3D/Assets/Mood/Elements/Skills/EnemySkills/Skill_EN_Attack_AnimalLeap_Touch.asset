@@ -19,6 +19,8 @@ MonoBehaviour:
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.69411767, b: 0.69411767, a: 0}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
+  conditionsToUse: []
+  joinConditionsType: 0
   onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
@@ -76,6 +78,8 @@ MonoBehaviour:
     _getter: {fileID: 0}
   _flyingThought: {fileID: 0}
   preAttackDash:
+    dist:
+      beats: 6
     distance: 6
     bumpeable: 1
     angle:
@@ -88,6 +92,8 @@ MonoBehaviour:
     dashFeedback: []
     dashFeedbackDirection: 0
   postAttackDash:
+    dist:
+      beats: -1
     distance: -1
     bumpeable: 0
     angle:
@@ -100,6 +106,8 @@ MonoBehaviour:
     dashFeedback: []
     dashFeedbackDirection: 0
   whiffAttackDash:
+    dist:
+      beats: 1
     distance: 1
     bumpeable: 0
     angle:

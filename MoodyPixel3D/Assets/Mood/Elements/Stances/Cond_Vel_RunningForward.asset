@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77bbc480dc826a94f97b8fdd6d0f285c, type: 3}
   m_Name: Cond_Vel_RunningForward
   m_EditorClassIdentifier: 
-  minVel: 3
+  minVel:
+    beats: 3
   maxVel: Infinity
   maxAngleWithDirection: 15

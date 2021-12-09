@@ -5,8 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Mood/Pawn/Condition/Velocity", fileName = "Cond_Vel_")]
 public class MoodPawnVelocityCondition : MoodPawnCondition
 {
-    public float minVel = 0f;
-    public float maxVel = float.PositiveInfinity;
+    public MoodUnitManager.SpeedBeats minVel = 0f;
+    public MoodUnitManager.SpeedBeats maxVel = float.PositiveInfinity;
     public float maxAngleWithDirection = 180f;
 
     public override bool ConditionIsOK(MoodPawn pawn)

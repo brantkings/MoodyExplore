@@ -69,7 +69,7 @@ namespace Mood.Swing.Maker
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, 0.5f);
+            Gizmos.DrawWireSphere(transform.position, 0.25f);
             Gizmos.color = gizmoColor;
             Color fillColor = gizmoColor * 0.25f;
             foreach(Transform t in NodeTransforms)

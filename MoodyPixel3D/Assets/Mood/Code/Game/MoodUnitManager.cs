@@ -108,6 +108,35 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
         }
     }
 
+    [System.Serializable]
+    public class SpeedBeats : UnitBeats
+    {
+        protected override float GetBeatLength()
+        {
+            return MoodUnitManager.GetDistanceBeatLength() / MoodUnitManager.GetTimeBeatLength();
+        }
+
+        public static implicit operator SpeedBeats(int q)
+        {
+            return new SpeedBeats()
+            {
+                beats = Mathf.FloorToInt(q)
+            };
+        }
+
+        public static implicit operator SpeedBeats(float q)
+        {
+            var t = new SpeedBeats();
+            t.SetLength(q);
+            return t;
+        }
+
+        public static implicit operator float(SpeedBeats q)
+        {
+            return q.GetLength();
+        }
+    }
+
     [UnityEngine.Serialization.FormerlySerializedAs("beatLength")]
     public float beatTimeLength = 0.125f;
 

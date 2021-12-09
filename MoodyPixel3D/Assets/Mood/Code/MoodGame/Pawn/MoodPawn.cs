@@ -1058,7 +1058,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private bool CanMove()
     {
-        return !IsStunned(StunType.Movement) && !IsStunned(StunType.Action);
+        return !IsStunned(StunType.Movement);
     }
 
     private void SolveFinalVelocity(ref Vector3 finalVel)
