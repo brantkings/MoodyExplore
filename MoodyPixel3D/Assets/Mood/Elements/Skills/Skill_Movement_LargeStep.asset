@@ -42,12 +42,10 @@ MonoBehaviour:
   _shortcut: 0
   _debug: 0
   _cost: 1
-  minDist:
+  minDistanceBeats:
     beats: 0
-  maxDist:
+  maxDistanceBeats:
     beats: 5
-  minDistance: 0
-  maxDistance: 5
   hopHeight: 0
   hopDurationInMultiplier: 0
   hopDurationOutMultiplier: 0
@@ -56,7 +54,7 @@ MonoBehaviour:
   setDirectionInRelationToMovement: []
   velocityAdd: 0
   durationAdd: 0.2
-  showArrowWidth: 1
+  showArrowWidth: 0.25
   ease: 3
   priortyChangeTimeProportional: 1
   priorityAdd: 0

@@ -1262,18 +1262,20 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         //Direction = _currentDirection;
     }
 
-    public void Dash(Vector3 movement, float duration, bool bumpeable, AnimationCurve curve)
+    public void Dash(in Vector3 movement, bool measuredInBeats, float duration, bool bumpeable, AnimationCurve curve)
     {
-        MakeCurrentDash(movement, duration, bumpeable)?.SetEase(curve);
+        MakeCurrentDash(movement, measuredInBeats, duration, bumpeable)?.SetEase(curve);
     }
 
-    public void Dash(Vector3 movement, float duration, bool bumpeable, Ease ease)
+    public void Dash(in Vector3 movement, bool measuredInBeats, float duration, bool bumpeable, Ease ease)
     {
-        MakeCurrentDash(movement, duration, bumpeable)?.SetEase(ease);
+        MakeCurrentDash(movement, measuredInBeats, duration, bumpeable)?.SetEase(ease);
     }
 
-    private Tween MakeCurrentDash(Vector3 movement, float duration, bool bumpeable)
+    private Tween MakeCurrentDash(Vector3 movement, bool measuredInBeats, float duration, bool bumpeable)
     {
+        if (measuredInBeats) movement = MoodUnitManager.ConvertFromBumpsToDistance(movement);
+
         CancelCurrentDash();
         if (bumpeable && Vector3.Angle(mover.WalledNormal, movement) > 90f)
         {

@@ -34,7 +34,7 @@ namespace Code.MoodGame.Skills
             };
             while (preAttackDashDuration > 0f && !shouldBreak)
             {
-                if(count > timeUntilStartsTesting.GetLength())
+                if(count > timeUntilStartsTesting.GetTotalLength())
                 {
                     pawn.OnNextEndMove += onDash;
                     bool? valid = buildData.TryHitGetFirst(pawn.Position, pawn.GetRotation(), targetLayer)?.IsValid();

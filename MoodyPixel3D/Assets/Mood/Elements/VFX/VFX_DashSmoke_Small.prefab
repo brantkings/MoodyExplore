@@ -65,11 +65,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.length
-      value: 3
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.m_Scale.y
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.m_Rotation.x
@@ -77,14 +77,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.radiusThickness
-      value: 0.15
+      value: 0.54
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 50
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: InitialModule.gravityModifier.scalar
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: InitialModule.gravityModifier.minScalar
       value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}

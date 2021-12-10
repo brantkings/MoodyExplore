@@ -15,9 +15,9 @@ MonoBehaviour:
   _created: 1
   _data:
     timeToMaxVelocity:
-      beats: 1
+      beats: 0.25
     timeToZeroVelocity:
-      beats: 2
+      beats: 3
     snapToTargetSpeedDelta: 0.25
     angleToBeAbleToAccelerate: 12
     turningDirectMaxSpeed: 1

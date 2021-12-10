@@ -30,7 +30,7 @@ namespace LHH.Caster
         protected Vector3 _restrictOriginDistanceOffsetToPlane;
 
 
-        [Header("Default values")]
+        [Header("Parameterless calls values")]
         [SerializeField]
         private float _defaultDistance = 1f;
         [SerializeField]

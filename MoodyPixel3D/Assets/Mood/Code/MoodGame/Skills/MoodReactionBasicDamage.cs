@@ -42,7 +42,7 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
 
         if (ShouldStaggerAnimation(info))
             pawn.SetDamageAnimationTween(pawn.ObjectTransform.InverseTransformDirection(info.distanceKnockback.normalized) * animationParameterMultiplier, animationDuration - animationDelay, animationDelay);
-        pawn.Dash(info.distanceKnockback * knockbackMultiplier, info.durationKnockback * knockbackMultiplier, dashIsBumpeable, dashCurve);
+        pawn.Dash(info.distanceKnockback * knockbackMultiplier, measuredInBeats:true, info.durationKnockback * knockbackMultiplier, dashIsBumpeable, dashCurve);
         pawn.RotateDash(info.rotationKnockbackAngle, animationDuration);
 
         pawn.AddStunLockTimer(MoodPawn.StunType.Action, name, info.stunTime * stunTimeMultiplier);

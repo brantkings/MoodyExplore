@@ -9,12 +9,12 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
         [SerializeField] internal float beats;
 
         protected abstract float GetBeatLength();
-        public float GetLength()
+        public float GetTotalLength()
         {
-            return GetLength(beats);
+            return GetTotalLength(beats);
         }
 
-        protected float GetLength(float beatValue)
+        protected float GetTotalLength(float beatValue)
         {
             return beatValue * GetBeatLength();
         }
@@ -25,7 +25,7 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
         /// <returns></returns>
         public float GetInversedLength()
         {
-            if (beats != 0f) return 1f / GetLength();
+            if (beats != 0f) return 1f / GetTotalLength();
             else return 0f;
         }
 
@@ -68,14 +68,15 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
 
         public static implicit operator TimeBeats(float q)
         {
-            var t = new TimeBeats();
-            t.SetLength(q);
-            return t;
+            return new TimeBeats()
+            {
+                beats = q
+            };
         }
 
         public static implicit operator float(TimeBeats q)
         {
-            return q.GetLength();
+            return q.GetTotalLength();
         }
     }
 
@@ -97,14 +98,15 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
 
         public static implicit operator DistanceBeats(float q)
         {
-            var t = new DistanceBeats();
-            t.SetLength(q);
-            return t;
+            return new DistanceBeats()
+            {
+                beats = q
+            };
         }
 
         public static implicit operator float(DistanceBeats q)
         {
-            return q.GetLength();
+            return q.GetTotalLength();
         }
     }
 
@@ -126,14 +128,15 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
 
         public static implicit operator SpeedBeats(float q)
         {
-            var t = new SpeedBeats();
-            t.SetLength(q);
-            return t;
+            return new SpeedBeats()
+            {
+                beats = q
+            };
         }
 
         public static implicit operator float(SpeedBeats q)
         {
-            return q.GetLength();
+            return q.GetTotalLength();
         }
     }
 
@@ -165,6 +168,21 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
     public static float GetDistanceBeatLength()
     {
         return Instance.beatDistanceLength;
+    }
+
+    public static Vector3 ConvertFromBumpsToDistance(Vector3 v)
+    {
+        return v * GetDistanceBeatLength();
+    }
+
+    public static Vector3 ConvertFromBumpsToSpeed(Vector3 v)
+    {
+        float timeBeatLength = GetTimeBeatLength();
+        if (timeBeatLength != 0)
+        {
+            return v * (GetDistanceBeatLength() / timeBeatLength);
+        }
+        else return Vector3.zero;
     }
 
 }

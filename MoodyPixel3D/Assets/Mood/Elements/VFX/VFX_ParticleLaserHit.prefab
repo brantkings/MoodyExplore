@@ -97,7 +97,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.size
@@ -109,7 +109,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: InitialModule.startSpeed.minScalar
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
@@ -325,7 +325,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4534425579592918413, guid: 668b9ffc2b5fa554da832d845b6b9b7e, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.size

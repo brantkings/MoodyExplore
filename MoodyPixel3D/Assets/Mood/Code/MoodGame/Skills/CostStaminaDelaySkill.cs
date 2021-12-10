@@ -88,7 +88,7 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
 
     public override IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
     {
-        yield return preFeedbackDelay.GetLength() + preDelay.GetLength();
-        yield return executionDelay.GetLength() + postFeedbackDelay.GetLength();
+        yield return preFeedbackDelay.GetTotalLength() + preDelay.GetTotalLength();
+        yield return executionDelay.GetTotalLength() + postFeedbackDelay.GetTotalLength();
     }
 }

@@ -9,8 +9,8 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
 {
 
     [Header("Movement")]
-    [UnityEngine.Serialization.FormerlySerializedAs("minDist")] public MoodUnitManager.DistanceBeats minDistance;
-    [UnityEngine.Serialization.FormerlySerializedAs("maxDist")] public MoodUnitManager.DistanceBeats maxDistance;
+    [UnityEngine.Serialization.FormerlySerializedAs("minDist")] public MoodUnitManager.DistanceBeats minDistanceBeats;
+    [UnityEngine.Serialization.FormerlySerializedAs("maxDist")] public MoodUnitManager.DistanceBeats maxDistanceBeats;
     public float hopHeight;
     public float hopDurationInMultiplier;
     public float hopDurationOutMultiplier;
@@ -58,7 +58,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
             SanitizeDirection(pawn.Direction, ref setDirection, setDirectionInRelationToMovement);
             pawn.SetHorizontalDirection(setDirection);
         }
-        pawn.Dash(distance, duration, movementIsBumpeable, ease);
+        pawn.Dash(distance, measuredInBeats:false, duration, movementIsBumpeable, ease);
         if (HasFeedback())
         {
             pawn.OnNextBeginMove += () => DoFeedback(pawn, skillDirection, true);
@@ -121,7 +121,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
 
     private void CalculateMovementData(Vector3 skillDirection, out Vector3 distance, out float duration)
     {
-        distance = skillDirection.Clamp(minDistance, maxDistance);
+        distance = skillDirection.Clamp(minDistanceBeats, maxDistanceBeats);
         duration = durationAdd;
         if (velocityAdd != 0f)
         {
@@ -148,7 +148,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     {
         return new RangeArrow.Properties()
         {
-            directionFixer = new RangeShow<RangeArrow.Properties>.SkillDirectionSanitizer(minDistance, maxDistance),
+            directionFixer = new RangeShow<RangeArrow.Properties>.SkillDirectionSanitizer(minDistanceBeats, maxDistanceBeats),
             width = showArrowWidth,
             warningOnHit = this.warningOnBumpWall,
             effectDuration = GetDurationSpecialEffect(),

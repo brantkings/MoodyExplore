@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!65 &3678747546032337639
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2775975959386151445}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 2}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2839284670563520628
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackDuration: 0.24
+  attackHeight: 1
 --- !u!114 &7872027183758182331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5095,6 +5083,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &3678747546032337639
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2775975959386151445}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7141189317129057034
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5195,10 +5196,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4778069407562484134, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4778069407562484134, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -5216,10 +5213,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5042300529913760687, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042300529913760687, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
-      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5042300529913760687, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
@@ -5275,6 +5268,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
+      propertyPath: movementData
+      value: 
+      objectReference: {fileID: 11400000, guid: e270c21568245584c966477d07b68054, type: 2}
+    - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: _attackFeedback
       value: 
       objectReference: {fileID: 1267605147178971668}
@@ -5312,10 +5309,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9039914443040310203, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9039914443040310203, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
-      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9039914443040310203, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}

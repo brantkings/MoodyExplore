@@ -165,16 +165,44 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             return TaskStatus.Success;
         }
     }
+
+    public static class TaskMeasure
+    {
+        public enum MeasureType
+        {
+            RawDistance,
+            BeatDistance,
+            BeatSpeed
+        }
+
+        public static Vector3 Convert(Vector3 original, MeasureType type)
+        {
+            switch (type)
+            {
+                case MeasureType.RawDistance:
+                    return original;
+                case MeasureType.BeatDistance:
+                    return MoodUnitManager.ConvertFromBumpsToDistance(original);
+                case MeasureType.BeatSpeed:
+                    return MoodUnitManager.ConvertFromBumpsToSpeed(original);
+                default:
+                    return MoodUnitManager.ConvertFromBumpsToDistance(original);
+            }
+        }
+    }
     
     [TaskCategory("Mood/Pawn")]
     public class SetPawnVelocity : Action
     {
+        
+
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
         [SerializeField] private SharedVector3 velocity;
+        [SerializeField] private TaskMeasure.MeasureType measure = TaskMeasure.MeasureType.BeatDistance;
 
         public override TaskStatus OnUpdate()
         {
-            pawn.Value.SetVelocity(velocity.Value);
+            pawn.Value.SetVelocity(TaskMeasure.Convert(velocity.Value, measure));
             return TaskStatus.Success;
         }
     }
@@ -183,22 +211,32 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
     [TaskDescription("Move pawn in the direction for the amount needed. Pawn will rotate to accomodate.")]
     public class MoveDirection : Action
     {
+
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
-        [SerializeField] private SharedVector3 movementPerSecond;
+        [SerializeField] [UnityEngine.Serialization.FormerlySerializedAs("movementPerSecond")] private SharedVector3 velocity;
+        [SerializeField] private TaskMeasure.MeasureType measure = TaskMeasure.MeasureType.BeatDistance;
         [SerializeField] private SharedBool infinite;
         [SerializeField] private SharedFloat amount;
+        [SerializeField] private SharedBool amountWalkedMeasuredInBeats = true;
 
         private float amountWalked;
+
+        private Vector3 velocityValue;
+        private float velocityMagnitude;
 
         public override void OnStart()
         {
             amountWalked = amount.Value;
+            if (amountWalkedMeasuredInBeats.Value) amountWalked *= MoodUnitManager.GetDistanceBeatLength();
+
+            velocityValue = TaskMeasure.Convert(velocity.Value, measure);
+            velocityMagnitude = velocityValue.magnitude;
         }
 
         public override TaskStatus OnUpdate()
         {
-            pawn.Value.SetVelocity(movementPerSecond.Value);
-            amountWalked -= Time.deltaTime * movementPerSecond.Value.magnitude;
+            pawn.Value.SetVelocity(velocityValue);
+            amountWalked -= Time.deltaTime * velocityMagnitude;
             if (infinite.Value) return TaskStatus.Running;
             else
             {
@@ -241,6 +279,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         [SerializeField] private SharedVector3 relativePosition;
         [SerializeField] private SharedFloat velocity;
         [SerializeField] private SharedBool bumpeable = true;
+        [SerializeField] private SharedBool distanceMeasuredInBeats = true;
         //[SerializeField] private SharedAnimationCurve curve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
         [SerializeField] private Ease ease = Ease.Linear;
         [SerializeField] private VelocityKind useVelocityAs;
@@ -284,7 +323,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
             if (pawn.Value != null)
             {
                 _dashed = true;
-                pawn.Value.Dash(relativePosition.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), bumpeable.Value,  ease);
+                pawn.Value.Dash(relativePosition.Value, distanceMeasuredInBeats.Value, GetVelocity(velocity.Value, relativePosition.Value, useVelocityAs), bumpeable.Value,  ease);
                 return TaskStatus.Running;
             }
             else

@@ -67,6 +67,7 @@ namespace LHH.Interface
         protected void AddElement(T element)
         {
             T oldSelected = GetSelected();
+            Debug.LogFormat("Adding element {0} over {1}. ({2})", element, oldSelected, typeof(T));
             if (element != null)
             {
                 switch (howToAdd)
@@ -100,7 +101,7 @@ namespace LHH.Interface
 
         private void NoticeChange(T oldObj, T newObj)
         {
-            Debug.LogFormat("Noticing change between {0} {1}",oldObj, newObj);
+            Debug.LogFormat("Noticing change between '{0}' and '{1}', of type {2}",oldObj, newObj, typeof(T));
             if(oldObj == null && newObj != null)
             {
                 Debug.LogFormat("OnChange1 Selected invoking {0} gonna call someone:{1} ", newObj, OnChangeSelected != null);

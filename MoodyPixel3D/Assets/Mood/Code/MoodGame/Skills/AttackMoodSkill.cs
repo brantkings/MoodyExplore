@@ -29,7 +29,6 @@ namespace Code.MoodGame.Skills
         {
             [UnityEngine.Serialization.FormerlySerializedAs("dist")]
             public MoodUnitManager.DistanceBeats dist;
-            public float distance;
             public bool bumpeable;
             public DirectionFixer angle;
             public DG.Tweening.Ease ease;
@@ -65,7 +64,7 @@ namespace Code.MoodGame.Skills
                 get
                 {
                     DashStruct d = new DashStruct();
-                    d.distance = 0f;
+                    d.dist = 0f;
                     d.angle = DirectionFixer.LetAll;
                     d.ease = DG.Tweening.Ease.OutCirc;
                     d.hopHeight = 0f;
@@ -241,7 +240,7 @@ namespace Code.MoodGame.Skills
         {
             if(dashData.HasDash())
             {
-                pawn.Dash(dashData.GetDashDistance(pawn.Direction, skillDirection), duration, dashData.bumpeable, dashData.ease);
+                pawn.Dash(dashData.GetDashDistance(pawn.Direction, skillDirection), measuredInBeats:false, duration, dashData.bumpeable, dashData.ease);
                 if (dashData.hopHeight != 0f) pawn.Hop(dashData.hopHeight, new MoodPawn.TweenData(duration * dashData.hopDurationRange).SetEase(DG.Tweening.Ease.OutCirc), new MoodPawn.TweenData(duration * (1f - dashData.hopDurationRange)).SetEase(DG.Tweening.Ease.InCirc));
                 dashData.Feedback(pawn.ObjectTransform, pawn, skillDirection);
             }
@@ -363,7 +362,7 @@ namespace Code.MoodGame.Skills
             return new RangeArrow.Properties()
             {
                 directionFixer = GetSanitizerForFirstDash(),
-                width = 0.5f
+                width = 0.25f
             };
         }
 

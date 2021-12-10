@@ -164,7 +164,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1507541639985700249}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1507541639539477097}
@@ -257,10 +257,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1507541639539477097}
     m_Modifications:
-    - target: {fileID: 1303193075842684403, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 1303193077165682250, guid: b8b8faaccd1a78b48b0d7075123f3ba9, type: 3}
       propertyPath: m_Name
       value: HumanoidObject_Casters

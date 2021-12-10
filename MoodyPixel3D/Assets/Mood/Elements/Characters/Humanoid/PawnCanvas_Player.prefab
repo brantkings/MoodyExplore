@@ -61,10 +61,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PawnCanvas_Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6099604486958605225, guid: a35f375dfa91c5d409629c6220b867f5, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6970033598111752679, guid: a35f375dfa91c5d409629c6220b867f5, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -168,6 +164,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2442097479655124923}
     m_Modifications:
+    - target: {fileID: 509649091284968160, guid: aa86b1c9b1c34924da5cb88771317c9a, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 952790046309772336, guid: aa86b1c9b1c34924da5cb88771317c9a, type: 3}
       propertyPath: m_Layer
       value: 5
@@ -184,11 +184,23 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4449924706349271463, guid: aa86b1c9b1c34924da5cb88771317c9a, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5182237527716189645, guid: aa86b1c9b1c34924da5cb88771317c9a, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5911357694425000991, guid: aa86b1c9b1c34924da5cb88771317c9a, type: 3}
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6081190143191245809, guid: aa86b1c9b1c34924da5cb88771317c9a, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6540323039816407176, guid: aa86b1c9b1c34924da5cb88771317c9a, type: 3}
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}

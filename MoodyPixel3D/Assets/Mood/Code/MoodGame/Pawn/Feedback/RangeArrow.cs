@@ -30,7 +30,7 @@ public class RangeArrow : RangeShow<RangeArrow.Properties>, IRangeShowDirected
 
         }
 
-        public float width = 1f;
+        public float width = 0.25f;
         public SkillDirectionSanitizer directionFixer;
         public bool warningOnHit;
         public float effectDuration;

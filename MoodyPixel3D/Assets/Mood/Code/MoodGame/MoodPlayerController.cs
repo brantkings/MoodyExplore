@@ -74,7 +74,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
     {
         [SerializeField] internal MoodPawnMovementData data;
         [SerializeField] internal InputCondition condition;
-        [SerializeField] internal float maxDistancePerBeat = 1f;
+        [SerializeField] internal MoodUnitManager.SpeedBeats maxSpeed = 1f;
 
         public void ApplyModeTo(MoodPawn p)
         {
@@ -782,7 +782,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
     private float GetMaxVelocity()
     {
-        return _currentMovementMode.maxDistancePerBeat / MoodUnitManager.GetTimeBeatLength();
+        return _currentMovementMode.maxSpeed;
     }
 
     private void FocusCommand(DirectionalState direction, AxisState addCommand)
