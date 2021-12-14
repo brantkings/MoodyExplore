@@ -69,6 +69,7 @@ MonoBehaviour:
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
   setDirection: 1
+  setVelocity0: 1
   priorityPreAttack: 2
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
@@ -79,7 +80,6 @@ MonoBehaviour:
   preAttackDash:
     dist:
       beats: 2
-    distance: 2
     bumpeable: 0
     angle:
       angleFromForward: 0
@@ -95,7 +95,6 @@ MonoBehaviour:
   postAttackDash:
     dist:
       beats: -1
-    distance: -1
     bumpeable: 0
     angle:
       angleFromForward: 0
@@ -110,7 +109,6 @@ MonoBehaviour:
   whiffAttackDash:
     dist:
       beats: 1
-    distance: 1
     bumpeable: 0
     angle:
       angleFromForward: 0

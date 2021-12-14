@@ -865,12 +865,12 @@ public class MoodCommandMenu : MonoBehaviour
         int match = CompareColumnPositionToCurrentColumn();
         if(match<0)
         {
-            Debug.LogErrorFormat("Column was wrong less {0}, active:{1} posNow:{2} posWant:{3}", match, _columnTween != null, GetCurrentColumnPosition(), GetWantedColumnPosition());
+            //Debug.LogErrorFormat("Column was wrong less {0}, active:{1} posNow:{2} posWant:{3}", match, _columnTween != null, GetCurrentColumnPosition(), GetWantedColumnPosition());
             StartCoroutine(JustSelectTreeFeedbackRoutine(pawn, changeDuration));
         }
         else if(match > 0)
         {
-            Debug.LogErrorFormat("Column was wrong more {0}, active:{1} posNow:{2} posWant:{3}", match, _columnTween != null, GetCurrentColumnPosition(), GetWantedColumnPosition());
+            //Debug.LogErrorFormat("Column was wrong more {0}, active:{1} posNow:{2} posWant:{3}", match, _columnTween != null, GetCurrentColumnPosition(), GetWantedColumnPosition());
             StartCoroutine(SelectAndActivateTreeFeedbackRoutine(pawn, changeDuration));
         }
     }

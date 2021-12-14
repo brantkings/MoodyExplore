@@ -9,7 +9,15 @@ public class StaminaHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     public Image border;
     public Image fill;
 
-    public Image carat;
+    public RectTransform carat;
+
+
+    float width = 70f;
+
+    private void Awake()
+    {
+        width = border.rectTransform.rect.width;
+    }
 
     public void SetTarget(MoodPawn pawn)
     {
@@ -24,12 +32,8 @@ public class StaminaHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     
     private void OnChangeStamina(MoodPawn pawn)
     {
-        //float maxWidth = border.rectTransform.;
-        //Vector2 size = fill.rectTransform.sizeDelta;
-        //size.x = maxWidth * pawn.GetStaminaRatio();
-        //Debug.LogFormat("Stamina depleted oh my god!! {0} {1} = {2} * {3}/{4} ({5}) rect is {6}", pawn, size.x, maxWidth, pawn.GetStamina(), pawn.GetMaxStamina(), pawn.GetStaminaRatio(), border.rectTransform.rect);
-        fill.rectTransform.localScale = new Vector3(pawn.GetStaminaRatio(), 1f, 1f);
-        SetNumberOfCarats(Mathf.RoundToInt(pawn.GetMaxStamina() - 1));
+        fill.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, pawn.GetStaminaRatio() * width);
+        SetNumberOfCarats(Mathf.RoundToInt(pawn.GetMaxStamina()));
     }
 
     private void SetNumberOfCarats(int num)

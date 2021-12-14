@@ -18,6 +18,7 @@ namespace Code.MoodGame.Skills
         public LayerMask targetLayer;
         public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
         public bool setDirection;
+        public bool setVelocity0;
         public int priorityPreAttack = PRIORITY_NOT_CANCELLABLE;
         public int priorityAfterAttack = PRIORITY_CANCELLABLE;
         public int priorityAfterWhiff = PRIORITY_NOT_CANCELLABLE;
@@ -127,15 +128,20 @@ namespace Code.MoodGame.Skills
             set => TargetProperties.target = value;
         }
 
+        private Vector3 GetDistanceOffsetDistance()
+        {
+            return MoodUnitManager.ConvertFromBumpsToDistance(swingDataPositionOffset);
+        }
+
         public float GetRange()
         {
-            if (swingData != null) return swingData.GetBuildData(Quaternion.identity, swingDataPositionOffset).GetRange();
+            if (swingData != null) return swingData.GetBuildData(Quaternion.identity, GetDistanceOffsetDistance()).GetRange();
             else return 0f;
         }
 
         private Transform GetTarget(MoodPawn pawn, Vector3 origin, Vector3 direction)
         {
-            return swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(direction)).TryHitGetBest(pawn.ObjectTransform.TransformVector(swingDataPositionOffset) + origin, Quaternion.LookRotation(direction, Vector3.up), targetLayer, direction)?.collider.GetComponentInParent<MoodPawn>()?.transform;
+            return swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(direction)).TryHitGetBest(pawn.ObjectTransform.TransformVector(GetDistanceOffsetDistance()) + origin, Quaternion.LookRotation(direction, Vector3.up), targetLayer, direction)?.collider.GetComponentInParent<MoodPawn>()?.transform;
         }
 
         public override void SetShowDirection(MoodPawn pawn, Vector3 direction)
@@ -181,6 +187,7 @@ namespace Code.MoodGame.Skills
 
         protected float PrepareAttack(MoodPawn pawn, in Vector3 skillDirection, out MoodSwing.MoodSwingBuildData buildData)
         {
+            if (setVelocity0) pawn.SetVelocity(Vector3.zero);
             if (setDirection) pawn.SetHorizontalDirection(skillDirection);
             buildData = swingData.GetBuildData(pawn.ObjectTransform.rotation, GetSwingOffset(skillDirection));
             pawn.SetPlugoutPriority(priorityPreAttack);
@@ -340,7 +347,7 @@ namespace Code.MoodGame.Skills
             return new RangeArea.Properties()
             {
                 swingData = this.swingData,
-                offset = swingDataPositionOffset,
+                offset = GetDistanceOffsetDistance(),
                 skillPreviewSanitizer = GetSanitizerForFirstDash(),
                 positioningWhenUsingSkill = previewPositioning,
             };
@@ -348,7 +355,7 @@ namespace Code.MoodGame.Skills
 
         protected Vector3 GetSwingOffset(Vector3 skillDirection)
         {
-            return swingDataPositionOffset;
+            return GetDistanceOffsetDistance();
         }
 
         public virtual bool ShouldShowNow(MoodPawn pawn)
@@ -385,7 +392,7 @@ namespace Code.MoodGame.Skills
         public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
         {
             SanitizeDirection(pawn.Direction, ref skillDirection);
-            MoodSwing.MoodSwingResult? result = swingData.GetBuildData(pawn, swingDataPositionOffset).TryHitGetFirst(pawn.Position + skillDirection.normalized * preAttackDash.dist, Quaternion.LookRotation(skillDirection), targetLayer);
+            MoodSwing.MoodSwingResult? result = swingData.GetBuildData(pawn, GetDistanceOffsetDistance()).TryHitGetFirst(pawn.Position + skillDirection.normalized * preAttackDash.dist, Quaternion.LookRotation(skillDirection), targetLayer);
             if (result.HasValue)
             {
                 if (result.Value.IsValid()) return WillHaveTargetResult.WillHaveTarget;
