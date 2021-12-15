@@ -111,16 +111,16 @@ MonoBehaviour:
     value: {fileID: 4800000, guid: 4cff50fc794c72943beb995891c12ab7, type: 3}
   textureIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: dda6d1966e448fa49bcbdb306881e0a0, type: 2}
+    value: {fileID: 11700000, guid: 3e26633d4dd393c48b8776013416e27d, type: 2}
   textureIlluminatedEffect:
-    overrideState: 0
-    value: {fileID: 0}
+    overrideState: 1
+    value: {fileID: 11400000, guid: a1a5883bcd228904299932613dace63a, type: 2}
   textureNotIlluminated:
     overrideState: 1
-    value: {fileID: 11700000, guid: dda6d1966e448fa49bcbdb306881e0a0, type: 2}
+    value: {fileID: 11700000, guid: 87c3c8bb7a977d04d9e66145b524a84a, type: 2}
   textureNotIlluminatedEffect:
-    overrideState: 0
-    value: {fileID: 0}
+    overrideState: 1
+    value: {fileID: 11400000, guid: a1a5883bcd228904299932613dace63a, type: 2}
   textureSize:
     overrideState: 0
     value: 0

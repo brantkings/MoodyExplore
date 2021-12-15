@@ -58,8 +58,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 7.5, y: 8, z: 2}
-  m_Center: {x: 0, y: 4, z: 0}
+  m_Size: {x: 6, y: 4, z: 1.5}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!1001 &6417392769540226937
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -112,6 +112,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1682627809243208977, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 8418204508859773708, guid: 0000000000000000d000000000000000, type: 0}
+    - target: {fileID: 1682627809243208977, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
       propertyPath: m_Name
       value: Mood_Door_Invisible
       objectReference: {fileID: 0}
@@ -120,8 +124,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4798655538010981073, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
+      propertyPath: m_Size.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798655538010981073, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
       propertyPath: m_Size.z
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6773985274011682823, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}

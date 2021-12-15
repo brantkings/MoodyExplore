@@ -18,21 +18,24 @@ public class PawnLevelActivator : AddonBehaviour<MoodPawn>
 
     private void OnChangePlatform(Collider oldPlat, Collider newPlat)
     {
-        MoodLevelRoom newLevel = newPlat.GetComponentInParent<MoodLevelRoom>();
-
-        if (newLevel != null && newLevel != _currentLevel)
+        if(newPlat != null)
         {
-            if(_currentLevel != null)
-            {
-                _currentLevel.SetRoomActive(false, false);
-            }
+            MoodLevelRoom newLevel = newPlat.GetComponentInParent<MoodLevelRoom>();
 
-            if(!newLevel.IsActivated())
+            if (newLevel != null && newLevel != _currentLevel)
             {
-                newLevel.SetRoomActive(true, immediate: _currentLevel == null);
-            }
+                if(_currentLevel != null)
+                {
+                    _currentLevel.SetRoomActive(false, false);
+                }
 
-            _currentLevel = newLevel;
+                if(!newLevel.IsActivated())
+                {
+                    newLevel.SetRoomActive(true, immediate: _currentLevel == null);
+                }
+
+                _currentLevel = newLevel;
+            }
         }
     }
 }

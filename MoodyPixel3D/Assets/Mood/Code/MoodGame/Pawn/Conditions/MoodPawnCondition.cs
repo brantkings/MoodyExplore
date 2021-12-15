@@ -20,10 +20,19 @@ public static class MoodPawnConditionUtils
     {
         switch (howToJoin)
         {
+            //Implemented without linq because this is used all the time and is making the game laggy
             case JoinType.All:
-                return conditions.All(x => x.ConditionIsOK(pawn));
+                for (int i = 0, len = conditions.Length; i < len; i++)
+                {
+                    if(!conditions[i].ConditionIsOK(pawn)) return false;
+                }
+                return true;
             case JoinType.Any:
-                return conditions.Any(x => x.ConditionIsOK(pawn));
+                for (int i = 0, len = conditions.Length; i < len; i++)
+                {
+                    if (conditions[i].ConditionIsOK(pawn)) return true;
+                }
+                return false;
             default:
                 return false;
         }
