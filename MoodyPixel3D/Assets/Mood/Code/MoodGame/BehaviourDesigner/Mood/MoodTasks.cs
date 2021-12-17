@@ -522,12 +522,13 @@ namespace BehaviorDesigner.Runtime.Tasks.Mood
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodPawn pawn;
         [SerializeField] private MoodSharedBehaviourTypes.SharedMoodSkill skill;
         [SerializeField] private SharedVector3 direction;
+        [SerializeField] private SharedFloat distanceSafetyInBeats;
         [SerializeField] private SharedBool considerNonApplicableAsOK = true;
 
         public override TaskStatus OnUpdate()
         {
             //Debug.LogFormat("{0} can execute {1} on {2}? {3}", pawn, skill, direction, skill.Value.CanExecute(pawn.Value, direction.Value));
-            MoodSkill.WillHaveTargetResult result = skill.Value.WillHaveTarget(pawn.Value, direction.Value);
+            MoodSkill.WillHaveTargetResult result = skill.Value.WillHaveTarget(pawn.Value, direction.Value, distanceSafetyInBeats.Value);
             switch (result)
             {
                 case MoodSkill.WillHaveTargetResult.NonApplicable:

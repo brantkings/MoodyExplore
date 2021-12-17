@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MovementAndAttackMoodSkill : StaminaCostMoodSkill
 {
-    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection, MoodUnitManager.DistanceBeats distanceSafety)
     {
         throw new System.NotImplementedException();
     }

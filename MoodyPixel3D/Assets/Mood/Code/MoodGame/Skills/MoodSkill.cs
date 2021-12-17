@@ -366,7 +366,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// <param name="pawn"></param>
     /// <param name="skillDirection"></param>
     /// <returns></returns>
-    public abstract WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection);
+    public abstract WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection, MoodUnitManager.DistanceBeats distanceSafety);
 
     public virtual IEnumerable<MoodStance> GetStancesThatWillBeAdded()
     {

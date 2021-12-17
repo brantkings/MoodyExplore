@@ -31,10 +31,11 @@ public class MoodSwing : ScriptableObject
             return this;
         }
 
-        public MoodSwingResult? TryHitGetBest(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, Vector3 desiredDirection)
+        public MoodSwingResult? TryHitGetBest(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, Vector3 desiredDirection, float safetyDistance = 0f)
         {
             float minAngle = float.MaxValue;
             MoodSwingResult? result = null;
+            if (safetyDistance != 0f) UseSafetyDistance(ref posOrigin, safetyDistance, moodSwingItself);
             foreach (MoodSwingResult r in TryHitMerged(posOrigin, rotOrigin, layer))
             {
                 Vector3 direction = r.collider.ClosestPoint(posOrigin) - posOrigin;
@@ -48,10 +49,10 @@ public class MoodSwing : ScriptableObject
             return result;
         }
 
-        public MoodSwingResult? TryHitGetFirst(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
+        public MoodSwingResult? TryHitGetFirst(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, float safetyDistance = 0f)
         {
-
             float currentDelay = 0f;
+            if (safetyDistance != 0f) UseSafetyDistance(ref posOrigin, safetyDistance, moodSwingItself);
             foreach (MoodSwingNode node in moodSwingItself.maker.Nodes)
             {
                 LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
@@ -68,13 +69,14 @@ public class MoodSwing : ScriptableObject
             return null;
         }
 
-        public IEnumerable<MoodSwingResult> TryHitMerged(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer)
+        public IEnumerable<MoodSwingResult> TryHitMerged(Vector3 posOrigin, Quaternion rotOrigin, LayerMask layer, float safetyDistance = 0f)
         {
             float currentDelay = 0f;
             _resultsCache.Clear();
             float capsuleHeight = 4f;
             Vector3 capsuleHalfHeight = Vector3.up * capsuleHeight * 0.5f;
             int b = 0;
+            if (safetyDistance != 0f) UseSafetyDistance(ref posOrigin, safetyDistance, moodSwingItself);
             foreach (MoodSwingNode node in moodSwingItself.maker.Nodes)
             {
                 LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
@@ -195,6 +197,12 @@ public class MoodSwing : ScriptableObject
     private static Vector3 GetCorrectPosition(Vector3 posOrigin, Quaternion rotOrigin, Vector3 posOffset, MoodSwingNode node)
     {
         return posOrigin + rotOrigin * (node.localPosition + posOffset);
+    }
+
+    private static void UseSafetyDistance(ref Vector3 posOrigin, in float safetyDistance, MoodSwing moodSwingItself)
+    {
+        Vector3 center = (moodSwingItself.maker.Nodes.Select(x => x.localPosition).Aggregate((x, y) => x + y)) / moodSwingItself.maker.Nodes.Count();
+        posOrigin += (posOrigin - center).normalized * safetyDistance;
     }
 
 

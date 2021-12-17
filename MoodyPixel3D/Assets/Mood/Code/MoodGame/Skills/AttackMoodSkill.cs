@@ -389,10 +389,11 @@ namespace Code.MoodGame.Skills
             yield return animationTime + postTime;
         }
 
-        public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+        public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection, MoodUnitManager.DistanceBeats distanceSafety)
         {
             SanitizeDirection(pawn.Direction, ref skillDirection);
-            MoodSwing.MoodSwingResult? result = swingData.GetBuildData(pawn, GetDistanceOffsetDistance()).TryHitGetFirst(pawn.Position + skillDirection.normalized * preAttackDash.dist, Quaternion.LookRotation(skillDirection), targetLayer);
+            MoodSwing.MoodSwingResult? result = swingData.GetBuildData(pawn, GetDistanceOffsetDistance()).TryHitGetFirst(pawn.Position + skillDirection.normalized * preAttackDash.dist, Quaternion.LookRotation(skillDirection), 
+                targetLayer, distanceSafety);
             if (result.HasValue)
             {
                 if (result.Value.IsValid()) return WillHaveTargetResult.WillHaveTarget;

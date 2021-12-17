@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using static MoodUnitManager;
 
 [CreateAssetMenu(menuName = "Mood/Skill/Change Stance")]
 public class ChangeStanceMoodSkill : StaminaCostMoodSkill
@@ -56,7 +56,7 @@ public class ChangeStanceMoodSkill : StaminaCostMoodSkill
             yield return stance;
     }
 
-    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection, DistanceBeats safetyDistance)
     {
         return WillHaveTargetResult.NonApplicable;
     }

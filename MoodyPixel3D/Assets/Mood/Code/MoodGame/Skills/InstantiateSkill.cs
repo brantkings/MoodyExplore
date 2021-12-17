@@ -169,7 +169,7 @@ public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRang
         yield return postTime;
     }
 
-    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection, MoodUnitManager.DistanceBeats distanceSafety)
     {
         return WillHaveTargetResult.NonApplicable; //DIfficult to gauge if projectile will find opponent
     }

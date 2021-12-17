@@ -93,9 +93,9 @@ public class ChainSkill : StaminaCostMoodSkill
         }
     }
 
-    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection)
+    public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection, MoodUnitManager.DistanceBeats distanceSafety)
     {
-        return skills.Select((x) => x.WillHaveTarget(pawn, skillDirection)).Aggregate(
+        return skills.Select((x) => x.WillHaveTarget(pawn, skillDirection, distanceSafety)).Aggregate(
             (x, y) => {
                 return (WillHaveTargetResult)Mathf.Max((int)x, (int)y);
             }

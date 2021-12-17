@@ -88,6 +88,14 @@ PrefabInstance:
       value: 0.54
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ClampVelocityModule.y.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ClampVelocityModule.z.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.alignToDirection
       value: 0
       objectReference: {fileID: 0}
@@ -101,11 +109,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ClampVelocityModule.z.minScalar
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 35
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: InitialModule.gravityModifier.scalar
