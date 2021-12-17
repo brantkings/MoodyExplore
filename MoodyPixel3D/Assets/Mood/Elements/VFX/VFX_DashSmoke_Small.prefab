@@ -25,15 +25,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 536837461512436486, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.6487178
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 536837461512436486, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 536837461512436486, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.76102906
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 536837461512436486, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: m_LocalRotation.z
@@ -45,7 +45,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 536837461512436486, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -260.89
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 536837461512436486, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -61,7 +61,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.angle
-      value: 65
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.length
@@ -69,19 +69,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.m_Scale.y
-      value: 0.1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.m_Rotation.x
-      value: -155
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ClampVelocityModule.dampen
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: ShapeModule.radiusThickness
       value: 0.54
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ShapeModule.alignToDirection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ClampVelocityModule.x.minScalar
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ClampVelocityModule.y.minScalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: ClampVelocityModule.z.minScalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 25
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 2302073669679273419, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: InitialModule.gravityModifier.scalar
@@ -97,7 +121,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5469503641647213935, guid: c74fe76da57a07f428235362633339b9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5469503641647213935, guid: c74fe76da57a07f428235362633339b9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c74fe76da57a07f428235362633339b9, type: 3}

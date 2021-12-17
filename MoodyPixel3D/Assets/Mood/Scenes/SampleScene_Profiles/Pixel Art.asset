@@ -52,7 +52,7 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 1
+    value: 0.5
   color:
     overrideState: 1
     value: {r: 0.4811321, g: 0.33815417, b: 0.4032541, a: 1}
@@ -76,10 +76,10 @@ MonoBehaviour:
     value: 0
   radius:
     overrideState: 1
-    value: 2.84
+    value: 3
   quality:
     overrideState: 1
-    value: 4
+    value: 2
 --- !u!114 &-5521021945785389126
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -151,10 +151,10 @@ MonoBehaviour:
     value: 1
   focusDistance:
     overrideState: 1
-    value: 15
+    value: 16
   aperture:
     overrideState: 1
-    value: 4
+    value: 5
   focalLength:
     overrideState: 1
     value: 180

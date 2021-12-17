@@ -17,7 +17,7 @@ MonoBehaviour:
   wrapMode: 1
   filterMode: 1
   mipMaps: 0
-  paletteToUse: {fileID: 11400000, guid: d4e5d43b8254619458530a934101950b, type: 2}
+  paletteToUse: {fileID: 11400000, guid: 2506b45e136e6be45bc366d7f805d03f, type: 2}
   paletteComparer: {fileID: 11400000, guid: c96fedf910108ac488a7f0a84a833ae8, type: 2}
   textureToCreate: {fileID: 11700000, guid: 675cb32ee38cacf4bad38681632f2e58, type: 2}
   possibilities:
