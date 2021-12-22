@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Mood/Stances/Modifier/Stun", fileName = "StMod_Stun")]
 public class StunMoodPawnModifier : MoodPawnModifier
 {
-    public MoodPawn.StunType[] stuns;
+    public MoodPawn.LockType[] stuns;
     public bool useStanceName;
 
     public override void ApplyModifier(MoodStance stance, MoodPawn pawn)

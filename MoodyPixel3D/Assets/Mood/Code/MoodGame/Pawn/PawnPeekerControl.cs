@@ -25,6 +25,7 @@ public class PawnPeekerControl : MonoBehaviour
     {
         foreach (IMoodPawnPeeker peeker in getters)
         {
+            Debug.LogFormat(this, "[PAWN PEEKER] {0} have {1}", pawn, peeker);
             peeker.SetTarget(pawn);
         }
     }
@@ -33,6 +34,7 @@ public class PawnPeekerControl : MonoBehaviour
     {
         foreach (IMoodPawnPeeker peeker in getters)
         {
+            Debug.LogFormat(this, "[PAWN PEEKER] {0} lost {1}", pawn, peeker);
             peeker.UnsetTarget(pawn);
         }
     }

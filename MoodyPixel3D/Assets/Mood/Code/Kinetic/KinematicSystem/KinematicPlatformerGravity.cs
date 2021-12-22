@@ -47,7 +47,7 @@ public class KinematicPlatformerGravity : AddonBehaviour<KinematicPlatformer>, I
 
     public void StartVelocity()
     {
-        Debug.LogFormat("Starting velocity for {0} and is grounded? {1}", this, Addon.Grounded);
+        Debug.LogFormat("Starting free fall velocity for {0} and is grounded? {1}", this, Addon.Grounded);
         if(!Addon.Grounded)
         {
             RestartFall(Mathf.Max(-Addon.Velocity.y, groundedGravitySpeed));

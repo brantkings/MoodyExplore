@@ -108,9 +108,9 @@ public class MoodDoor : MonoBehaviour
     {
         if (pawn != null)
         {
-            pawn.AddStunLock(MoodPawn.StunType.Action, "Door");
-            pawn.AddStunLock(MoodPawn.StunType.Movement, "Door");
-            pawn.AddStunLock(MoodPawn.StunType.Reaction, "Door");
+            pawn.AddStunLock(MoodPawn.LockType.Action, "Door");
+            pawn.AddStunLock(MoodPawn.LockType.Movement, "Door");
+            pawn.AddStunLock(MoodPawn.LockType.Reaction, "Door");
         }
     }
 
@@ -118,9 +118,9 @@ public class MoodDoor : MonoBehaviour
     {
         if (pawn != null)
         {
-            pawn.RemoveStunLock(MoodPawn.StunType.Action, "Door");
-            pawn.RemoveStunLock(MoodPawn.StunType.Movement, "Door");
-            pawn.RemoveStunLock(MoodPawn.StunType.Reaction, "Door");
+            pawn.RemoveStunLock(MoodPawn.LockType.Action, "Door");
+            pawn.RemoveStunLock(MoodPawn.LockType.Movement, "Door");
+            pawn.RemoveStunLock(MoodPawn.LockType.Reaction, "Door");
         }
     }
 
@@ -139,7 +139,7 @@ public class MoodDoor : MonoBehaviour
 
     private IEnumerator MoveTo(MoodPawn pawn, Vector3 position, Vector3 direction, float duration, float durationAfter)
     {
-        pawn.RotateDash(Vector3.SignedAngle(pawn.Direction, direction, Vector3.up), duration);
+        pawn.RotateDash(Vector3.SignedAngle(pawn.Direction, direction, Vector3.up), duration, Ease.Linear);
         yield return pawn.mover.TweenMoverPosition(position - pawn.mover.Position, duration).SetEase(Ease.Linear);
         yield return new WaitForSeconds(durationAfter);
     }

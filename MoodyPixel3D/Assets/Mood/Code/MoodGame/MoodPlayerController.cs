@@ -138,6 +138,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
     {
         public float movementTimeFactor;
         public float movementThreatTimeFactor;
+        public float movementThreatWhileInputtingTimeFactor;
         public float thinkingTimeFactor;
         public float commandNotExecutingSkillTimeFactor;
         public float commandExecutingSkillButCanExecuteTimeFactor;
@@ -451,6 +452,10 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
             else return 0;
         }
 
+        public bool HasInput()
+        {
+            return horizontal.GetValue() != 0 || vertical.GetValue() != 0;
+        }
     }
 
     private class RecheckableAxis
@@ -753,7 +758,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
         //SolveCommandSlowDown(executeAction.Pressing, true);
         //SolveCommandSlowDown(false, true);
-        SolveSlowdown(currentMode, IsManuallyRotating(), _pawn.Threatenable.IsThreatened(), IsExecutingCommand(), HasAvailableSkills(), IsBufferingSkill(), slowdownData);
+        SolveSlowdown(currentMode, IsManuallyRotating(), _pawn.Threatenable.IsThreatened(), IsExecutingCommand(), HasAvailableSkills(), IsBufferingSkill(), moveAxis.HasInput(), slowdownData) ;
     }
 
     private void SelectExecuteCurrentSkill(MoodSkill currentSkill, MoodItemInstance currentItem, MoodCommandOption currentOption, Vector3 currentDirection)
@@ -864,7 +869,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
     public bool IsStunned()
     {
-        return _pawn.IsStunned(MoodPawn.StunType.Action);
+        return _pawn.IsStunned(MoodPawn.LockType.Action);
     }
 
     public bool IsManuallyRotating()
@@ -895,7 +900,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
 
     private float _oldSlowDown;
-    private void SolveSlowdown(Mode currentMode, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool bufferingSkill, SlowdownData data)
+    private void SolveSlowdown(Mode currentMode, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool bufferingSkill, bool isMoving, SlowdownData data)
     {
         bool inCommand, isThinking = false;
         switch (currentMode)
@@ -918,7 +923,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
                 break;
         }
 
-        _targetTimeDelta = GetSlowdownTarget(inCommand, isThinking, isRotating, isThreatened, isExecutingSkill, canExecuteSkill, bufferingSkill, data);
+        _targetTimeDelta = GetSlowdownTarget(inCommand, isThinking, isRotating, isThreatened, isExecutingSkill, canExecuteSkill, bufferingSkill, isMoving, data);
         //if(_oldSlowDown != _targetTimeDelta)
             //Debug.LogErrorFormat($"Solve slowdown change {_oldSlowDown} to {_targetTimeDelta} ({currentMode}, {isRotating}, {isExecutingSkill}, {canExecuteSkill}, {bufferingSkill})");
         _oldSlowDown = _targetTimeDelta;
@@ -926,7 +931,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
     }
 
 
-    private float GetSlowdownTarget(bool inCommand, bool isThinking, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool isBufferingSkill, SlowdownData data)
+    private float GetSlowdownTarget(bool inCommand, bool isThinking, bool isRotating, bool isThreatened, bool isExecutingSkill, bool canExecuteSkill, bool isBufferingSkill, bool isMoving, SlowdownData data)
     {
         if (isThinking) return data.thinkingTimeFactor;
         else if (inCommand)
@@ -946,7 +951,11 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
         }
         else
         {
-            if (isThreatened) return data.movementThreatTimeFactor;
+            if (isThreatened)
+            {
+                if (isMoving) return data.movementThreatWhileInputtingTimeFactor;
+                else return data.movementThreatTimeFactor;
+            }
             else return data.movementTimeFactor;
         }
 

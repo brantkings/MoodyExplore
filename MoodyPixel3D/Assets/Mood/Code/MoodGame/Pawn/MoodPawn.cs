@@ -647,7 +647,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public bool CanUseSkill(MoodSkill skill)
     {
-        return !IsStunned(StunType.Action) && skill.GetPluginPriority(this) > GetPlugoutPriority();
+        return !IsStunned(LockType.Action) && skill.GetPluginPriority(this) > GetPlugoutPriority();
     }
     #endregion
 
@@ -729,7 +729,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public IEnumerable<MoodReaction> GetActiveReactions()
     {
-        if (IsStunned(StunType.Reaction)) 
+        if (IsStunned(LockType.Reaction)) 
             yield break;
 
         foreach(MoodStance stance in AllActiveStances)
@@ -986,6 +986,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, ref Vector3 speed, ref Vector3 direction)
     {
+        if (movementData == null) return;
+
         if(inputVelocity.sqrMagnitude < 0.1f) //Wants to stop
         {
             UpdateMovementVector(ref speed, 0f, movementData.Data.timeToZeroVelocity);
@@ -1032,7 +1034,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void UpdateDirectionVector(ref Vector3 direction, Vector3 targetDirection, float maxDelta)
     {
-        if (cantRotateWhileExecutingSkill && IsExecutingSkill()) 
+        if ((cantRotateWhileExecutingSkill && IsExecutingSkill()) || IsRotationDashing() || IsStunned(LockType.Movement_NonDash) || IsStunned(LockType.Movement_Rotation)) 
             return;
         float angleTurn = Vector3.SignedAngle(direction, targetDirection, Vector3.up);
         //Debug.LogFormat("Angle between [{3} <-> {4}] is {0} when total is {1} and max is {2}", Mathf.Sign(angleTurn) * Mathf.Max(Mathf.Abs(angleTurn), maxDelta), angleTurn, maxDelta, direction, targetDirection);
@@ -1047,7 +1049,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void UpdateMovementVector(ref Vector3 movement, Vector3 destination, float smoothTime)
     {
-        if(cantMoveWhileExecutingSkill && IsExecutingSkill())
+        if((cantMoveWhileExecutingSkill && IsExecutingSkill()) || IsStunned(LockType.Movement_NonDash))
         {
             movement = Vector3.zero;
             return;
@@ -1058,7 +1060,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private bool CanMove()
     {
-        return !IsStunned(StunType.Movement);
+        return !IsStunned(LockType.Movement);
     }
 
     private void SolveFinalVelocity(ref Vector3 finalVel)
@@ -1242,13 +1244,23 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public Tween TweenMoverDirection(Vector3 directionTo, float duration)
     {
-        Debug.LogFormat("{0} is rotating to direction {1}, {2} [{3}]", this, directionTo, duration, Time.time);
+        //Debug.LogWarningFormat("{0} is rotating to direction {1}, duration:{2} [{3}]", this, directionTo, duration, Time.frameCount);
         if (duration <= 0f)
         {
             SetPawnLerpDirection(directionTo);
             return null;
         }
-        else return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this).OnKill(() => Debug.LogFormat("Killed me {0} {1} [{2}]!", this, directionTo, Time.time));//.OnKill(CallEndMove).OnStart(CallBeginMove);
+        else 
+        {
+            _isRotationDashing = true;
+            //TODO when tweening between (-1,0,0) to (1,0,0), the motion won't be circular. Do something that when it happens it nudges a bit
+            return DOTween.To(GetPawnLerpDirection, SetPawnLerpDirection, directionTo, duration).SetId(this).OnKill(() =>
+            {
+                //Debug.LogFormat("Direction tween killed me {0} {1} [{2}]!", this, directionTo, Time.time);
+                _isRotationDashing = false;
+            }
+            );//.OnKill(CallEndMove).OnStart(CallBeginMove)
+        }
     }
 
     private Vector3 GetPawnLerpDirection()
@@ -1304,9 +1316,18 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if (_currentDash != null) _currentDash.KillDash();
         _currentDash = null;
     }
+
+    private bool _isRotationDashing = false;
+
     public void CancelCurrentRotationDash()
     {
         if (_currentRotationDash != null) _currentRotationDash.KillIfActive();
+        _isRotationDashing = false;
+    }
+
+    public bool IsRotationDashing()
+    {
+        return _isRotationDashing;
     }
 
     private Tween TweenFakeHeight(float height, float duration, Ease ease)
@@ -1457,12 +1478,16 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Lock<string> _actionStunLock = new Lock<string>();
     private Lock<string> _reactionStunLock = new Lock<string>();
     private Lock<string> _movementLock = new Lock<string>();
+    private Lock<string> _rotationLock = new Lock<string>();
+    private Lock<string> _movementNonDashLock = new Lock<string>();
 
-    public enum StunType
+    public enum LockType
     {
         Action,
         Reaction,
         Movement,
+        Movement_Rotation,
+        Movement_NonDash,
         None
     }
 
@@ -1476,45 +1501,49 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
 
 
-    private Dictionary<StunType, Dictionary<string,Coroutine>> _stunRoutines = new Dictionary<StunType, Dictionary<string, Coroutine>>(4);
+    private Dictionary<LockType, Dictionary<string,Coroutine>> _stunRoutines = new Dictionary<LockType, Dictionary<string, Coroutine>>(4);
 
-    private Lock<string> GetLock(StunType type)
+    private Lock<string> GetLock(LockType type)
     {
         switch (type)
         {
-            case StunType.Action:
+            case LockType.Action:
                 return _actionStunLock;
-            case StunType.Reaction:
+            case LockType.Reaction:
                 return _reactionStunLock;
-            case StunType.Movement:
+            case LockType.Movement:
                 return _movementLock;
+            case LockType.Movement_NonDash:
+                return _movementNonDashLock;
+            case LockType.Movement_Rotation:
+                return _rotationLock;
             default:
                 return null;
         }
     }
 
-    public bool IsStunned(StunType type)
+    public bool IsStunned(LockType type)
     {
         return GetLock(type).IsLocked();
     }
 
-    private void EndStun(StunType type)
+    private void EndStun(LockType type)
     {
         RemoveStunLockTimer(type);
         GetLock(type).RemoveAll();
     }
 
-    public void AddStunLock(StunType type, string str)
+    public void AddStunLock(LockType type, string str)
     {
         GetLock(type).Add(str);
     }
 
-    public void RemoveStunLock(StunType type, string str)
+    public void RemoveStunLock(LockType type, string str)
     {
         GetLock(type).Remove(str);
     }
 
-    private void RemoveStunLockTimer(StunType type)
+    private void RemoveStunLockTimer(LockType type)
     {
         if (_stunRoutines.ContainsKey(type))
         {
@@ -1524,7 +1553,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
-    public void AddStunLockTimer(StunType type, string str, float timeStunned)
+    public void AddStunLockTimer(LockType type, string str, float timeStunned)
     {
         if(!_stunRoutines.ContainsKey(type))
         {
@@ -1539,7 +1568,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         dict.Add(str, StartCoroutine(StunLockRoutine(type, str, timeStunned)));
     }
 
-    private IEnumerator StunLockRoutine(StunType type, string str, float timeStunned)
+    private IEnumerator StunLockRoutine(LockType type, string str, float timeStunned)
     {
         GetLock(type).Add(str);
         if(timeStunned>0) yield return new WaitForSeconds(timeStunned);

@@ -279,6 +279,7 @@ public partial class KinematicPlatformer : MonoBehaviour
         get => _desiredDirection;
         set
         {
+            //Debug.LogFormat("{0} is going to direction {1} from {2}. [{3}]", this, value, _desiredDirection, Time.frameCount);
             _desiredDirection = value;
         }
     }

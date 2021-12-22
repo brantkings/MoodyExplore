@@ -45,7 +45,7 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
         pawn.Dash(info.distanceKnockback * knockbackMultiplier, measuredInBeats:true, info.durationKnockback * knockbackMultiplier, dashIsBumpeable, dashCurve);
         pawn.RotateDash(info.rotationKnockbackAngle, animationDuration);
 
-        pawn.AddStunLockTimer(MoodPawn.StunType.Action, name, info.stunTime * stunTimeMultiplier);
+        pawn.AddStunLockTimer(MoodPawn.LockType.Action, name, info.stunTime * stunTimeMultiplier);
         if(shouldInterruptCurrentSkill) 
             pawn.InterruptCurrentSkill();
     }

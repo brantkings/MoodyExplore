@@ -65,7 +65,7 @@ public class MoodPreReaction : MoodReaction, IMoodReaction<ReactionInfo>, IMoodR
     private bool IsStunnedStatusValid(MoodPawn pawn)
     {
         if (canExecuteStunned) return true;
-        else return !pawn.IsStunned(MoodPawn.StunType.Reaction);
+        else return !pawn.IsStunned(MoodPawn.LockType.Reaction);
     }
 
     private bool IsStanceStatusValid(MoodPawn pawn)

@@ -40,7 +40,8 @@ MonoBehaviour:
     beats: 6
   maxDistanceBeats:
     beats: 7
-  hopHeight: 2
+  hopHeight:
+    beats: 2
   hopDurationInMultiplier: 0.5
   hopDurationOutMultiplier: 0.5
   movementIsBumpeable: 1

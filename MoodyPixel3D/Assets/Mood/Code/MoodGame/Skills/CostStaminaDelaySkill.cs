@@ -13,7 +13,7 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
     public MoodUnitManager.TimeBeats postFeedbackDelay = 0;
     public int plugoutPriorityBefore;
     public int plugoutPriorityAfter;
-    public MoodPawn.StunType[] stuns;
+    public MoodPawn.LockType[] stuns;
     public MoodEffectFlag[] flags;
     public ActivateableMoodStance[] toAdd;
 

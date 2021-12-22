@@ -687,7 +687,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  itemCategory: {fileID: 0}
+  itemCategory: {fileID: 11400000, guid: 7e67a6e60d1b1b246ba82bba6dd117f2, type: 2}
 --- !u!114 &4262352548464607657
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -34,8 +34,9 @@ namespace Code.MoodGame.Skills
             public DirectionFixer angle;
             public DG.Tweening.Ease ease;
             [Space()]
-            public float hopHeight;
+            public MoodUnitManager.DistanceBeats hopHeight;
             [Range(0f, 1f)]
+            [Tooltip("How much of the dash is a hop. It always begins with the hop and all extra time will be grounded.")]
             public float hopDurationRange;
             [Space()]
             public ScriptableEvent[] dashFeedback;

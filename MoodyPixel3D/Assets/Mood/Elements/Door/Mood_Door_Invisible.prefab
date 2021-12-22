@@ -129,11 +129,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4798655538010981073, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
       propertyPath: m_Size.z
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6773985274011682823, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7258811515498415951, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
+      propertyPath: distanceFromDoor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7258811515498415951, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}
+      propertyPath: initialSlideDuration
+      value: 0.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8a31edc5c6fb1f4891279c77edc5378, type: 3}

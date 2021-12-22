@@ -17,7 +17,7 @@ MonoBehaviour:
   _description: 
   _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
   _skillCommandColor:
-    _directProperty: {r: 1, g: 0.69411767, b: 0.69411767, a: 0}
+    _directProperty: {r: 1, g: 0.69411767, b: 0.69411767, a: 1}
     _getter: {fileID: 11400000, guid: e315bb54045d5e043a89c4a92db5bd9f, type: 2}
   conditionsToUse: []
   joinConditionsType: 0
@@ -27,11 +27,8 @@ MonoBehaviour:
   toConsume: []
   restrictions: []
   _possibleAngles:
-  - angleFromForward: 110
-    coneAngle: 15
-    mirrored: 0
-  - angleFromForward: -110
-    coneAngle: 15
+  - angleFromForward: 0
+    coneAngle: 30
     mirrored: 0
   heightCheckers: []
   _startupPriority: 2
@@ -41,7 +38,7 @@ MonoBehaviour:
   lockMovement: 0
   _shortcut: 0
   _debug: 0
-  _cost: 2
+  _cost: 1
   damage: 10
   stunTime:
     beats: 4
@@ -70,6 +67,7 @@ MonoBehaviour:
       knockbackDuration: 0.25
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
   setDirection: 1
+  setVelocity0: 0
   priorityPreAttack: 2
   priorityAfterAttack: 1
   priorityAfterWhiff: 2
@@ -79,55 +77,55 @@ MonoBehaviour:
   _flyingThought: {fileID: 0}
   preAttackDash:
     dist:
-      beats: 6
-    distance: 6
+      beats: 4
     bumpeable: 1
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 2
+    hopHeight:
+      beats: 1
     hopDurationRange: 0.5
     dashFeedback: []
     dashFeedbackDirection: 0
   postAttackDash:
     dist:
-      beats: -1
-    distance: -1
+      beats: -2
     bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 1
     hopDurationRange: 0.5
     dashFeedback: []
     dashFeedbackDirection: 0
   whiffAttackDash:
     dist:
       beats: 1
-    distance: 1
     bumpeable: 0
     angle:
       angleFromForward: 0
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 0
     hopDurationRange: 0.5
     dashFeedback: []
     dashFeedbackDirection: 0
   previewPositioning: 0
   preDashDelay:
-    beats: 4
+    beats: 2
   preTime:
-    beats: 6
+    beats: 8
   animationTime:
     beats: 1
   postTime:
-    beats: 16
+    beats: 2
   showPreview: 0
   animationIntStepString: Attack_Right
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}

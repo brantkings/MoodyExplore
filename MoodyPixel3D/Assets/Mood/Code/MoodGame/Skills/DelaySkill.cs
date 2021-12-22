@@ -7,7 +7,7 @@ public class DelaySkill : MoodSkill
 {
     [Header("Delay")]
     public MoodUnitManager.TimeBeats delay;
-    public MoodPawn.StunType[] stuns;
+    public MoodPawn.LockType[] stuns;
     public MoodEffectFlag[] flags;
 
     [Header("Delay Feedback")]

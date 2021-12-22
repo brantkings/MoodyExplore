@@ -11,7 +11,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     [Header("Movement")]
     [UnityEngine.Serialization.FormerlySerializedAs("minDist")] public MoodUnitManager.DistanceBeats minDistanceBeats;
     [UnityEngine.Serialization.FormerlySerializedAs("maxDist")] public MoodUnitManager.DistanceBeats maxDistanceBeats;
-    public float hopHeight;
+    public MoodUnitManager.DistanceBeats hopHeight;
     public float hopDurationInMultiplier;
     public float hopDurationOutMultiplier;
     public bool movementIsBumpeable = true;
