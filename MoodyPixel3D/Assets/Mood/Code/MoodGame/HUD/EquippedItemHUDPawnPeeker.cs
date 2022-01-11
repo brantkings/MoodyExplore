@@ -121,7 +121,7 @@ public class EquippedItemHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
 
     private void HideItem()
     {
-        Debug.LogFormat("Hide item!");
+        Debug.LogFormat("Hide item!");  
         allParent.gameObject.SetActive(false);
     }
 

@@ -215,11 +215,11 @@ MonoBehaviour:
     - level: 1
       setup:
         minDistance: 0
-        maxDistance: 8
+        maxDistance: 4
     - level: 3
       setup:
         minDistance: 0
-        maxDistance: 11
+        maxDistance: 5
 --- !u!1 &3422517261770292765
 GameObject:
   m_ObjectHideFlags: 0
