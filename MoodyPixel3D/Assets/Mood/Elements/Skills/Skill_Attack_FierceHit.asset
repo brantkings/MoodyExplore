@@ -86,7 +86,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 0
     hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
@@ -101,7 +102,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 0
     hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
@@ -115,7 +117,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 0
     hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
@@ -124,11 +127,11 @@ MonoBehaviour:
   preDashDelay:
     beats: 0
   preTime:
-    beats: 6
+    beats: 5
   animationTime:
     beats: 1
   postTime:
-    beats: 8
+    beats: 5
   showPreview: 0
   animationIntStepString: Attack_Right
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}

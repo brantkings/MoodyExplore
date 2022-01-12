@@ -25,7 +25,7 @@ public class MoodReactionBasicBump : MoodReaction, IMoodReaction<ReactionInfo>
     public virtual void React(ref ReactionInfo info, MoodPawn pawn)
     {
         pawn.AddStunLockTimer(MoodPawn.LockType.Action, name, info.duration * stunDurationMultiplier);
-        pawn.SetDamageAnimationTween(info.direction.normalized * animationParameterMultiplier, info.duration * stunDurationMultiplier, 0f);
+        pawn.SetDamageAnimationTween(pawn.ObjectTransform.InverseTransformDirection(info.direction.normalized) * animationParameterMultiplier, info.duration * stunDurationMultiplier, 0f);
         pawn.Dash(dashMultiplier * info.direction + dashAbsoluteAdd * info.direction.normalized, distanceInBeats, info.duration * dashMultiplier, bumpeable, dashEase);
         if(interruptCurrentSkill) pawn.InterruptCurrentSkill();
     }

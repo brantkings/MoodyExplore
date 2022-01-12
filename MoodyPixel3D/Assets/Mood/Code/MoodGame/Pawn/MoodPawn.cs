@@ -143,6 +143,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public bool cantMoveWhileThreatened = true;
     public bool cantMoveWhileExecutingSkill = false;
     public bool cantRotateWhileExecutingSkill = false;
+    public bool cantMoveWhileDashing = true;
     
     [System.Serializable]
     public struct MovementData
@@ -363,9 +364,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
         Vector3 _currentDirection = Direction;
         //if (name.Contains("Player")) Debug.LogFormat("Before update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
-        UpdateMovement(_inputVelocity, _inputRotation, ref _currentSpeed, ref _currentDirection);
+        MovementData toUse = movementData.Data;
+        UpdateMovement(_inputVelocity, _inputRotation, in toUse, ref _currentSpeed, ref _currentDirection);
         //if (name.Contains("Player")) Debug.LogFormat("After update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
 
+        //Debug.LogFormat("[PAWN] {0} Update: Current speed is {1} while input is {2}", name, _currentSpeed, _inputVelocity);
         Direction = _currentDirection;
         /*Vector3 forward = mover.transform.forward;
         if (Vector3.Dot(forward, _currentDirection) < 0f) forward = Quaternion.Euler(0f,10f,0) * forward;
@@ -376,6 +379,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void FixedUpdate()
     {
+        //Debug.LogFormat("[PAWN] {0} Fixed update: Current speed is {1}. Setting to Mover.", name, _currentSpeed);
         mover.SetVelocity(_currentSpeed);
 
         ThreatFixedUpdate(_threatDirection);
@@ -984,18 +988,18 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
 
 
-    private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, ref Vector3 speed, ref Vector3 direction)
+    private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, in MovementData movData, ref Vector3 currentSpeed, ref Vector3 currentDirection)
     {
         if (movementData == null) return;
 
         if(inputVelocity.sqrMagnitude < 0.1f) //Wants to stop
         {
-            UpdateMovementVector(ref speed, 0f, movementData.Data.timeToZeroVelocity);
+            UpdateMovementVector(ref currentSpeed, 0f, movData.timeToZeroVelocity);
 
             //Maybe it is rotating while stopped
             if(inputDirection.sqrMagnitude >= 0.1f)
             {
-                UpdateDirectionVector(ref direction, inputDirection, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedLength());
+                UpdateDirectionVector(ref currentDirection, inputDirection, Time.deltaTime * 360f * movData.turningTimeTo360.GetInversedLength());
             }
         }
         else
@@ -1003,30 +1007,30 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
             Vector3 inputVelocityNormalized = inputVelocity.normalized;
                 
-            UpdateDirectionVector(ref direction, inputVelocityNormalized, Time.deltaTime * 360f * movementData.Data.turningTimeTo360.GetInversedLength());
+            UpdateDirectionVector(ref currentDirection, inputVelocityNormalized, Time.deltaTime * 360f * movData.turningTimeTo360.GetInversedLength());
 
-            if (Vector3.Angle(inputVelocity, direction) < movementData.Data.angleToBeAbleToAccelerate) //Already looking in the direction
+            if (Vector3.Angle(inputVelocity, currentDirection) < movData.angleToBeAbleToAccelerate) //Already looking in the direction
             {
-                UpdateMovementVector(ref speed, inputVelocity, movementData.Data.timeToMaxVelocity);
+                UpdateMovementVector(ref currentSpeed, inputVelocity, movData.timeToMaxVelocity);
             }
             else //Has to turn first
             {
-                float maxVelocityTurning = movementData.Data.turningDirectMaxSpeed;
+                float maxVelocityTurning = movData.turningDirectMaxSpeed;
                 float maxVelocityTurningSqrd = maxVelocityTurning * maxVelocityTurning;
                 float smoothTimeTurning;
-                if(speed.sqrMagnitude > maxVelocityTurningSqrd)
+                if(currentSpeed.sqrMagnitude > maxVelocityTurningSqrd)
                 {
-                    smoothTimeTurning = movementData.Data.timeToMaxVelocity;
+                    smoothTimeTurning = movData.timeToMaxVelocity;
                 }
                 else
                 {
-                    smoothTimeTurning = movementData.Data.timeToZeroVelocity;
+                    smoothTimeTurning = movData.timeToZeroVelocity;
                 }
 
                 Vector3 turningDirectVelocity = inputVelocityNormalized * maxVelocityTurning;
                 Vector3 forwardMaxVelocity = Direction.normalized * inputVelocity.magnitude;
-                Vector3 totalVelocity = Vector3.Lerp(turningDirectVelocity, forwardMaxVelocity, movementData.Data.turningForwardVelocityRatio);
-                UpdateMovementVector(ref speed, totalVelocity, smoothTimeTurning);
+                Vector3 totalVelocity = Vector3.Lerp(turningDirectVelocity, forwardMaxVelocity, movData.turningForwardVelocityRatio);
+                UpdateMovementVector(ref currentSpeed, totalVelocity, smoothTimeTurning);
             }
         }
 
@@ -1047,15 +1051,15 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         UpdateMovementVector(ref movement, movement.normalized * targetMagnitude, smoothTime);
     }
 
-    private void UpdateMovementVector(ref Vector3 movement, Vector3 destination, float smoothTime)
+    private void UpdateMovementVector(ref Vector3 currentSpeed, Vector3 destination, float smoothTime)
     {
-        if((cantMoveWhileExecutingSkill && IsExecutingSkill()) || IsStunned(LockType.Movement_NonDash))
+        if((cantMoveWhileExecutingSkill && IsExecutingSkill()) || (cantMoveWhileDashing && IsDashing()) || IsStunned(LockType.Movement_NonDash))
         {
-            movement = Vector3.zero;
+            currentSpeed = Vector3.zero;
             return;
         }
-        movement = Vector3.SmoothDamp(movement, destination, ref _movementDelta, smoothTime);
-        if ((movement - destination).sqrMagnitude < (movementData.Data.snapToTargetSpeedDelta * movementData.Data.snapToTargetSpeedDelta)) movement = destination;
+        currentSpeed = Vector3.SmoothDamp(currentSpeed, destination, ref _movementDelta, smoothTime);
+        if ((currentSpeed - destination).sqrMagnitude < (movementData.Data.snapToTargetSpeedDelta * movementData.Data.snapToTargetSpeedDelta)) currentSpeed = destination;
     }
 
     private bool CanMove()
@@ -1162,7 +1166,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         StanceChangeVelocity(ref velocity);
         _inputVelocity = velocity;
-        SolveFinalVelocity(ref _inputVelocity);
+        SolveFinalVelocity(ref _inputVelocity); //TODO isso é estranho, aqui ele bloqueia certas coisas, mas ele bloequeia outras coisas quando ele faz a velocidade no final, no Update() também
     }
 
     public float GetHeightFromGround(float maxHeight = float.MaxValue)
@@ -1272,6 +1276,14 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         mover.Direction = set;
         //Direction = _currentDirection;
+    }
+
+    public struct DashData
+    {
+        public bool measuredInBeats;
+        public float duration;
+        public bool bumpeable;
+        public bool cancelVelocity;
     }
 
     public void Dash(in Vector3 movement, bool measuredInBeats, float duration, bool bumpeable, AnimationCurve curve)
