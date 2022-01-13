@@ -5204,7 +5204,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1602768618135370661, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
-      propertyPath: _radius
+      propertyPath: _length
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2401020549693629455, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
@@ -5368,6 +5368,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
+      propertyPath: _pawnRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: movementData
       value: 
       objectReference: {fileID: 11400000, guid: e270c21568245584c966477d07b68054, type: 2}
@@ -5422,6 +5426,10 @@ PrefabInstance:
     - target: {fileID: 6148079812569204324, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543790188407440521, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6543790190089053934, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: m_LocalPosition.y

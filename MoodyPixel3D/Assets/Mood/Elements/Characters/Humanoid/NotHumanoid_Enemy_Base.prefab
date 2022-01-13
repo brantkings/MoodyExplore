@@ -149,6 +149,7 @@ MonoBehaviour:
   cantMoveWhileThreatened: 1
   cantMoveWhileExecutingSkill: 1
   cantRotateWhileExecutingSkill: 1
+  cantMoveWhileDashing: 1
   _maxStamina:
     baseValue: 1
   infiniteStamina: 0
@@ -674,6 +675,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5524346874691887327}
     m_Modifications:
+    - target: {fileID: 1070067872989204622, guid: e2422091a836f9d439fb5b330557fcbe, type: 3}
+      propertyPath: radiusToScaleRatio
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3773079963293976388, guid: e2422091a836f9d439fb5b330557fcbe, type: 3}
       propertyPath: m_Name
       value: Pawn_ShowRadius

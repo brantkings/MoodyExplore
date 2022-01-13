@@ -36,7 +36,6 @@ public struct DamageInfo
 
     public List<ThoughtInDamage> pain;
 
-    public bool feedbacks;
     public struct FreezeFrameData
     {
         public int freezeFrameDelay;
@@ -49,6 +48,7 @@ public struct DamageInfo
     public FreezeFrameData freezeFrame;
 
     public float stunTime;
+    public bool feedbacks;
 
     public DamageInfo(int damage = 0, DamageTeam damageTeam = DamageTeam.Neutral, GameObject damageOrigin = null)
     {

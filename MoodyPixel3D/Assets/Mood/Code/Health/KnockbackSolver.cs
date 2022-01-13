@@ -12,7 +12,7 @@ public class KnockbackSolver
     [SerializeField]
     private Vector3 absoluteKnockback = Vector3.zero;
     [SerializeField]
-    private float knockbackFromForce = 0f;
+    private float knockbackFromHitbox = 0f;
     [SerializeField]
     private float knockbackPositionDifferenceNormalized = 0f;
     [SerializeField]
@@ -21,7 +21,7 @@ public class KnockbackSolver
     [SerializeField]
     private bool totalMagnitudeConstant;
     [SerializeField]
-    private float constantTotalMagnitude = 1;
+    private MoodUnitManager.DistanceBeats constantTotalMagnitude = 1;
 
     [Space()]
     [SerializeField]
@@ -43,9 +43,9 @@ public class KnockbackSolver
 
     public Vector3 GetKnockback(Transform from, Transform to, Vector3 attackForce, out float knockbackAngle)
     {
-        Vector3 knock = knockbackByDealer.Get(from) + knockbackByReceiver.Get(from) + absoluteKnockback + GetKnockbackPositionDifference(from, to) + knockbackFromForce * attackForce;
+        Vector3 knock = knockbackByDealer.Get(from) + knockbackByReceiver.Get(from) + absoluteKnockback + GetKnockbackPositionDifference(from, to) + knockbackFromHitbox * attackForce;
         Debug.LogFormat("Knockback: [From:{0} To:{1} Abs:{2}; PosDif:{3} (to:{7} - from:{8}='{9}'); Force:{4}] --> Total:{5} ({6})",
-            knockbackByDealer.Get(from), knockbackByReceiver.Get(from), absoluteKnockback, GetKnockbackPositionDifference(from, to), knockbackFromForce * attackForce,
+            knockbackByDealer.Get(from), knockbackByReceiver.Get(from), absoluteKnockback, GetKnockbackPositionDifference(from, to), knockbackFromHitbox * attackForce,
             knock.normalized * constantTotalMagnitude, knock,
             to.position,from.position, to.position - from.position);
         if (totalMagnitudeConstant) knock = knock.normalized * constantTotalMagnitude;

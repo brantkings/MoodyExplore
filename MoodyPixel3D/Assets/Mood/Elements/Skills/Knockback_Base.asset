@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 515dde1323456b44badf6777ead2df6a, type: 3}
-  m_Name: Knockback_GetOff
+  m_Name: Knockback_Base
   m_EditorClassIdentifier: 
   _value:
     knockbackByDealer:
@@ -22,10 +22,11 @@ MonoBehaviour:
       customFrom: {fileID: 0}
       magnitude: 0.1
     absoluteKnockback: {x: 0, y: 0, z: 0}
-    knockbackFromForce: 0.3
+    knockbackFromHitbox: 0.3
     knockbackPositionDifferenceNormalized: 0
     knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 1, z: 0}
     totalMagnitudeConstant: 1
-    constantTotalMagnitude: 4
+    constantTotalMagnitude:
+      beats: 5
     angleRotation: 30
     knockbackDuration: 0.125

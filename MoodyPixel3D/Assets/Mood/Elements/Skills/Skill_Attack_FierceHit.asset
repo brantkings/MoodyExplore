@@ -43,7 +43,7 @@ MonoBehaviour:
   _cost: 2
   damage: 30
   stunTime:
-    beats: 4
+    beats: 6
   swingData: {fileID: 11400000, guid: 6d5e5e03a9402f147af046330bf6dd50, type: 2}
   swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:

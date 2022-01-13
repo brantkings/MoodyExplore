@@ -12,8 +12,9 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
     public int maxDamage = int.MaxValue;
 
     [Header("Basic damage effect")]
-    public float stunTimeMultiplier = 1f;
-    public float knockbackMultiplier = 1f;
+    public float stunDurationMultiplier = 1f;
+    public float knockbackDistanceMultiplier = 1f;
+    public float knockbackDurationMultiplier = 1f;
     public bool shouldInterruptCurrentSkill;
     public bool dashIsBumpeable = false;
 
@@ -38,14 +39,14 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
 
     public virtual void React(ref DamageInfo info, MoodPawn pawn)
     {
-        float animationDuration = Mathf.Max(info.stunTime * stunTimeMultiplier, info.durationKnockback * knockbackMultiplier, animationDelay);
+        float animationDuration = Mathf.Max(info.stunTime * stunDurationMultiplier, info.durationKnockback * knockbackDistanceMultiplier, animationDelay);
 
         if (ShouldStaggerAnimation(info))
             pawn.SetDamageAnimationTween(pawn.ObjectTransform.InverseTransformDirection(info.distanceKnockback.normalized) * animationParameterMultiplier, animationDuration - animationDelay, animationDelay);
-        pawn.Dash(info.distanceKnockback * knockbackMultiplier, measuredInBeats:true, info.durationKnockback * knockbackMultiplier, dashIsBumpeable, dashCurve);
+        pawn.Dash(info.distanceKnockback * knockbackDistanceMultiplier, measuredInBeats:true, info.durationKnockback * knockbackDurationMultiplier, dashIsBumpeable, dashCurve);
         pawn.RotateDash(info.rotationKnockbackAngle, animationDuration);
 
-        pawn.AddStunLockTimer(MoodPawn.LockType.Action, name, info.stunTime * stunTimeMultiplier);
+        pawn.AddStunLockTimer(MoodPawn.LockType.Action, name, info.stunTime * stunDurationMultiplier);
         if(shouldInterruptCurrentSkill) 
             pawn.InterruptCurrentSkill();
     }

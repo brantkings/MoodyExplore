@@ -13,27 +13,16 @@ namespace LHH.Unity.Editor
             EditorGUI.BeginProperty(position, label, property);
             position = EditorGUI.PrefixLabel(position, label);
             Rect halfPosition = new Rect(position.position, position.size);
-            halfPosition.width *= 0.5f;
+            halfPosition.width *= 0.45f;
             EditorGUI.PropertyField(halfPosition, property.FindPropertyRelative("_getter"), GUIContent.none);
-            /*
-            MorphablePropertyBase morph = GetTargetObjectOfProperty(property) as MorphablePropertyBase;
-            Object obj = EditorGUI.ObjectField(halfPosition, GUIContent.none, morph.GetOverrider(), typeof(ScriptableObject), false);
-            if(morph.SetOverrider(obj))
-            {
-                property.SetValue(morph);
-                property.serializedObject.ApplyModifiedProperties();
-            }
-            */
-            halfPosition.position += Vector2.right  * halfPosition.width;
+            halfPosition.position += Vector2.right * (halfPosition.width + 10);
             EditorGUI.PropertyField(halfPosition, property.FindPropertyRelative("_directProperty"), GUIContent.none);
-            //EditorGUI.ObjectField(position, property.Get)
             EditorGUI.EndProperty();
-            //base.OnGUI(position, property, label);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return base.GetPropertyHeight(property, label);
+            return Mathf.Max(base.GetPropertyHeight(property, label), base.GetPropertyHeight(property.FindPropertyRelative("_directProperty"), label));
         }
 
         public static object GetTargetObjectOfProperty(SerializedProperty prop)

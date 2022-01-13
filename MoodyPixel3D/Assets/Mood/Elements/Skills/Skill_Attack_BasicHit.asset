@@ -43,7 +43,7 @@ MonoBehaviour:
   _cost: 1
   damage: 20
   stunTime:
-    beats: 4
+    beats: 6
   swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
   swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:
@@ -86,7 +86,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 0
     hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: fbe59595673f3ff46af38a6460c25350, type: 2}
@@ -101,7 +102,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 0
     hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
@@ -115,7 +117,8 @@ MonoBehaviour:
       coneAngle: 180
       mirrored: 0
     ease: 21
-    hopHeight: 0
+    hopHeight:
+      beats: 0
     hopDurationRange: 0.5
     dashFeedback:
     - {fileID: 11400000, guid: 8d7af30994c370d488613985c207f6f7, type: 2}
