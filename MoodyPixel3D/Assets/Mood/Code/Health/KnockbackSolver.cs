@@ -18,37 +18,30 @@ public class KnockbackSolver
     [SerializeField]
     private Vector3 knockbackPositionDifferenceProjectedOnPlane = Vector3.zero;
 
-    [SerializeField]
-    private bool totalMagnitudeConstant;
-    [SerializeField]
-    private MoodUnitManager.DistanceBeats constantTotalMagnitude = 1;
-
     [Space()]
     [SerializeField]
     private float angleRotation;
+    [Space]
+    [SerializeField] private MoodUnitManager.TimeBeats knockbackDurationAbsolute = 0;
+    [SerializeField] private MoodUnitManager.TimeBeats knockbackDurationMultiplierForDistance = 1;
 
-    [Space()]
-    [SerializeField]
-    private float knockbackDuration = 0.25f;
-
-    public float GetDuration()
+    public float GetDuration(MoodUnitManager.DistanceBeats knockbackDistance)
     {
-        return knockbackDuration;
+        return MoodUnitManager.GetTime(knockbackDurationAbsolute.beats + knockbackDistance.beats * knockbackDurationMultiplierForDistance.beats);  
     }
 
-    public Vector3 GetKnockback(Transform from, Transform to, out float knockbackAngle)
+    public Vector3 GetKnockback(Transform from, Transform to, float magnitude, out float knockbackAngle)
     {
-        return GetKnockback(from, to, Vector3.zero, out knockbackAngle);
+        return GetKnockback(from, to, Vector3.zero, magnitude, out knockbackAngle);
     }
 
-    public Vector3 GetKnockback(Transform from, Transform to, Vector3 attackForce, out float knockbackAngle)
+    public Vector3 GetKnockback(Transform from, Transform to, Vector3 attackForce, float magnitude, out float knockbackAngle)
     {
         Vector3 knock = knockbackByDealer.Get(from) + knockbackByReceiver.Get(from) + absoluteKnockback + GetKnockbackPositionDifference(from, to) + knockbackFromHitbox * attackForce;
         Debug.LogFormat("Knockback: [From:{0} To:{1} Abs:{2}; PosDif:{3} (to:{7} - from:{8}='{9}'); Force:{4}] --> Total:{5} ({6})",
             knockbackByDealer.Get(from), knockbackByReceiver.Get(from), absoluteKnockback, GetKnockbackPositionDifference(from, to), knockbackFromHitbox * attackForce,
-            knock.normalized * constantTotalMagnitude, knock,
+            knock.normalized, knock,
             to.position,from.position, to.position - from.position);
-        if (totalMagnitudeConstant) knock = knock.normalized * constantTotalMagnitude;
 
         if (angleRotation != 0f)
         {
@@ -56,7 +49,7 @@ public class KnockbackSolver
         }
         else knockbackAngle = 0f;
 
-        return knock;
+        return knock.normalized * magnitude;
     }
 
     private Vector3 GetKnockbackPositionDifference(Transform from, Transform to)

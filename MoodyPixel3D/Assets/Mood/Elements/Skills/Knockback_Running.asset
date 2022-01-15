@@ -22,11 +22,11 @@ MonoBehaviour:
       customFrom: {fileID: 0}
       magnitude: 0.1
     absoluteKnockback: {x: 0, y: 0, z: 0}
-    knockbackFromForce: 0
+    knockbackFromHitbox: 0
     knockbackPositionDifferenceNormalized: 0
     knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 1, z: 0}
-    totalMagnitudeConstant: 1
-    constantTotalMagnitude:
-      beats: 3
     angleRotation: 0
-    knockbackDuration: 0.125
+    knockbackDurationAbsolute:
+      beats: 0
+    knockbackDurationMultiplierForDistance:
+      beats: 1

@@ -39,6 +39,8 @@ public class Damage : MonoBehaviour
 
 
 
+    [SerializeField]
+    private MoodUnitManager.DistanceBeats _knockbackDistance = 4;
     [Space()]
     public MorphableProperty<KnockbackSolver> knockback;
 
@@ -100,7 +102,7 @@ public class Damage : MonoBehaviour
         return new DamageInfo(_amount, source, gameObject)
             .SetDirection(GetDirection(target))
             .SetForce(knockback.Get()
-            .GetKnockback(transform, target, out float angle), angle, knockback.Get().GetDuration())
+            .GetKnockback(transform, target, _knockbackDistance, out float angle), angle, knockback.Get().GetDuration(_knockbackDistance))
             .SetStunTime(_stunTime)
             .SetIgnorePhaseThrough(_ignorePhaseThrough);
     }

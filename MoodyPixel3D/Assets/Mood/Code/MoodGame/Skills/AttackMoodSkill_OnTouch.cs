@@ -14,8 +14,10 @@ namespace Code.MoodGame.Skills
         {
             if (!SanityCheck(pawn, skillDirection)) yield break;
 
+            PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
+
 #if UNITY_EDITOR
-            if(!preAttackDash.bumpeable)
+            if (!preAttackDash.bumpeable)
             {
                 Debug.LogWarningFormat("Preattack dash for {0} is not true. This will make using this class useless.", this);
             }
@@ -23,7 +25,7 @@ namespace Code.MoodGame.Skills
 
             yield return new WaitForSeconds(preDashDelay);
 
-            float preAttackDashDuration = PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
+            float preAttackDashDuration = DoDashForAttack(pawn, skillDirection);
             
             float count = 0f;
 

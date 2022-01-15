@@ -53,7 +53,7 @@ public partial class KinematicPlatformer
     public Tween TweenMoverPosition(Vector3 movement, float duration, int priority = 0, string comment = "")
     {
         var setAndMove = SetPawnLerpSpecificPriorityDiff(priority);
-        Debug.LogFormat("[TWEEN] {0} is going to tween {1} [frame count: {2} fixed: {3}]", this, comment, Time.frameCount, Time.fixedTime);
+        Debug.LogFormat("[TWEEN] {0} is going to tween {1}, distance {2} duration {3}. [frame count: {4} fixed: {5}]", this, comment, movement.magnitude, duration, Time.frameCount, Time.fixedTime);
 
 
         if (duration == 0f)

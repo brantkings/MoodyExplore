@@ -16,6 +16,7 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
 
         protected float GetTotalLength(float beatValue)
         {
+            //Debug.LogFormat("{0} -> {1} beats is {2} ({3})", this, beatValue, beatValue * GetBeatLength(), GetBeatLength());
             return beatValue * GetBeatLength();
         }
 
@@ -46,6 +47,8 @@ public class MoodUnitManager : CreateableSingleton<MoodUnitManager>
                 return 0f;
             }
         }
+
+           
 
 
     }

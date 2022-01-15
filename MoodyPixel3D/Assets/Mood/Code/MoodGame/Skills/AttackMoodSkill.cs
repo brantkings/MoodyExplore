@@ -16,7 +16,8 @@ namespace Code.MoodGame.Skills
         public MoodSwing swingData;
         public Vector3 swingDataPositionOffset;
         public LayerMask targetLayer;
-        public LHH.Unity.MorphableProperty<KnockbackSolver> knockback;
+        public MoodUnitManager.DistanceBeats knockbackDistance;
+        [UnityEngine.Serialization.FormerlySerializedAs("knockback")] public LHH.Unity.MorphableProperty<KnockbackSolver> knobackStyle;
         public bool setDirection;
         public bool setVelocity0;
         public int priorityPreAttack = PRIORITY_NOT_CANCELLABLE;
@@ -66,7 +67,7 @@ namespace Code.MoodGame.Skills
                 get
                 {
                     DashStruct d = new DashStruct();
-                    d.dist = 0f;
+                    d.dist = 0;
                     d.angle = DirectionFixer.LetAll;
                     d.ease = DG.Tweening.Ease.OutCirc;
                     d.hopHeight = 0f;
@@ -82,13 +83,17 @@ namespace Code.MoodGame.Skills
 
             public bool HasDash()
             {
-                return dist != 0f;
+                return dist.beats != 0;
             }
         }
 
         [Space()]
+        public MoodUnitManager.TimeBeats preDashDelay = 0;
+        public MoodUnitManager.TimeBeats preTime = 4;
         [SerializeField]
         protected DashStruct preAttackDash = DashStruct.DefaultValue;
+        public MoodUnitManager.TimeBeats animationTime = 1;
+        public MoodUnitManager.TimeBeats postTime = 3;
         [SerializeField]
         protected DashStruct postAttackDash = DashStruct.DefaultValue;
         [SerializeField]
@@ -96,12 +101,6 @@ namespace Code.MoodGame.Skills
 
         [Space()]
         public RangeArea.Properties.Positioning previewPositioning = RangeArea.Properties.Positioning.OriginalPositionPlusDirection;
-
-        [Space]
-        public MoodUnitManager.TimeBeats preDashDelay = 0;
-        public MoodUnitManager.TimeBeats preTime = 4;
-        public MoodUnitManager.TimeBeats animationTime = 1;
-        public MoodUnitManager.TimeBeats postTime = 3;
         public bool showPreview;
         private RangeTarget.Properties _targetProp;
 
@@ -153,10 +152,10 @@ namespace Code.MoodGame.Skills
         public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
         {
             if (!SanityCheck(pawn, skillDirection)) yield break;
-
+            PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
             yield return new WaitForSeconds(preDashDelay);
 
-            float preAttackDash = PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
+            float preAttackDash = DoDashForAttack(pawn, skillDirection);
             yield return new WaitForSeconds(preAttackDash);
 
             
@@ -186,7 +185,7 @@ namespace Code.MoodGame.Skills
             return true;
         }
 
-        protected float PrepareAttack(MoodPawn pawn, in Vector3 skillDirection, out MoodSwing.MoodSwingBuildData buildData)
+        protected void PrepareAttack(MoodPawn pawn, in Vector3 skillDirection, out MoodSwing.MoodSwingBuildData buildData)
         {
             if (setVelocity0) pawn.SetVelocity(Vector3.zero);
             if (setDirection) pawn.SetHorizontalDirection(skillDirection);
@@ -194,6 +193,10 @@ namespace Code.MoodGame.Skills
             pawn.SetPlugoutPriority(priorityPreAttack);
             pawn.StartThreatening(skillDirection, buildData);
             ConsumeStances(pawn);
+        }
+
+        protected float DoDashForAttack(MoodPawn pawn, in Vector3 skillDirection)
+        {
             float preAttackDuration = Mathf.Max(preTime, 0f);
             Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
             pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.PreAttack);
@@ -325,7 +328,7 @@ namespace Code.MoodGame.Skills
 
         protected DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
-            DamageInfo info = new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockback.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, out float angle), angle, knockback.Get().GetDuration());
+            DamageInfo info = new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knobackStyle.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, knockbackDistance, out float angle), angle, knobackStyle.Get().GetDuration(knockbackDistance));
             if (_painThought != null) info.AddPainThought(new FlyingThoughtInstance() { flyingThought = _flyingThought, data = new FlyingThought.FlyingThoughtData() { destination = null, thought = _painThought, where = ThoughtSystemController.ThoughtPlacement.Down} });
             return info;
         }
