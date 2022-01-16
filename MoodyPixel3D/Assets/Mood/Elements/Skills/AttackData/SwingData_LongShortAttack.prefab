@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 2057013991634988410}
   - component: {fileID: 2057013991634988389}
   m_Layer: 0
-  m_Name: SwingData_SmallAttack
+  m_Name: SwingData_LongShortAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
