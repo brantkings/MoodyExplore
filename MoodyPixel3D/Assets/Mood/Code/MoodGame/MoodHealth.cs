@@ -58,7 +58,7 @@ public class MoodHealth : Health, IMoodPawnBelonger
                 {
                     if(react.CanReact(damage, pawn))
                     {
-                        Debug.LogFormat("{0} reacting with '{1}' to damage {2}", pawn.name, react, damage);
+                        Debug.LogFormat("[HEALTH] {0} reacting with '{1}' to damage {2}", pawn.name, react, damage);
                         react.React(ref damage, pawn);
                     }
                 }

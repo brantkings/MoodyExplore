@@ -47,7 +47,9 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 512
-  knockback:
+  knockbackDistance:
+    beats: 3
+  knobackStyle:
     _directProperty:
       knockbackByDealer:
         direction: 0
@@ -58,13 +60,14 @@ MonoBehaviour:
         customFrom: {fileID: 0}
         magnitude: 1
       absoluteKnockback: {x: 0, y: 0, z: 0}
-      knockbackFromForce: 0
+      knockbackFromHitbox: 0
       knockbackPositionDifferenceNormalized: 0
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
-      totalMagnitudeConstant: 0
-      constantTotalMagnitude: 1
       angleRotation: 0
-      knockbackDuration: 0.25
+      knockbackDurationAbsolute:
+        beats: 0
+      knockbackDurationMultiplierForDistance:
+        beats: 1
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
   setDirection: 1
   setVelocity0: 0
@@ -75,6 +78,10 @@ MonoBehaviour:
     _directProperty: {fileID: 0}
     _getter: {fileID: 0}
   _flyingThought: {fileID: 0}
+  preDashDelay:
+    beats: 2
+  preTime:
+    beats: 8
   preAttackDash:
     dist:
       beats: 4
@@ -89,6 +96,10 @@ MonoBehaviour:
     hopDurationRange: 0.5
     dashFeedback: []
     dashFeedbackDirection: 0
+  animationTime:
+    beats: 1
+  postTime:
+    beats: 2
   postAttackDash:
     dist:
       beats: -2
@@ -118,14 +129,6 @@ MonoBehaviour:
     dashFeedback: []
     dashFeedbackDirection: 0
   previewPositioning: 0
-  preDashDelay:
-    beats: 2
-  preTime:
-    beats: 8
-  animationTime:
-    beats: 1
-  postTime:
-    beats: 2
   showPreview: 0
   animationIntStepString: Attack_Right
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}

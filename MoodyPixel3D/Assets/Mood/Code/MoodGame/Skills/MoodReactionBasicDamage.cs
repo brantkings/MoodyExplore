@@ -43,6 +43,7 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
 
         if (ShouldStaggerAnimation(info))
             pawn.SetDamageAnimationTween(pawn.ObjectTransform.InverseTransformDirection(info.distanceKnockback.normalized) * animationParameterMultiplier, animationDuration - animationDelay, animationDelay);
+        //Debug.LogFormat(this,"[REACT] {0} reacting with {1} for {2}. Dash({3}* {4}, {5} * {6})", pawn.name, this, info, info.distanceKnockback, knockbackDistanceMultiplier, info.durationKnockback, knockbackDistanceMultiplier);
         pawn.Dash(info.distanceKnockback * knockbackDistanceMultiplier, measuredInBeats:false, info.durationKnockback * knockbackDurationMultiplier, dashIsBumpeable, dashCurve);
         pawn.RotateDash(info.rotationKnockbackAngle, animationDuration);
 

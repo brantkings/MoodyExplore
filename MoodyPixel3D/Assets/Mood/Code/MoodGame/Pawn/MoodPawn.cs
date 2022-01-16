@@ -1055,6 +1055,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if((cantMoveWhileExecutingSkill && IsExecutingSkill()) || (cantMoveWhileDashing && IsDashing()) || IsStunned(LockType.Movement_NonDash))
         {
+            //Debug.LogFormat("[PAWN] {0} is either ex:{1}, dash:{2}, or stunned:{3}", name, IsExecutingSkill(), IsDashing(), IsStunned(LockType.Movement_NonDash));
             currentSpeed = Vector3.zero;
             return;
         }
@@ -1298,13 +1299,22 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private Tween MakeCurrentDash(Vector3 movement, bool measuredInBeats, float duration, bool bumpeable)
     {
+        if(movement == Vector3.zero)
+        {
+#if UNITY_EDITOR
+            Debug.LogWarningFormat(this, "[PAWN] Weird, dash done with movement 0.");
+#endif
+            return null;
+        }
         if (measuredInBeats) movement = MoodUnitManager.ConvertFromBumpsToDistance(movement);
+
 
         CancelCurrentDash();
         if (bumpeable && Vector3.Angle(mover.WalledNormal, movement) > 90f)
         {
             SetVelocity(Vector3.zero);
             Bump(movement);
+
             return null;
         }
         else
@@ -1316,7 +1326,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
                 endPosition = Position + movement,
                 interruptable = bumpeable
             };
-            //Debug.LogFormat("[PAWN] {0} is now gonna Dash! [{1} {2}]", name, Time.frameCount, Time.fixedDeltaTime);
 
             return _currentDash.tween;
         }
@@ -1326,6 +1335,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         //Debug.LogFormat("[PAWN] {0} is dash cancelled anymore! [{1} {2}]", name, Time.frameCount, Time.fixedDeltaTime);
         if (_currentDash != null) _currentDash.KillDash();
+
         _currentDash = null;
     }
 
@@ -1353,7 +1363,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void CallBeginDash()
     {
-        //Debug.LogWarningFormat("Start move {0}, {1}", this, Time.time);
+        //Debug.LogWarningFormat("[PAWN] Start move {0}, {1}", this, Time.frameCount);
         OnBeginMove?.Invoke();
         OnNextBeginMove?.Invoke();
         OnNextBeginMove = null;
@@ -1374,6 +1384,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void CallCompleteDash()
     {
+        //Debug.LogFormat("[PAWN] {0} just completed dashing! [{1} {2}]", name, Time.frameCount, Time.fixedDeltaTime);
         OnCompleteMove?.Invoke();
         OnNextCompleteMove?.Invoke();
         OnNextCompleteMove = null;
