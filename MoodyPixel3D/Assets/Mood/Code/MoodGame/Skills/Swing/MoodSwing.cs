@@ -6,8 +6,8 @@ using UnityEngine;
 using Mood.Swing.Maker;
 
 
-[CreateAssetMenu(menuName ="Mood/Swing Data", fileName = "Swing_")]
-public class MoodSwing : ScriptableObject
+[RequireComponent(typeof(MoodSwingMaker))]
+public class MoodSwing : MonoBehaviour
 {
     public static int CACHE_SIZE = 8;
 
@@ -53,7 +53,7 @@ public class MoodSwing : ScriptableObject
         {
             float currentDelay = 0f;
             if (safetyDistance != 0f) UseSafetyDistance(ref posOrigin, safetyDistance, moodSwingItself);
-            foreach (MoodSwingNode node in moodSwingItself.maker.Nodes)
+            foreach (MoodSwingNode node in moodSwingItself._maker.Nodes)
             {
                 LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
                 int result = Physics.OverlapSphereNonAlloc(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, _colliderCache, layer.value, QueryTriggerInteraction.Collide);
@@ -77,7 +77,7 @@ public class MoodSwing : ScriptableObject
             Vector3 capsuleHalfHeight = Vector3.up * capsuleHeight * 0.5f;
             int b = 0;
             if (safetyDistance != 0f) UseSafetyDistance(ref posOrigin, safetyDistance, moodSwingItself);
-            foreach (MoodSwingNode node in moodSwingItself.maker.Nodes)
+            foreach (MoodSwingNode node in moodSwingItself.Maker.Nodes)
             {
                 LHH.Utils.DebugUtils.DrawCircle(GetCorrectPosition(posOrigin, rotOrigin, localOffset, node), node.radius, rotOrigin * Vector3.up, Color.black, 1f);
                 Vector3 capsuleCenter = GetCorrectPosition(posOrigin, rotOrigin, localOffset, node);
@@ -109,7 +109,7 @@ public class MoodSwing : ScriptableObject
         public float GetRange()
         {
             float range = 0f;
-            foreach (var d in moodSwingItself.maker.Nodes)
+            foreach (var d in moodSwingItself.Maker.Nodes)
             {
                 range = Mathf.Max(range, Vector3.ProjectOnPlane(d.localPosition, Vector3.up).magnitude + d.radius);
             }
@@ -164,19 +164,26 @@ public class MoodSwing : ScriptableObject
         }
     }
 
+    private MoodSwingMaker _maker;
+    public MoodSwingMaker Maker
+    {
+        get
+        {
+            if (_maker == null) _maker = GetComponent<MoodSwingMaker>();
+            return _maker;
+        }
+    }
 
-    //public MoodSwingNode[] data;
-    public MoodSwingMaker maker;
 
 
     public IEnumerable<MoodSwingTrailNode> GetTrail()
     {
-        return maker.Trail;
+        return Maker.Trail;
     }
 
     public int GetTrailLength()
     {
-        return maker.TrailLength;
+        return Maker.TrailLength;
     }
 
     public MoodSwingBuildData GetBuildData(Vector3 direction, Vector3 offset = default)
@@ -191,7 +198,6 @@ public class MoodSwing : ScriptableObject
     public MoodSwingBuildData GetBuildData(Quaternion objectData, Vector3 offset = default)
     {
         return new MoodSwingBuildData(this).AddOffset(offset);
-        //return new MoodSwingBuildData(this).AddOffset(objectData * offset);
     }
 
     private static Vector3 GetCorrectPosition(Vector3 posOrigin, Quaternion rotOrigin, Vector3 posOffset, MoodSwingNode node)
@@ -201,7 +207,7 @@ public class MoodSwing : ScriptableObject
 
     private static void UseSafetyDistance(ref Vector3 posOrigin, in float safetyDistance, MoodSwing moodSwingItself)
     {
-        Vector3 center = (moodSwingItself.maker.Nodes.Select(x => x.localPosition).Aggregate((x, y) => x + y)) / moodSwingItself.maker.Nodes.Count();
+        Vector3 center = (moodSwingItself.Maker.Nodes.Select(x => x.localPosition).Aggregate((x, y) => x + y)) / moodSwingItself.Maker.Nodes.Count();
         posOrigin += (posOrigin - center).normalized * safetyDistance;
     }
 

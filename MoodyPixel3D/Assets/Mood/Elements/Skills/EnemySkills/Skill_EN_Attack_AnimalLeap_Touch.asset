@@ -42,7 +42,7 @@ MonoBehaviour:
   damage: 10
   stunTime:
     beats: 4
-  swingData: {fileID: 11400000, guid: dfadf65a8e4142f4eba11a85d57b9af1, type: 2}
+  swingData: {fileID: -819647384587720022, guid: 8df71684789a2f945ae3c1e102537403, type: 3}
   swingDataPositionOffset: {x: 0, y: 0, z: 1}
   targetLayer:
     serializedVersion: 2

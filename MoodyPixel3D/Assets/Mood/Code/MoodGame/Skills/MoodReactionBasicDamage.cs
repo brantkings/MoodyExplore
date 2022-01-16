@@ -22,6 +22,7 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
     public float animationParameterMultiplier = 2f;
     public float animationDelay = 0.125f;
     public AnimationCurve dashCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+    public ShakeTweenData customShake;
 
     public virtual bool CanReact(DamageInfo info, MoodPawn pawn)
     {
@@ -46,6 +47,9 @@ public class MoodReactionBasicDamage : MoodReaction, IMoodReaction<DamageInfo>
         //Debug.LogFormat(this,"[REACT] {0} reacting with {1} for {2}. Dash({3}* {4}, {5} * {6})", pawn.name, this, info, info.distanceKnockback, knockbackDistanceMultiplier, info.durationKnockback, knockbackDistanceMultiplier);
         pawn.Dash(info.distanceKnockback * knockbackDistanceMultiplier, measuredInBeats:false, info.durationKnockback * knockbackDurationMultiplier, dashIsBumpeable, dashCurve);
         pawn.RotateDash(info.rotationKnockbackAngle, animationDuration);
+
+        ShakeTweenData shake = customShake != null ? customShake : pawn.GetShakeTweenData();
+        if (shake != null) shake.ShakeTween(pawn.GetShakeTransform(), info.GetFrameFreeze().GetTotalDuration() + animationDuration); //Shake with freeze frame
 
         pawn.AddStunLockTimer(MoodPawn.LockType.Action, name, info.stunTime * stunDurationMultiplier);
         if(shouldInterruptCurrentSkill) 

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Attack_LiftSlash
+  m_Name: Skill_Attack_Stick_FierceHit
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
-  _name: Lift Bonk
-  _description: 
+  _name: Fierce Bonk
+  _description: Strong, slower attack that dashes forward.
   _category: {fileID: 11400000, guid: f99b1f25d892f4b42bd900b6442b0bf1, type: 2}
   _skillCommandColor:
     _directProperty: {r: 1, g: 0.3254717, b: 0.3254717, a: 1}
@@ -22,15 +22,15 @@ MonoBehaviour:
   conditionsToUse:
   - {fileID: 11400000, guid: 95b2911e6c902cc4c9f9a6b59cb63c4b, type: 2}
   joinConditionsType: 0
-  onlyNeutralStance: 0
+  onlyNeutralStance: 1
   needs: []
   consumeNeededStances: 0
   toConsume: []
   restrictions:
-  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  - {fileID: 11400000, guid: 4406c5b42a452554a9971951a9f3334a, type: 2}
   _possibleAngles:
   - angleFromForward: 0
-    coneAngle: 0
+    coneAngle: 45
     mirrored: 0
   heightCheckers: []
   _startupPriority: 2
@@ -41,16 +41,16 @@ MonoBehaviour:
   _shortcut: 120
   _debug: 0
   _cost: 2
-  damage: 10
+  damage: 30
   stunTime:
     beats: 6
-  swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
+  swingData: {fileID: -9036091216129525429, guid: f649c829978fa8741a8eb63449e1a7d7, type: 3}
   swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 1024
   knockbackDistance:
-    beats: 3
+    beats: 7
   knobackStyle:
     _directProperty:
       knockbackByDealer:
@@ -67,7 +67,7 @@ MonoBehaviour:
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
       angleRotation: 0
       knockbackDurationAbsolute:
-        beats: 0
+        beats: 2
       knockbackDurationMultiplierForDistance:
         beats: 1
     _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
@@ -81,12 +81,12 @@ MonoBehaviour:
     _getter: {fileID: 0}
   _flyingThought: {fileID: 0}
   preDashDelay:
-    beats: 0
+    beats: 1
   preTime:
-    beats: 4
+    beats: 3
   preAttackDash:
     dist:
-      beats: 0
+      beats: 2
     bumpeable: 0
     angle:
       angleFromForward: 0
@@ -101,12 +101,12 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6e14acadc6d7b684388ce0f85dfd1380, type: 2}
     dashFeedbackDirection: 1
   animationTime:
-    beats: 1
+    beats: 2
   postTime:
-    beats: 3
+    beats: 4
   postAttackDash:
     dist:
-      beats: 0
+      beats: 1
     bumpeable: 0
     angle:
       angleFromForward: 0
@@ -121,7 +121,7 @@ MonoBehaviour:
     dashFeedbackDirection: 0
   whiffAttackDash:
     dist:
-      beats: 0
+      beats: 1
     bumpeable: 0
     angle:
       angleFromForward: 0
@@ -144,5 +144,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3659f7150c31dae44bc5ba7672bc9cc7, type: 2}
   onGuardedDamage:
   - {fileID: 11400000, guid: 278d02892e568cd498cb8ead19df3860, type: 2}
-  addedStancesWithAttack:
-  - {fileID: 11400000, guid: 057ed881cb2c3384495d876e08e79c83, type: 2}
+  addedStancesWithAttack: []

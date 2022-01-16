@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Attack_RunningHit
+  m_Name: Skill_Attack_Stick_RunningHit
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Running Bonk
@@ -49,7 +49,7 @@ MonoBehaviour:
   damage: 20
   stunTime:
     beats: 6
-  swingData: {fileID: 11400000, guid: bcbde5f45988ca444b9eaf1830fd72e9, type: 2}
+  swingData: {fileID: -2832638120993174905, guid: 9587f09a461c1c84b87999739564b806, type: 3}
   swingDataPositionOffset: {x: 0, y: 0, z: 0}
   targetLayer:
     serializedVersion: 2

@@ -23,8 +23,7 @@ MonoBehaviour:
   skillsToGrant:
   - {fileID: 11400000, guid: feaf277a4a5525240abe9958ff8bf92f, type: 2}
   - {fileID: 11400000, guid: 1eb1e7880582b29498047c9a57a8a5b0, type: 2}
-  - {fileID: 11400000, guid: 4e5fe8e374280f949a2d8293fd2d0438, type: 2}
-  - {fileID: 11400000, guid: d4607fed9f5eee8429892e4664fc5ba9, type: 2}
+  - {fileID: 11400000, guid: 48f81adcd8383114e95c7c3f5e2b8e29, type: 2}
   - {fileID: 11400000, guid: e75d9f22f7b57cf4a9033f6471deedf6, type: 2}
   equippedItem: {fileID: -6520346370307874918, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
   equippedItemOffset: {x: 0, y: 0, z: 0}

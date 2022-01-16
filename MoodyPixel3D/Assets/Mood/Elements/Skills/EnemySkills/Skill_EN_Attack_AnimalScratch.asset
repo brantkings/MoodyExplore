@@ -43,7 +43,7 @@ MonoBehaviour:
   damage: 10
   stunTime:
     beats: 4
-  swingData: {fileID: 11400000, guid: 6d5e5e03a9402f147af046330bf6dd50, type: 2}
+  swingData: {fileID: -5538433025791745172, guid: 1e7f6d9f9aee746468d471fb45c387fa, type: 3}
   swingDataPositionOffset: {x: 0, y: 0, z: -1.5}
   targetLayer:
     serializedVersion: 2
@@ -69,7 +69,7 @@ MonoBehaviour:
         beats: 0
       knockbackDurationMultiplierForDistance:
         beats: 1
-    _getter: {fileID: 0}
+    _getter: {fileID: 11400000, guid: 6aa6884c966b49348a2604773838061e, type: 2}
   setDirection: 1
   setVelocity0: 0
   priorityPreAttack: 2
