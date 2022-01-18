@@ -27,23 +27,24 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: -0.0041656494
+      time: 0
       value: 0
-      inSlope: 2.7030032
-      outSlope: 2.7030032
+      inSlope: 1.3939883
+      outSlope: 1.3939883
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.1
+      outWeight: 0.12553908
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: -0.030485371
+      outSlope: -0.030485371
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.20501715
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  customShake: {fileID: 0}

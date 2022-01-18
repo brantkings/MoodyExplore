@@ -50,7 +50,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   knockbackDistance:
-    beats: 3
+    beats: 2
   knobackStyle:
     _directProperty:
       knockbackByDealer:

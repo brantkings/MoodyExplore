@@ -86,7 +86,7 @@ MonoBehaviour:
     beats: 4
   preAttackDash:
     dist:
-      beats: 4
+      beats: 2
     bumpeable: 0
     angle:
       angleFromForward: 0
