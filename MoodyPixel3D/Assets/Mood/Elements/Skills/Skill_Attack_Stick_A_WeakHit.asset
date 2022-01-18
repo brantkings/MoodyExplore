@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed37f4726d75df245bd3427eabe121bb, type: 3}
-  m_Name: Skill_Attack_Stick_WeakHit
+  m_Name: Skill_Attack_Stick_A_WeakHit
   m_EditorClassIdentifier: 
   _icon: {fileID: 0}
   _name: Jab Bonk
@@ -106,7 +106,7 @@ MonoBehaviour:
     beats: 2
   postAttackDash:
     dist:
-      beats: -2
+      beats: -1
     bumpeable: 0
     angle:
       angleFromForward: 0
