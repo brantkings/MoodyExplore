@@ -57,6 +57,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
             Vector3 setDirection = skillDirection;
             SanitizeDirection(pawn.Direction, ref setDirection, setDirectionInRelationToMovement);
             pawn.SetHorizontalDirection(setDirection);
+            Debug.LogWarningFormat("Setting {0} direction to {1} -> {2}", pawn, setDirection, pawn.Direction);
         }
         pawn.Dash(distance, measuredInBeats:false, duration, movementIsBumpeable, ease);
         if (HasFeedback())

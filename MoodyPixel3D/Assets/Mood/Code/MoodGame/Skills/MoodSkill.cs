@@ -440,10 +440,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// Execute the real effect! Return the duration of the effect that should be waited after.
     /// </summary>
     /// <param name="pawn">The pawn that is executing the skill.</param>
-    /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
+    /// <param name="skillDistance">The distance  to which the pawn is executing the skill. </param>
     /// <returns>The amount of time this should wait in real time and if the execution was considered a 'success' or not.</returns>
 
-    protected abstract (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection);
+    protected abstract (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDistance);
 
     protected static ExecutionResult MergeExecutionResult(ExecutionResult a, ExecutionResult b, bool priorityIsSuccess = true)
     {

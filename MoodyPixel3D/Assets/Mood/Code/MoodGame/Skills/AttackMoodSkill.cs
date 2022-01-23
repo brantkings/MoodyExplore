@@ -17,7 +17,7 @@ namespace Code.MoodGame.Skills
         public Vector3 swingDataPositionOffset;
         public LayerMask targetLayer;
         public MoodUnitManager.DistanceBeats knockbackDistance;
-        [UnityEngine.Serialization.FormerlySerializedAs("knockback")] public LHH.Unity.MorphableProperty<KnockbackSolver> knobackStyle;
+        [UnityEngine.Serialization.FormerlySerializedAs("knobackStyle")] public LHH.Unity.MorphableProperty<KnockbackSolver> knockbackStyle;
         public bool setDirection;
         public bool setVelocity0;
         public int priorityPreAttack = PRIORITY_NOT_CANCELLABLE;
@@ -328,7 +328,7 @@ namespace Code.MoodGame.Skills
 
         protected DamageInfo GetDamage(MoodPawn pawn, Transform target, Vector3 attackDirection)
         {
-            DamageInfo info = new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knobackStyle.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, knockbackDistance, out float angle), angle, knobackStyle.Get().GetDuration(knockbackDistance));
+            DamageInfo info = new DamageInfo(damage, pawn.DamageTeam, pawn.gameObject).SetStunTime(stunTime).SetForce(knockbackStyle.Get().GetKnockback(pawn.ObjectTransform, target, attackDirection, knockbackDistance, out float angle), angle, knockbackStyle.Get().GetDuration(knockbackDistance));
             if (_painThought != null) info.AddPainThought(new FlyingThoughtInstance() { flyingThought = _flyingThought, data = new FlyingThought.FlyingThoughtData() { destination = null, thought = _painThought, where = ThoughtSystemController.ThoughtPlacement.Down} });
             return info;
         }

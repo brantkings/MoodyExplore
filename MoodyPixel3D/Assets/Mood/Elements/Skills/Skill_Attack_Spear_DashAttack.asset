@@ -40,8 +40,8 @@ MonoBehaviour:
   lockMovement: 0
   _shortcut: 120
   _debug: 0
-  _cost: 2
-  damage: 30
+  _cost: 1
+  damage: 20
   stunTime:
     beats: 6
   swingData: {fileID: -2507636063829154251, guid: bf8e2d84bc83c4845a2358af746433cb, type: 3}

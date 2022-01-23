@@ -156,6 +156,43 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         [Tooltip("When not rotated, the ratio it goes to it's the direct velocity or it's own forward. On 1f, the pawn moves like a car.")] [Range(0f, 1f)] public float turningForwardVelocityRatio;
         [Tooltip("The time it takes to rotate 360 degrees.")] public MoodUnitManager.TimeBeats turningTimeTo360;
 
+        [System.Serializable]
+        public class InnateSkills
+        {
+            public bool useVelocityChange;
+            public float velocityChange;
+            public bool useAngleChange;
+            public float angleChange;
+
+            public MoodSkill skill;
+
+            /// <summary>
+            /// Check if the innate skill may be used, and return it if so.
+            /// </summary>
+            /// <param name="pawn"></param>
+            /// <param name="inputDirection"></param>
+            /// <returns></returns>
+            public MoodSkill GetSkillToUse(MoodPawn pawn, in Vector3 inputDirection)
+            {
+                if (useAngleChange && angleChange != 0f)
+                {
+                    float angleDelta = Vector3.Angle(inputDirection, pawn.Direction);
+                    if (angleDelta > angleChange) return skill;
+                }
+
+                if (useVelocityChange && velocityChange != 0f)
+                {
+                    float sqrMagDelta = inputDirection.sqrMagnitude - pawn.Velocity.sqrMagnitude;
+                    if (velocityChange > 0f && sqrMagDelta >= velocityChange) return skill;
+                    else if (velocityChange < 0f && sqrMagDelta <= velocityChange) return skill;
+                }
+
+                return null;
+            }
+
+        }
+        [Tooltip("Changes in inputs may trigger skills to happen in this mode.")] public InnateSkills[] innateSkills;
+
         public static MovementData Default
         {
             get
@@ -169,6 +206,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
                     turningDirectMaxSpeed = 2f,
                     turningForwardVelocityRatio = 0.5f,
                     turningTimeTo360 = 8,
+                    innateSkills = null
                 };
             }
         }
@@ -220,6 +258,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         get => mover.Direction;
         set
         {
+            //if (name.Contains("Player")) Debug.LogFormat("Player setting direction {0} -> {1}", mover.Direction, value);
             if(value != Vector3.zero)
                 mover.Direction = value.normalized;
         }
@@ -362,9 +401,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(ShouldRecoverStamina())
             RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
 
+        MovementData toUse = movementData.Data;
+        UpdateInnateMovementSkills(_inputVelocity, _inputRotation, toUse);
+
         Vector3 _currentDirection = Direction;
         //if (name.Contains("Player")) Debug.LogFormat("Before update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
-        MovementData toUse = movementData.Data;
         UpdateMovement(_inputVelocity, _inputRotation, in toUse, ref _currentSpeed, ref _currentDirection);
         //if (name.Contains("Player")) Debug.LogFormat("After update {0} and {1} while Input is {2}", _currentSpeed, _currentDirection, _inputVelocity);
 
@@ -505,9 +546,21 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _currentSkill != null && _currentSkillRoutine != null;
     }
 
-    public Coroutine ExecuteSkill(MoodSkill skill, Vector3 skillDirection, MoodItemInstance item = null)
+    private void SelfUseSkill(MoodSkill skill, in Vector3 skillDirection, MoodItemInstance item = null)
     {
-        if (IsExecutingSkill()) InterruptCurrentSkill();
+        ExecuteSkill(skill, skillDirection, item);
+    }
+
+    /// <summary>
+    /// Use this to call skills. Maintain the coroutine and check the interrupted skill event in order to check if it finished, etc. Use CanUseSkill() if you want to obey the cancel properties of the skill.
+    /// </summary>
+    /// <param name="skill">The skill</param>
+    /// <param name="skillDirection">The direction of the skill. Ideally, the max magnitude of this is 1.</param>
+    /// <param name="item">The item instance associated with this skill.</param>
+    /// <returns></returns>
+    public Coroutine ExecuteSkill(MoodSkill skill, in Vector3 skillDirection, MoodItemInstance item = null)
+    {
+        if (IsExecutingSkill()) InterruptCurrentSkill(); //If it called this, will cancel every other skill.
         _currentSkillRoutine = StartCoroutine(SkillRoutine(skill, skillDirection, item));
         return _currentSkillRoutine;
     }
@@ -988,10 +1041,28 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         }
     }
 
+    private void UpdateInnateMovementSkills(in Vector3 inputVelocity, in Vector3 inputDirection, in MovementData movData)
+    {
+        //Innate movement skills
+        if (movData.innateSkills != null)
+        {
+            foreach (var innate in movData.innateSkills)
+            {
+                MoodSkill skill = innate.GetSkillToUse(this, inputVelocity);
+                if (skill != null)
+                {
+                    if (CanUseSkill(skill)) SelfUseSkill(skill, inputVelocity);
+                }
+            }
+        }
+    }
 
-    private void UpdateMovement(Vector3 inputVelocity, Vector3 inputDirection, in MovementData movData, ref Vector3 currentSpeed, ref Vector3 currentDirection)
+
+    private void UpdateMovement(in Vector3 inputVelocity, in Vector3 inputDirection, in MovementData movData, ref Vector3 currentSpeed, ref Vector3 currentDirection)
     {
         if (movementData == null) return;
+
+        
 
         if(inputVelocity.sqrMagnitude < 0.1f) //Wants to stop
         {

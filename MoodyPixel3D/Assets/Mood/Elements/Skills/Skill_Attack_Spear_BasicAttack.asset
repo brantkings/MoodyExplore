@@ -106,7 +106,7 @@ MonoBehaviour:
     beats: 3
   postAttackDash:
     dist:
-      beats: -4
+      beats: -1
     bumpeable: 0
     angle:
       angleFromForward: 0

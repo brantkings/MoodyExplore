@@ -24,3 +24,9 @@ MonoBehaviour:
     turningForwardVelocityRatio: 0.4
     turningTimeTo360:
       beats: 24
+    innateSkills:
+    - useVelocityChange: 0
+      velocityChange: 0
+      useAngleChange: 1
+      angleChange: 90
+      skill: {fileID: 11400000, guid: bc4c386ed93bf1b42836cf93ee166b84, type: 2}
