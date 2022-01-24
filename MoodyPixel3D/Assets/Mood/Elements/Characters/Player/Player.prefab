@@ -1856,8 +1856,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4813272952109751330}
-  m_LocalRotation: {x: -0.00010228805, y: 0.9013209, z: -0.43315196, w: -0.00021284529}
-  m_LocalPosition: {x: 0, y: 8, z: 5.500001}
+  m_LocalRotation: {x: -0.00010229956, y: 0.90132093, z: -0.433152, w: -0.00021286924}
+  m_LocalPosition: {x: 0, y: 8, z: 5.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5063391411731368733}
@@ -2663,8 +2663,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5938188665409695490}
-  m_LocalRotation: {x: 0.18883342, y: -0.7388091, z: 0.23085566, w: 0.604325}
-  m_LocalPosition: {x: 17.64267, y: 13.999999, z: 3.5687969}
+  m_LocalRotation: {x: 0.1888334, y: -0.7388091, z: 0.23085566, w: 0.604325}
+  m_LocalPosition: {x: 17.64267, y: 13.999999, z: 3.568797}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5938188666564908155}
@@ -3089,7 +3089,7 @@ MonoBehaviour:
   inherentReactions: []
   flagInherentStances: []
   _threatenable: {fileID: 0}
-  movementData: {fileID: 0}
+  _movementData: {fileID: 11400000, guid: 89999d79a710430488345bea5c245351, type: 2}
   height: 4
   _pawnRadius: 0.5
   extraRangeBase: 0
@@ -3101,12 +3101,7 @@ MonoBehaviour:
     baseValue: 3
   infiniteStamina: 0
   recoverStaminaWhileUsingSkill: 0
-  staminaRecoveryIdlePerSecond:
-    beats: 8
-  staminaRecoveryMovingPerSecond:
-    beats: 8
   _debug: 0
-  shakeOnDamage: {fileID: 0}
   sensorGroup: {fileID: 6111893301521731665}
 --- !u!114 &6861143338353298073
 MonoBehaviour:
@@ -6666,7 +6661,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7054111352717382884}
   m_LocalRotation: {x: -0.112967886, y: 0.8810881, z: -0.37458828, w: -0.26571748}
-  m_LocalPosition: {x: 5.52874, y: 12, z: 8.33265}
+  m_LocalPosition: {x: 5.52874, y: 12, z: 8.332649}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3367119130684837559}
@@ -11816,7 +11811,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.5687969
+      value: 3.568797
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11824,7 +11819,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.18883342
+      value: 0.1888334
       objectReference: {fileID: 0}
     - target: {fileID: 1703411701898651868, guid: 2bd9920d11b031c48919df2352907af1, type: 3}
       propertyPath: m_LocalRotation.y

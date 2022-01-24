@@ -135,7 +135,20 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     [Header("Movement")]
     [UnityEngine.Serialization.FormerlySerializedAs("movementDataOverride")]
-    public MoodPawnMovementData movementData;
+    [SerializeField] private MoodPawnMovementData _movementData;
+
+    public MoodPawnMovementData PawnMovementData
+    {
+        get
+        {
+            return _movementData;
+        }
+        set
+        {
+            _movementData = value;
+        }
+    }
+
     public float height = 2f;
     [SerializeField] private float _pawnRadius = 0.5f;
 
@@ -221,26 +234,109 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         UnityEditor.AssetDatabase.CreateAsset(scriptableObject, "Assets/" + scriptableObject.name + ".asset");
         UnityEditor.AssetDatabase.SaveAssets();
         MovementData data = new MovementData();
-        data.timeToMaxVelocity = movementData.Data.timeToMaxVelocity;
-        data.timeToZeroVelocity = movementData.Data.timeToZeroVelocity;
-        data.snapToTargetSpeedDelta = movementData.Data.snapToTargetSpeedDelta;
-        data.angleToBeAbleToAccelerate = movementData.Data.angleToBeAbleToAccelerate;
-        data.turningDirectMaxSpeed = movementData.Data.turningDirectMaxSpeed;
-        data.turningForwardVelocityRatio = movementData.Data.turningForwardVelocityRatio;
-        data.turningTimeTo360 = movementData.Data.turningTimeTo360;
-        scriptableObject.Data = data;
-        this.movementData = scriptableObject;
+        data.timeToMaxVelocity = PawnMovementData.MovementData.timeToMaxVelocity;
+        data.timeToZeroVelocity = PawnMovementData.MovementData.timeToZeroVelocity;
+        data.snapToTargetSpeedDelta = PawnMovementData.MovementData.snapToTargetSpeedDelta;
+        data.angleToBeAbleToAccelerate = PawnMovementData.MovementData.angleToBeAbleToAccelerate;
+        data.turningDirectMaxSpeed = PawnMovementData.MovementData.turningDirectMaxSpeed;
+        data.turningForwardVelocityRatio = PawnMovementData.MovementData.turningForwardVelocityRatio;
+        data.turningTimeTo360 = PawnMovementData.MovementData.turningTimeTo360;
+        scriptableObject.MovementData = data;
+        this._movementData = scriptableObject;
     }
 #endif
 
+    
     [Header("Stamina")]
     [UnityEngine.Serialization.FormerlySerializedAs("_maxStamina")]
     public MoodParameter<float> _maxStamina = 1;
     private float _stamina;
     public bool infiniteStamina;
     public bool recoverStaminaWhileUsingSkill;
-    public MoodUnitManager.TimeBeats staminaRecoveryIdlePerSecond = 8;
-    public MoodUnitManager.TimeBeats staminaRecoveryMovingPerSecond = 8;
+
+    [System.Serializable]
+    public struct StaminaRecoveryData
+    {
+        public MoodUnitManager.TimeBeats idleRecovery;
+        public MoodUnitManager.TimeBeats movingRecovery;
+
+
+        public static StaminaRecoveryData Zero
+        {
+            get
+            {
+                return new StaminaRecoveryData()
+                {
+                    idleRecovery = 0,
+                    movingRecovery = 0
+                };
+            }
+        }
+
+        public static StaminaRecoveryData Default
+        {
+            get
+            {
+                return new StaminaRecoveryData()
+                {
+                    idleRecovery = 8,
+                    movingRecovery = 8
+                };
+            }
+        }
+
+        public static StaminaRecoveryData operator +(StaminaRecoveryData a, StaminaRecoveryData b)
+        {
+            return new StaminaRecoveryData()
+            {
+                idleRecovery = a.idleRecovery + b.idleRecovery,
+                movingRecovery = a.movingRecovery + b.movingRecovery
+            };
+        }
+
+        public static StaminaRecoveryData operator -(StaminaRecoveryData a, StaminaRecoveryData b)
+        {
+            return new StaminaRecoveryData()
+            {
+                idleRecovery = a.idleRecovery - b.idleRecovery,
+                movingRecovery = a.movingRecovery - b.movingRecovery
+            };
+        }
+
+        public static StaminaRecoveryData operator -(StaminaRecoveryData a)
+        {
+            return new StaminaRecoveryData()
+            {
+                idleRecovery = -a.idleRecovery,
+                movingRecovery = -a.movingRecovery
+            };
+        }
+    }
+
+    public interface IStaminaRecoveryDataChanger
+    {
+        void Change(ref StaminaRecoveryData data);
+    }
+    private IStaminaRecoveryDataChanger[] _staminaChangersCache;
+    private bool _checkedForStaminaChangers;
+
+    public StaminaRecoveryData PawnStaminaRecoveryData
+    {
+        get
+        {
+            if(!_checkedForStaminaChangers)
+            {
+                _staminaChangersCache = GetComponentsInChildren<IStaminaRecoveryDataChanger>(true);
+                _checkedForStaminaChangers = true;
+            }
+            StaminaRecoveryData data = PawnMovementData.StaminaRecoveryData;
+            if (_staminaChangersCache != null)
+            {
+                foreach (var changer in _staminaChangersCache) changer.Change(ref data);
+            }
+            return data;
+        }
+    }
     private Vector3 _damageAnimation;
 
 
@@ -401,7 +497,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         if(ShouldRecoverStamina())
             RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
 
-        MovementData toUse = movementData.Data;
+        MovementData toUse = _movementData.MovementData;
         UpdateInnateMovementSkills(_inputVelocity, _inputRotation, toUse);
 
         Vector3 _currentDirection = Direction;
@@ -705,7 +801,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public bool CanUseSkill(MoodSkill skill)
     {
-        return !IsStunned(LockType.Action) && skill.GetPluginPriority(this) > GetPlugoutPriority();
+        return !IsStunned(LockType.Action) && skill.GetPluginPriority(this, GetCurrentSkill()) > GetPlugoutPriority();
     }
     #endregion
 
@@ -1060,13 +1156,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void UpdateMovement(in Vector3 inputVelocity, in Vector3 inputDirection, in MovementData movData, ref Vector3 currentSpeed, ref Vector3 currentDirection)
     {
-        if (movementData == null) return;
+        if (_movementData == null) return;
 
         
 
         if(inputVelocity.sqrMagnitude < 0.1f) //Wants to stop
         {
-            UpdateMovementVector(ref currentSpeed, 0f, movData.timeToZeroVelocity);
+            UpdateMovementVector(ref currentSpeed, movData, 0f, movData.timeToZeroVelocity);
 
             //Maybe it is rotating while stopped
             if(inputDirection.sqrMagnitude >= 0.1f)
@@ -1083,7 +1179,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
             if (Vector3.Angle(inputVelocity, currentDirection) < movData.angleToBeAbleToAccelerate) //Already looking in the direction
             {
-                UpdateMovementVector(ref currentSpeed, inputVelocity, movData.timeToMaxVelocity);
+                UpdateMovementVector(ref currentSpeed, movData, inputVelocity, movData.timeToMaxVelocity);
             }
             else //Has to turn first
             {
@@ -1102,7 +1198,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
                 Vector3 turningDirectVelocity = inputVelocityNormalized * maxVelocityTurning;
                 Vector3 forwardMaxVelocity = Direction.normalized * inputVelocity.magnitude;
                 Vector3 totalVelocity = Vector3.Lerp(turningDirectVelocity, forwardMaxVelocity, movData.turningForwardVelocityRatio);
-                UpdateMovementVector(ref currentSpeed, totalVelocity, smoothTimeTurning);
+                UpdateMovementVector(ref currentSpeed, movData, totalVelocity, smoothTimeTurning);
             }
         }
 
@@ -1118,12 +1214,12 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         direction = Quaternion.Euler(0f, angleTurn, 0f) * direction;
     }
 
-    private void UpdateMovementVector(ref Vector3 movement, float targetMagnitude, float smoothTime)
+    private void UpdateMovementVector(ref Vector3 movement, in MovementData movData, float targetMagnitude, float smoothTime)
     {
-        UpdateMovementVector(ref movement, movement.normalized * targetMagnitude, smoothTime);
+        UpdateMovementVector(ref movement, movData, movement.normalized * targetMagnitude, smoothTime);
     }
 
-    private void UpdateMovementVector(ref Vector3 currentSpeed, Vector3 destination, float smoothTime)
+    private void UpdateMovementVector(ref Vector3 currentSpeed, in MovementData movData, Vector3 destination, float smoothTime)
     {
         if((cantMoveWhileExecutingSkill && IsExecutingSkill()) || (cantMoveWhileDashing && IsDashing()) || IsStunned(LockType.Movement_NonDash))
         {
@@ -1132,7 +1228,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
             return;
         }
         currentSpeed = Vector3.SmoothDamp(currentSpeed, destination, ref _movementDelta, smoothTime);
-        if ((currentSpeed - destination).sqrMagnitude < (movementData.Data.snapToTargetSpeedDelta * movementData.Data.snapToTargetSpeedDelta)) currentSpeed = destination;
+        if ((currentSpeed - destination).sqrMagnitude < (movData.snapToTargetSpeedDelta * movData.snapToTargetSpeedDelta)) currentSpeed = destination;
     }
 
     private bool CanMove()
@@ -1804,7 +1900,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private float GetCurrentStaminaRecoverValue()
     {
         bool isMoving = IsMoving();
-        float value = isMoving ? staminaRecoveryMovingPerSecond : staminaRecoveryIdlePerSecond;
+        float value = isMoving ? PawnStaminaRecoveryData.movingRecovery : PawnStaminaRecoveryData.idleRecovery;
         foreach(ActivateableMoodStance stance in AddedStances)
         {
             foreach (IMoodPawnModifierStamina mod in stance.GetAllModifiers<IMoodPawnModifierStamina>()) 

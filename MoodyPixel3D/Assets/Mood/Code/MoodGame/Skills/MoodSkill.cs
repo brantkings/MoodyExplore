@@ -32,7 +32,7 @@ public interface IMoodSkill
     bool CanBeShown(MoodPawn pawn);
 
     // A skill only enters play while other skill is executing if current plugout priority (got from pawn) is less than next plugin priority.
-    int GetPluginPriority(MoodPawn pawn);
+    int GetPluginPriority(MoodPawn pawn, MoodSkill currentSkill);
     
     /// <summary>
     /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. Dispatch execute event after you do the skill. Do not call base.
@@ -159,6 +159,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
     [Space()]
     [SerializeField] private int _startupPriority;
+    [SerializeField] private int _startupPriorityBonusOnChangeCategory;
     [SerializeField] private int _itemQuantityCost;
     [SerializeField] private int _freeFocusCost;
 
@@ -336,7 +337,7 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
 
 
     /// <summary>
-    /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. Dispatch execute event after you do the skill. Do not call base.
+    /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. You also must dispatch execute event after you do the skill in order to consume items for example. Do not call base.
     /// </summary>
     /// <param name="pawn">The pawn that is executing the skill.</param>
     /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
@@ -477,9 +478,20 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         //Only the mood pawn itself interrupts an skill ongoing, never the skill itself. This code should be related only to the skill.
     }
 
-    public virtual int GetPluginPriority(MoodPawn pawn)
+    /// <summary>
+    /// The priority of this skill. It should be over the current pawn in order to cancel a skill for example.
+    /// </summary>
+    /// <param name="pawn"></param>
+    /// <param name="currentSkill"></param>
+    /// <returns></returns>
+    public virtual int GetPluginPriority(MoodPawn pawn, MoodSkill currentSkill)
     {
-        return _startupPriority;
+        int priority = _startupPriority;
+        if(currentSkill != null)
+        {
+            if (currentSkill._category != null && _category != null && currentSkill._category != _category) priority += _startupPriorityBonusOnChangeCategory;
+        }
+        return priority;
     }
 
     public virtual bool NeedsCameraUpwards()
@@ -512,5 +524,4 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     {
         return true;
     }
-
 }

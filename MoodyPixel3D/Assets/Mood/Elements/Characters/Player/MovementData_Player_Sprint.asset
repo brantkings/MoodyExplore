@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 923070a8c606e06439eec3a5b4803e9a, type: 3}
   m_Name: MovementData_Player_Sprint
   m_EditorClassIdentifier: 
-  _created: 1
-  _data:
+  _movementData:
     timeToMaxVelocity:
       beats: 0.25
     timeToZeroVelocity:
@@ -30,3 +29,8 @@ MonoBehaviour:
       useAngleChange: 1
       angleChange: 90
       skill: {fileID: 11400000, guid: bc4c386ed93bf1b42836cf93ee166b84, type: 2}
+  _staminaRecoveryData:
+    idleRecovery:
+      beats: 8
+    movingRecovery:
+      beats: -4

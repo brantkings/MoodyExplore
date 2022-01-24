@@ -294,6 +294,18 @@ public class MoodCommandController : MonoBehaviour
         }
     }
 
+    public IEnumerable<(MoodSkill, MoodItemInstance)> GetVisibleMoodSkills(bool includeInactive = false)
+    {
+        foreach (MoodCommandMenu.Option opt in _menu.GetVisibleOptions(includeInactive))
+        {
+            IMoodSelectable select = opt.GetSelectable();
+            if (select is MoodSkill)
+            {
+                yield return (select as MoodSkill, opt.item);
+            }
+        }
+    }
+
     public MoodCommandMenu.SelectCategoryResult SelectCategory(MoodSkillCategory category, bool feedbacks)
     {
         return _menu.SelectCategory(_pawn, category, feedbacks);

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7512266084420818686}
   - component: {fileID: 4784992921665472164}
   m_Layer: 1
-  m_Name: SensorBreath
+  m_Name: Sensor_Breath_[MoodEffect can do this]
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelIncreases:
-  - idle: 0.2
-    moving: 0.1
-  - idle: 0.1
-    moving: 0
+  - idleRecovery:
+      beats: 2
+    movingRecovery:
+      beats: 1
+  - idleRecovery:
+      beats: 1
+    movingRecovery:
+      beats: 0

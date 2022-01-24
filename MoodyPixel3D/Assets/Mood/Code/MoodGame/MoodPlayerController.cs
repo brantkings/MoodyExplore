@@ -78,7 +78,7 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
 
         public void ApplyModeTo(MoodPawn p)
         {
-            p.movementData = data;
+            p.PawnMovementData = data;
         }
     }
     [SerializeField] private MovementMode[] extraMovementModes;
@@ -800,9 +800,9 @@ public class MoodPlayerController : Singleton<MoodPlayerController>, TimeManager
         }
     }
 
-    public bool HasAvailableSkills()
+    public bool HasAvailableSkills(bool visible = true)
     {
-        return command.GetAllMoodSkills(true).Any((x) => x.Item1.CanExecute(_pawn, Vector3.zero));
+        return command.GetAllMoodSkills(visible).Any((x) => x.Item1.CanExecute(_pawn, Vector3.zero));
     }
 
     public Mode GetCurrentMode()

@@ -2,70 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoodStaminaLeveledChange : MoodPawnLeveledBehaviour
+public class MoodStaminaLeveledChange : MoodPawnLeveledBehaviour, MoodPawn.IStaminaRecoveryDataChanger
 {
-    [System.Serializable]
-    public struct Rate
-    {
-        public float idle;
-        public float moving;
+    
 
-        public static Rate operator+(Rate a, Rate b)
-        {
-            return new Rate()
-            {
-                idle = a.idle + b.idle,
-                moving = a.moving + b.moving
-            };
-        }
 
-        public static Rate operator-(Rate a, Rate b)
-        {
-            return new Rate()
-            {
-                idle = a.idle - b.idle,
-                moving = a.moving - b.moving
-            };
-        }
-
-        public static Rate operator -(Rate a)
-        {
-            return new Rate()
-            {
-                idle = -a.idle,
-                moving = -a.moving
-            };
-        }
-    }
-
-    private Rate initial;
-
-    public Rate[] levelIncreases;
+    public MoodPawn.StaminaRecoveryData[] levelIncreases;
 
     protected override void Initiate(MoodPawn pawn)
     {
-        initial.idle = pawn.staminaRecoveryIdlePerSecond;
-        initial.moving = pawn.staminaRecoveryMovingPerSecond;
     }
 
     protected override void ApplyLevel(MoodPawn pawn, float level)
     {
-        int exactLevel = Mathf.RoundToInt(level);
-        Rate rate = initial;
+        
+    }
+
+    public void Change(ref MoodPawn.StaminaRecoveryData data)
+    {
+        int exactLevel = Mathf.RoundToInt(GetLevel());
         for (int i = 0, len = levelIncreases.Length; i < exactLevel; i++)
         {
-            if(i<len)
+            if (i < len)
             {
-                rate += levelIncreases[i];
+                data += levelIncreases[i];
             }
             else
             {
-                rate += levelIncreases[len - 1];
+                data += levelIncreases[len - 1];
             }
         }
-
-        pawn.staminaRecoveryIdlePerSecond = rate.idle;
-        pawn.staminaRecoveryMovingPerSecond = rate.moving;
     }
 }
 

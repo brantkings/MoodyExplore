@@ -20,11 +20,12 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     [SerializeField]
     private DirectionFixer[] setDirectionInRelationToMovement;
     public float velocityAdd = 1f;
-    public float durationAdd;
+    public MoodUnitManager.TimeBeats durationAdd;
     public float showArrowWidth = 1f;
     public Ease ease;
-    public float priortyChangeTimeProportional = 1f;
+    [UnityEngine.Serialization.FormerlySerializedAs("priortyChangeTimeProportional")] public float priorityChangeTimeProportional = 1f;
     public int priorityAdd;
+    public MoodUnitManager.TimeBeats postMovementDelay;
 
     [Header("Feedback Movement")]
     public bool warningOnBumpWall;
@@ -68,10 +69,10 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         SetFlags(pawn);
         AddStances(pawn);
         var result = base.ExecuteEffect(pawn, skillDirection);
-        duration += result.Item1;
+        duration += result.Item1 + postMovementDelay;
         if (hopHeight > 0) pawn.Hop(hopHeight, new MoodPawn.TweenData(hopDurationInMultiplier * duration).SetEase(Ease.OutCirc), new MoodPawn.TweenData(hopDurationOutMultiplier * duration).SetEase(Ease.InCirc));
         //Debug.LogWarningFormat("{0} has duration {1}. Distance is {2} and velocity is {3}. Duration real is {4}", this, duration, distance.magnitude, velocityAdd, pawn.CurrentDashDuration());
-        pawn.StartCoroutine(PriorityChangeCoroutine(pawn, GetPluginPriority(pawn) + priorityAdd, duration * priortyChangeTimeProportional));
+        pawn.StartCoroutine(PriorityChangeCoroutine(pawn, GetPluginPriority(pawn, this) + priorityAdd, duration * priorityChangeTimeProportional));
         return (duration, ExecutionResult.Success);
     }
 
@@ -167,6 +168,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     {
         CalculateMovementData(skillDirection, out Vector3 distance, out float duration);
         yield return duration;
+        if (postMovementDelay.beats != 0) yield return postMovementDelay;
     }
 
     public override WillHaveTargetResult WillHaveTarget(MoodPawn pawn, Vector3 skillDirection, MoodUnitManager.DistanceBeats distanceSafety)

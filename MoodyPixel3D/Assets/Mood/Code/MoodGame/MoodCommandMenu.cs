@@ -902,6 +902,11 @@ public class MoodCommandMenu : MonoBehaviour
         }
     }
 
+    public IEnumerable<Option> GetVisibleOptions(bool includeInactive = false)
+    {
+        return GetAllOptions(current.current, includeInactive);
+    }
+
     #endregion
 
     #region SecondaryMenus

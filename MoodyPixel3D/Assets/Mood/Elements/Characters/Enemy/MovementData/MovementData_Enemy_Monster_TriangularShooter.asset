@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 923070a8c606e06439eec3a5b4803e9a, type: 3}
   m_Name: MovementData_Enemy_Monster_TriangularShooter
   m_EditorClassIdentifier: 
-  _created: 1
-  _data:
+  _movementData:
     timeToMaxVelocity:
       beats: 1
     timeToZeroVelocity:
@@ -23,4 +22,10 @@ MonoBehaviour:
     turningDirectMaxSpeed: 2
     turningForwardVelocityRatio: 0.5
     turningTimeTo360:
+      beats: 8
+    innateSkills: []
+  _staminaRecoveryData:
+    idleRecovery:
+      beats: 8
+    movingRecovery:
       beats: 8
