@@ -10,11 +10,11 @@ namespace Code.MoodGame.Skills
         [Header("Ou Touch modifier")]
 
         public MoodUnitManager.TimeBeats timeUntilStartsTesting;
-        public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+        public override IEnumerator ExecuteRoutine(MoodPawn pawn, CommandData command)
         {
-            if (!SanityCheck(pawn, skillDirection)) yield break;
+            if (!SanityCheck(pawn, command)) yield break;
 
-            PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
+            PrepareAttack(pawn, command.direction, out MoodSwing.MoodSwingBuildData buildData);
 
 #if UNITY_EDITOR
             if (!preAttackDash.bumpeable)
@@ -25,7 +25,7 @@ namespace Code.MoodGame.Skills
 
             yield return new WaitForSeconds(preDashDelay);
 
-            float preAttackDashDuration = DoDashForAttack(pawn, skillDirection);
+            float preAttackDashDuration = DoDashForAttack(pawn, command);
             
             float count = 0f;
 
@@ -54,19 +54,19 @@ namespace Code.MoodGame.Skills
             pawn.OnNextEndMove -= onDash;
             
 
-            float executingTime = ExecuteAttack(pawn, skillDirection, buildData, out bool hit);
+            float executingTime = ExecuteAttack(pawn, command, buildData, out bool hit);
 
             yield return new WaitForSeconds(executingTime);
 
-            PostHitDash(pawn, skillDirection, hit);
+            PostHitDash(pawn, command.direction, hit);
 
             yield return new WaitForSeconds(animationTime);
 
-            PostAnimationEnd(pawn, skillDirection, hit);
+            PostAnimationEnd(pawn, command.direction, hit);
 
             yield return new WaitForSeconds(postTime);
 
-            FinishAttack(pawn, skillDirection, hit);
+            FinishAttack(pawn, command, hit);
         }
 
         private void Pawn_OnEndMove()

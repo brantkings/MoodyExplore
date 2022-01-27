@@ -50,25 +50,26 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
         }
     }
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData command)
     {
-        CalculateMovementData(skillDirection, out Vector3 distance, out float duration);
+        CalculateMovementData(command.direction, out Vector3 distance, out float duration);
         if(setHorizontalDirection)
         {
-            Vector3 setDirection = skillDirection;
+            Vector3 setDirection = command.direction;
             SanitizeDirection(pawn.Direction, ref setDirection, setDirectionInRelationToMovement);
             pawn.SetHorizontalDirection(setDirection);
             Debug.LogWarningFormat("Setting {0} direction to {1} -> {2}", pawn, setDirection, pawn.Direction);
         }
         pawn.Dash(distance, measuredInBeats:false, duration, movementIsBumpeable, ease);
+        Vector3 argsDirection = command.direction;
         if (HasFeedback())
         {
-            pawn.OnNextBeginMove += () => DoFeedback(pawn, skillDirection, true);
-            pawn.OnNextEndMove += () => DoFeedback(pawn, skillDirection, false);
+            pawn.OnNextBeginMove += () => DoFeedback(pawn, argsDirection, true);
+            pawn.OnNextEndMove += () => DoFeedback(pawn, argsDirection, false);
         }
         SetFlags(pawn);
         AddStances(pawn);
-        var result = base.ExecuteEffect(pawn, skillDirection);
+        var result = base.ExecuteEffect(pawn, command);
         duration += result.Item1 + postMovementDelay;
         if (hopHeight > 0) pawn.Hop(hopHeight, new MoodPawn.TweenData(hopDurationInMultiplier * duration).SetEase(Ease.OutCirc), new MoodPawn.TweenData(hopDurationOutMultiplier * duration).SetEase(Ease.InCirc));
         //Debug.LogWarningFormat("{0} has duration {1}. Distance is {2} and velocity is {3}. Duration real is {4}", this, duration, distance.magnitude, velocityAdd, pawn.CurrentDashDuration());
@@ -89,7 +90,7 @@ public class MovementMoodSkill : StaminaCostMoodSkill, RangeArrow.IRangeShowProp
     }
 
 
-    private void DoFeedback(MoodPawn pawn, Vector3 direction, bool set)
+    private void DoFeedback(MoodPawn pawn, in Vector3 direction, bool set)
     {
         if(pawn.animator != null)
         {

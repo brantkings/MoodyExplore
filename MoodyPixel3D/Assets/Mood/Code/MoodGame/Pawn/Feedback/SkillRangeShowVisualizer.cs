@@ -38,13 +38,13 @@ public class SkillRangeShowVisualizer : LHH.Unity.AddonParentBehaviour<MoodPawn>
     }
 
 
-    private void OnUseSkill(MoodPawn pawn, MoodSkill skill, Vector3 skillDirection)
+    private void OnUseSkill(MoodPawn pawn, MoodSkill skill, MoodSkill.CommandData command)
     {
         foreach (RangeShow show in shows)
         {
             if (show.CanShowSkill(skill))
             {
-                _routine = StartCoroutine(show.ShowSkillLive(pawn, skill, skillDirection));
+                _routine = StartCoroutine(show.ShowSkillLive(pawn, skill, command.direction));
             }
         }
     }

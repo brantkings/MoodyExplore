@@ -106,6 +106,8 @@ namespace Code.MoodGame.Skills
 
         [Space()]
         public string animationIntStepString = "Attack_Right";
+        public bool useCancelledAnimation;
+        public string cancelledAnimationIntStepString = "Attack_Left";
         public SoundEffect onStartAttack;
         public SoundEffect onExecuteAttack;
         public SoundEffect onEndAttack;
@@ -149,33 +151,33 @@ namespace Code.MoodGame.Skills
             Target = pawn.FindTarget(GetSanitizerForFirstDash().Sanitize(direction, pawn.Direction), direction, swingData.GetBuildData(pawn, swingDataPositionOffset), targetLayer);
         }
 
-        public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+        public override IEnumerator ExecuteRoutine(MoodPawn pawn, CommandData command)
         {
-            if (!SanityCheck(pawn, skillDirection)) yield break;
-            PrepareAttack(pawn, skillDirection, out MoodSwing.MoodSwingBuildData buildData);
+            if (!SanityCheck(pawn, command)) yield break;
+            PrepareAttack(pawn, command.direction, out MoodSwing.MoodSwingBuildData buildData);
             yield return new WaitForSeconds(preDashDelay);
 
-            float preAttackDash = DoDashForAttack(pawn, skillDirection);
+            float preAttackDash = DoDashForAttack(pawn, command);
             yield return new WaitForSeconds(preAttackDash);
 
             
-            float executingTime = ExecuteAttack(pawn, skillDirection, buildData, out bool hit);
+            float executingTime = ExecuteAttack(pawn, command, buildData, out bool hit);
 
             yield return new WaitForSeconds(executingTime);
 
-            PostHitDash(pawn, skillDirection, hit);
+            PostHitDash(pawn, command.direction, hit);
 
             yield return new WaitForSeconds(animationTime);
 
-            PostAnimationEnd(pawn, skillDirection, hit);
+            PostAnimationEnd(pawn, command.direction, hit);
 
             yield return new WaitForSeconds(postTime);
 
-            FinishAttack(pawn, skillDirection, hit);
+            FinishAttack(pawn, command, hit);
 
         }
 
-        protected bool SanityCheck(MoodPawn pawn, in Vector3 skillDirection)
+        protected bool SanityCheck(MoodPawn pawn, in CommandData command)
         {
             if (swingData == null)
             {
@@ -183,6 +185,15 @@ namespace Code.MoodGame.Skills
                 return false;
             }
             return true;
+        }
+
+        private string GetCorrectAnimation(in CommandData command)
+        {
+            if(useCancelledAnimation && command.cancelledInto)
+            {
+                if (command.indexInString % 2 == 1) return cancelledAnimationIntStepString;
+            }
+            return animationIntStepString;
         }
 
         protected void PrepareAttack(MoodPawn pawn, in Vector3 skillDirection, out MoodSwing.MoodSwingBuildData buildData)
@@ -195,28 +206,28 @@ namespace Code.MoodGame.Skills
             ConsumeStances(pawn);
         }
 
-        protected float DoDashForAttack(MoodPawn pawn, in Vector3 skillDirection)
+        protected float DoDashForAttack(MoodPawn pawn, in CommandData command)
         {
             float preAttackDuration = Mathf.Max(preTime, 0f);
-            Dash(pawn, skillDirection, preAttackDash, preAttackDuration);
-            pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.PreAttack);
+            Dash(pawn, command.direction, preAttackDash, preAttackDuration);
+            pawn.SetAttackSkillAnimation(GetCorrectAnimation(command), MoodPawn.AnimationPhase.PreAttack);
             onStartAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             return preAttackDuration;
         }
 
-        protected float ExecuteAttack(MoodPawn pawn, in Vector3 skillDirection, in MoodSwing.MoodSwingBuildData buildData, out bool hit)
+        protected float ExecuteAttack(MoodPawn pawn, in CommandData command, in MoodSwing.MoodSwingBuildData buildData, out bool hit)
         {
-            pawn.PrepareForSwing(buildData, skillDirection);
-            pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.PostAttack);
-            pawn.ShowSwing(buildData, skillDirection);
+            pawn.PrepareForSwing(buildData, command.direction);
+            pawn.SetAttackSkillAnimation(GetCorrectAnimation(command), MoodPawn.AnimationPhase.PostAttack);
+            pawn.ShowSwing(buildData, command.direction);
             pawn.StopThreatening();
 
             onExecuteAttack.ExecuteIfNotNull(pawn.ObjectTransform);
             AddStances(pawn);
-            hit = DealDamage(pawn, skillDirection);
+            hit = DealDamage(pawn, command.direction);
             ExecutionResult success = hit ? ExecutionResult.Success : ExecutionResult.Failure;
-            DispatchExecuteEvent(pawn, skillDirection, success);
-            return ExecuteAttackEffect(pawn, skillDirection, success).Item1;
+            DispatchExecuteEvent(pawn, command, success);
+            return ExecuteAttackEffect(pawn, command, success).Item1;
         }
 
         protected void PostHitDash(MoodPawn pawn, in Vector3 skillDirection, bool hit)
@@ -237,14 +248,14 @@ namespace Code.MoodGame.Skills
             onEndAttack.ExecuteIfNotNull(pawn.ObjectTransform);
         }
 
-        protected void FinishAttack(MoodPawn pawn, in Vector3 skillDirection, bool hit)
+        protected void FinishAttack(MoodPawn pawn, in CommandData command, bool hit)
         {
-            pawn.SetAttackSkillAnimation(animationIntStepString, MoodPawn.AnimationPhase.None);
+            pawn.SetAttackSkillAnimation(GetCorrectAnimation(command), MoodPawn.AnimationPhase.None);
         }
 
-        protected (float, ExecutionResult) ExecuteAttackEffect(MoodPawn pawn, Vector3 skillDirection, ExecutionResult success)
+        protected (float, ExecutionResult) ExecuteAttackEffect(MoodPawn pawn, CommandData command, ExecutionResult success)
         {
-            return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (0f, success));
+            return MergeExecutionResult(base.ExecuteEffect(pawn, command), (0f, success));
         }
 
         protected void Dash(MoodPawn pawn, Vector3 skillDirection, DashStruct dashData, float duration)

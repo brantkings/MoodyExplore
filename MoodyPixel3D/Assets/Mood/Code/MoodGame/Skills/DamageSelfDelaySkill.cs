@@ -9,10 +9,10 @@ public class DamageSelfDelaySkill : CostStaminaDelaySkill
     public int damage = DamageInfo.BASE_SINGLE_UNIT_DAMAGE;
     public float stunTime = 0f;
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData command)
     {
         pawn.Damage(GetDamageInfo(pawn));
-        return base.ExecuteEffect(pawn, skillDirection);
+        return base.ExecuteEffect(pawn, command);
     }
 
     private DamageInfo GetDamageInfo(MoodPawn pawn)

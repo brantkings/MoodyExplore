@@ -25,14 +25,14 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
     private AnimatorID boolWhileInSkill;
 
 
-    public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+    public override IEnumerator ExecuteRoutine(MoodPawn pawn, MoodSkill.CommandData command)
     {
         pawn.SetPlugoutPriority(plugoutPriorityBefore);
         yield return new WaitForSeconds(preFeedbackDelay);
         DoFeedback(pawn, true);
         SolveStun(pawn, true);
         yield return new WaitForSeconds(preDelay);
-        yield return base.ExecuteRoutine(pawn, skillDirection);
+        yield return base.ExecuteRoutine(pawn, command);
         pawn.SetPlugoutPriority(plugoutPriorityAfter);
         SolveStun(pawn, false);
         DoFeedback(pawn, false);
@@ -58,11 +58,11 @@ public class CostStaminaDelaySkill : StaminaCostMoodSkill
         base.Interrupt(pawn);
     }
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData command)
     {
         foreach (var stance in toAdd) pawn.AddStance(stance);
         foreach (var flag in flags) pawn.AddFlag(flag);
-        return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (preFeedbackDelay, ExecutionResult.Success));
+        return MergeExecutionResult(base.ExecuteEffect(pawn, command), (preFeedbackDelay, ExecutionResult.Success));
     }
 
 

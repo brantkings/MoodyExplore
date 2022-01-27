@@ -34,6 +34,7 @@ MonoBehaviour:
     mirrored: 0
   heightCheckers: []
   _startupPriority: 2
+  _startupPriorityBonusOnChangeCategory: 0
   _itemQuantityCost: 1
   _freeFocusCost: 0
   _lockCamera: 1
@@ -51,7 +52,7 @@ MonoBehaviour:
     m_Bits: 1024
   knockbackDistance:
     beats: 3
-  knobackStyle:
+  knockbackStyle:
     _directProperty:
       knockbackByDealer:
         direction: 0
@@ -136,7 +137,9 @@ MonoBehaviour:
     dashFeedbackDirection: 0
   previewPositioning: 2
   showPreview: 0
-  animationIntStepString: Attack_Right
+  animationIntStepString: Attack_Thrust
+  useCancelledAnimation: 0
+  cancelledAnimationIntStepString: Attack_Left
   onStartAttack: {fileID: 11400000, guid: 87d62d6562f45d6459f05bbddc5e5216, type: 2}
   onExecuteAttack: {fileID: 11400000, guid: 896493ee010d6f247bd986138f3c95a1, type: 2}
   onEndAttack: {fileID: 11400000, guid: 51c76a511fc743042b427a97911333c7, type: 2}

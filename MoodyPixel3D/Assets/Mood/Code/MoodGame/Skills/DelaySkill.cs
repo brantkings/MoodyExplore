@@ -19,7 +19,7 @@ public class DelaySkill : MoodSkill
     private AnimatorID boolWhileInSkill;
 
 
-    public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+    public override IEnumerator ExecuteRoutine(MoodPawn pawn, MoodSkill.CommandData skillDirection)
     {
         DoFeedback(pawn, true);
         SolveStun(pawn, true);
@@ -48,7 +48,7 @@ public class DelaySkill : MoodSkill
         base.Interrupt(pawn);
     }
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData skillDirection)
     {
         foreach (var stance in toAdd) pawn.AddStance(stance);
         foreach (var flag in flags) pawn.AddFlag(flag);

@@ -39,8 +39,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
     public delegate void DelMoodPawnDamageEvent(MoodPawn pawn, DamageInfo info);
-    public delegate void DelMoodPawnSkillEvent(MoodPawn pawn, MoodSkill skill, Vector3 direction);
-    public delegate void DelMoodPawnSkillExecutionEvent(MoodPawn pawn, MoodSkill skill, Vector3 direction, MoodSkill.ExecutionResult result);
+    public delegate void DelMoodPawnSkillEvent(MoodPawn pawn, MoodSkill skill, MoodSkill.CommandData direction);
+    public delegate void DelMoodPawnSkillExecutionEvent(MoodPawn pawn, MoodSkill skill, MoodSkill.CommandData command, MoodSkill.ExecutionResult result);
     public delegate void DelMoodPawnItemEvent(MoodPawn pawn, MoodItemInstance item);
     public delegate void DelMoodPawnSwingEvent(MoodSwing.MoodSwingBuildData swing, Vector3 direction);
     public delegate void DelMoodPawnUndirectedSkillEvent(MoodPawn pawn, MoodSkill skill);
@@ -630,6 +630,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private Vector3? _currentSkillUsePosition;
     private Vector3 _currentSkillOriginDirection;
     private Vector3 _currentSkillOriginPosition;
+    private int _skillStringCounter;
 
     public Tween DelayedAction(TweenCallback act, float delay)
     {
@@ -656,21 +657,31 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     /// <returns></returns>
     public Coroutine ExecuteSkill(MoodSkill skill, in Vector3 skillDirection, MoodItemInstance item = null)
     {
-        if (IsExecutingSkill()) InterruptCurrentSkill(); //If it called this, will cancel every other skill.
-        _currentSkillRoutine = StartCoroutine(SkillRoutine(skill, skillDirection, item));
+        bool shouldInterrupt = IsExecutingSkill();
+        if (shouldInterrupt) InterruptCurrentSkill(); //If it called this, will cancel every other skill.
+        _currentSkillRoutine = StartCoroutine(SkillRoutine(skill, skillDirection, shouldInterrupt, item));
         return _currentSkillRoutine;
     }
 
 
-    private IEnumerator SkillRoutine(MoodSkill skill, Vector3 skillDirection, MoodItemInstance item = null)
+    private IEnumerator SkillRoutine(MoodSkill skill, Vector3 skillDirection, bool interrupted, MoodItemInstance item = null)
     {
-        MarkUsingSkill(skill, skillDirection);
+        MoodSkill.CommandData command = new MoodSkill.CommandData()
+        {
+            direction = skillDirection,
+            indexInString = _skillStringCounter++,
+            cancelledInto = interrupted,
+        };
+
+        MarkUsingSkill(skill, command);
         MarkUsingItem(item);
+
         if(pawnConfiguration?.stanceOnSkill != null) AddStance(pawnConfiguration.stanceOnSkill);
         BattleLog.Log($"{GetName()} readies '{skill.GetName(this)}'.", BattleLog.LogType.Battle);
-        yield return skill.ExecuteRoutine(this, skillDirection);
+        yield return skill.ExecuteRoutine(this, command);
         if (pawnConfiguration?.stanceOnSkill != null) RemoveStance(pawnConfiguration.stanceOnSkill);
         _currentSkillRoutine = null;
+        _skillStringCounter = 0; //If this gets here, then the string is nullified.
         UnmarkUsingSkill(skill);
         UnmarkUsingItem();
     }
@@ -745,7 +756,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _currentSkillUsePosition;
     }
 
-    public void MarkUsingSkill(MoodSkill skill, Vector3 direction)
+    public void MarkUsingSkill(MoodSkill skill, MoodSkill.CommandData direction)
     {
         //Debug.LogFormat("{0} mark using skill {1}", this.name, skill?.name);
         _currentSkill = skill;
@@ -790,13 +801,13 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         return _currentSkill;
     }
 
-    public void UsedSkill(MoodSkill skill, Vector3 direction, MoodSkill.ExecutionResult success)
+    public void UsedSkill(MoodSkill skill, MoodSkill.CommandData command, MoodSkill.ExecutionResult success)
     {
         Debug.LogFormat("{0} executes {1} with {2}! ({3})", name, skill.name, _currentSkillItem, Time.frameCount);
         _currentSkillUseTimestamp = Time.time;
         _currentSkillUsePosition = Position;
         if (success == MoodSkill.ExecutionResult.Success && _currentSkillItem != null) UsedItem(skill, _currentSkillItem);
-        OnUseSkill?.Invoke(this, skill, direction, success);
+        OnUseSkill?.Invoke(this, skill, command, success);
     }
 
     public bool CanUseSkill(MoodSkill skill)

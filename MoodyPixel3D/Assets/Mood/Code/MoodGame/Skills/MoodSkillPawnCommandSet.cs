@@ -260,25 +260,25 @@ public class MoodSkillPawnCommandSet : MoodSkill
         else return WillHaveTargetResult.NonApplicable;
     }
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData skillDirection)
     {
         return (0f, ExecutionResult.Non_Applicable);
     }
 
-    public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+    public override IEnumerator ExecuteRoutine(MoodPawn pawn, CommandData args)
     {
         RoutineState state = new RoutineState();
         for (int i = 0, len = commands.Count; i < len; i++)
         {
             Command command = commands[i];
-            SanitizeDirection(pawn.Direction, ref skillDirection, command.directionChange);
+            SanitizeDirection(pawn.Direction, ref args.direction, command.directionChange);;
 
             float duration = 0f;
 
             foreach(var stuff in command.GetAllCommands())
             {
-                float stuffDuration = stuff.GetDuration(pawn, skillDirection);
-                pawn.StartCoroutine(stuff.DoCommandRoutine(pawn, this, skillDirection, stuffDuration, state));
+                float stuffDuration = stuff.GetDuration(pawn, args.direction);
+                pawn.StartCoroutine(stuff.DoCommandRoutine(pawn, this, args.direction, stuffDuration, state));
 
                 duration = Mathf.Max(stuffDuration, duration);
             }
@@ -287,7 +287,7 @@ public class MoodSkillPawnCommandSet : MoodSkill
             if (command.endCommandString) break;
         }
 
-        if (!state.dispatchedEvent) DispatchExecuteEvent(pawn, skillDirection, ExecutionResult.Non_Applicable);
+        if (!state.dispatchedEvent) DispatchExecuteEvent(pawn, args, ExecutionResult.Non_Applicable);
     }
 
     public IEnumerator CommandRoutine(MoodPawn pawn, Vector3 skillDirection)

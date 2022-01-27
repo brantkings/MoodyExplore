@@ -8,7 +8,10 @@ ModelImporter:
     second: standing melee attack backhand pre
   - first:
       74: 7194794334204908976
-    second: standing melee attack backhand post
+    second: standing melee attack hook post
+  - first:
+      74: -5121496186455474524
+    second: standing melee attack hook pre
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -38,13 +41,13 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: standing melee attack backhand pre
+      name: standing melee attack hook pre
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
       lastFrame: 19
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: -36.18
       level: 0
       cycleOffset: 0
       loop: 0
@@ -67,13 +70,13 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: standing melee attack backhand post
+      name: standing melee attack hook post
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 22
-      lastFrame: 95
+      firstFrame: 28
+      lastFrame: 47
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 31.9
       level: 0
       cycleOffset: 0
       loop: 0

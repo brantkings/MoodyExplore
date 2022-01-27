@@ -24,7 +24,7 @@ public class ChainSkill : StaminaCostMoodSkill
         return cost;
     }
 
-    public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+    public override IEnumerator ExecuteRoutine(MoodPawn pawn, CommandData command)
     {
         pawn.DepleteStamina(base.GetStaminaCost(), MoodPawn.StaminaChangeOrigin.Action);
 
@@ -39,21 +39,21 @@ public class ChainSkill : StaminaCostMoodSkill
         pawn.UnmarkUsingSkill(this);
         foreach (MoodSkill skill in skills)
         {
-            pawn.MarkUsingSkill(skill, skillDirection);
+            pawn.MarkUsingSkill(skill, command);
             //Debug.LogFormat("Gonna use skill {0}, {1}", skill, Time.time);
-            yield return skill.ExecuteRoutine(pawn, skillDirection);
+            yield return skill.ExecuteRoutine(pawn, command);
             //Debug.LogFormat("Finished skill {0}, {1}", skill, Time.time);
             pawn.UnmarkUsingSkill(skill);
 
             if (interrupted == skill)
             {
                 pawn.InterruptSkill(this);
-                pawn.MarkUsingSkill(this, skillDirection);
+                pawn.MarkUsingSkill(this, command);
                 break;
             }
         }
         pawn.OnInterruptSkill -= onInterruptSkill;
-        pawn.MarkUsingSkill(this, skillDirection);
+        pawn.MarkUsingSkill(this, command);
     }
 
     public override void SetShowDirection(MoodPawn pawn, Vector3 direction)

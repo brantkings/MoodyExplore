@@ -5,10 +5,10 @@ ModelImporter:
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: standing melee attack downward pre
+    second: standing melee attack overhead short pre
   - first:
       74: 2264495481829860171
-    second: standing melee attack downward post
+    second: standing melee attack overhead short post
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -38,20 +38,20 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: standing melee attack downward pre
+      name: standing melee attack overhead short pre
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 13
+      lastFrame: 14
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: -37.6
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
@@ -60,27 +60,52 @@ ModelImporter:
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
+      curves:
+      - name: Curve
+        curve:
+          serializedVersion: 2
+          curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          preInfinity: 2
+          postInfinity: 2
+          rotationOrder: 4
       events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: standing melee attack downward post
+      name: standing melee attack overhead short post
       takeName: mixamo.com
       internalID: 0
       firstFrame: 23
       lastFrame: 68
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 67.3
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0

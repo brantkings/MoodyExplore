@@ -100,24 +100,24 @@ public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRang
         Target = pawn.FindTarget(direction, range);
     }
 
-    public override IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+    public override IEnumerator ExecuteRoutine(MoodPawn pawn, CommandData command)
     {
-        if (setDirection) pawn.SetHorizontalDirection(skillDirection);
+        if (setDirection) pawn.SetHorizontalDirection(command.direction);
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PreAttack);
         pawn.SetPlugoutPriority(priorityPreInstantiate);
-        onStartInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
-        if (threat != null) pawn.StartThreatening(skillDirection, threat.GetBuildData(pawn, threatOffset));
+        onStartInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(command.direction));
+        if (threat != null) pawn.StartThreatening(command.direction, threat.GetBuildData(pawn, threatOffset));
         yield return new WaitForSeconds(preTime);
 
-        ExecuteEffect(pawn, skillDirection);
-        DispatchExecuteEvent(pawn, skillDirection, ExecutionResult.Success);
+        ExecuteEffect(pawn, command);
+        DispatchExecuteEvent(pawn, command, ExecutionResult.Success);
 
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.PostAttack);
         pawn.SetPlugoutPriority(priorityAfterInstantiate);
         if (threat != null) pawn.StopThreatening();
-        onExecuteInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
+        onExecuteInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(command.direction));
         yield return new WaitForSeconds(postTime);
-        onEndInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(skillDirection));
+        onEndInstantiate.Invoke(pawn.ObjectTransform, pawn.Position, Quaternion.LookRotation(command.direction));
         pawn.SetAttackSkillAnimation("Attack_Left", MoodPawn.AnimationPhase.None);
     }
 
@@ -127,9 +127,9 @@ public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRang
         base.Interrupt(pawn);
     }
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData command)
     {
-        GameObject inst = GetProjectile(pawn, skillDirection, pawn.GetInstantiatePlace(), pawn.GetInstantiateRotation());
+        GameObject inst = GetProjectile(pawn, command.direction, pawn.GetInstantiatePlace(), pawn.GetInstantiateRotation());
         if(inst != null)
         {
             inst.GetComponentInChildren<IMoodPawnSetter>()?.SetMoodPawnOwner(pawn);
@@ -147,11 +147,11 @@ public abstract class InstantiateSkill : StaminaCostMoodSkill, RangeSphere.IRang
                 if (instBody != null) instBody.AddForce(forceOnThrow.GetForce(pawn.ObjectTransform), forceOnThrow.forceMode);
             }
 
-            return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (0f, ExecutionResult.Success));
+            return MergeExecutionResult(base.ExecuteEffect(pawn, command), (0f, ExecutionResult.Success));
         }
         else
         {
-            return MergeExecutionResult(base.ExecuteEffect(pawn, skillDirection), (0f, ExecutionResult.Failure));
+            return MergeExecutionResult(base.ExecuteEffect(pawn, command), (0f, ExecutionResult.Failure));
         }
     }
 

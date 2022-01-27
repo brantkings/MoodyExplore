@@ -40,7 +40,7 @@ public interface IMoodSkill
     /// <param name="pawn">The pawn that is executing the skill.</param>
     /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
     /// <returns></returns>
-    IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection);
+    IEnumerator ExecuteRoutine(MoodPawn pawn, MoodSkill.CommandData skillDirection);
     
     /// <summary>
     /// An skill can be interrupted at any time. Implement this to tell what should still happen, what shouldn't, kill tweens.
@@ -119,6 +119,13 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         {
             return Sanitize(vec, YAngleToSanitize(vec, characterDirection));
         }
+    }
+
+    public struct CommandData
+    {
+        public Vector3 direction;
+        public int indexInString;
+        public bool cancelledInto;
     }
 
     
@@ -340,13 +347,13 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// Execute the skill. This should call ExecuteEffect() at some point and wait in real time for the return result. Override if you want to change delays, times, etc from the normal one. You also must dispatch execute event after you do the skill in order to consume items for example. Do not call base.
     /// </summary>
     /// <param name="pawn">The pawn that is executing the skill.</param>
-    /// <param name="skillDirection">The direction to which the pawn is executing the skill.</param>
+    /// <param name="command">The direction to which the pawn is executing the skill.</param>
     /// <returns></returns>
-    public virtual IEnumerator ExecuteRoutine(MoodPawn pawn, Vector3 skillDirection)
+    public virtual IEnumerator ExecuteRoutine(MoodPawn pawn, CommandData command)
     {
-        (float duration, ExecutionResult executed) = ExecuteEffect(pawn, skillDirection);
+        (float duration, ExecutionResult executed) = ExecuteEffect(pawn, command);
         pawn.SetPlugoutPriority(_startupPriority); //By default, it is the startup priority.
-        DispatchExecuteEvent(pawn, skillDirection, executed);
+        DispatchExecuteEvent(pawn, command, executed);
         if (duration > 0f)
         {
             yield return new WaitForSeconds(duration);
@@ -389,10 +396,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
         }
     }
 
-    protected void DispatchExecuteEvent(MoodPawn pawn, Vector3 skillDirection, ExecutionResult success)
+    protected void DispatchExecuteEvent(MoodPawn pawn, in CommandData command, ExecutionResult success)
     {
-        OnExecute?.Invoke(pawn, skillDirection, success);
-        pawn.UsedSkill(this, skillDirection, success);
+        OnExecute?.Invoke(pawn, command.direction, success);
+        pawn.UsedSkill(this, command, success);
     }
 
     public virtual IEnumerable<float> GetTimeIntervals(MoodPawn pawn, Vector3 skillDirection)
@@ -441,10 +448,10 @@ public abstract class MoodSkill : ScriptableObject, IMoodSelectable, IMoodSkill
     /// Execute the real effect! Return the duration of the effect that should be waited after.
     /// </summary>
     /// <param name="pawn">The pawn that is executing the skill.</param>
-    /// <param name="skillDistance">The distance  to which the pawn is executing the skill. </param>
+    /// <param name="command">The data of the command to the skill. </param>
     /// <returns>The amount of time this should wait in real time and if the execution was considered a 'success' or not.</returns>
 
-    protected abstract (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDistance);
+    protected abstract (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData command);
 
     protected static ExecutionResult MergeExecutionResult(ExecutionResult a, ExecutionResult b, bool priorityIsSuccess = true)
     {

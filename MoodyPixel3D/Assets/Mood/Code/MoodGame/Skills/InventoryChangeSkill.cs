@@ -18,7 +18,7 @@ public class InventoryChangeSkill : CostStaminaDelaySkill
     public MoodItem arbitraryItem;
 
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in CommandData command)
     {
         MoodItemInstance item = pawn.GetCurrentItem();
         switch (action)
@@ -45,6 +45,6 @@ public class InventoryChangeSkill : CostStaminaDelaySkill
             default:
                 break;
         }
-        return base.ExecuteEffect(pawn, skillDirection);
+        return base.ExecuteEffect(pawn, command);
     }
 }

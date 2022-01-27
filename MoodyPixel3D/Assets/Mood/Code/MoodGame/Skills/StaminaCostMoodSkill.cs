@@ -28,7 +28,7 @@ public abstract class StaminaCostMoodSkill : MoodSkill
         return HasPawnEnoughStamina(pawn) && base.CanExecute(pawn, where);
     }
 
-    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, Vector3 skillDirection)
+    protected override (float, ExecutionResult) ExecuteEffect(MoodPawn pawn, in MoodSkill.CommandData command)
     {
         pawn.DepleteStamina(_cost, MoodPawn.StaminaChangeOrigin.Action);
         return (0f, ExecutionResult.Non_Applicable);
