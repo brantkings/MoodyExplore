@@ -11,8 +11,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 0.5, z: 2}
-  m_Center: {x: -0.2, y: 0, z: 0.5}
+  m_Size: {x: 0.25, y: 0.25, z: 1}
+  m_Center: {x: -0.1, y: 0, z: 0.25}
 --- !u!1001 &3168387030290868986
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20,6 +20,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 95477535953831992, guid: 83b6de2603d9d9b40898ffe8ef264f15, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4692400333989210188, guid: 83b6de2603d9d9b40898ffe8ef264f15, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -68,6 +72,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PROJECTILE_Crowbar
       objectReference: {fileID: 0}
+    - target: {fileID: 7959667790238689196, guid: 83b6de2603d9d9b40898ffe8ef264f15, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2076797427984728018, guid: 83b6de2603d9d9b40898ffe8ef264f15, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 83b6de2603d9d9b40898ffe8ef264f15, type: 3}
@@ -94,11 +102,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 883870826879395589, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.81649655
+      objectReference: {fileID: 0}
+    - target: {fileID: 883870826879395589, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.40106115
       objectReference: {fileID: 0}
     - target: {fileID: 883870826879395589, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 883870826879395589, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.415311
       objectReference: {fileID: 0}
     - target: {fileID: 883870826879395589, guid: 676de2f443f7a8945b371686e9d5930d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y

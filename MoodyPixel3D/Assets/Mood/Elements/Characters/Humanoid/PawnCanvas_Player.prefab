@@ -61,6 +61,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PawnCanvas_Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6099604486958605225, guid: a35f375dfa91c5d409629c6220b867f5, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6970033598111752679, guid: a35f375dfa91c5d409629c6220b867f5, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

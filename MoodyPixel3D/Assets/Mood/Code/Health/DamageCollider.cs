@@ -31,7 +31,7 @@ public class DamageCollider : Damage
 #if UNITY_EDITOR
         if (_debug)
         {
-            DamageInfo info = GetDamage(other.transform);
+            DamageInfo info = GetDamage(enemy.transform);
             Debug.LogFormat(
                 "{0} entered {1} and it is going to damage {2} by {3} damage. It already damaged how many? {4}",
                 this, other, enemy, info.damage, GetAlreadyDamagedLength());

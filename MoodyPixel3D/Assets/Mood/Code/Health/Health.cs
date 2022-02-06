@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using DG.Tweening;
+using System.Linq;
 
 public enum DamageTeam
 {
@@ -35,6 +36,7 @@ public struct DamageInfo
     }
 
     public List<ThoughtInDamage> pain;
+    public List<MoodStatusEffect> statusEffects;
 
     public struct FreezeFrameData
     {
@@ -64,6 +66,7 @@ public struct DamageInfo
         shouldStaggerAnimation = true;
         feedbacks = true;
         pain = null;
+        statusEffects = null;
         freezeFrame = new FreezeFrameData()
         {
             freezeFrameDelay = 1,
@@ -136,6 +139,27 @@ public struct DamageInfo
     {
         if (pain == null) pain = new List<ThoughtInDamage>(2);
         pain.Add(new ThoughtInDamage() {flyingThoughtInstance = f});
+        return this;
+    }
+
+
+    public DamageInfo AddStatusEffect(in MoodStatusEffect f)
+    {
+        if (statusEffects == null) statusEffects = new List<MoodStatusEffect>(2);
+        statusEffects.Add(f);
+        return this;
+    }
+
+    public DamageInfo AddStatusEffect(IEnumerable<MoodStatusEffect> fs)
+    {
+        if(fs.Any())
+        {
+            if (statusEffects == null) statusEffects = new List<MoodStatusEffect>(2);
+            foreach (var f in fs)
+            {
+                statusEffects.Add(f);
+            }
+        }
         return this;
     }
 

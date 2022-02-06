@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 515dde1323456b44badf6777ead2df6a, type: 3}
-  m_Name: Knockback_Pull
+  m_Name: Knockback_SpherePosDifference
   m_EditorClassIdentifier: 
   _value:
     knockbackByDealer:
       direction: 0
       customFrom: {fileID: 0}
-      magnitude: 0.6
+      magnitude: 0
     knockbackByReceiver:
       direction: 1
       customFrom: {fileID: 0}
       magnitude: 0.1
     absoluteKnockback: {x: 0, y: 0, z: 0}
-    knockbackFromHitboxMagnitude: 0.3
+    knockbackFromHitboxMagnitude: 0
     knockbackPositionDifferenceMagnitude: 0
     knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 1, z: 0}
-    angleRotation: 0
+    angleRotation: 30
     knockbackDurationAbsolute:
       beats: 0
     knockbackDurationMultiplierForDistance:

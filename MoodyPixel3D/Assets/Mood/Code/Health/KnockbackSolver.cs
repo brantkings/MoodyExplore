@@ -12,9 +12,9 @@ public class KnockbackSolver
     [SerializeField]
     private Vector3 absoluteKnockback = Vector3.zero;
     [SerializeField]
-    private float knockbackFromHitbox = 0f;
+    private float knockbackFromHitboxMagnitude = 0f;
     [SerializeField]
-    private float knockbackPositionDifferenceNormalized = 0f;
+    private float knockbackPositionDifferenceMagnitude = 0f;
     [SerializeField]
     private Vector3 knockbackPositionDifferenceProjectedOnPlane = Vector3.zero;
 
@@ -37,9 +37,9 @@ public class KnockbackSolver
 
     public Vector3 GetKnockback(Transform from, Transform to, Vector3 attackForce, float magnitude, out float knockbackAngle)
     {
-        Vector3 knock = knockbackByDealer.Get(from) + knockbackByReceiver.Get(from) + absoluteKnockback + GetKnockbackPositionDifference(from, to) + knockbackFromHitbox * attackForce;
+        Vector3 knock = knockbackByDealer.Get(from) + knockbackByReceiver.Get(to) + absoluteKnockback + GetKnockbackPositionDifference(from, to) + knockbackFromHitboxMagnitude * attackForce;
         Debug.LogFormat("Knockback: [From:{0} To:{1} Abs:{2}; PosDif:{3} (to:{7} - from:{8}='{9}'); Force:{4}] --> Total:{5} ({6})",
-            knockbackByDealer.Get(from), knockbackByReceiver.Get(from), absoluteKnockback, GetKnockbackPositionDifference(from, to), knockbackFromHitbox * attackForce,
+            knockbackByDealer.Get(from), knockbackByReceiver.Get(to), absoluteKnockback, GetKnockbackPositionDifference(from, to), knockbackFromHitboxMagnitude * attackForce,
             knock.normalized, knock,
             to.position,from.position, to.position - from.position);
 
@@ -54,7 +54,7 @@ public class KnockbackSolver
 
     private Vector3 GetKnockbackPositionDifference(Transform from, Transform to)
     {
-        Vector3 dif = (to.position - from.position).normalized * knockbackPositionDifferenceNormalized;
+        Vector3 dif = (to.position - from.position).normalized * knockbackPositionDifferenceMagnitude;
         if (dif != Vector3.zero && knockbackPositionDifferenceProjectedOnPlane != Vector3.zero)
         {
             dif = Vector3.ProjectOnPlane(dif, knockbackPositionDifferenceProjectedOnPlane);

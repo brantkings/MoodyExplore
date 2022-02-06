@@ -30,6 +30,7 @@ public struct RelativeVector3
 
     public Vector3 Get(Transform defaultTransform)
     {
+        Debug.LogFormat("Getting from {0} {1} (f:{3}) -> {2}", defaultTransform, direction, DirectionUtils.GetDirectionFrom(direction, GetTransformOrigin(defaultTransform)) * magnitude, defaultTransform.forward);
         return DirectionUtils.GetDirectionFrom(direction, GetTransformOrigin(defaultTransform)) * magnitude;
     }
 

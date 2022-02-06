@@ -30,6 +30,7 @@ MonoBehaviour:
   _possibleAngles: []
   heightCheckers: []
   _startupPriority: 0
+  _startupPriorityBonusOnChangeCategory: 0
   _itemQuantityCost: 0
   _freeFocusCost: 0
   _lockCamera: 1
@@ -49,7 +50,7 @@ MonoBehaviour:
   threat: {fileID: 0}
   threatOffset: {x: 0, y: 0, z: 0}
   forceOnThrow:
-    force: {x: 0, y: 0, z: 20}
+    force: {x: 0, y: 0, z: 10}
     forceMode: 2
     absoluteValue: 0
   onStartInstantiate: []

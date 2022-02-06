@@ -143,23 +143,19 @@ MonoBehaviour:
   inherentReactions: []
   flagInherentStances: []
   _threatenable: {fileID: 0}
-  movementData: {fileID: 0}
+  _movementData: {fileID: 0}
   height: 2
   _pawnRadius: 0.5
   extraRangeBase: 0
   cantMoveWhileThreatened: 1
   cantMoveWhileExecutingSkill: 0
   cantRotateWhileExecutingSkill: 0
+  cantMoveWhileDashing: 1
   _maxStamina:
     baseValue: 1
   infiniteStamina: 0
   recoverStaminaWhileUsingSkill: 0
-  staminaRecoveryIdlePerSecond:
-    beats: 8
-  staminaRecoveryMovingPerSecond:
-    beats: 8
   _debug: 0
-  shakeOnDamage: {fileID: 0}
 --- !u!114 &1165887686459921071
 MonoBehaviour:
   m_ObjectHideFlags: 0

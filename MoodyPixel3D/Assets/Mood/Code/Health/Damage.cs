@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LHH.Unity;
+using System.Linq;
 
 public class Damage : MonoBehaviour
 {
@@ -36,6 +37,9 @@ public class Damage : MonoBehaviour
 
     [SerializeField]
     private bool _onlyDamageOnce;
+
+    [SerializeField] private List<Thought> pain;
+    [SerializeField] private List<MoodStatusEffect> statusEffects;
 
 
 
@@ -88,6 +92,7 @@ public class Damage : MonoBehaviour
         Transform chain = other.transform;
         while (chain != null)
         {
+            Debug.LogFormat("Getting health from {0} ({1})", chain.name, other.transform.name);
             Health h = chain.GetComponent<Health>();
             if (h != null) return h;
             Damage d = chain.GetComponent<Damage>();
@@ -104,6 +109,7 @@ public class Damage : MonoBehaviour
             .SetForce(knockback.Get()
             .GetKnockback(transform, target, _knockbackDistance, out float angle), angle, knockback.Get().GetDuration(_knockbackDistance))
             .SetStunTime(_stunTime)
+            .AddStatusEffect(statusEffects)
             .SetIgnorePhaseThrough(_ignorePhaseThrough);
     }
 

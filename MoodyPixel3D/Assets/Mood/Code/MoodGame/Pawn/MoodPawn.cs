@@ -38,6 +38,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 {
 
     public delegate void DelMoodPawnEvent(MoodPawn pawn);
+    public delegate void DelMoodPawnValueEvent<T>(MoodPawn pawn, in T oldValue, in T newValue);
     public delegate void DelMoodPawnDamageEvent(MoodPawn pawn, DamageInfo info);
     public delegate void DelMoodPawnSkillEvent(MoodPawn pawn, MoodSkill skill, MoodSkill.CommandData direction);
     public delegate void DelMoodPawnSkillExecutionEvent(MoodPawn pawn, MoodSkill skill, MoodSkill.CommandData command, MoodSkill.ExecutionResult result);
@@ -47,7 +48,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public static event DelMoodPawnDamageEvent OnAnyMoodPawnDie;
 
-    public event DelMoodPawnEvent OnChangeStamina;
+    public event DelMoodPawnValueEvent<float> OnChangeStamina;
 
     public event DelMoodPawnSkillEvent OnBeforeSkillUse;
     public event DelMoodPawnSwingEvent OnBeforeSwinging;
@@ -488,7 +489,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         _stamina = _maxStamina;
         //_currentDirection = Direction;
-        OnChangeStamina?.Invoke(this);
+        OnChangeStamina?.Invoke(this, 0f, _stamina);
     }
 
 
@@ -496,6 +497,8 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     {
         if(ShouldRecoverStamina())
             RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
+
+        UpdateStatusEffects();
 
         MovementData toUse = _movementData.MovementData;
         UpdateInnateMovementSkills(_inputVelocity, _inputRotation, toUse);
@@ -588,6 +591,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         BattleLog.Log($"{GetName()} takes {BattleLog.Paint($"{Mathf.FloorToInt(info.damage / 10)} damage", BattleLog.Instance.importantColor)}!", BattleLog.LogType.Battle);
         if (info.damage > 0 && pawnConfiguration != null) 
             AddFlag(pawnConfiguration.onDamage);
+        if (info.statusEffects.Any()) foreach (var f in info.statusEffects) AddStatusEffect(f);
         HandleDamageInfo(info, health);
     }
 
@@ -813,6 +817,11 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     public bool CanUseSkill(MoodSkill skill)
     {
         return !IsStunned(LockType.Action) && skill.GetPluginPriority(this, GetCurrentSkill()) > GetPlugoutPriority();
+    }
+
+    public string CanUseSkillDebug(MoodSkill skill)
+    {
+        return $"Can {name} use {skill.name}? Stunned OK?{!IsStunned(LockType.Action)} and Plugin Plugout OK? ({skill.GetPluginPriority(this, GetCurrentSkill())} > {GetPlugoutPriority()}) {skill.GetPluginPriority(this, GetCurrentSkill()) > GetPlugoutPriority()}.";
     }
     #endregion
 
@@ -1952,7 +1961,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         _stamina = Mathf.Clamp(_stamina + change, 0f, _maxStamina);
         if (oldStamina != _stamina)
         {
-            OnChangeStamina?.Invoke(this);
+            OnChangeStamina?.Invoke(this, oldStamina, _stamina);
             if(_stamina == 0f)
             {
                 switch (origin)
@@ -1988,7 +1997,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private void OnChangeMaxStamina(float before, float after)
     {
         //Debug.LogFormat("Change stamina yay {0} {1} {2}", before, after, this);
-        if (before != after) OnChangeStamina?.Invoke(this);
+        if (before != after) OnChangeStamina?.Invoke(this, _stamina, _stamina);
     }
 
 
@@ -2094,50 +2103,6 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     }
     #endregion
 
-    #region Debug
-    [LHH.Unity.Button]
-    [ContextMenu("Debug Stances")]
-    public void DebugActiveStances()
-    {
-        foreach(var stance in AllActiveStances)
-            Debug.LogFormat("{0} is in {1}", name, stance);
-    }
-
-    [LHH.Unity.Button]
-    [ContextMenu("Debug Possible Reactions")]
-    public void DebugActiveReactions()
-    {
-        foreach (var reaction in GetActiveReactions())
-                Debug.LogFormat("{0} can react with {1}", name, reaction);
-    }
-
-    [LHH.Unity.Button]
-    [ContextMenu("Debug Possible Reactions on stances")]
-    public void DebugActiveReactionsStances()
-    {
-        foreach (var stance in AllActiveStances)
-            foreach(var reaction in stance.GetReactions())
-                Debug.LogFormat("{0} can react with {1} because {2}", name, reaction, stance);
-
-        foreach(var reaction in pawnConfiguration?.GetReactions())
-            Debug.LogFormat("{0} can react with {1} because configuration {2}", name, reaction, pawnConfiguration);
-
-
-        foreach (var reaction in inherentReactions)
-            Debug.LogFormat("{0} can react with {1} because inherent reactions", name, reaction);
-    }
-
-
-    [LHH.Unity.Button]
-    [ContextMenu("Debug Locks")]
-    public void DebugLocks()
-    {
-        Debug.LogFormat("[LOCK] Movement is {0}", _movementLock);
-        Debug.LogFormat("[LOCK] Action is {0}", _actionStunLock);
-        Debug.LogFormat("[LOCK] Reaction is {0}", _reactionStunLock);
-    }
-    #endregion
-
     #region Item
 
     public void MarkUsingItem(MoodItemInstance item)
@@ -2163,7 +2128,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     public void AddItem(MoodItemInstance item)
     {
-        if(!Inventory.Equals(null))
+        if (!Inventory.Equals(null))
             Inventory.AddItem(item);
     }
 
@@ -2251,7 +2216,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
 
     private void UsedItem(MoodSkill skill, MoodItemInstance item)
     {
-        if(item != null)
+        if (item != null)
         {
             item.Use(this, skill, JustDestroyedItem);
             OnUseItem?.Invoke(this, item);
@@ -2267,6 +2232,85 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         RemoveItem(item);
     }
 
+    #endregion
+
+    #region Status Effect
+
+    List<IMoodPawnStatusEffect> currentEffects = new List<IMoodPawnStatusEffect>(4);
+
+    public void AddStatusEffect(IMoodPawnStatusEffect effect)
+    {
+        if(!currentEffects.Contains(effect))
+        {
+            currentEffects.Add(effect);
+            effect.AddEffect(this);
+            BattleLog.Log($"{name} is now feeling '{BattleLog.Paint(effect.GetName(), Color.white)}'...", BattleLog.LogType.Battle);
+        }
+    }
+
+    public void RemoveStatusEffect(IMoodPawnStatusEffect effect)
+    {
+        if (currentEffects.Remove(effect))
+        {
+            effect.RemoveEffect(this);
+            BattleLog.Log($"{name} is not feeling '{BattleLog.Paint(effect.GetName(), Color.white)}' anymore!", BattleLog.LogType.Battle);
+        }
+    }
+
+    private void UpdateStatusEffects()
+    {
+        for (int i = 0, len = currentEffects.Count; i < len; i++)
+        {
+            if(currentEffects[i] is IMoodPawnUpdateEffect updateEffect)
+            {
+                updateEffect.UpdatePawn(this);
+            }
+        }
+    }
+    #endregion
+
+    #region Debug
+    [LHH.Unity.Button]
+    [ContextMenu("Debug Stances")]
+    public void DebugActiveStances()
+    {
+        foreach(var stance in AllActiveStances)
+            Debug.LogFormat("{0} is in {1}", name, stance);
+    }
+
+    [LHH.Unity.Button]
+    [ContextMenu("Debug Possible Reactions")]
+    public void DebugActiveReactions()
+    {
+        foreach (var reaction in GetActiveReactions())
+                Debug.LogFormat("{0} can react with {1}", name, reaction);
+    }
+
+    [LHH.Unity.Button]
+    [ContextMenu("Debug Possible Reactions on stances")]
+    public void DebugActiveReactionsStances()
+    {
+        foreach (var stance in AllActiveStances)
+            foreach(var reaction in stance.GetReactions())
+                Debug.LogFormat("{0} can react with {1} because {2}", name, reaction, stance);
+
+        foreach(var reaction in pawnConfiguration?.GetReactions())
+            Debug.LogFormat("{0} can react with {1} because configuration {2}", name, reaction, pawnConfiguration);
+
+
+        foreach (var reaction in inherentReactions)
+            Debug.LogFormat("{0} can react with {1} because inherent reactions", name, reaction);
+    }
+
+
+    [LHH.Unity.Button]
+    [ContextMenu("Debug Locks")]
+    public void DebugLocks()
+    {
+        Debug.LogFormat("[LOCK] Movement is {0}", _movementLock);
+        Debug.LogFormat("[LOCK] Action is {0}", _actionStunLock);
+        Debug.LogFormat("[LOCK] Reaction is {0}", _reactionStunLock);
+    }
     #endregion
 
 

@@ -22,7 +22,7 @@ public class StaminaHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     public void SetTarget(MoodPawn pawn)
     {
         pawn.OnChangeStamina += OnChangeStamina;
-        OnChangeStamina(pawn);
+        OnChangeStamina(pawn, 0f, pawn.GetStamina());
     }
     
     public void UnsetTarget(MoodPawn pawn)
@@ -30,7 +30,7 @@ public class StaminaHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
         pawn.OnChangeStamina -= OnChangeStamina;
     }
     
-    private void OnChangeStamina(MoodPawn pawn)
+    private void OnChangeStamina(MoodPawn pawn, in float oldValue, in float newValue)
     {
         fill.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, pawn.GetStaminaRatio() * width);
         SetNumberOfCarats(Mathf.RoundToInt(pawn.GetMaxStamina()));
