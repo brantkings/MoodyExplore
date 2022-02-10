@@ -496,7 +496,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
     private void Update()
     {
         if(ShouldRecoverStamina())
-            RecoverStamina(GetCurrentStaminaRecoverValue(), Time.deltaTime);
+            RecoverStamina(GetCurrentStaminaRecoverRate(), Time.deltaTime);
 
         UpdateStatusEffects();
 
@@ -591,7 +591,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         BattleLog.Log($"{GetName()} takes {BattleLog.Paint($"{Mathf.FloorToInt(info.damage / 10)} damage", BattleLog.Instance.importantColor)}!", BattleLog.LogType.Battle);
         if (info.damage > 0 && pawnConfiguration != null) 
             AddFlag(pawnConfiguration.onDamage);
-        if (info.statusEffects.Any()) foreach (var f in info.statusEffects) AddStatusEffect(f);
+        if (info.statusEffects != null && info.statusEffects.Any()) foreach (var f in info.statusEffects) AddStatusEffect(f);
         HandleDamageInfo(info, health);
     }
 
@@ -1917,7 +1917,7 @@ public class MoodPawn : MonoBehaviour, IMoodPawnBelonger, IBumpeable
         None
     }
 
-    private float GetCurrentStaminaRecoverValue()
+    public float GetCurrentStaminaRecoverRate()
     {
         bool isMoving = IsMoving();
         float value = isMoving ? PawnStaminaRecoveryData.movingRecovery : PawnStaminaRecoveryData.idleRecovery;

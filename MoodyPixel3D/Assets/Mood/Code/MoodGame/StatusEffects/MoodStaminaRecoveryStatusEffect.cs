@@ -14,6 +14,7 @@ public class MoodStaminaRecoveryStatusEffect : MoodRoutineStatusEffect
         OnlyAcceptNegativeChange,
         AllChange,
     }
+    public bool ifChangeIsZeroThenUseNormalChange;
     public Style changeStyle = Style.AllChange;
     public MoodSkill skillOnCumulativeChange;
     protected override IEnumerator StatusEffectRoutine(MoodPawn pawn)
@@ -25,26 +26,36 @@ public class MoodStaminaRecoveryStatusEffect : MoodRoutineStatusEffect
         {
             yield return null;
             float currentStamina = pawn.GetStamina();
-            float change = currentStamina - oldStamina;
+            float changeSign = currentStamina - oldStamina;
+            oldStamina = currentStamina;
             switch (changeStyle)
             {
                 case Style.OnlyAcceptPositiveChange:
-                    if (change < 0f) change = 0f;
+                    if (changeSign < 0f) changeSign = 0f;
                     break;
                 case Style.OnlyAcceptNegativeChange:
-                    if (change > 0f) change = 0f;
+                    if (changeSign > 0f) changeSign = 0f;
                     break;
             }
-            change = Mathf.Abs(change);
+            float change;
+            if (ifChangeIsZeroThenUseNormalChange && changeSign == 0f)
+            {
+                change = pawn.GetCurrentStaminaRecoverRate() * Time.deltaTime;
+            }
+            else
+            {
+                change = Mathf.Abs(changeSign);
+            }
             cumulativeChange += change;
             totalChange += change;
-            Debug.LogFormat("{0} with '{1}' -> {2} to {3} and {4}", pawn.name, GetName(), cumulativeChange, onCumulativeChange, totalChange);
+            Debug.LogFormat("{0} with '{1}' -> {2} to {3} and {4} (current stamina {5}, {6})", pawn.name, GetName(), cumulativeChange, onCumulativeChange, totalChange, currentStamina.ToString("F2"), changeSign.ToString("F3"));
             if(cumulativeChange > onCumulativeChange)
             {
                 Debug.LogFormat("{0} can use {1}? {2} {3}", pawn.name, skillOnCumulativeChange.name, pawn.CanUseSkill(skillOnCumulativeChange), pawn.CanUseSkillDebug(skillOnCumulativeChange));
-                if (pawn.CanUseSkill(skillOnCumulativeChange))
+                Vector3 skillDirection = pawn.Direction;
+                if (skillOnCumulativeChange.CanExecute(pawn, skillDirection))
                 {
-                    pawn.ExecuteSkill(skillOnCumulativeChange, pawn.Direction, null);
+                    pawn.ExecuteSkill(skillOnCumulativeChange, skillDirection, null);
                     cumulativeChange -= onCumulativeChange;
                 }
             }

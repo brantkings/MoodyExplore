@@ -119,13 +119,13 @@ public class HealthHUDPawnPeeker : MonoBehaviour, IMoodPawnPeeker
     private void CheckCurrentHealth(int current,  bool feedback)
     {
         ChangeProportional(ref current);
-        Debug.LogFormat("[HUD Health] Checking health {0} (before {4}) with feedback? {1}. By {2} ({3})", current, feedback, this, transform.GetComponentInParent<MoodPawn>(), _currentHealth);
+        //Debug.LogFormat("[HUD Health] Checking health {0} (before {4}) with feedback? {1}. By {2} ({3})", current, feedback, this, transform.GetComponentInParent<MoodPawn>(), _currentHealth);
         if (_currentHealth != current)
         {
             for (int i = 0, len = _children.Count; i < len; i++) 
             {
                 _children[i].SetDamaged((i+1) > current, feedback);
-                Debug.LogFormat("[HUD Health] Setting {0} damaged? {1}", i, (i + 1) > current);
+                //Debug.LogFormat("[HUD Health] Setting {0} damaged? {1}", i, (i + 1) > current);
             }
 
             _currentHealth = current;

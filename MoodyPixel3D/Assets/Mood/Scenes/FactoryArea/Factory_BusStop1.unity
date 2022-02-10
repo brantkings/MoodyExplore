@@ -821,8 +821,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 575313073}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.35, y: 3.497612, z: 8.800545}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 7, y: 0, z: 8}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children:
   - {fileID: 1248791376}
   - {fileID: 1471653607}
@@ -845,14 +845,14 @@ MonoBehaviour:
   direction: 1
   _amount: 10
   _stunTime:
-    beats: 4
+    beats: 0
   _ignorePhaseThrough: 0
   _onlyDamageOnce: 0
   pain: []
   statusEffects:
   - {fileID: 11400000, guid: f30cd372e0f5d1a4d881397deecfe037, type: 2}
   _knockbackDistance:
-    beats: 4
+    beats: 0
   knockback:
     _directProperty:
       knockbackByDealer:
@@ -864,8 +864,8 @@ MonoBehaviour:
         customFrom: {fileID: 0}
         magnitude: 1
       absoluteKnockback: {x: 0, y: 0, z: 0}
-      knockbackFromHitbox: 0
-      knockbackPositionDifferenceNormalized: 0
+      knockbackFromHitboxMagnitude: 0
+      knockbackPositionDifferenceMagnitude: 0
       knockbackPositionDifferenceProjectedOnPlane: {x: 0, y: 0, z: 0}
       angleRotation: 0
       knockbackDurationAbsolute:
@@ -1106,8 +1106,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1248791375}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.5, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 575313074}
   m_RootOrder: 0
@@ -1351,8 +1351,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1471653606}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.5, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 575313074}
   m_RootOrder: 1
@@ -1368,7 +1368,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.45
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!43 &2064377158
 Mesh:
@@ -1376,7 +1376,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh26804
+  m_Name: pb_Mesh26802
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

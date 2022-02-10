@@ -5079,7 +5079,7 @@ BoxCollider:
   m_GameObject: {fileID: 8396501500529785288}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -5255,6 +5255,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3510668027475626060, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3753761908181155500, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: _maxLife
       value: 60
@@ -5373,6 +5377,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
       propertyPath: movementData
+      value: 
+      objectReference: {fileID: 11400000, guid: e270c21568245584c966477d07b68054, type: 2}
+    - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}
+      propertyPath: _movementData
       value: 
       objectReference: {fileID: 11400000, guid: e270c21568245584c966477d07b68054, type: 2}
     - target: {fileID: 5637358447622213141, guid: ff0bf6257c84b0244bc89dec33097e41, type: 3}

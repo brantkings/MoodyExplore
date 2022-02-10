@@ -16,5 +16,6 @@ MonoBehaviour:
   _statusEffectDiscription: 
   totalCumulativeChange: 1
   onCumulativeChange: 1
+  ifChangeIsZeroThenUseNormalChange: 1
   changeStyle: 0
   skillOnCumulativeChange: {fileID: 11400000, guid: fde0314f1c9f77f4588daed0b54e45d6, type: 2}

@@ -47,7 +47,7 @@ MonoBehaviour:
     beats: 0
   plugoutPriorityBefore: 0
   plugoutPriorityAfter: 0
-  stuns: 
+  stuns: 020000000300000004000000
   flags: []
   toAdd: []
   sfx: {fileID: 0}
